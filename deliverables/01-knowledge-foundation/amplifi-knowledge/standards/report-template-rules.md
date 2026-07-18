@@ -6,6 +6,30 @@
 > "transfer data to template so the deck doesn't look AI" step can shrink
 > and eventually disappear. Owner: **Rica**.
 
+## How to fill this file (30 minutes, once)
+
+Unlike the other two standards frames, this one isn't extracted from
+reports ~ it's extracted from the actual Canva template and brand kit,
+since that's where the real structure and branding rules live.
+
+1. Open the current Canva report template (and the brand kit / asset
+   library) side by side with this file.
+2. Export or screenshot the template's section order, fonts, colors, logo
+   placement, and chart styles, then run the extraction prompt below with
+   Claude, attaching those exports.
+3. **Edit what it drafts** ~ Rica confirms the real structure, the AI just
+   organizes it into this file's shape.
+4. Delete this instruction block. The file is then live.
+
+**Extraction prompt** (paste with the Canva template exports attached):
+> "This is Amplifi's current intelligence report template and brand kit.
+> From it, extract: (1) the exact section order and what each section
+> contains; (2) the specific fonts, colors (hex if visible), logo
+> placement, and chart style rules; (3) anything the team currently fixes
+> by hand every time (a recurring manual touch-up) that could instead be a
+> written rule here. Draft the sections below. Be concrete ~ name actual
+> values, not descriptions of them."
+
 ## Canonical report structure
 
 | # | Section | Contains | Source |

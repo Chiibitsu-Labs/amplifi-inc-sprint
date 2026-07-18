@@ -14,8 +14,21 @@
    still-undelivered report visible** ~ if `Due` passes while `Status` is
    still `open`, that cycle is already a cadence miss even though nothing
    has shipped yet. Don't wait for delivery to log the cycle.
+1.5. **If the QA gate or internal alignment (steps 9–10) catches and
+   corrects a `brief-misalign` or `brand` issue BEFORE the client ever
+   sees the report:** bump `Rounds`, append the cause (same rules as
+   touch 3, below) ~ right then, while `Status` is still `open` (nothing
+   has shipped yet). This is real rework and a real corpus signal ~ if it
+   only counted client-requested revisions, FIX_CORPUS would never see
+   the brief/brand problems the QA gate is specifically catching and
+   fixing before they reach the client, which understates the exact
+   pain (rework, standard-in-heads) this instrument exists to route on.
+   Skip this touch entirely for cycles where internal review found
+   nothing to fix ~ most of them, hopefully.
 2. **At ship:** fill `Delivered`, top up `Effort (h)`. `Status = delivered`.
-   `Rounds` starts at `0`, tag at `none` ~ both provisional.
+   `Rounds`/`Rework tag` carry forward whatever touch 1.5 already logged
+   (default `0`/`none` if internal review caught nothing) ~ never reset to
+   zero out pre-delivery catches.
 3. **If the client asks for a revision:** bump `Rounds` by 1, top up
    `Effort (h)`, set `Rework tag`. First revision **replaces** the
    provisional `none` with the real cause. Every revision after that
@@ -80,8 +93,12 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   any `open` row where `Due` has already passed (an `open` row not yet
   past `Due` is neither ~ it's future work, exclude it from the rate
   entirely until it resolves one way or the other).
-- **Rounds** ~ running count of revision rounds. Only trusted once
-  `Status = accepted`.
+- **Rounds** ~ running count of revision rounds, from EITHER source:
+  internal catches (QA gate / internal alignment, touch 1.5, before the
+  client sees anything) or client-requested revisions (touch 3, after
+  delivery). Both are real rework; the router doesn't care which side of
+  delivery it happened on, only whether the standard needed correcting.
+  Only trusted once `Status = accepted`.
 - **Effort (h)** ~ rough total hours, self-estimated, running total across
   every touch. Gut feel is fine; consistency beats precision.
 - **Rework tag** ~ **required, not optional, the moment `Rounds` goes above

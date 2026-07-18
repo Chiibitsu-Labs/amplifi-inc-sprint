@@ -56,7 +56,7 @@ a second job. Capture as byproduct, both times.
 | **WIP per analyst** | active clients/tasks in flight per person | capchecker (daily Q3) | the "full hands" ceiling |
 | **Perceived load** | daily 1–10 self-rating + reason | capchecker (Q1+Q2) | earliest warning ~ people feel strain before metrics show it |
 | **Cycle time per report** | period start → delivered | delivery log | rising = falling behind cadence; the early-warning half of REDESIGN's evidence (see §3) ~ cycle time can trend up for weeks before it actually breaches the due date and shows up in on-cadence rate |
-| **On-cadence rate** | % reports delivered by their due date | delivery log | mixed weekly/bi-weekly/monthly clients; misses point at a workflow/scheduling problem first (routes to REDESIGN ~ see §3), not straight at capacity |
+| **On-cadence rate** | % reports delivered by their due date | delivery log | mixed weekly/bi-weekly/monthly clients; CLUSTERED misses (one client, one handoff) point at a workflow problem (routes to REDESIGN ~ see §3); BROAD misses across most clients/analysts, with WIP/load also elevated, point at capacity instead |
 | **Rework rounds per report** | revision rounds before client-accepted, + tag | delivery log | their #1 pain ~ and usually a **corpus gap, not a headcount gap** |
 
 Effort-per-deliverable rides along as the delivery log's `Effort (h)` column
@@ -81,10 +81,27 @@ threshold crossed →
                  due date has actually been missed; OR (b) cycle time
                  trending up against baseline while still narrowly making
                  due dates ~ the early-warning version, catching a slide
-                 before it becomes a miss. Plus: cadence misses clustering
-                 at one handoff; "late alignment sched"; rework tagged
-                 client-new-ask.
-                 → route: fix the handoff/process, not the headcount.
+                 before it becomes a miss.
+                 **PLUS a hard requirement, not optional supporting color:
+                 the slowdown must CLUSTER** at an identifiable point ~ one
+                 handoff step, one client, one specific process ~ not be
+                 spread evenly across most clients and most analysts at
+                 once. A broad, uniform "everyone's a little late on
+                 everything," co-occurring with elevated WIP/load
+                 team-wide, is the capacity-exhaustion pattern, not a
+                 process defect ~ there's no specific handoff to redesign
+                 because nothing specific is broken, there's just more work
+                 than hands. THAT pattern must be allowed through to the
+                 HIRE check, not absorbed by REDESIGN. (This is the same
+                 failure mode as the original HIRE-unreachable bug from
+                 earlier in this doc's history, recurring in a new shape:
+                 REDESIGN's own definition, without the clustering
+                 requirement, was broad enough to claim genuine
+                 capacity-exhaustion cycles and block HIRE from ever firing
+                 in exactly the scenario HIRE most needs to catch ~ Codex
+                 catch, 2026-07-18.)
+                 → route: fix the handoff/process, not the headcount ~
+                 ONLY when there's an actual handoff/process to point at.
                  On-cadence and cycle time are REDESIGN's signals and ONLY
                  REDESIGN's ~ see §5 for why HIRE deliberately never reads
                  on-cadence.
@@ -222,8 +239,14 @@ No code, no wiring, no waiting on capchecker. Once each client's
      AUTOMATE, then REDESIGN, then FIX_CORPUS, then HIRE, each with
      self-contained evidence, none needing to look ahead at the next
      step's answer first ~ Codex catch, 2026-07-18.)
-   Either way REDESIGN does fire, name the clustering (one client? one
-   handoff step?) as the evidence.
+   **Before calling either read a REDESIGN, check it clusters** ~ one
+   client, one handoff step, one specific process, not a broad slowdown
+   touching most clients/analysts at once. If it's broad AND WIP/load are
+   also elevated team-wide, that's capacity exhaustion, not a process
+   defect ~ do NOT let REDESIGN claim it; let it flow through to the HIRE
+   check (step 4) instead. Only route to REDESIGN when you can name the
+   specific thing to fix; "everything's a little slow" isn't a redesign,
+   it's a capacity signal wearing a cadence costume.
 3. **FIX_CORPUS check:** same logs, but two gates in order, not one ~
    (a) first, is overall rework meaningful at all: rounds-per-report (or
    rows with `Rounds ≥ 1` as a share of all accepted rows) above threshold?
@@ -285,12 +308,21 @@ above by hand:
    - on-cadence rate below threshold, OR cycle time trending up against
      baseline while on-cadence still narrowly holds (the early-warning
      path ~ §2), where the rework on those specific cycles (if any) is low
-     or isn't corpus-tagged → **REDESIGN** candidate. This condition is
-     self-contained (doesn't reference FIX_CORPUS's output) by design ~
-     both branches read the same rework-tag data independently, so which
-     one evaluates "first" in code never changes the answer for a given
-     cycle. This is the workflow/scheduling signal ~ on-cadence and cycle
-     time live here and nowhere else in the router.
+     or isn't corpus-tagged, **AND the misses cluster** (one client, one
+     handoff step, one identifiable process) rather than spreading broadly
+     across most clients/analysts at once → **REDESIGN** candidate. The
+     clustering check is load-bearing, not decoration: a broad, uniform
+     slowdown co-occurring with elevated team-wide WIP/load is capacity
+     exhaustion, and REDESIGN claiming it would make HIRE structurally
+     unreachable in exactly the scenario it exists to catch ~ the same
+     class of bug as the on-cadence/HIRE overlap fixed earlier in this doc
+     (Codex catch, 2026-07-18). This condition is self-contained (doesn't
+     reference FIX_CORPUS's output) by design ~ both branches read the
+     same rework-tag data independently, so which one evaluates "first" in
+     code never changes the answer for a given cycle. This is the
+     workflow/scheduling signal ~ on-cadence and cycle time live here and
+     nowhere else in the router, and only when there's a specific place to
+     point at.
    - HIRE requires ALL of: sustained load over the structural line (the
      live rule) AND WIP per analyst sustainedly elevated vs baseline (the
      capacity-ceiling signal ~ independent of cadence) AND capchecker's
