@@ -105,11 +105,27 @@ signal panel. Already implements five router actions on the capacity feed:
 
 | Action | Fires when (defaults; tunable in-app, no redeploy) |
 |---|---|
-| **HIRE** | team avg > 6/10 on ≥7 of last 10 working days (needs ≥10 days history) |
+| **HIRE** ⚠ see caveat below | team avg > 6/10 on ≥7 of last 10 working days (needs ≥10 days history) |
 | **REBALANCE** | one person's 5-day avg ≥ 7.5 while team sits ≥2 pts lower |
 | **AUTOMATE** | one reason-theme ≥40% of high-load reports (≥3 occurrences, 14d) |
 | **WATCH** | ≥2 people at/above strain zone (8/10) same day |
 | **DATA** | response rate <70% (7d) or <10 days history ~ "calibrating" gate |
+
+**Read this before treating today's live HIRE label as a decision.** The
+deployed rule fires on sustained perceived load alone ~ it has no way to
+check WIP, on-cadence, or rework, because feed 2 doesn't exist yet and
+REDESIGN/FIX_CORPUS aren't wired in. That means today's label is exactly
+what §3 says the instrument must never produce on its own: a hire signal
+that hasn't ruled out automate/redesign/corpus-fix. Until §5's v2 wiring
+ships, treat this label as **"go look, don't decide"** ~ Michele
+cross-checks it by hand against rework tags and cadence misses in the
+delivery logs before it means anything close to a hire.
+
+**Action item, not yet done:** rename this action from `HIRE` to
+`HIRE-CANDIDATE` in the live `lib/analytics.ts` (and the dashboard label)
+so the UI itself carries the caveat instead of relying on someone having
+read this document. Small change, real product behavior ~ ship it
+deliberately, not folded into this spec.
 
 Trial learnings already banked: the load-scale flip (10 = drowning) with an
 epoch cutoff so old-scale data can't corrupt signals; thresholds

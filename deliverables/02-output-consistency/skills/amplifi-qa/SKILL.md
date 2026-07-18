@@ -12,7 +12,11 @@ replace it. Flags are suggestions to a human who decides.
 ## Step 0 ~ Load the bar (rules live in the corpus, never in this skill)
 
 Required inputs, all of them:
-1. The report **draft**.
+1. The report **draft** ~ markdown pre-Canva for the first pass, OR the
+   assembled deck (exported text/PDF, or screenshots of the key numbers)
+   for the required second pass after Canva transfer (see
+   `standards/report-template-rules.md` §"Two checkpoints, not one"). Same
+   checks, either input ~ note in the output header which one you ran.
 2. The **current period's source data** (the same Sentimo/MCP exports the
    draft was generated from). Without it, check 4 cannot trace a single
    figure ~ so if it's not provided, STOP and ask for it. Never run
@@ -38,14 +42,17 @@ If a standards file is an unfilled frame, run anyway but say so at the top:
    tests; "just continue" alone = automatic flag; recos the client already
    rejected (per `context.md`) = flag.
 4. **Data integrity** ~ check each figure against its claimed source, not
-   one blanket source: figures presented as CURRENT must exist in the
-   provided period data; figures explicitly labeled with a past period
-   (the insight-log trend reads the insights skill is required to include)
-   must exist in `insight-log.md` instead ~ don't flag those as untraceable
-   just because they're absent from the period export. List any number
-   that fails its OWN check ~ these go to the human verify step first.
-   Also flag: any CURRENT-labeled figure that's actually identical to a
-   past insight-log entry (stale-template ghost hiding as current data).
+   one blanket source: figures presented as CURRENT must either appear
+   directly in the provided period data OR be a deterministic calculation
+   from it (total, average, rate, period-over-period change) that you can
+   re-derive and show ~ that's a pass, not a flag; figures explicitly
+   labeled with a past period (the insight-log trend reads the insights
+   skill is required to include) must exist in `insight-log.md` instead.
+   List any number that fails its OWN check ~ isn't in the export, can't
+   be re-derived from it, and isn't a labeled historical figure ~ these go
+   to the human verify step first. Also flag: any CURRENT-labeled figure
+   that's actually identical to a past insight-log entry (stale-template
+   ghost hiding as current data).
 5. **Compounding** ~ does the draft use the insight-log trend where it
    should? A quiet month with no trend read = flag.
 

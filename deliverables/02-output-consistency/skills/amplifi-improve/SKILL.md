@@ -51,7 +51,12 @@ later.
 
 ## Mode 2 ~ PROMOTE (weekly, run with Rica)
 
-1. Read all unarchived files in `learnings/`.
+1. Read only files matching the dated session-file pattern,
+   `learnings/YYYY-MM-DD-HHMM-*.md`, that are NOT already prefixed
+   `archived-`. **Explicitly exclude `learnings/patterns.md` and
+   `learnings/README.md`** ~ `patterns.md` is the permanent output of this
+   step, not an input to it; reading it back in would re-promote its own
+   tally into itself and double-count every theme on every future run.
 2. Group by tag and propose the promotion, showing each item with its
    destination:
    - `CLIENT-FACT` → `clients/{x}/context.md` (or `brief.md` FAQ table if it

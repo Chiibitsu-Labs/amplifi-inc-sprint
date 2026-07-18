@@ -9,7 +9,7 @@ grows under their roof. Chii's repo remains the reference/spec copy.
 | From (repo) | To (Amplifi Drive) | Becomes |
 |---|---|---|
 | `deliverables/01-knowledge-foundation/amplifi-knowledge/` | shared folder `amplifi-knowledge/` at the team's Drive root | **the live corpus** ~ the one home |
-| `deliverables/02-output-consistency/skills/*/SKILL.md` | Claude Enterprise (skills/project setup) | the three live skills |
+| `deliverables/02-output-consistency/skills/*/SKILL.md` | (a) Claude Enterprise (skills/project setup) AND (b) a `skills/` folder in the Drive corpus | (a) the three live skills, (b) **Amplifi's owned copy** ~ see step 4 |
 | `BLUEPRINT.md`, `CONSISTENCY-SYSTEM.md`, `ARCHITECTURE-MAP.md`, `ROADMAP.md`, `INSTRUMENT.md` | a `deliverables/` folder in Drive (reading copies) | the engagement documents Michele circulates |
 
 ## Steps (~30 minutes, Chii + Michele)
@@ -25,10 +25,19 @@ grows under their roof. Chii's repo remains the reference/spec copy.
 3. **Share:** edit access for all six ~ Michele, Rica, Dale, Janelle +
    the two others on the function roster. No per-file permissions; the
    folder is the unit.
-4. **Wire the skills:** upload the three `SKILL.md` files to Claude
-   Enterprise. **The improve skill needs to WRITE to the corpus, not just
-   read it** ~ the read-only Drive connector (or attaching files per
-   session) satisfies `amplifi-insights` and `amplifi-qa` fine, but leaves
+4. **Wire the skills, and keep an owned copy.** Upload the three
+   `SKILL.md` files to Claude Enterprise (that's what makes them live) ~
+   AND also copy the same three files into `amplifi-knowledge/skills/` in
+   Drive, as Amplifi's own canonical record. Without this second copy, the
+   operating instructions for "how the analyst function uses AI" live only
+   in Chii's reference repo and inside a vendor product; if Claude access
+   changes or the lens swaps, Amplifi would be reconstructing its own
+   process from someone else's copy. The Drive copy is the source of
+   truth going forward ~ if a skill gets edited, edit it in Drive first.
+
+   **The improve skill needs to WRITE to the corpus, not just read it** ~
+   the read-only Drive connector (or attaching files per session)
+   satisfies `amplifi-insights` and `amplifi-qa` fine, but leaves
    `amplifi-improve` unable to actually save anything, which breaks the
    capture loop this whole deliverable is built on. Set up **Drive for
    Desktop** synced to the `amplifi-knowledge/` folder so it's a real local

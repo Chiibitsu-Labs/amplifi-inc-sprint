@@ -30,7 +30,9 @@ High pain, low effort. The corpus goes live and the standard gets encoded.
 | 1.2 | Rica fills the three standards frames from 2–3 gold reports (extraction prompts included ~ one focused hour) | **Rica** | Jul 31 | "AI slop", "AI tells", "doesn't align w/ branding" |
 | 1.3 | Seed client folders: copy `_template-client/` per active client; fill `brief.md` + `brand-standard.md` for each (split the portfolio) | **Dale + Janelle** | Aug 7 | "incomplete information", "unique asks", re-inferring |
 | 1.4 | Deploy the three skills (insights · qa · improve) to Claude Enterprise; retire the old reprompt-heavy skill | **Chii** | Aug 7 | "still requires reprompting", "not optimized for what good looks like" |
-| 1.5 | Ship-writes habit live: insight-log entry + delivery-log row on every report from Aug 10 | **Rica** (enforces) · all analysts (do) | Aug 10 onward | "reports not evolving"; feeds the instrument |
+| 1.4b | Rename capchecker's live `HIRE` action to `HIRE-CANDIDATE` (`lib/analytics.ts` + dashboard label) ~ today's label fires on load alone with no automate/redesign/corpus-fix ruled out yet; the UI shouldn't claim more than v1 can back up | **Chii** | Aug 7 | premature hire signal before the router is fully wired (Instrument §4) |
+| 1.5a | Open a delivery-log row (`Status = open`) for EVERY cycle already in flight, backdated to its real period start ~ not just new cycles going forward. Skipping this means the first baseline (2.2) can't see any report that was already overdue before Aug 3 | **Rica** (enforces) · all analysts (do) | Aug 3 | overdue work invisible to on-cadence tracking |
+| 1.5b | Delivery-log habit live for the full cycle: open at period start, ship-touch + insight-log entry at delivery, finalize (rounds/tag/`accepted`) at client sign-off | **Rica** (enforces) · all analysts (do) | Aug 3 onward | "reports not evolving"; feeds the instrument |
 | 1.6 | First weekly promotion pass (improve skill, promote mode) ~ then every Friday | **Rica + Chii** | Aug 14, recurring | corpus rot; same-mistake-twice |
 
 **Gate out of Phase 1:** an analyst generates a report section via the
@@ -55,7 +57,7 @@ High impact, more effort. The system starts measuring itself.
 | Rhythm | What | Owner |
 |---|---|---|
 | Daily | capchecker 3-tap check-in (08:00) · summary to Michele (10:00) | all · auto |
-| Per report | insight-log entry + delivery-log row (~2 min) | delivering analyst |
+| Per cycle | delivery-log: open at start, ship-touch + insight-log entry at delivery, finalize at acceptance (~20–30s each) | delivering analyst |
 | Weekly (Fri) | promotion pass: learnings → corpus | Rica (+ improve skill) |
 | Monthly | threshold read: any signal crossed? walk the router chain, log the routing decision | Michele |
 | Quarterly | threshold calibration against real distributions · corpus health check (stale files, unfilled frames) | Michele + Chii |
@@ -77,8 +79,14 @@ living numbers, and the instrument evolves as Amplifi does.
 
 1. Can any analyst produce a client-ready report to the same standard,
    without tribal knowledge? → *corpus + skills (Phases 1–2)*
-2. Does the COO have a near-real-time view of capacity, output, cost per
-   deliverable? → *capchecker + delivery logs + panel (2.2–2.3)*
+2. Does the COO have a near-real-time view of capacity and output per
+   deliverable? → *capchecker + delivery logs + panel (2.2–2.3)*.
+   **Cost per deliverable specifically is not yet in scope** ~ the feeds
+   capture effort hours, not a labor rate or cost formula; "cost" from the
+   brief's own definition of success would need that input added
+   deliberately (a rate table, or a simple hours × blended-rate calc),
+   which nobody has asked for yet. Flagged here so it's a known gap, not a
+   silent miss ~ revisit with Michele if cost visibility becomes a real ask.
 3. Are existing subscriptions used to documented capability? → *skills on
    Claude Enterprise; Drive as vault; no new platforms*
 4. Is there a living knowledge base growing with every engagement? →

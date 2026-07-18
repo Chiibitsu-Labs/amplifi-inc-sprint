@@ -35,6 +35,24 @@ the skill's output and the Canva deck.}
 - The QA skill cross-checks the deck's period stamp against the data window
   and flags any figure that matches last period's report verbatim.
 
+**Two checkpoints, not one.** The QA gate runs on the markdown draft ~
+before Canva. That catches drift the skill introduced, but the exact
+failure this section names ("old data retained in templates," stale
+charts/numbers) mostly happens DURING the manual transfer into last
+period's Canva file, which is a step after QA already passed. Content that
+was clean in the draft can still ship stale if the deck retained an old
+chart image or a typed-over number. So:
+- The markdown QA pass is checkpoint one: catches skill-introduced errors
+  before Canva.
+- **Before sending to the client, re-run the QA skill's data-integrity
+  check against the assembled deck** (export as text/PDF, or screenshot
+  the key numbers) ~ same check, second checkpoint, catches what the
+  transfer step introduced. This is a few minutes, not a re-review.
+- Until this second pass is habitual, the existing human "VERIFICATION OF
+  AI RESULTS" step should explicitly include "does every number in the
+  deck match the QA'd draft" as a checklist line ~ don't let the deck be
+  the one artifact nothing checks.
+
 ## Format notes
 
 - Working format: markdown from the skill → Canva for client-facing polish.

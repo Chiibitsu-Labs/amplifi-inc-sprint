@@ -28,14 +28,19 @@ This section exists because "unique asks from client → not part of usual
 baseline format" was a named pain ~ trap those asks here so they survive
 analyst handoffs.}
 
-## FAQs & clarifications (append-only)
+## FAQs & clarifications (append new rows; never delete)
 
 > Every answered question gets a row. This kills re-inferring, re-asking,
-> and the slow-reply wait for things we were already told.
+> and the slow-reply wait for things we were already told. **If a client
+> corrects or changes an earlier answer, don't just append the new one** ~
+> that leaves two "active" answers and a skill could apply either.
+> Add the new row AND flip the old row's Status to `superseded`, pointing
+> at the date that replaced it. Skills only trust rows marked `current`.
 
-| Date | Question | Answer | Source |
-|---|---|---|---|
-| {YYYY-MM-DD} | {what we asked} | {what they said} | {email/call/meeting} |
+| Date | Question | Answer | Status | Source |
+|---|---|---|---|---|
+| {YYYY-MM-DD} | {what we asked} | {what they said} | `current` | {email/call/meeting} |
+| {earlier date, if corrected} | {same question} | {old answer} | `superseded → see {new date}` | {…} |
 
 ## Out of scope / do NOT
 

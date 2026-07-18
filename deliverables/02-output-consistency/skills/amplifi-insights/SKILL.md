@@ -27,8 +27,12 @@ file, ask for it or flag the gap. Do not silently default to generic.
 
 Work ONLY from the data provided for this period (Sentimo/MCP exports,
 platform pulls). Rules:
-- Every number presented as CURRENT must exist in the provided period data.
-  No estimates presented as data. If a needed figure is missing: flag it,
+- Every number presented as CURRENT must either exist directly in the
+  provided period data, or be a deterministic calculation FROM it (totals,
+  averages, rates, period-over-period % change) where the inputs and the
+  calculation are traceable ~ show your work if it's not obvious. What's
+  banned is invented or estimated figures with no traceable source, not
+  ordinary arithmetic on real data. If a needed input is missing: flag it,
   don't invent it.
 - Historical figures from the insight-log are allowed ~ required, even, for
   the trend read ~ but ALWAYS labeled with their period ("engagement was
