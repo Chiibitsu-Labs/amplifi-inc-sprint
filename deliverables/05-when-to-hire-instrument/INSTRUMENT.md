@@ -53,7 +53,7 @@ a second job. Capture as byproduct, both times.
 
 | Signal | Definition | Feed | Why it predicts strain |
 |---|---|---|---|
-| **WIP per analyst** | active clients/tasks in flight per person, from capchecker's `client_count` field (Q3, parsed to a number) | capchecker (daily Q3) | the "full hands" ceiling. **v1 threshold, same pattern as capchecker's other signals:** WIP baseline = per-analyst average `client_count` over a **FROZEN** reference window ~ the first 10 working days once `client_count` data starts (mirrors `SCALE_EPOCH`'s frozen-reference pattern, not `minHistoryDays`'s rolling one). **Deliberately not a continuously-rolling trailing average** ~ a rolling baseline absorbs the same sustained increase the threshold is supposed to catch (10 days at 3, then a genuine step up to 5: a rolling baseline creeps from 3.0 toward 3.2 on day one of the increase, chasing the threshold it's compared against, so a real sustained rise can mathematically never clear "baseline + 2" ~ Codex catch, 2026-07-18). WIP threshold = `client_count` ≥ frozen baseline + 2, sustained on ≥5 of the last 10 working days (a lower bar than load's `structuralDays: 7` since WIP moves more slowly, day to day, than a self-rated feeling). The frozen baseline recalculates only at quarterly calibration (§7), same cadence as everything else there ~ never mid-quarter, so it can't chase a real signal into hiding. Gut-seed like every other v1 number here ~ Michele adjusts the FORMULA (window length, +2 margin) at quarterly review, not the baseline value itself mid-cycle. Without a stated number, "WIP sustainedly elevated" isn't checkable and two people could read the same dashboard and disagree ~ this is that number, however roughly. |
+| **WIP per analyst** | active clients/tasks in flight per person, from capchecker's `client_count` field (Q3, parsed to a number) | capchecker (daily Q3) | the "full hands" ceiling. **v1 threshold, same pattern as capchecker's other signals:** WIP baseline = per-analyst average `client_count` over a **FROZEN** reference window ~ the first 10 working days once `client_count` data starts (mirrors `SCALE_EPOCH`'s frozen-reference pattern, not `minHistoryDays`'s rolling one). **Deliberately not a continuously-rolling trailing average** ~ a rolling baseline absorbs the same sustained increase the threshold is supposed to catch (10 days at 3, then a genuine step up to 5: a rolling baseline creeps from 3.0 toward 3.2 on day one of the increase, chasing the threshold it's compared against, so a real sustained rise can mathematically never clear "baseline + 2" ~ Codex catch, 2026-07-18). WIP threshold = `client_count` ≥ frozen baseline + 2, sustained on ≥5 of the last 10 working days (a lower bar than load's `structuralDays: 7` since WIP moves more slowly, day to day, than a self-rated feeling). The frozen baseline recalculates only at quarterly calibration (§7) ~ **and only from a window confirmed to be healthy, never blindly from "whatever the last N days looked like."** A blind quarterly reset reproduces the exact bug the freeze exists to prevent: if WIP rose from a genuine baseline of 3 to a sustained breach at 5 shortly before a quarterly boundary, recalculating from the most recent days would set the new baseline to 5 and the new threshold to 7 ~ silently clearing an overload that was never resolved, just relabeled as normal. Rule: if the WIP threshold is CURRENTLY firing (or fired at any point in the window under consideration) when quarterly calibration comes around, carry the OLD baseline forward unchanged rather than recalculating from an active-breach window; only recalculate from a period that was itself below threshold, confirming it reflects genuinely healthy load, not a new-normal that's actually still the problem (Codex catch, 2026-07-18). Gut-seed like every other v1 number here ~ Michele adjusts the FORMULA (window length, +2 margin) at quarterly review, and the baseline VALUE only from confirmed-healthy data, never mid-cycle and never from an unresolved breach. Without a stated number, "WIP sustainedly elevated" isn't checkable and two people could read the same dashboard and disagree ~ this is that number, however roughly. |
 | **Perceived load** | daily 1–10 self-rating + reason | capchecker (Q1+Q2) | earliest warning ~ people feel strain before metrics show it |
 | **Cycle time per report** | period start → delivered | delivery log | rising = falling behind cadence; the early-warning half of REDESIGN's evidence (see §3) ~ cycle time can trend up for weeks before it actually breaches the due date and shows up in on-cadence rate |
 | **On-cadence rate** | % reports delivered by their due date | delivery log | mixed weekly/bi-weekly/monthly clients; CLUSTERED misses (one client, one handoff) point at a workflow problem (routes to REDESIGN ~ see §3); BROAD misses across most clients/analysts, with WIP/load also elevated, point at capacity instead |
@@ -307,12 +307,18 @@ cycles, not elapsed time):
    PROCESS entries are written from real session friction, so "long queue
    for data pulling, ClientA/C/D" in the tally is frequently the
    clustering answer, not just corroboration of it.
-3. **FIX_CORPUS check:** same logs, but two gates in order, not one ~
-   (a) first, is overall rework meaningful at all: rounds-per-report (or
-   rows with `Rounds ≥ 1` as a share of all accepted rows) above threshold?
-   If rework is rare, stop here ~ one brand-tagged revision among many
-   clean reports is noise, not a corpus signal, even though it'd be
-   "100% corpus-tagged" by count alone. (b) Only once (a) clears: **count
+3. **FIX_CORPUS check:** same logs, but two gates in order, not one, and
+   ONE metric throughout, not two ~ **average rounds per accepted report**
+   (total rework rounds across qualifying rows ÷ number of qualifying
+   rows), never "share of rows with any rework" ~ the two aren't
+   interchangeable (one 5-round report among ten clean ones is 0.5
+   rounds/report but only 10% of rows touched; picking whichever makes
+   the gate pass on a given month would make routing decisions
+   incomparable across months). (a) first, is that rounds-per-report
+   average above threshold? If rework is rare, stop here ~ one
+   brand-tagged revision among many clean reports is noise, not a corpus
+   signal, even though it'd be "100% corpus-tagged" by count alone.
+   (b) Only once (a) clears: **count
    at the round level, not the row level** ~ a 5-round report with one
    `brand` cause and four `client-new-ask` causes is 20% corpus-driven,
    not 100%; the delivery log keeps one tag entry per round specifically

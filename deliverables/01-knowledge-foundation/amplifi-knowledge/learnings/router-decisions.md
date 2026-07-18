@@ -11,16 +11,31 @@
 
 ## Format per entry
 
+**Routes can be plural.** Per `INSTRUMENT.md`'s portfolio-wide HIRE gate:
+a narrow AUTOMATE/REDESIGN/FIX_CORPUS/REBALANCE signal on ONE client
+doesn't automatically block a HIRE that's independently explained by
+broad, team-wide capacity strain ~ both can be real findings from the
+same walkthrough, and the log needs to hold both without implying the
+narrow one was wrong or dismissed.
+
 ```markdown
 ## {YYYY-MM-DD} ~ monthly walkthrough
-- Signal(s) crossed: {which of the 5}
-- Route: {AUTOMATE | REDESIGN | FIX_CORPUS | REBALANCE | HIRE | none crossed}
+- Routes fired: {one or more of AUTOMATE | REDESIGN | FIX_CORPUS |
+  REBALANCE | HIRE | none crossed ~ list every one that actually fired,
+  not just the "final" one}
   (REBALANCE = capchecker's live signal, one analyst overloaded while the
-  team has headroom ~ checked as part of the HIRE step, Instrument §5a,
-  and routes to redistribution instead of a hire when it fires)
-- Evidence: {the specific numbers/tags that drove the call}
-- Action taken: {what Michele/Chii actually did as a result}
-- Ruled out first: {the branches checked and dismissed, in order, if route = HIRE}
+  team has headroom, WITH genuine absolute headroom confirmed behind it ~
+  see Instrument §3/§5a; a narrow signal here does not by itself block HIRE)
+- Per route, one line each:
+  - {ROUTE}: {evidence} → {scope: portfolio-wide, or narrow (name the
+    client/theme)} → {action taken, or "insufficient to explain the
+    breach, noted and not acted on separately" if narrow and coexisting
+    with a HIRE}
+- If HIRE fired: {which earlier routes were checked and found genuinely
+  ABSENT (no signal at all) vs. checked and found PRESENT BUT NARROW
+  (fired, scoped to one client/theme, judged insufficient to explain a
+  portfolio-wide breach) ~ these are different findings, don't collapse
+  "insufficient" into "ruled out" as if the narrow signal weren't real}
 ```
 
 ## Why this exists

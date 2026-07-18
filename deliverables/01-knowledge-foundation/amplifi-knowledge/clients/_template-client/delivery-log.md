@@ -14,21 +14,26 @@
    still-undelivered report visible** ~ if `Due` passes while `Status` is
    still `open`, that cycle is already a cadence miss even though nothing
    has shipped yet. Don't wait for delivery to log the cycle.
-1.5. **If the QA gate or internal alignment (steps 9–10) catches and
-   corrects ANY material issue BEFORE the client ever sees the report ~
-   `brief-misalign`, `brand`, or `data`** (not just the corpus-tagged
-   two): bump `Rounds`, append the cause (same rules as touch 3, below)
-   ~ right then, while `Status` is still `open` (nothing has shipped
-   yet). This is real rework regardless of which tag it carries ~
-   recording only `brief-misalign`/`brand` internal catches while
-   silently skipping internal `data` corrections would inflate the
-   corpus-tag SHARE artificially (imagine four internal `data` fixes and
-   one `brand` fix in one cycle: skipping the four makes that a
-   single 100%-corpus round instead of five rounds at a real 20% share).
-   The tag vocabulary doesn't change ~ `client-new-ask` still can't apply
-   here, there's no client yet ~ only which catches get recorded does.
-   Skip this touch entirely for cycles where internal review found
-   nothing to fix ~ most of them, hopefully.
+1.5. **Any time between period start and the actual ship write ~ the QA
+   gate (pass 1), internal alignment, OR the post-Canva pass 2 (steps
+   9–11) ~ catches and corrects ANY material issue BEFORE the client ever
+   sees the report: `brief-misalign`, `brand`, or `data`** (not just the
+   corpus-tagged two): bump `Rounds`, append the cause (same rules as
+   touch 3, below) ~ right then, while `Status` is still `open` (the ship
+   write, touch 2, hasn't happened yet). This is real rework regardless of
+   which tag it carries or which of the three pre-send checkpoints caught
+   it ~ pass 2 exists specifically to catch Canva-stage drift, and a
+   correction it finds is just as real as one steps 9–10 found; recording
+   only the earlier two would systematically miss exactly the failures
+   the LATER checkpoint exists to detect. Recording only
+   `brief-misalign`/`brand` catches while silently skipping `data`
+   corrections would ALSO inflate the corpus-tag SHARE artificially
+   (imagine four internal `data` fixes and one `brand` fix in one cycle:
+   skipping the four makes that a single 100%-corpus round instead of
+   five rounds at a real 20% share). The tag vocabulary doesn't change ~
+   `client-new-ask` still can't apply here, there's no client yet ~ only
+   which catches get recorded does. Skip this touch entirely for cycles
+   where nothing needed fixing before send ~ most of them, hopefully.
 2. **At ship:** fill `Delivered`, top up `Effort (h)`. `Status = delivered`.
    `Rounds`/`Rework tag` carry forward whatever touch 1.5 already logged
    (default `0`/`none` if internal review caught nothing) ~ never reset to
@@ -43,12 +48,16 @@
    over-counting one, and FIX_CORPUS existing to catch it is the whole
    point of this priority). One round, one entry, no exceptions ~ this
    keeps the entry count always equal to `Rounds`, which is what makes
-   the per-round share countable at all. First revision **replaces** the
-   provisional `none` with that round's (prioritized) cause. Every
-   revision after that **appends** its own entry ~ repeats allowed, never
-   deduplicated. Round 1 `brand`, round 2 `client-new-ask`, round 3 also
-   `client-new-ask` → cell reads `brand, client-new-ask, client-new-ask`
-   (three entries for three rounds, matching `Rounds = 3`). This matters
+   the per-round share countable at all. **"Replaces the provisional
+   `none`" applies ONLY if `Rounds` is still 0 when this touch fires** ~
+   i.e., this client revision really is the row's first-ever recorded
+   round. If touch 1.5 already logged one or more pre-delivery catches,
+   `Rounds` is already >0 and real tag entries already exist ~ this
+   client revision **appends** like every other non-first round; there's
+   no `none` left to replace. Round 1 `brand`, round 2 `client-new-ask`,
+   round 3 also `client-new-ask` → cell reads `brand, client-new-ask,
+   client-new-ask` (three entries for three rounds, matching `Rounds = 3`,
+   regardless of whether round 1 happened pre- or post-delivery). This matters
    beyond bookkeeping: the instrument's FIX_CORPUS check computes the
    corpus share PER ROUND (how many of the actual revision rounds were
    corpus-caused, not just whether any round ever was) ~ a row with one
@@ -107,20 +116,22 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   past `Due` is neither ~ it's future work, exclude it from the rate
   entirely until it resolves one way or the other).
 - **Rounds** ~ running count of revision rounds, from EITHER source:
-  internal catches (QA gate / internal alignment, touch 1.5, before the
-  client sees anything) or client-requested revisions (touch 3, after
-  delivery). Both are real rework; the router doesn't care which side of
-  delivery it happened on, only whether the standard needed correcting.
-  Only trusted once `Status = accepted`.
+  pre-delivery catches (QA gate, internal alignment, OR pass 2 ~ touch
+  1.5, any point before the ship write) or client-requested revisions
+  (touch 3, after delivery). Both are real rework; the router doesn't
+  care which side of delivery it happened on, or which checkpoint caught
+  it, only whether the standard needed correcting. Only trusted once
+  `Status = accepted`.
 - **Effort (h)** ~ rough total hours, self-estimated, running total across
   every touch. Gut feel is fine; consistency beats precision.
 - **Rework tag** ~ **required, not optional, the moment `Rounds` goes above
   0** ~ exactly ONE entry per round (if a round has multiple causes, pick
   by priority `brief-misalign` > `brand` > `data` > `client-new-ask` and
-  note the rest in Notes ~ see touch 3). The first round REPLACES the
-  provisional `none`; every round after that APPENDS its own entry, one
-  per round, repeats allowed, never deduplicated:
-  `brief-misalign` · `brand` · `data` · `client-new-ask`.
+  note the rest in Notes ~ see touch 3). The genuinely FIRST round
+  recorded on this row (whichever touch fires first ~ 1.5 or 3) REPLACES
+  the provisional `none`; every round after that, regardless of source,
+  APPENDS its own entry, one per round, repeats allowed, never
+  deduplicated: `brief-misalign` · `brand` · `data` · `client-new-ask`.
   `none` is valid ONLY while `Rounds = 0`; a row with `Rounds ≥ 1` and tag
   `none` is an incomplete row, not a real zero-rework report ~ the router
   can't act on untagged rework, so it goes unrouted instead of pointing at

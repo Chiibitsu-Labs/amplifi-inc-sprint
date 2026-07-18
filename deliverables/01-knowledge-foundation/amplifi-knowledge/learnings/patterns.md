@@ -10,18 +10,23 @@
 
 ## How a promotion pass writes here
 
-One entry per week, appended (never edited/overwritten):
+One week-block per week, appended (never edited/overwritten). **One
+bullet per DISTINCT theme, not one bullet per tag** ~ if a week surfaced
+three unrelated REWORK themes, that's three `REWORK` bullets, not one
+bullet trying to hold three themes:
 
 ```markdown
 ## {YYYY-MM-DD} (week of)
 - REWORK: {theme, count, which clients} ~ e.g. "brief-misalign, 3x, ClientA×2 ClientB×1"
+- REWORK: {a second, unrelated theme this same week, count, clients} ~ e.g. "stale data carried over, 2x, ClientD"
 - PROCESS: {friction theme, count, which clients} ~ e.g. "long queue for data pulling, 4x, ClientA ClientC ClientD"
 ```
 
 Keep entries terse ~ counts and themes, not narrative. The instrument's
 manual router walkthrough (`INSTRUMENT.md` §5a) and any future automated
-version (§5b) read the running counts across entries, not any single
-week's detail.
+version (§5b) read the running counts PER THEME across entries ~ merging
+distinct themes into one bullet would hide which one is actually
+recurring, which is the entire thing this file exists to show.
 
 ## Reading this file
 
