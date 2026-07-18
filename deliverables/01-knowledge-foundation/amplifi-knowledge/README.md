@@ -49,7 +49,8 @@ clients/           per-client: living brief, brand standard, context,
                    insight log (compounding), delivery log (instrument feed)
 standards/         the Amplifi bar: what good looks like, house voice,
                    report template rules
-learnings/         auto-captured session learnings, promoted weekly
+learnings/         auto-captured session learnings, promoted weekly;
+                   patterns.md is the durable tally the instrument reads
 ```
 
 *Chiibitsu Labs ~ more human, by design.*

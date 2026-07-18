@@ -62,6 +62,7 @@ amplifi-knowledge/
     report-template-rules.md    # structure + branding rules every report follows
   learnings/
     README.md                   # how the improve skill writes here + the promotion path
+    patterns.md                 # the durable running tally, written by promotion, read by the instrument
     (dated learning files accumulate here automatically)
 ```
 

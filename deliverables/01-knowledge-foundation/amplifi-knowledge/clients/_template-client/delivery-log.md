@@ -61,9 +61,16 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
 - **Due** ~ the date this client's cadence says it ships.
 - **Delivered** ~ when the client actually received it. Blank while `open`.
 - **Status** ~ `open` → `delivered` → (`revising` × as many rounds as
-  needed) → `accepted`, always in that order, `accepted` set exactly once
-  (explicit sign-off, or 5 business days of post-delivery silence ~ see
-  above). On-cadence is computed as `Delivered ≤ Due` for any row that has
+  needed) → `accepted`, always in that order. `accepted` is set once for
+  the normal case (explicit sign-off, or 5 business days of post-delivery
+  silence ~ see above) ~ **with one documented exception:** a revision
+  request arriving AFTER a silent auto-accept re-opens the same row,
+  `accepted → revising`, then back to `accepted` once that late round
+  resolves (see touch 4). That's the only case a row leaves `accepted`
+  once reached; it's not a violation of "exactly once" so much as "once
+  per actual finalization," and it's the documented way late feedback
+  stays counted instead of vanishing. On-cadence is computed as
+  `Delivered ≤ Due` for any row that has
   shipped (`delivered`/`revising`/`accepted`), and as an automatic miss for
   any `open` row where `Due` has already passed (an `open` row not yet
   past `Due` is neither ~ it's future work, exclude it from the rate

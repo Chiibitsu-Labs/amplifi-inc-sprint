@@ -133,7 +133,7 @@ signal panel. Already implements five router actions on the capacity feed:
 |---|---|
 | **HIRE** ⚠ see caveat below | team avg > 6/10 on ≥7 of last 10 working days (needs ≥10 days history) |
 | **REBALANCE** | one person's 5-day avg ≥ 7.5 while team sits ≥2 pts lower |
-| **AUTOMATE** | one reason-theme ≥40% of high-load reports (≥3 occurrences, 14d) |
+| **AUTOMATE** ⚠ see caveat below | one reason-theme ≥40% of high-load reports (≥3 occurrences, 14d) |
 | **WATCH** | ≥2 people at/above strain zone (8/10) same day |
 | **DATA** | response rate <70% (7d) or <10 days history ~ "calibrating" gate |
 
@@ -147,11 +147,31 @@ ships, treat this label as **"go look, don't decide"** ~ Michele
 cross-checks it by hand against rework tags and cadence misses in the
 delivery logs before it means anything close to a hire.
 
-**Action item, not yet done:** rename this action from `HIRE` to
-`HIRE-CANDIDATE` in the live `lib/analytics.ts` (and the dashboard label)
-so the UI itself carries the caveat instead of relying on someone having
-read this document. Small change, real product behavior ~ ship it
-deliberately, not folded into this spec.
+**Same caveat applies to the live AUTOMATE label, for a different reason.**
+The deployed rule is pure prevalence ~ ≥40% of high-load reasons, no check
+for whether the dominant theme is actually repetitive and rules-based. A
+theme like "client meetings" or "supplier delays" can hit 40% and fire
+AUTOMATE even though nothing about it is automatable (§5a walks through
+the eligibility test a human has to apply; the live code doesn't apply
+it). This matters beyond a wrong recommendation: HIRE's own gate requires
+"automate not currently firing," so a false-positive AUTOMATE on a
+non-automatable theme could silently block a real hire need, and §5b (not
+yet built) doesn't add the eligibility check either ~ it inherits this
+gap. Until it's coded (own item, alongside HIRE's rename below), treat
+the live AUTOMATE label the same way as HIRE: a candidate to check by
+hand, never a routing to act on directly.
+
+**Action items, not yet done** ~ two labels on the live dashboard need the
+same rename, for the same reason (the UI shouldn't claim more certainty
+than v1 can back up):
+1. `HIRE` → `HIRE-CANDIDATE` in `lib/analytics.ts` + the dashboard label.
+2. `AUTOMATE` → `AUTOMATE-CANDIDATE`, same file, same reasoning ~ AND when
+   §5b eventually gets built, code the eligibility test in (a small
+   keyword/category tag on themes marking them automatable or not, set
+   once when the theme taxonomy is defined, read by the router before it
+   fires) rather than carrying the caveat forever.
+Small changes, real product behavior ~ ship deliberately, not folded into
+this spec.
 
 Trial learnings already banked: the load-scale flip (10 = drowning) with an
 epoch cutoff so old-scale data can't corrupt signals; thresholds
@@ -190,8 +210,15 @@ No code, no wiring, no waiting on capchecker. Once each client's
      narrowly hitting `Due` → REDESIGN, flagged as "before it becomes a
      miss" ~ this is the row that keeps a slow slide from going unnoticed
      until on-cadence formally breaches.
-   Either way, name the clustering (one client? one handoff step?) as the
-   evidence.
+   **Same exclusion applies to both reads:** only count cycles the
+   FIX_CORPUS check (step 3, below) hasn't already claimed ~ if the same
+   cycles driving a rising cycle-time trend are ALSO frequent and
+   majority corpus-tagged, that's FIX_CORPUS's evidence, not REDESIGN's.
+   Do step 3's frequency-and-tag-share read first if a cycle looks like it
+   could qualify for either, so the manual walkthrough and §5b's coded
+   version never disagree on the same data (Codex catch, 2026-07-18).
+   Either way REDESIGN does fire, name the clustering (one client? one
+   handoff step?) as the evidence.
 3. **FIX_CORPUS check:** same logs, but two gates in order, not one ~
    (a) first, is overall rework meaningful at all: rounds-per-report (or
    rows with `Rounds ≥ 1` as a share of all accepted rows) above threshold?

@@ -69,9 +69,9 @@ AI starts. Here, every handoff is a decision, not a default.
 | 6 | Implement | **H** manages suppliers/vendors (process, not AI ~ see risks) | — |
 | 7 | Monthly analysis | AI synthesizes Sentimo/MCP pulls · **H** spot-checks | **V** reads `context.md` for what matters to this client |
 | 8 | Insights | **AI drafts** (insight skill) · **H** verifies ~ "VERIFICATION OF AI RESULTS" stays | **V** reads standards + full `insight-log.md` |
-| 9 | Report | AI outputs template-shaped draft → **QA gate** (pass 1, pre-Canva) → **H** final verify → Canva polish | **V** reads `report-template-rules.md`; ship writes: insight-log entry + delivery-log row UPDATED to `delivered` (row already existed from step 1, opened at period start) |
+| 9 | Report | AI outputs template-shaped draft → **QA gate** (pass 1, pre-Canva) → **H** final verify → Canva polish | **V** reads `report-template-rules.md`. No delivery-log write yet ~ this is an internal draft, not what the client received |
 | 10 | Internal alignment | **H** ~ faster because pass 1 already ran; if this step requests deck edits, they happen here | — |
-| 11 | Client presentation | **QA gate pass 2 on the assembled deck, run AFTER step 10's edits (if any), immediately before this step** → **H** presents ~ the relationship is the product | pass 2 is what catches drift step 10 itself introduced; running it back at step 9 would leave post-alignment edits unchecked |
+| 11 | Client presentation | **QA gate pass 2 on the assembled deck, run AFTER step 10's edits (if any), immediately before this step** → **H** presents ~ the relationship is the product | **V** THIS is the ship write: insight-log entry + delivery-log row UPDATED to `delivered` (row already existed from step 1, opened at period start). `Delivered` means the client actually received it ~ writing it at step 9 would mark a cycle on-time even if internal alignment (step 10) delayed the actual send |
 | 12 | Repeat | improve skill closes the loop | **V** learnings promoted weekly → next cycle starts smarter |
 
 The capchecker check-in (3 taps, daily 08:00) runs alongside all twelve ~
