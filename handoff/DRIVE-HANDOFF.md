@@ -9,7 +9,7 @@ grows under their roof. Chii's repo remains the reference/spec copy.
 | From (repo) | To (Amplifi Drive) | Becomes |
 |---|---|---|
 | `deliverables/01-knowledge-foundation/amplifi-knowledge/` | shared folder `amplifi-knowledge/` at the team's Drive root | **the live corpus** ~ the one home |
-| `deliverables/02-output-consistency/skills/*/SKILL.md` | (a) Claude Enterprise, (b) `amplifi-knowledge/skills/{skill-name}/SKILL.md` in Drive (one subfolder per skill, NOT three files flattened into one folder ~ they'd collide on the shared filename), (c) the Claude Code / write-capable client for `amplifi-improve` specifically | (a)+(c) the three live skills across two clients, (b) **Amplifi's owned copy** ~ see steps 4–6 |
+| `deliverables/02-output-consistency/skills/*/SKILL.md` | (a) the write-capable client (Claude Code or equivalent, via Drive for Desktop) for ALL THREE skills, ideally ~ Claude Enterprise as a fallback for `amplifi-insights`/`amplifi-qa` only if local sync isn't set up, (b) `amplifi-knowledge/skills/{skill-name}/SKILL.md` in Drive (one subfolder per skill, NOT three files flattened into one folder ~ they'd collide on the shared filename) | (a) the three live skills, one client where possible (see step 6), (b) **Amplifi's owned copy** ~ see steps 4–6 |
 | `BLUEPRINT.md`, `CONSISTENCY-SYSTEM.md`, `ARCHITECTURE-MAP.md`, `ROADMAP.md`, `INSTRUMENT.md` | a `deliverables/` folder in Drive (reading copies) | the engagement documents Michele circulates |
 
 ## Steps (~30 minutes, Chii + Michele)
@@ -68,25 +68,46 @@ grows under their roof. Chii's repo remains the reference/spec copy.
      old behavior.
    Don't tell anyone an update is live until every installed copy is
    confirmed, not just the first one you remembered.
-6. **Give the improve skill an actual write path ~ and actually install it
-   there, not just Claude Enterprise.** Read access (step 4) is not enough
-   for this one. The read-only Drive connector (or attaching files per
-   session) satisfies `amplifi-insights` and `amplifi-qa` fine, but leaves
-   `amplifi-improve` unable to save anything, which breaks the capture
-   loop this whole deliverable is built on. Two things, not one:
-   (a) Set up **Drive for Desktop** synced to the `amplifi-knowledge/`
-   folder so it's a real local path.
-   (b) **Install `amplifi-improve` in the write-capable client itself** ~
-   uploading it to Claude Enterprise in step 4 does NOT make it available
-   in Claude Code or whatever local-filesystem client runs this step; that
-   upload only registers the skill where you just said it can't write.
-   Copy `amplifi-improve/SKILL.md` into that client's own skills location
-   (for Claude Code: the project's `.claude/skills/amplifi-improve/
-   SKILL.md`, or `~/.claude/skills/amplifi-improve/SKILL.md` for a
-   user-level install) so it can actually be invoked in the session that
-   has write access to the synced folder. Verify by running it once and
-   confirming a real file lands in `learnings/`.
-   Until both (a) and (b) are set up, the skill outputs the learning
+6. **Give the improve skill an actual write path ~ and don't let the fix
+   for "can't write" accidentally create "can't see what happened."**
+   Read access (step 4) is not enough for `amplifi-improve`: the
+   read-only Drive connector (or attaching files per session) satisfies
+   `amplifi-insights` and `amplifi-qa` fine, but leaves `amplifi-improve`
+   unable to save anything. The naive fix ~ "run improve in a different
+   client that CAN write" ~ creates a worse problem: `amplifi-improve` is
+   supposed to review THE SESSION that just happened (what was produced,
+   corrected, learned), and a fresh Claude Code session has zero access to
+   a conversation that happened over in Claude Enterprise. A file landing
+   in `learnings/` proves write access works; it doesn't prove the capture
+   is about anything real. Two tiers, in order of preference:
+
+   **(a) Primary ~ one client, no split.** Set up **Drive for Desktop**
+   synced to `amplifi-knowledge/`, and do the WHOLE session ~ drafting
+   with `amplifi-insights`, checking with `amplifi-qa`, AND the
+   end-of-session `amplifi-improve` capture ~ in the one client that has
+   both read (via the local sync) and write access (Claude Code, or any
+   client with real filesystem access to that synced folder). No
+   context-switch, no handoff needed, because there's only ever one
+   session. This is the deployment to aim for.
+
+   **(b) Fallback ~ only if the team keeps drafting in Claude Enterprise.**
+   If insights/QA work stays in Claude Enterprise (paid seat, org
+   preference, whatever the reason) and `amplifi-improve` has to run
+   separately in a write-capable client: the analyst carries a short
+   recap forward, typed once, right after finishing in Enterprise ~ 2-3
+   sentences on what got corrected and what was learned, not a full
+   transcript paste. `amplifi-improve` captures FROM that recap in this
+   mode, not from a session it never saw. Install `amplifi-improve` in
+   the write-capable client's own skills location (for Claude Code: the
+   project's `.claude/skills/amplifi-improve/SKILL.md`, or
+   `~/.claude/skills/amplifi-improve/SKILL.md` for a user-level install)
+   ~ uploading it to Claude Enterprise in step 4 does NOT make it
+   available there, that upload only registers the skill where it can't
+   write. Verify by running it once end-to-end with a real recap and
+   confirming a real, meaningful file lands in `learnings/` ~ not just
+   that a file appears, that it reflects something that actually happened.
+
+   Until either tier is fully set up, the skill outputs the learning
    file's content and asks the analyst to save it by hand ~ workable, but
    confirm this is temporary, not the plan.
 7. **Copy the deliverable docs** into a Drive `deliverables/` folder for

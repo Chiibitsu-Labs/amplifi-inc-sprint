@@ -32,8 +32,8 @@ not four separate boxes.**
 │  THE WORKFLOW (12 steps, human↔AI handoffs marked ~ §2)             │
 │   data: Sentimo (legacy) + MCP (new) → analysis → report → client   │
 └──────────────┬──────────────────────────────────────────────────────┘
-     produces  │   THE LENS (rented, swappable): Claude Enterprise
-               ▼   runs the skills: insights · qa · improve
+     produces  │   THE LENS (rented, swappable): Claude, one client
+               ▼   runs the skills: insights · qa · improve, same session
 ┌─────────────────────────────────────────────────────────────────────┐
 │  CONSISTENT OUTPUT  ~ standard encoded in the vault, AI-QA gate,    │
 │                       human verify kept                             │
@@ -69,9 +69,9 @@ AI starts. Here, every handoff is a decision, not a default.
 | 6 | Implement | **H** manages suppliers/vendors (process, not AI ~ see risks) | — |
 | 7 | Monthly analysis | AI synthesizes Sentimo/MCP pulls · **H** spot-checks | **V** reads `context.md` for what matters to this client |
 | 8 | Insights | **AI drafts** (insight skill) · **H** verifies ~ "VERIFICATION OF AI RESULTS" stays | **V** reads standards + full `insight-log.md` |
-| 9 | Report | AI outputs template-shaped draft → **QA gate** (pass 1, pre-Canva) → **H** final verify → Canva polish | **V** reads `report-template-rules.md`. No delivery-log write yet ~ this is an internal draft, not what the client received |
-| 10 | Internal alignment | **H** ~ faster because pass 1 already ran; if this step requests deck edits, they happen here | — |
-| 11 | Client presentation | **QA gate pass 2 on the assembled deck, run AFTER step 10's edits (if any), immediately before this step** → **H** presents ~ the relationship is the product | **V** THIS is the ship write: insight-log entry + delivery-log row UPDATED to `delivered` (row already existed from step 1, opened at period start). `Delivered` means the client actually received it ~ writing it at step 9 would mark a cycle on-time even if internal alignment (step 10) delayed the actual send |
+| 9 | Report | AI outputs template-shaped draft → **QA gate** (pass 1, pre-Canva) → **H** final verify → Canva polish | **V** reads `report-template-rules.md`. NOT the ship write (no `Delivered` date, `Status` stays `open` ~ this is an internal draft, not what the client received) ~ but IF pass 1 or `H`'s verify catches and corrects a `brief-misalign`/`brand` issue right here, THAT does get logged: `delivery-log.md` touch 1.5, bump `Rounds` + tag, while `Status` is still `open`. "Not delivered yet" and "no rework happened" are different facts ~ this row can be true on the first and false on the second |
+| 10 | Internal alignment | **H** ~ faster because pass 1 already ran; if this step requests deck edits, they happen here | **V** same as step 9 ~ a brief-misalign/brand catch corrected here also logs via touch 1.5, `Status` still `open` |
+| 11 | Client presentation | **QA gate pass 2 on the assembled deck, run AFTER step 10's edits (if any)** → **any flags pass 2 raises get cleared by a human or the deck gets corrected and pass 2 re-run ~ a flagged deck does not proceed to presenting on its own** → **H** presents ~ the relationship is the product | **V** THIS is the ship write: insight-log entry + delivery-log row UPDATED to `delivered` (row already existed from step 1, opened at period start, possibly already carrying Rounds from steps 9–10's internal catches). `Delivered` means the client actually received it ~ writing it before pass 2 clears would mark a cycle on-time and clean even if a known flag shipped uncorrected |
 | 12 | Repeat | improve skill closes the loop | **V** learnings promoted weekly → next cycle starts smarter |
 
 The capchecker check-in (3 taps, daily 08:00) runs alongside all twelve ~
@@ -81,7 +81,7 @@ the instrument's pulse.
 
 | Tool | Role in the system | Notes & flags |
 |---|---|---|
-| **Claude Enterprise** | the lens ~ runs the three skills at steps 2, 7–9, 12 | ⚠ "CLAUDE AI LIMIT": batch heavy runs (analysis + insights same session); if caps still bite after skills cut reprompting waste, it's a seat/plan conversation, not a workflow one |
+| **Claude (Code or equivalent, one write-capable client)** | the lens ~ runs all three skills at steps 2, 7–9, 12, in the SAME session where possible so step 12's capture actually sees steps 2–9's work (`DRIVE-HANDOFF.md` §6) | Claude Enterprise works as a fallback for drafting/QA only, never alone for step 12; ⚠ "CLAUDE AI LIMIT": batch heavy runs (analysis + insights same session); if caps still bite after skills cut reprompting waste, it's a seat/plan conversation, not a workflow one |
 | **Google Drive** | the vault's home (Level 2) + report storage | migration to git = copy-paste by design, when CTO unblocks |
 | **Sentimo** (legacy) + **MCP** (new) | the data feed into steps 7–8 | data-pull queue + inconsistency pains live here ~ automation candidates on the roadmap |
 | **Canva** | client-facing polish, step 9 | ⚠ fragility flagged: crashes, outages, slow graphics, per-analyst access locks. Mitigation now: content lives in markdown before Canva, so a Canva outage delays polish, never loses work. Replacement = deliberately not-yet |

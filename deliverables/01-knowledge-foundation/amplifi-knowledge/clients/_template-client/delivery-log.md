@@ -30,19 +30,28 @@
    (default `0`/`none` if internal review caught nothing) ~ never reset to
    zero out pre-delivery catches.
 3. **If the client asks for a revision:** bump `Rounds` by 1, top up
-   `Effort (h)`, set `Rework tag`. First revision **replaces** the
-   provisional `none` with the real cause. Every revision after that
-   **appends** its own cause as a NEW entry ~ **one entry per round,
-   repeats allowed, never deduplicated.** Round 1 `brand`, round 2
-   `client-new-ask`, round 3 also `client-new-ask` → cell reads `brand,
-   client-new-ask, client-new-ask` (three entries for three rounds, not
-   two). This matters beyond bookkeeping: the instrument's FIX_CORPUS
-   check computes the corpus share PER ROUND (how many of the actual
-   revision rounds were corpus-caused, not just whether any round ever
-   was) ~ a row with one `brand` fix among four `client-new-ask` fixes is
-   20% corpus-driven, not 100%, and only the un-deduped list makes that
-   countable. `Status = revising` ~ **not** `accepted`. Repeat this touch
-   for every additional round.
+   `Effort (h)`, set `Rework tag`. **One tag entry per round, always ~
+   if a single round has more than one cause** (e.g. a brand correction
+   bundled with a genuinely new client ask in the same message), pick ONE
+   per this priority order and note the rest in **Notes**:
+   `brief-misalign` > `brand` > `data` > `client-new-ask` (corpus causes
+   rank first ~ under-counting a real corpus gap is worse than
+   over-counting one, and FIX_CORPUS existing to catch it is the whole
+   point of this priority). One round, one entry, no exceptions ~ this
+   keeps the entry count always equal to `Rounds`, which is what makes
+   the per-round share countable at all. First revision **replaces** the
+   provisional `none` with that round's (prioritized) cause. Every
+   revision after that **appends** its own entry ~ repeats allowed, never
+   deduplicated. Round 1 `brand`, round 2 `client-new-ask`, round 3 also
+   `client-new-ask` → cell reads `brand, client-new-ask, client-new-ask`
+   (three entries for three rounds, matching `Rounds = 3`). This matters
+   beyond bookkeeping: the instrument's FIX_CORPUS check computes the
+   corpus share PER ROUND (how many of the actual revision rounds were
+   corpus-caused, not just whether any round ever was) ~ a row with one
+   `brand` fix among four `client-new-ask` fixes is 20% corpus-driven,
+   not 100%, and the entry count must equal `Rounds` for that math to
+   mean anything. `Status = revising` ~ **not** `accepted`. Repeat this
+   touch for every additional round.
 4. **At actual client acceptance ~ or after 5 business days of silence
    post-delivery with no revision request:** `Status = accepted`. Explicit
    sign-off and "no news" are both real acceptance signals ~ most reports
@@ -102,9 +111,12 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
 - **Effort (h)** ~ rough total hours, self-estimated, running total across
   every touch. Gut feel is fine; consistency beats precision.
 - **Rework tag** ~ **required, not optional, the moment `Rounds` goes above
-  0** ~ the first round REPLACES the provisional `none`; every round after
-  that APPENDS its own entry, one per round, repeats allowed, never
-  deduplicated: `brief-misalign` · `brand` · `data` · `client-new-ask`.
+  0** ~ exactly ONE entry per round (if a round has multiple causes, pick
+  by priority `brief-misalign` > `brand` > `data` > `client-new-ask` and
+  note the rest in Notes ~ see touch 3). The first round REPLACES the
+  provisional `none`; every round after that APPENDS its own entry, one
+  per round, repeats allowed, never deduplicated:
+  `brief-misalign` · `brand` · `data` · `client-new-ask`.
   `none` is valid ONLY while `Rounds = 0`; a row with `Rounds ≥ 1` and tag
   `none` is an incomplete row, not a real zero-rework report ~ the router
   can't act on untagged rework, so it goes unrouted instead of pointing at

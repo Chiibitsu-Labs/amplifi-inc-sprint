@@ -119,10 +119,21 @@ threshold crossed →
  4. HIRE.        Only when 1–3 are ruled out AND capchecker's REBALANCE
                  signal is ALSO ruled out (this isn't one person absorbing
                  load while the team has headroom ~ that's a redistribution
-                 fix, cheaper than a hire) AND the CAPACITY signals ~
+                 fix, cheaper than a hire) AND capchecker's DATA signal is
+                 CLEAR (response rate ≥70% over the last 7 days, ≥10 days
+                 of post-epoch history) AND the CAPACITY signals ~
                  specifically WIP per analyst and perceived load, NOT
                  on-cadence ~ are sustainedly maxed ACROSS THE TEAM, not
-                 concentrated in one person.
+                 concentrated in one person. The DATA gate matters here
+                 specifically: "maxed across the team" is only a real
+                 claim if the team's numbers ARE the data ~ a <70%
+                 response rate means load/WIP are computed from whoever
+                 happened to answer, and a systematically non-responding
+                 subset (the busiest people, ironically, tend to skip
+                 check-ins first) could make a partial team look maxed
+                 when the full team isn't, or hide the opposite. HIRE
+                 waits for the data to actually represent the team it's
+                 claiming to describe.
                  → the defensible hire: the ruled-out trail above IS the
                  evidence Michele takes to Mells.
 ```
@@ -205,6 +216,13 @@ the hard part, and it's done.
 No code, no wiring, no waiting on capchecker. Once each client's
 `delivery-log.md` has 3–4 weeks of rows (see §7):
 
+0. **Skim `learnings/patterns.md` first.** This is where the read
+   actually happens ~ it's cross-week corroborating context for steps 1
+   and 2 below, not its own separate check. capchecker's live theme
+   breakdown only sees the last 14 days; `patterns.md`'s weekly
+   REWORK/PROCESS entries show whether a theme has been recurring for
+   MONTHS, which is stronger evidence than one window, and often names
+   the specific client/handoff a delivery-log number alone wouldn't.
 1. **AUTOMATE check:** open the capchecker dashboard's theme breakdown
    (live today). First ask the eligibility question §3 actually poses ~
    **is the dominant theme repetitive and rules-based** (data sync,
@@ -214,7 +232,12 @@ No code, no wiring, no waiting on capchecker. Once each client's
    once a theme passes that eligibility test does the ≥40%-of-high-load,
    ≥3-occurrences threshold matter, and only then does AUTOMATE fire. A
    non-automatable dominant theme is real information (it may point at
-   REDESIGN instead ~ see below) but it is NOT an AUTOMATE routing.
+   REDESIGN instead ~ see below) but it is NOT an AUTOMATE routing. Cross-
+   check against step 0's `patterns.md` skim: a PROCESS theme recurring
+   there for 2+ months strengthens a borderline 14-day call; if
+   capchecker's window shows nothing but `patterns.md` shows the same
+   theme recurring for months, that's worth a note even without a live
+   threshold crossed.
 2. **REDESIGN check:** open each client's `delivery-log.md`, two reads ~
    either fires REDESIGN:
    - **Confirmed (on-cadence):** compute the rate by hand: numerator =
@@ -246,7 +269,11 @@ No code, no wiring, no waiting on capchecker. Once each client's
    defect ~ do NOT let REDESIGN claim it; let it flow through to the HIRE
    check (step 4) instead. Only route to REDESIGN when you can name the
    specific thing to fix; "everything's a little slow" isn't a redesign,
-   it's a capacity signal wearing a cadence costume.
+   it's a capacity signal wearing a cadence costume. Step 0's
+   `patterns.md` skim often names the specific bottleneck already ~
+   PROCESS entries are written from real session friction, so "long queue
+   for data pulling, ClientA/C/D" in the tally is frequently the
+   clustering answer, not just corroboration of it.
 3. **FIX_CORPUS check:** same logs, but two gates in order, not one ~
    (a) first, is overall rework meaningful at all: rounds-per-report (or
    rows with `Rounds ≥ 1` as a share of all accepted rows) above threshold?
@@ -265,13 +292,21 @@ No code, no wiring, no waiting on capchecker. Once each client's
    REBALANCE**, capchecker's live signal for one analyst overloaded while
    the team has headroom (check the dashboard's REBALANCE flag before
    anything else here; if it's firing, that's redistribution, not a hire,
-   even if team-wide WIP/load also look high). Once REBALANCE is ruled out
-   too: cross-reference capchecker's sustained-load signal against WIP per
-   analyst (capchecker Q3, read manually until §5b's automation exists) ~
-   both maxed ACROSS THE TEAM (not concentrated in the one person
-   REBALANCE would have caught), no automate/redesign/corpus/rebalance
-   explanation → HIRE, and the four ruled-out checks above are the
-   evidence trail, already written down.
+   even if team-wide WIP/load also look high). **Also check capchecker's
+   DATA flag before trusting "across the team" ~** if response rate is
+   below 70% or there's under 10 days of post-epoch history, the DATA
+   signal is active, meaning "the team's load is maxed" is actually "the
+   people who answered are maxed," which isn't the same claim. Don't
+   route to HIRE off a partial team; wait for DATA to clear, or chase the
+   response rate up first (that's its own fixable problem, separate from
+   whether a hire is warranted). Once REBALANCE is ruled out and DATA is
+   clear: cross-reference capchecker's sustained-load signal against WIP
+   per analyst (capchecker Q3, read manually until §5b's automation
+   exists) ~ both maxed ACROSS THE TEAM (not concentrated in the one
+   person REBALANCE would have caught, and not an artifact of who
+   happened to respond), no automate/redesign/corpus/rebalance
+   explanation → HIRE, and the ruled-out checks above are the evidence
+   trail, already written down.
 
 Fifteen minutes, monthly, two documents open. This is the real router ~
 write the routing decision + evidence into
@@ -288,9 +323,15 @@ Once the manual version has run a few cycles and the thresholds feel
 right, encode the same logic into the dashboard so nobody has to do the
 above by hand:
 
-1. **Ingest feed 2:** a light weekly pass reads `clients/*/delivery-log.md`
-   from Drive into capchecker's Supabase (or renders alongside ~ data stays
-   canonical in the owned corpus; the app is a lens on it).
+1. **Ingest feed 2, AND `learnings/patterns.md`:** a light weekly pass
+   reads `clients/*/delivery-log.md` from Drive into capchecker's
+   Supabase (or renders alongside ~ data stays canonical in the owned
+   corpus; the app is a lens on it), plus `patterns.md`'s theme tally as
+   corroborating signal strength for AUTOMATE/REDESIGN (a theme recurring
+   there across multiple weeks raises confidence on a borderline
+   14-day-window call) ~ without this second ingest, `patterns.md` keeps
+   accumulating and never actually influences a routing decision, which
+   defeats the point of promoting REWORK/PROCESS themes there at all.
 2. **Add the two missing branches:** `REDESIGN` and `FIX_CORPUS` actions in
    the router (`lib/analytics.ts`), fed by rework tags + cadence data.
    **REDESIGN and HIRE are built on deliberately non-overlapping evidence**
@@ -328,8 +369,11 @@ above by hand:
      capacity-ceiling signal ~ independent of cadence) AND capchecker's
      REBALANCE not currently firing (no single analyst absorbing the load
      while the team has headroom ~ that's redistribution, cheaper than a
-     hire) AND automate + redesign + fix-corpus not currently firing ~ the
-     chain enforced in code, not just in prose. **HIRE never reads
+     hire) AND capchecker's DATA signal NOT currently firing (response
+     rate ≥70%/7d, ≥10 days history ~ "team-wide maxed" is only a real
+     claim when the responding sample actually represents the team) AND
+     automate + redesign + fix-corpus not currently firing ~ the chain
+     enforced in code, not just in prose. **HIRE never reads
      on-cadence or cycle time.** A cadence problem is, by construction, a
      REDESIGN or FIX_CORPUS matter first; if HIRE also required cadence
      degraded as corroboration, any miss severe enough to justify a hire
