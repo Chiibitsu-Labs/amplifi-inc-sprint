@@ -46,8 +46,8 @@ High impact, more effort. The system starts measuring itself.
 | # | Action | Owner | Done by | Kills / unlocks |
 |---|---|---|---|---|
 | 2.1 | AI-QA gate wired into the report flow as a standing step before internal alignment | **Rica** (process) · **Chii** (tuning) | Sep 4 | rework rounds; makes human verify faster |
-| 2.2 | First baselines from 4 weeks of delivery-log + capchecker data; Michele sets first-pass thresholds | **Michele + Chii** | Sep 11 | gut-feel resourcing ~ the instrument gets its numbers |
-| 2.3 | Instrument v2: delivery-log feed into capchecker; add REDESIGN + FIX-CORPUS router branches; panel in chain order (automate → redesign → fix-corpus → hire) | **Chii** | Sep 18 | the full router ~ high rework routes to corpus fix, never straight to hire |
+| 2.2 | First baselines from 4 weeks of delivery-log + capchecker data; Michele sets first-pass thresholds; **first manual router walk-through** (Instrument §5a ~ no code needed, just the two feeds side by side) | **Michele + Chii** | Sep 11 | gut-feel resourcing ~ the full router (automate/redesign/fix-corpus/hire) is live and usable from THIS date, by hand |
+| 2.3 | Automate the router into capchecker's dashboard: delivery-log feed ingested; REDESIGN + FIX-CORPUS branches coded; panel in chain order (automate → redesign → fix-corpus → hire) | **Chii** | Sep 18 | convenience, not capability ~ the router itself has been real and in use since 2.2; this just stops Michele doing the arithmetic by hand |
 | 2.4 | Automate data-transfer-to-template: skill output shaped to `report-template-rules.md`, paste-and-style into Canva; measure minutes saved per report | **Chii + Dale** | Oct 2 | "we still transfer data so the deck doesn't look AI" |
 | 2.5 | Automation candidates from instrument themes: top recurring high-load theme (likely data pulling / sync ~ "LONG QUEUE FOR PULLING") gets an automation spike | **Chii + Michele** (pick) | Oct 16 | the AUTOMATE branch earning its keep |
 | 2.6 | 90-day review vs the success bar + the brief's five Definition-of-Success questions | **Michele + Chii** | week of Oct 19 | ~ |
@@ -59,7 +59,7 @@ High impact, more effort. The system starts measuring itself.
 | Daily | capchecker 3-tap check-in (08:00) · summary to Michele (10:00) | all · auto |
 | Per cycle | delivery-log: open at start, ship-touch + insight-log entry at delivery, finalize at acceptance (~20–30s each) | delivering analyst |
 | Weekly (Fri) | promotion pass: learnings → corpus | Rica (+ improve skill) |
-| Monthly | threshold read: any signal crossed? walk the router chain, log the routing decision | Michele |
+| Monthly | walk the router chain by hand (Instrument §5a) and log the routing decision ~ starts at 2.2 (Sep 11), continues on this cadence whether or not 2.3's automation has shipped | Michele |
 | Quarterly | threshold calibration against real distributions · corpus health check (stale files, unfilled frames) | Michele + Chii |
 
 The quarterly calibration is a standing working session ~ thresholds are
@@ -92,8 +92,8 @@ living numbers, and the instrument evolves as Amplifi does.
 4. Is there a living knowledge base growing with every engagement? →
    *capture loop (1.5–1.6)*
 5. Is there a clear, agreed signal for when AI augmentation is no longer
-   sufficient and a hire is warranted? → *the router (2.3) ~ the whole
-   point*
+   sufficient and a hire is warranted? → *the router, live and in manual
+   use from 2.2 (Sep 11), automated by 2.3 ~ the whole point*
 
 *Sequences: everything. The map shows the system; this builds it in order.*
 

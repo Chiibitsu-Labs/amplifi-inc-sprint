@@ -5,7 +5,7 @@ function: Analyst (Core Build scope)
 deliverable: 5 of 5
 owner: Michele Curran (COO) ~ this is her instrument
 builder: Chii / Chiibitsu Labs
-status: v1 ~ capacity feed LIVE (amplifi-capchecker); delivery-log feed ships with Deliverable 1; router v2 wiring is a 60–90d roadmap item
+status: v1 ~ capacity feed LIVE (amplifi-capchecker); delivery-log feed ships with Deliverable 1. The FULL 4-branch router is usable by hand the moment both feeds have a few weeks of data ~ it does not wait on any capchecker code change. Auto-computing it inside capchecker's dashboard is a separate 60–90d convenience item (§5).
 canon: AI adoption is not tool exposure. It is workflow incorporation.
 ---
 
@@ -97,6 +97,19 @@ threshold crossed →
 The output is never "hire: yes/no." It's **"here's what crossed, here's why
 the answer is [X], here's the evidence trail."**
 
+**This chain is real and usable today, by hand ~ it is not blocked on
+capchecker.** Look at what each branch actually reads: AUTOMATE and HIRE
+touch capchecker (reason-themes, load, and eventually WIP), but REDESIGN
+and FIX_CORPUS are pure delivery-log reads ~ on-cadence rate and rework
+tags, sitting in plain markdown in the corpus. Michele (or Chii, monthly)
+can walk this whole chain with two things open side by side ~ the
+capchecker dashboard and the delivery logs ~ the moment there's a few
+weeks of data in each. Wiring it into capchecker's own dashboard (§5) is a
+convenience that automates the arithmetic; it is not what makes the router
+real. The instrument doesn't wait on a piece of software to be the real
+deal ~ that's the whole point of keeping the evidence in owned, portable
+markdown instead of locked inside one tool.
+
 ## 4. What's live today (amplifi-capchecker)
 
 Repo: `Chiibitsu-Labs/amplifi-capchecker` · Next.js + Supabase + Vercel +
@@ -132,7 +145,43 @@ epoch cutoff so old-scale data can't corrupt signals; thresholds
 env/settings-tunable; summary idempotent. The habit loop is proven ~ that's
 the hard part, and it's done.
 
-## 5. v2 wiring (60–90d roadmap item ~ after the delivery logs accumulate)
+## 5. The manual router (usable now) + its future automation
+
+### 5a. How Michele runs the full chain by hand today
+
+No code, no wiring, no waiting on capchecker. Once each client's
+`delivery-log.md` has 3–4 weeks of rows (see §7):
+
+1. **AUTOMATE check:** open the capchecker dashboard's theme breakdown
+   (live today). One theme ≥40% of high-load reasons, ≥3 occurrences →
+   AUTOMATE fires, evidence is right there.
+2. **REDESIGN check:** open each client's `delivery-log.md`. Compute
+   on-cadence rate by hand (`Delivered ≤ Due` count ÷ total cycles,
+   counting overdue `open` rows as misses). Below threshold, with
+   `Rework tag` mostly `client-new-ask`/`data`/`none` rather than
+   `brief-misalign`/`brand` → REDESIGN fires, name the clustering (one
+   client? one handoff step?) as the evidence.
+3. **FIX_CORPUS check:** same logs, count rows with `Rounds ≥ 1`. Half or
+   more tagged `brief-misalign`/`brand` → FIX_CORPUS fires, and the tag
+   itself tells you which corpus file is stale (the brief, or the brand
+   standard).
+4. **HIRE check:** only if none of the above fired. Cross-reference
+   capchecker's sustained-load signal against WIP per analyst (capchecker
+   Q3, read manually until §5b's automation exists) ~ both maxed, no
+   automate/redesign/corpus explanation → HIRE, and the three ruled-out
+   checks above are the evidence trail, already written down.
+
+Fifteen minutes, monthly, two documents open. This is the real router ~
+write the routing decision + evidence into a line in `learnings/patterns.md`
+or a short note to Mells, dated. **This is what Phase 3's "monthly
+threshold read" in the roadmap actually means** ~ it starts as soon as the
+data exists, not after any software ships.
+
+### 5b. Automating it into capchecker's dashboard (60–90d roadmap item)
+
+Once the manual version has run a few cycles and the thresholds feel
+right, encode the same logic into the dashboard so nobody has to do the
+above by hand:
 
 1. **Ingest feed 2:** a light weekly pass reads `clients/*/delivery-log.md`
    from Drive into capchecker's Supabase (or renders alongside ~ data stays
@@ -175,10 +224,15 @@ the hard part, and it's done.
   load + reason sorted most-loaded first, strain-zone flags, non-responders.
 - **Anytime (live today):** the dashboard ~ KPI tiles, heatmap, trend,
   signal panel with plain-language detail lines.
-- **v2 adds the router summary line, the one she defends to Mells:**
-  *"Rework on Client X crossed threshold in week 6 → routes to corpus fix
-  (brief-alignment), not a hire."*
-  Readable in 30 seconds. Defensible in one line.
+- **Monthly (live today, manual ~ §5a):** the full router summary line, the
+  one she defends to Mells ~ *"Rework on Client X crossed threshold in week
+  6 → routes to corpus fix (brief-alignment), not a hire."* Written by
+  hand from the delivery logs + dashboard, fifteen minutes, no automation
+  required. Readable in 30 seconds. Defensible in one line. Real from
+  week one of having data, not from whenever software ships.
+- **Once §5b lands (60–90d):** the same line, generated automatically in
+  the dashboard instead of hand-assembled. Convenience, not capability ~
+  the capability is already there.
 
 ## 7. Baselines & calibration (v1 honesty)
 
@@ -188,8 +242,8 @@ them. Say it plainly; it's not a weakness, it's the method:
 | Phase | What happens |
 |---|---|
 | Weeks 1–2 | delivery logs start filling; capchecker keeps accumulating post-epoch data |
-| Weeks 3–4 | first baselines: normal cycle time, rework rounds, on-cadence rate per client cadence-type; Michele sets first-pass thresholds (her gut numbers ~ the seed, not the truth) |
-| Weeks 5+ | thresholds calibrate against real distributions; quarterly review with Michele |
+| Weeks 3–4 | first baselines: normal cycle time, rework rounds, on-cadence rate per client cadence-type; Michele sets first-pass thresholds (her gut numbers ~ the seed, not the truth). **First manual router walk-through (§5a) happens here** ~ rough thresholds are enough to practice the chain and catch obvious REDESIGN/FIX_CORPUS calls, even before they're calibrated |
+| Weeks 5+ | thresholds calibrate against real distributions; quarterly review with Michele; manual router walk-through continues monthly whether or not §5b's automation has shipped yet |
 
 **Ongoing calibration + evolution is the continuing relationship** ~
 thresholds are living numbers, and the instrument reads the whole system
