@@ -12,9 +12,17 @@ feels like a documentation chore, you've failed. Two modes.
 
 1. Review the session: what was produced, what was corrected, what was
    learned that the corpus didn't already know.
-2. Check against the corpus first ~ only write things that are NEW or that
-   CONTRADICT what's written (contradictions are the most valuable capture:
-   flag them explicitly).
+2. Check against the corpus first ~ only write `CLIENT-FACT`/`STANDARD`
+   items that are NEW or that CONTRADICT what's written (contradictions
+   are the most valuable capture: flag them explicitly). **This novelty
+   filter does NOT apply to `REWORK` and `PROCESS`.** A recurring theme
+   is not "old news" for those two tags ~ it's the exact signal
+   AUTOMATE/REDESIGN need: `patterns.md` counts OCCURRENCES across weeks,
+   and a theme that already happened once still needs every SUBSEQUENT
+   occurrence logged, or the count that's supposed to cross a threshold
+   never grows past one. If rework happened or friction showed up this
+   session, log it under `REWORK`/`PROCESS` even if the exact same theme
+   was captured last week too ~ especially then.
 3. Write ONE file: `learnings/YYYY-MM-DD-HHMM-{analyst}-{client-or-topic}.md`
    (the HHMM time keeps two same-day sessions from colliding ~ never
    overwrite an existing learning file)

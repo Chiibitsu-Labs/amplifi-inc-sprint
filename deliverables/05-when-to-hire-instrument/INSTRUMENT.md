@@ -53,7 +53,7 @@ a second job. Capture as byproduct, both times.
 
 | Signal | Definition | Feed | Why it predicts strain |
 |---|---|---|---|
-| **WIP per analyst** | active clients/tasks in flight per person, from capchecker's `client_count` field (Q3, parsed to a number) | capchecker (daily Q3) | the "full hands" ceiling. **v1 threshold, same pattern as capchecker's other signals:** WIP baseline = trailing per-analyst average `client_count` once ≥10 working days of post-epoch data exist (mirrors `minHistoryDays`); WIP threshold = `client_count` ≥ baseline + 2, sustained on ≥5 of the last 10 working days (a lower bar than load's `structuralDays: 7` since WIP moves more slowly, day to day, than a self-rated feeling). Gut-seed like every other v1 number here ~ Michele adjusts once real distributions exist (§7). Without a stated number, "WIP sustainedly elevated" isn't checkable and two people could read the same dashboard and disagree ~ this is that number, however roughly. |
+| **WIP per analyst** | active clients/tasks in flight per person, from capchecker's `client_count` field (Q3, parsed to a number) | capchecker (daily Q3) | the "full hands" ceiling. **v1 threshold, same pattern as capchecker's other signals:** WIP baseline = per-analyst average `client_count` over a **FROZEN** reference window ~ the first 10 working days once `client_count` data starts (mirrors `SCALE_EPOCH`'s frozen-reference pattern, not `minHistoryDays`'s rolling one). **Deliberately not a continuously-rolling trailing average** ~ a rolling baseline absorbs the same sustained increase the threshold is supposed to catch (10 days at 3, then a genuine step up to 5: a rolling baseline creeps from 3.0 toward 3.2 on day one of the increase, chasing the threshold it's compared against, so a real sustained rise can mathematically never clear "baseline + 2" ~ Codex catch, 2026-07-18). WIP threshold = `client_count` ≥ frozen baseline + 2, sustained on ≥5 of the last 10 working days (a lower bar than load's `structuralDays: 7` since WIP moves more slowly, day to day, than a self-rated feeling). The frozen baseline recalculates only at quarterly calibration (§7), same cadence as everything else there ~ never mid-quarter, so it can't chase a real signal into hiding. Gut-seed like every other v1 number here ~ Michele adjusts the FORMULA (window length, +2 margin) at quarterly review, not the baseline value itself mid-cycle. Without a stated number, "WIP sustainedly elevated" isn't checkable and two people could read the same dashboard and disagree ~ this is that number, however roughly. |
 | **Perceived load** | daily 1–10 self-rating + reason | capchecker (Q1+Q2) | earliest warning ~ people feel strain before metrics show it |
 | **Cycle time per report** | period start → delivered | delivery log | rising = falling behind cadence; the early-warning half of REDESIGN's evidence (see §3) ~ cycle time can trend up for weeks before it actually breaches the due date and shows up in on-cadence rate |
 | **On-cadence rate** | % reports delivered by their due date | delivery log | mixed weekly/bi-weekly/monthly clients; CLUSTERED misses (one client, one handoff) point at a workflow problem (routes to REDESIGN ~ see §3); BROAD misses across most clients/analysts, with WIP/load also elevated, point at capacity instead |
@@ -137,7 +137,20 @@ threshold crossed →
                  AND capchecker's REBALANCE
                  signal is ALSO ruled out (this isn't one person absorbing
                  load while the team has headroom ~ that's a redistribution
-                 fix, cheaper than a hire) AND capchecker's DATA signal is
+                 fix, cheaper than a hire ~ **but check REBALANCE'S OWN
+                 claim before trusting it**: it only proves a RELATIVE gap
+                 [outlier ≥2pts above team average], not ABSOLUTE headroom.
+                 Five analysts at load 6 and one at 8.5 average 6.42 ~ that
+                 satisfies REBALANCE's "≥2pts lower" test AND independently
+                 crosses the structural HIRE line, because a team where
+                 "everyone but one" is ALSO sitting at the overload line
+                 has nowhere to redistribute INTO. REBALANCE only actually
+                 blocks HIRE when the rest of the team, excluding the
+                 outlier, has genuine slack ~ v1 seed: their average sits
+                 meaningfully below the structural line [≤5, a full point
+                 of margin under the 6-point "overloaded day" threshold],
+                 not just numerically lower than whoever's worst off) AND
+                 capchecker's DATA signal is
                  CLEAR (response rate ≥70% over the last 7 days, ≥10 days
                  of post-epoch history) AND the CAPACITY signals ~
                  specifically WIP per analyst and perceived load, NOT
@@ -328,9 +341,17 @@ cycles, not elapsed time):
    of the strain to matter ~ don't let a small, already-handled signal
    permanently shield a real capacity need. This **including
    REBALANCE**, capchecker's live signal for one analyst overloaded while
-   the team has headroom (check the dashboard's REBALANCE flag before
-   anything else here; if it's firing, that's redistribution, not a hire,
-   even if team-wide WIP/load also look high). **Also check capchecker's
+   the team has headroom ~ check the dashboard's REBALANCE flag, but
+   **verify the headroom claim before trusting it, don't just take the
+   flag at face value**: REBALANCE fires on a RELATIVE gap (outlier ≥2pts
+   above team average), which five analysts at 6 and one at 8.5 satisfies
+   even though the team average (6.42) is itself at the overload line ~
+   there's no real slack to redistribute into. Manually check: excluding
+   the outlier, is the REST of the team's average comfortably below the
+   structural line (≤5, v1 seed)? If yes, REBALANCE is real, redistribute.
+   If the rest of the team is ALSO near/at the overload line, that's
+   uniform team-wide strain wearing a REBALANCE costume ~ don't let it
+   block HIRE. **Also check capchecker's
    DATA flag before trusting "across the team" ~** if response rate is
    below 70% or there's under 10 days of post-epoch history, the DATA
    signal is active, meaning "the team's load is maxed" is actually "the
@@ -409,9 +430,15 @@ above by hand:
    - HIRE requires ALL of: sustained load over the structural line (the
      live rule) AND WIP per analyst sustainedly elevated vs baseline (the
      capacity-ceiling signal ~ independent of cadence, threshold defined
-     in §2) AND capchecker's REBALANCE not currently firing (no single
-     analyst absorbing the load while the team has headroom ~ that's
-     redistribution, cheaper than a hire) AND capchecker's DATA signal NOT
+     in §2) AND capchecker's REBALANCE not currently firing WITH GENUINE
+     HEADROOM behind it (no single analyst absorbing the load while the
+     REST of the team, excluding that outlier, sits comfortably below the
+     structural line ~ ≤5, v1 seed. REBALANCE's raw relative-gap trigger
+     alone isn't enough: 5 analysts at 6 + 1 at 8.5 satisfies the ≥2pt gap
+     while the team average [6.42] is already at the overload line, with
+     nowhere to redistribute into. v2 code needs the absolute-headroom
+     check computed alongside the raw REBALANCE flag, not the flag alone)
+     AND capchecker's DATA signal NOT
      currently firing (response rate ≥70%/7d, ≥10 days history ~
      "team-wide maxed" is only a real claim when the responding sample
      actually represents the team) AND automate + redesign + fix-corpus
