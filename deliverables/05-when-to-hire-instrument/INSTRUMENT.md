@@ -55,7 +55,7 @@ a second job. Capture as byproduct, both times.
 |---|---|---|---|
 | **WIP per analyst** | active clients/tasks in flight per person | capchecker (daily Q3) | the "full hands" ceiling |
 | **Perceived load** | daily 1–10 self-rating + reason | capchecker (Q1+Q2) | earliest warning ~ people feel strain before metrics show it |
-| **Cycle time per report** | period start → delivered | delivery log | rising = falling behind cadence |
+| **Cycle time per report** | period start → delivered | delivery log | rising = falling behind cadence; the early-warning half of REDESIGN's evidence (see §3) ~ cycle time can trend up for weeks before it actually breaches the due date and shows up in on-cadence rate |
 | **On-cadence rate** | % reports delivered by their due date | delivery log | mixed weekly/bi-weekly/monthly clients; misses point at a workflow/scheduling problem first (routes to REDESIGN ~ see §3), not straight at capacity |
 | **Rework rounds per report** | revision rounds before client-accepted, + tag | delivery log | their #1 pain ~ and usually a **corpus gap, not a headcount gap** |
 
@@ -75,21 +75,34 @@ threshold crossed →
                  → route: automate it (data sync, formatting, first-draft work).
  2. REDESIGN?    Is the workflow itself the bottleneck ~ not capacity, not
                  quality?
-                 Evidence: on-cadence rate below threshold WHILE rework
-                 stays low or isn't corpus-tagged (the work is fine, the
-                 SCHEDULE isn't); cadence misses clustering at one handoff;
-                 "late alignment sched"; rework tagged client-new-ask.
+                 Evidence, EITHER of: (a) on-cadence rate below threshold
+                 WHILE rework stays low or isn't corpus-tagged (the work is
+                 fine, the SCHEDULE isn't) ~ the confirmed version, once a
+                 due date has actually been missed; OR (b) cycle time
+                 trending up against baseline while still narrowly making
+                 due dates ~ the early-warning version, catching a slide
+                 before it becomes a miss. Plus: cadence misses clustering
+                 at one handoff; "late alignment sched"; rework tagged
+                 client-new-ask.
                  → route: fix the handoff/process, not the headcount.
-                 On-cadence is REDESIGN's signal and ONLY REDESIGN's ~ see
-                 §5 for why HIRE deliberately never reads it.
+                 On-cadence and cycle time are REDESIGN's signals and ONLY
+                 REDESIGN's ~ see §5 for why HIRE deliberately never reads
+                 on-cadence.
  3. FIX CORPUS?  Is quality inconsistent because the standard lives in heads?
-                 Evidence: rework rounds high with tags brief-misalign or
-                 brand ~ their exact loudest pain.
+                 Evidence: rework is meaningfully frequent (not just
+                 present) AND, of that rework, half or more is tagged
+                 brief-misalign or brand ~ their exact loudest pain, and
+                 the two-gate order that keeps one stray tag from firing
+                 this on its own (see §5).
                  → route: Deliverable 1+2 ~ align the brief, encode the
                  standard. NEVER route this to hire.
- 4. HIRE.        Only when 1–3 are ruled out AND the CAPACITY signals ~
+ 4. HIRE.        Only when 1–3 are ruled out AND capchecker's REBALANCE
+                 signal is ALSO ruled out (this isn't one person absorbing
+                 load while the team has headroom ~ that's a redistribution
+                 fix, cheaper than a hire) AND the CAPACITY signals ~
                  specifically WIP per analyst and perceived load, NOT
-                 on-cadence ~ are sustainedly maxed.
+                 on-cadence ~ are sustainedly maxed ACROSS THE TEAM, not
+                 concentrated in one person.
                  → the defensible hire: the ruled-out trail above IS the
                  evidence Michele takes to Mells.
 ```
@@ -162,16 +175,23 @@ No code, no wiring, no waiting on capchecker. Once each client's
    ≥3-occurrences threshold matter, and only then does AUTOMATE fire. A
    non-automatable dominant theme is real information (it may point at
    REDESIGN instead ~ see below) but it is NOT an AUTOMATE routing.
-2. **REDESIGN check:** open each client's `delivery-log.md`. Compute
-   on-cadence rate by hand: numerator = rows with `Delivered ≤ Due`;
-   denominator = rows that have shipped (`delivered`/`revising`/
-   `accepted`) **plus** `open` rows already past `Due` (overdue-in-
-   progress misses) ~ **excluding** `open` rows whose `Due` hasn't arrived
-   yet (that's future work, not yet a hit or a miss; counting it dilutes
-   the rate and can mask a real problem). Below threshold, with `Rework
-   tag` mostly `client-new-ask`/`data`/`none` rather than
-   `brief-misalign`/`brand` → REDESIGN fires, name the clustering (one
-   client? one handoff step?) as the evidence.
+2. **REDESIGN check:** open each client's `delivery-log.md`, two reads ~
+   either fires REDESIGN:
+   - **Confirmed (on-cadence):** compute the rate by hand: numerator =
+     rows with `Delivered ≤ Due`; denominator = rows that have shipped
+     (`delivered`/`revising`/`accepted`) **plus** `open` rows already past
+     `Due` (overdue-in-progress misses) ~ **excluding** `open` rows whose
+     `Due` hasn't arrived yet (that's future work, not yet a hit or a
+     miss; counting it dilutes the rate and can mask a real problem).
+     Below threshold, with `Rework tag` mostly `client-new-ask`/`data`/
+     `none` rather than `brief-misalign`/`brand` → REDESIGN.
+   - **Early warning (cycle time):** compare recent `Delivered − Start`
+     spans against the baseline (§7). Trending up even while still
+     narrowly hitting `Due` → REDESIGN, flagged as "before it becomes a
+     miss" ~ this is the row that keeps a slow slide from going unnoticed
+     until on-cadence formally breaches.
+   Either way, name the clustering (one client? one handoff step?) as the
+   evidence.
 3. **FIX_CORPUS check:** same logs, but two gates in order, not one ~
    (a) first, is overall rework meaningful at all: rounds-per-report (or
    rows with `Rounds ≥ 1` as a share of all accepted rows) above threshold?
@@ -181,11 +201,17 @@ No code, no wiring, no waiting on capchecker. Once each client's
    rework that exists, is half or more tagged `brief-misalign`/`brand`?
    If both gates clear, FIX_CORPUS fires, and the tag itself tells you
    which corpus file is stale (the brief, or the brand standard).
-4. **HIRE check:** only if none of the above fired. Cross-reference
-   capchecker's sustained-load signal against WIP per analyst (capchecker
-   Q3, read manually until §5b's automation exists) ~ both maxed, no
-   automate/redesign/corpus explanation → HIRE, and the three ruled-out
-   checks above are the evidence trail, already written down.
+4. **HIRE check:** only if none of the above fired ~ **including
+   REBALANCE**, capchecker's live signal for one analyst overloaded while
+   the team has headroom (check the dashboard's REBALANCE flag before
+   anything else here; if it's firing, that's redistribution, not a hire,
+   even if team-wide WIP/load also look high). Once REBALANCE is ruled out
+   too: cross-reference capchecker's sustained-load signal against WIP per
+   analyst (capchecker Q3, read manually until §5b's automation exists) ~
+   both maxed ACROSS THE TEAM (not concentrated in the one person
+   REBALANCE would have caught), no automate/redesign/corpus/rebalance
+   explanation → HIRE, and the four ruled-out checks above are the
+   evidence trail, already written down.
 
 Fifteen minutes, monthly, two documents open. This is the real router ~
 write the routing decision + evidence into a line in `learnings/patterns.md`
@@ -213,25 +239,30 @@ above by hand:
      **FIX_CORPUS**, pointing at the exact corpus file to fix. Same
      two-gate order as §5a's manual version ~ frequency gate before
      tag-share gate, always.
-   - on-cadence rate below threshold, on cycles FIX_CORPUS hasn't already
-     claimed (i.e. rework there is low, or tagged `client-new-ask`/`data`
-     rather than `brief-misalign`/`brand`) → **REDESIGN** candidate. This
-     is the workflow/scheduling signal ~ on-cadence lives here and nowhere
-     else in the router.
+   - on-cadence rate below threshold, OR cycle time trending up against
+     baseline while on-cadence still narrowly holds (the early-warning
+     path ~ §2), on cycles FIX_CORPUS hasn't already claimed (i.e. rework
+     there is low, or tagged `client-new-ask`/`data` rather than
+     `brief-misalign`/`brand`) → **REDESIGN** candidate. This is the
+     workflow/scheduling signal ~ on-cadence and cycle time live here and
+     nowhere else in the router.
    - HIRE requires ALL of: sustained load over the structural line (the
      live rule) AND WIP per analyst sustainedly elevated vs baseline (the
-     capacity-ceiling signal ~ independent of cadence) AND automate +
-     redesign + fix-corpus not currently firing ~ the chain enforced in
-     code, not just in prose. **HIRE never reads on-cadence.** A cadence
-     miss is, by construction, a REDESIGN or FIX_CORPUS matter first; if
-     HIRE also required on-cadence degraded as corroboration, any miss
-     severe enough to justify a hire would have already tripped REDESIGN
-     or FIX_CORPUS and blocked HIRE from ever firing ~ the chain would
-     look real but be structurally unreachable (Codex catch, 2026-07-18:
-     the original v2 draft required on-cadence for both). WIP elevation is
-     the corroborating signal precisely because it's independent of the
-     cadence-based branches. Load alone, with WIP not corroborating, still
-     never fires HIRE ~ it routes to WATCH instead.
+     capacity-ceiling signal ~ independent of cadence) AND capchecker's
+     REBALANCE not currently firing (no single analyst absorbing the load
+     while the team has headroom ~ that's redistribution, cheaper than a
+     hire) AND automate + redesign + fix-corpus not currently firing ~ the
+     chain enforced in code, not just in prose. **HIRE never reads
+     on-cadence or cycle time.** A cadence problem is, by construction, a
+     REDESIGN or FIX_CORPUS matter first; if HIRE also required cadence
+     degraded as corroboration, any miss severe enough to justify a hire
+     would have already tripped REDESIGN or FIX_CORPUS and blocked HIRE
+     from ever firing ~ the chain would look real but be structurally
+     unreachable (Codex catch, 2026-07-18: the original v2 draft required
+     on-cadence for both). WIP elevation is the corroborating signal
+     precisely because it's independent of the cadence-based branches.
+     Load alone, with WIP not corroborating, still never fires HIRE ~ it
+     routes to WATCH instead.
 3. **Panel order = chain order.** Signals display automate → redesign →
    fix-corpus → hire (severity shown, but position tells the story: hire
    sits last visually, always).

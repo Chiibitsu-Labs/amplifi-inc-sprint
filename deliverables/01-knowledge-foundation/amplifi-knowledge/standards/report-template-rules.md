@@ -33,7 +33,12 @@ the skill's output and the Canva deck.}
   insight-log trend ~ never typed over last period's deck.
 - Period-stamp the exec summary: "{Month YYYY} · data window {start}–{end}."
 - The QA skill cross-checks the deck's period stamp against the data window
-  and flags any figure that matches last period's report verbatim.
+  and flags any figure that matches last period's report verbatim AND
+  can't independently be confirmed in this period's export ~ a figure that
+  matches the prior period but IS genuinely present in the current data is
+  a real flat metric, not a stale-template ghost, and isn't flagged (see
+  `skills/amplifi-qa/SKILL.md` check 4 ~ same rule, stated once, read from
+  both places).
 
 **Two checkpoints, not one.** The QA gate runs on the markdown draft ~
 before Canva. That catches drift the skill introduced, but the exact

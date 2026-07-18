@@ -17,23 +17,28 @@
 2. **At ship:** fill `Delivered`, top up `Effort (h)`. `Status = delivered`.
    `Rounds` starts at `0`, tag at `none` ~ both provisional.
 3. **If the client asks for a revision:** bump `Rounds` by 1, top up
-   `Effort (h)`, **add** this round's cause to `Rework tag` ~ don't
-   overwrite. If round 1 was `brand` and round 2 is `client-new-ask`, the
-   cell reads `brand, client-new-ask`, not just the latest one. A later
-   round's cause replacing an earlier one would hide a real corpus gap
-   behind a coincidental second ask ~ the router needs every cause that
-   fired, not just the last. `Status = revising` ~ **not** `accepted`.
-   Repeat this touch for every additional round.
+   `Effort (h)`, set `Rework tag`. First revision **replaces** the
+   provisional `none` with the real cause. Every revision after that
+   **adds** to the existing tag(s) rather than replacing them ~ round 1
+   `brand`, round 2 `client-new-ask` → cell reads `brand, client-new-ask`,
+   never just the latest one (a later cause overwriting an earlier one
+   would hide a real corpus gap behind a coincidental second ask; `none`
+   never re-appears once a real cause has landed). `Status = revising` ~
+   **not** `accepted`. Repeat this touch for every additional round.
 4. **At actual client acceptance ~ or after 5 business days of silence
    post-delivery with no revision request:** `Status = accepted`. Explicit
    sign-off and "no news" are both real acceptance signals ~ most reports
    ship clean and nobody writes back to say so, and treating silence as
    permanently unresolved would starve the rework baseline of exactly the
-   clean deliveries it needs to mean anything. If a revision request
-   arrives after the 5-day auto-accept, treat it as a fresh cycle issue
-   (note it, don't reopen the old row). First version accepted with no
-   revisions, explicit or by silence = go straight from `delivered` to
-   `accepted`, numbers stay at 0/none.
+   clean deliveries it needs to mean anything. **If a revision request
+   arrives after the 5-day auto-accept, re-open the SAME row** ~ `Status`
+   back to `revising`, bump `Rounds`, add the cause per touch 3 above.
+   Late feedback is still real rework on this report; a fresh row with no
+   period/due/delivered of its own would just delete the evidence, not
+   relocate it. Only re-finalize to `accepted` once the late round is
+   actually resolved. First version accepted with no revisions, explicit
+   or by silence = go straight from `delivered` to `accepted`, numbers
+   stay at 0/none.
 
 **Why `Status` exists:** without it, a report still mid-revision or still
 awaiting sign-off looks identical to one that shipped clean ~ all read
@@ -68,9 +73,10 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
 - **Effort (h)** ~ rough total hours, self-estimated, running total across
   every touch. Gut feel is fine; consistency beats precision.
 - **Rework tag** ~ **required, not optional, the moment `Rounds` goes above
-  0** ~ each round ADDS its cause, comma-separated, never overwrites:
-  `brief-misalign` · `brand` · `data` · `client-new-ask`. `none` is valid
-  ONLY while `Rounds = 0`; a row with `Rounds ≥ 1` and tag `none` is an
+  0** ~ the first round REPLACES the provisional `none`; every round after
+  that ADDS its cause, comma-separated, never overwrites the ones already
+  there: `brief-misalign` · `brand` · `data` · `client-new-ask`. `none` is
+  valid ONLY while `Rounds = 0`; a row with `Rounds ≥ 1` and tag `none` is an
   incomplete row, not a real zero-rework report ~ the router can't act on
   untagged rework, so it goes unrouted instead of pointing at
   automate/redesign/fix-corpus. (`brief-misalign` and `brand` are corpus

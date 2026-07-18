@@ -41,14 +41,21 @@ grows under their roof. Chii's repo remains the reference/spec copy.
    ~ works, but means re-attaching every time, so note it as a rough edge,
    not a config to leave broken permanently.
 
-5. **Keep an owned copy.** Also copy the same three `SKILL.md` files into
+5. **Keep an owned copy ~ and know that editing it isn't enough on its
+   own.** Also copy the same three `SKILL.md` files into
    `amplifi-knowledge/skills/` in Drive, as Amplifi's own canonical
    record. Without this second copy, the operating instructions for "how
    the analyst function uses AI" live only in Chii's reference repo and
    inside a vendor product; if Claude access changes or the lens swaps,
    Amplifi would be reconstructing its own process from someone else's
    copy. The Drive copy is the source of truth going forward ~ if a skill
-   gets edited, edit it in Drive first.
+   gets edited, edit it in Drive first. **But Claude Enterprise runs
+   whatever was uploaded in step 4, not whatever's currently in Drive** ~
+   the two don't sync themselves. Every time a skill changes in Drive:
+   re-upload the updated `SKILL.md` to Claude Enterprise, then re-run
+   step 4's verification (fresh session, confirm the new behavior) before
+   telling anyone the update is live. Skipping this means analysts keep
+   running the stale version while believing the Drive copy is authoritative.
 6. **Give the improve skill an actual write path** ~ read access (step 4)
    is not enough for this one. The read-only Drive connector (or attaching
    files per session) satisfies `amplifi-insights` and `amplifi-qa` fine,
