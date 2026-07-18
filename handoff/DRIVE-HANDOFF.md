@@ -26,9 +26,17 @@ grows under their roof. Chii's repo remains the reference/spec copy.
    the two others on the function roster. No per-file permissions; the
    folder is the unit.
 4. **Wire the skills:** upload the three `SKILL.md` files to Claude
-   Enterprise; point them at the Drive folder (Claude's Google Drive
-   connector, or attach the relevant corpus files per session until the
-   connector is enabled org-wide).
+   Enterprise. **The improve skill needs to WRITE to the corpus, not just
+   read it** ~ the read-only Drive connector (or attaching files per
+   session) satisfies `amplifi-insights` and `amplifi-qa` fine, but leaves
+   `amplifi-improve` unable to actually save anything, which breaks the
+   capture loop this whole deliverable is built on. Set up **Drive for
+   Desktop** synced to the `amplifi-knowledge/` folder so it's a real local
+   path, and run the improve skill from a session that can write local
+   files (Claude Code, or any client with filesystem access to that sync
+   folder). Until that's set up, the skill outputs the learning file's
+   content and asks the analyst to save it by hand ~ workable, but confirm
+   this is temporary, not the plan.
 5. **Copy the deliverable docs** into a Drive `deliverables/` folder for
    circulation. Canva/Slides visual of the architecture map: optional
    polish, the markdown is canonical.

@@ -2,7 +2,7 @@
 title: Prioritized Implementation Roadmap
 client: Amplifi Technologies Corp
 function: Analyst (Core Build scope)
-deliverable: 4 of 4
+deliverable: 4 of 5
 builder: Chii / Chiibitsu Labs
 anchor: week of 2026-07-20 (delivery week) ~ 30d = Aug 21 · 60d = Sep 18 · 90d = Oct 16
 canon: AI adoption is not tool exposure. It is workflow incorporation.

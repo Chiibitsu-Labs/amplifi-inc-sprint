@@ -2,7 +2,7 @@
 title: AI Ecosystem Architecture Map
 client: Amplifi Technologies Corp
 function: Analyst (Core Build scope)
-deliverable: 3 of 4
+deliverable: 3 of 5
 builder: Chii / Chiibitsu Labs
 canon: AI adoption is not tool exposure. It is workflow incorporation.
 ---

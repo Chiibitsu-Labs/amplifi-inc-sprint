@@ -37,10 +37,15 @@ If a standards file is an unfilled frame, run anyway but say so at the top:
 3. **Actionability** ~ every recommendation passes the actionable-when
    tests; "just continue" alone = automatic flag; recos the client already
    rejected (per `context.md`) = flag.
-4. **Data integrity** ~ every stated figure exists in the provided period
-   data. List any number you cannot trace ~ these go to the human verify
-   step first. Check the period stamp; flag any figure identical to the
-   previous period's insight-log entry (stale-template ghost).
+4. **Data integrity** ~ check each figure against its claimed source, not
+   one blanket source: figures presented as CURRENT must exist in the
+   provided period data; figures explicitly labeled with a past period
+   (the insight-log trend reads the insights skill is required to include)
+   must exist in `insight-log.md` instead ~ don't flag those as untraceable
+   just because they're absent from the period export. List any number
+   that fails its OWN check ~ these go to the human verify step first.
+   Also flag: any CURRENT-labeled figure that's actually identical to a
+   past insight-log entry (stale-template ghost hiding as current data).
 5. **Compounding** ~ does the draft use the insight-log trend where it
    should? A quiet month with no trend read = flag.
 

@@ -2,7 +2,7 @@
 title: Knowledge Foundation Blueprint
 client: Amplifi Technologies Corp
 function: Analyst (Core Build scope)
-deliverable: 1 of 4
+deliverable: 1 of 5
 builder: Chii / Chiibitsu Labs
 status: v1 ~ scaffold ready to copy to Drive
 canon: AI adoption is not tool exposure. It is workflow incorporation.
@@ -12,7 +12,7 @@ canon: AI adoption is not tool exposure. It is workflow incorporation.
 
 The corpus. Amplifi's owned, machine-legible knowledge layer for the analyst
 function ~ the single source of truth that makes output consistent regardless
-of who's at the keyboard, and the foundation the other three deliverables
+of who's at the keyboard, and the foundation the other four deliverables
 stand on.
 
 ---
@@ -82,12 +82,13 @@ generating, so "boring months" still yield signal ~ *"flat month, but here's
 the 3-month trend"* instead of "just continue." Direct fix for "Reports not
 evolving as more data pts are collected over time."
 
-**Delivery log = the instrument's feed.** One table row at the moment a
-report ships (analyst, dates, on-time or not, rough effort), finalized with
-revision rounds + a rework tag when the client accepts. Two ~30-second
-touches, both byproducts of finishing ~ never a separate job. This
-is where the when-to-hire instrument gets its cycle-time, on-cadence, and
-rework signals (see Deliverable 5).
+**Delivery log = the instrument's feed.** One row per cycle, opened at
+period start (so an overdue, undelivered report is visible even before it
+ships), filled at ship, finalized with revision rounds + a rework tag at
+client acceptance. Three ~20–30-second touches, all byproducts of work
+that's already happening ~ never a separate job. This is where the
+when-to-hire instrument gets its cycle-time, on-cadence, and rework
+signals (see Deliverable 5).
 
 **Brand standard as the anti-slop layer.** "AI slop," "AI tells," "AI
 template does not align w/ amplifi branding" ~ all thin-context symptoms.

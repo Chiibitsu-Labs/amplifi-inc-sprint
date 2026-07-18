@@ -13,11 +13,17 @@ client's name → fill `brief.md` and `brand-standard.md` from the kickoff.
 **A client clarifies something?** Write it into that client's `brief.md`
 FAQ section, once. Nobody re-infers it again.
 
-**Shipping a report?** Two writes, ~2 minutes total, at the moment you ship:
-1. Append the key insights to the client's `insight-log.md`.
-2. Add one row to the client's `delivery-log.md` (analyst, dates, effort).
-   When the client accepts ~ if there were revisions ~ update that row's
-   rounds + rework tag. This feeds Michele's when-to-hire instrument.
+**Starting a client cycle?** Open a row in that client's `delivery-log.md`
+~ 20 seconds. This is what makes an overdue, still-undelivered report
+visible to the instrument, not just a shipped one.
+
+**Shipping a report?** Append the key insights to the client's
+`insight-log.md`, and mark the delivery-log row `delivered` (~1 minute
+total).
+
+**Client accepts the report?** Finalize that row's rounds + rework tag,
+mark it `accepted` ~ 20 seconds. This is what feeds Michele's
+when-to-hire instrument.
 
 **Ending a work session with Claude?** Run the **improve skill** ~ it writes
 learnings to `learnings/` automatically. See `learnings/README.md`.

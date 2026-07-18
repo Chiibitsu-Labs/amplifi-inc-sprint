@@ -2,7 +2,7 @@
 title: Output Consistency & Quality System
 client: Amplifi Technologies Corp
 function: Analyst (Core Build scope)
-deliverable: 2 of 4
+deliverable: 2 of 5
 builder: Chii / Chiibitsu Labs
 status: v1 ~ skills ready; standards frames await Rica's gold-report extraction
 canon: AI adoption is not tool exposure. It is workflow incorporation.

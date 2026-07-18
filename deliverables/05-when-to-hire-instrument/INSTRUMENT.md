@@ -2,6 +2,7 @@
 title: When-to-Hire Instrument ~ v1 Specification
 client: Amplifi Technologies Corp
 function: Analyst (Core Build scope)
+deliverable: 5 of 5
 owner: Michele Curran (COO) ~ this is her instrument
 builder: Chii / Chiibitsu Labs
 status: v1 ~ capacity feed LIVE (amplifi-capchecker); delivery-log feed ships with Deliverable 1; router v2 wiring is a 60–90d roadmap item
@@ -26,7 +27,7 @@ trigger hiring"*; current state: 6 on the function, still within capacity).
 
 ```
 FEED 1 ~ amplifi-capchecker (LIVE)          FEED 2 ~ delivery logs (ships w/ D1)
-daily Telegram check-in, 3 taps             one row per delivered report, ~60s
+daily Telegram check-in, 3 taps             one row per cycle, 3 touches ~20-30s ea
 · perceived load 1–10 (10 = drowning)       · cycle time  (start → delivered)
 · why (free text → themes)                  · on-cadence  (due vs delivered)
 · clients & tasks (WIP)                     · rework rounds + rework tag
@@ -55,7 +56,7 @@ a second job. Capture as byproduct, both times.
 | **WIP per analyst** | active clients/tasks in flight per person | capchecker (daily Q3) | the "full hands" ceiling |
 | **Perceived load** | daily 1–10 self-rating + reason | capchecker (Q1+Q2) | earliest warning ~ people feel strain before metrics show it |
 | **Cycle time per report** | period start → delivered | delivery log | rising = falling behind cadence |
-| **On-cadence rate** | % reports delivered by their due date | delivery log | mixed weekly/bi-weekly/monthly clients; misses = capacity pressure |
+| **On-cadence rate** | % reports delivered by their due date | delivery log | mixed weekly/bi-weekly/monthly clients; misses point at a workflow/scheduling problem first (routes to REDESIGN ~ see §3), not straight at capacity |
 | **Rework rounds per report** | revision rounds before client-accepted, + tag | delivery log | their #1 pain ~ and usually a **corpus gap, not a headcount gap** |
 
 Effort-per-deliverable rides along as the delivery log's `Effort (h)` column
@@ -72,17 +73,23 @@ threshold crossed →
                  Evidence: capchecker reason-themes dominating high-load days
                  (live today); delivery-log notes naming the same manual step.
                  → route: automate it (data sync, formatting, first-draft work).
- 2. REDESIGN?    Is the workflow itself the bottleneck?
-                 Evidence: cadence misses clustering at handoffs; "late
-                 alignment sched"; rework tagged client-new-ask (brief process).
+ 2. REDESIGN?    Is the workflow itself the bottleneck ~ not capacity, not
+                 quality?
+                 Evidence: on-cadence rate below threshold WHILE rework
+                 stays low or isn't corpus-tagged (the work is fine, the
+                 SCHEDULE isn't); cadence misses clustering at one handoff;
+                 "late alignment sched"; rework tagged client-new-ask.
                  → route: fix the handoff/process, not the headcount.
+                 On-cadence is REDESIGN's signal and ONLY REDESIGN's ~ see
+                 §5 for why HIRE deliberately never reads it.
  3. FIX CORPUS?  Is quality inconsistent because the standard lives in heads?
                  Evidence: rework rounds high with tags brief-misalign or
                  brand ~ their exact loudest pain.
                  → route: Deliverable 1+2 ~ align the brief, encode the
                  standard. NEVER route this to hire.
- 4. HIRE.        Only when 1–3 are ruled out AND capacity signals (WIP,
-                 on-cadence, load) are sustainedly maxed.
+ 4. HIRE.        Only when 1–3 are ruled out AND the CAPACITY signals ~
+                 specifically WIP per analyst and perceived load, NOT
+                 on-cadence ~ are sustainedly maxed.
                  → the defensible hire: the ruled-out trail above IS the
                  evidence Michele takes to Mells.
 ```
@@ -115,18 +122,31 @@ the hard part, and it's done.
    from Drive into capchecker's Supabase (or renders alongside ~ data stays
    canonical in the owned corpus; the app is a lens on it).
 2. **Add the two missing branches:** `REDESIGN` and `FIX_CORPUS` actions in
-   the router (`lib/analytics.ts`), fed by rework tags + cadence data:
+   the router (`lib/analytics.ts`), fed by rework tags + cadence data.
+   **REDESIGN and HIRE are built on deliberately non-overlapping evidence**
+   ~ this matters, see the note below:
    - rework rounds/report above threshold with ≥half tagged
      `brief-misalign`/`brand` → **FIX_CORPUS**, pointing at the exact
      corpus file to fix
-   - on-cadence rate below threshold with rework NOT corpus-tagged →
-     **REDESIGN** candidate
+   - on-cadence rate below threshold, on cycles FIX_CORPUS hasn't already
+     claimed (i.e. rework there is low, or tagged `client-new-ask`/`data`
+     rather than `brief-misalign`/`brand`) → **REDESIGN** candidate. This
+     is the workflow/scheduling signal ~ on-cadence lives here and nowhere
+     else in the router.
    - HIRE requires ALL of: sustained load over the structural line (the
-     live rule) AND corroborating capacity evidence (WIP per analyst
-     elevated vs baseline, on-cadence rate degraded) AND automate +
+     live rule) AND WIP per analyst sustainedly elevated vs baseline (the
+     capacity-ceiling signal ~ independent of cadence) AND automate +
      redesign + fix-corpus not currently firing ~ the chain enforced in
-     code, not just in prose. Load alone never fires HIRE in v2; feeling
-     slammed without capacity metrics backing it routes to WATCH, not hire
+     code, not just in prose. **HIRE never reads on-cadence.** A cadence
+     miss is, by construction, a REDESIGN or FIX_CORPUS matter first; if
+     HIRE also required on-cadence degraded as corroboration, any miss
+     severe enough to justify a hire would have already tripped REDESIGN
+     or FIX_CORPUS and blocked HIRE from ever firing ~ the chain would
+     look real but be structurally unreachable (Codex catch, 2026-07-18:
+     the original v2 draft required on-cadence for both). WIP elevation is
+     the corroborating signal precisely because it's independent of the
+     cadence-based branches. Load alone, with WIP not corroborating, still
+     never fires HIRE ~ it routes to WATCH instead.
 3. **Panel order = chain order.** Signals display automate → redesign →
    fix-corpus → hire (severity shown, but position tells the story: hire
    sits last visually, always).

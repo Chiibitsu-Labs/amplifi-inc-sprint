@@ -19,6 +19,20 @@ feels like a documentation chore, you've failed. Two modes.
    (the HHMM time keeps two same-day sessions from colliding ~ never
    overwrite an existing learning file)
 
+   **This requires an actual write path to the live corpus** ~ a
+   Drive-connector attachment that only lets you *read* files can't create
+   this one. Before relying on this step, confirm which applies:
+   - **Filesystem access to the synced folder** (Drive for Desktop, or any
+     setup where `amplifi-knowledge/` is a real local path) ~ write the
+     file directly. This is the deployment `handoff/DRIVE-HANDOFF.md`
+     recommends, precisely because it's the one that actually writes.
+   - **No write access** (read-only Drive connector, or files attached
+     per-session with no save-back) ~ you cannot persist anything. Output
+     the learning file's full content in a fenced block instead, and end
+     the session with: *"No write path to the corpus ~ save this as
+     `learnings/{filename}` yourself."* Never silently skip the write and
+     never claim you saved something you didn't.
+
 ```markdown
 # {date} ~ {analyst} ~ {client/topic}
 - CLIENT-FACT: {new client knowledge → destined for context.md / brief.md FAQ}
@@ -50,7 +64,11 @@ later.
      running tally the when-to-hire instrument's automate/redesign branches
      read. Summarizing into chat and archiving the sources would lose the
      cross-week counts; the tally file is the memory.
-3. On Rica's confirmation, apply the edits to the corpus files.
+3. On Rica's confirmation, apply the edits to the corpus files. Same write-
+   path requirement as Mode 1: if you can't write to `amplifi-knowledge/`
+   directly, output every edit as a fenced block per destination file and
+   have Rica (or whoever has edit access) apply them ~ don't claim
+   "promoted" for anything not actually written.
 4. Prefix processed learning files with `archived-` (never archive before
    step 2's destinations ~ including `patterns.md` ~ are written).
 
