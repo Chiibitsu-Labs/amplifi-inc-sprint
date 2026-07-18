@@ -15,8 +15,9 @@ FAQ section, once. Nobody re-infers it again.
 
 **Shipping a report?** Two writes, ~2 minutes total, at the moment you ship:
 1. Append the key insights to the client's `insight-log.md`.
-2. Add one row to the client's `delivery-log.md` (dates, revision rounds,
-   effort, rework tag). This feeds Michele's when-to-hire instrument.
+2. Add one row to the client's `delivery-log.md` (analyst, dates, effort).
+   When the client accepts ~ if there were revisions ~ update that row's
+   rounds + rework tag. This feeds Michele's when-to-hire instrument.
 
 **Ending a work session with Claude?** Run the **improve skill** ~ it writes
 learnings to `learnings/` automatically. See `learnings/README.md`.

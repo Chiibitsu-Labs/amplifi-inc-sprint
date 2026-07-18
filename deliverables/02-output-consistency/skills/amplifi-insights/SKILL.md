@@ -27,9 +27,14 @@ file, ask for it or flag the gap. Do not silently default to generic.
 
 Work ONLY from the data provided for this period (Sentimo/MCP exports,
 platform pulls). Rules:
-- Every number you state must exist in the provided data. No estimates
-  presented as data, no carry-over from the insight-log presented as
-  current. If a needed figure is missing: flag it, don't invent it.
+- Every number presented as CURRENT must exist in the provided period data.
+  No estimates presented as data. If a needed figure is missing: flag it,
+  don't invent it.
+- Historical figures from the insight-log are allowed ~ required, even, for
+  the trend read ~ but ALWAYS labeled with their period ("engagement was
+  4.2% in Mar 2026"), never presented as this period's number. Current
+  numbers come from the export; past numbers come from the log, wearing
+  their date.
 - Stamp the draft: client, period, data window dates.
 
 ## Step 2 ~ Generate to the bar
@@ -55,8 +60,12 @@ platform pulls). Rules:
 
 ## Step 4 ~ Output shape
 
-Structure the draft exactly per `report-template-rules.md` sections, in
-markdown, ready to paste into the Canva template. End with:
+Produce ONLY the sections this skill owns ~ executive summary, analysis,
+insights, recommendations ~ in the order and shape
+`report-template-rules.md` gives them, in markdown, ready to paste into the
+Canva template. Never generate or overwrite the sections you don't own
+(cover, performance-vs-baseline data blocks, appendix) ~ those have their
+own sources. End with:
 
 ```
 DATA NOTES: {gaps, anomalies, anything a human should verify}

@@ -83,8 +83,9 @@ the 3-month trend"* instead of "just continue." Direct fix for "Reports not
 evolving as more data pts are collected over time."
 
 **Delivery log = the instrument's feed.** One table row at the moment a
-report ships: dates, on-time or not, revision rounds, rough effort, a rework
-tag. ~60 seconds, as a byproduct of finishing ~ never a separate job. This
+report ships (analyst, dates, on-time or not, rough effort), finalized with
+revision rounds + a rework tag when the client accepts. Two ~30-second
+touches, both byproducts of finishing ~ never a separate job. This
 is where the when-to-hire instrument gets its cycle-time, on-cadence, and
 rework signals (see Deliverable 5).
 

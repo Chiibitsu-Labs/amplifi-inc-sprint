@@ -15,7 +15,9 @@ feels like a documentation chore, you've failed. Two modes.
 2. Check against the corpus first ~ only write things that are NEW or that
    CONTRADICT what's written (contradictions are the most valuable capture:
    flag them explicitly).
-3. Write ONE file: `learnings/YYYY-MM-DD-{analyst}-{client-or-topic}.md`
+3. Write ONE file: `learnings/YYYY-MM-DD-HHMM-{analyst}-{client-or-topic}.md`
+   (the HHMM time keeps two same-day sessions from colliding ~ never
+   overwrite an existing learning file)
 
 ```markdown
 # {date} ~ {analyst} ~ {client/topic}
@@ -43,10 +45,14 @@ later.
    - `STANDARD` → the matching `standards/` file, drafted as an edit in that
      file's own format
    - `CONTRADICTS` → the correction, highlighted for Rica's explicit yes/no
-   - `REWORK` / `PROCESS` → a pattern summary (recurring themes, counts) ~
-     surfaced for the when-to-hire instrument's automate/redesign reading
+   - `REWORK` / `PROCESS` → append a dated pattern entry (theme, count,
+     which clients) to `learnings/patterns.md` ~ the durable, append-only
+     running tally the when-to-hire instrument's automate/redesign branches
+     read. Summarizing into chat and archiving the sources would lose the
+     cross-week counts; the tally file is the memory.
 3. On Rica's confirmation, apply the edits to the corpus files.
-4. Prefix processed learning files with `archived-`.
+4. Prefix processed learning files with `archived-` (never archive before
+   step 2's destinations ~ including `patterns.md` ~ are written).
 
 Rica authors the standard; you sort, draft, and file. Never promote a
 STANDARD or CONTRADICTS item without a human yes.

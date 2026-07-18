@@ -11,11 +11,18 @@ replace it. Flags are suggestions to a human who decides.
 
 ## Step 0 ~ Load the bar (rules live in the corpus, never in this skill)
 
-From `amplifi-knowledge/`, read:
-- `standards/what-good-looks-like.md` (use its checklist section)
-- `standards/house-voice.md`
-- `standards/report-template-rules.md`
-- `clients/{client}/brand-standard.md`, `brief.md`, `insight-log.md`
+Required inputs, all of them:
+1. The report **draft**.
+2. The **current period's source data** (the same Sentimo/MCP exports the
+   draft was generated from). Without it, check 4 cannot trace a single
+   figure ~ so if it's not provided, STOP and ask for it. Never run
+   data-integrity blind and flag everything as untraceable.
+3. From `amplifi-knowledge/`:
+   - `standards/what-good-looks-like.md` (use its checklist section)
+   - `standards/house-voice.md`
+   - `standards/report-template-rules.md`
+   - `clients/{client}/brand-standard.md`, `brief.md`, `context.md`,
+     `insight-log.md`
 
 If a standards file is an unfilled frame, run anyway but say so at the top:
 "Bar not yet encoded for: {file} ~ checks in that area are generic."

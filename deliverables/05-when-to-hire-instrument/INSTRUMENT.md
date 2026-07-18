@@ -121,8 +121,12 @@ the hard part, and it's done.
      corpus file to fix
    - on-cadence rate below threshold with rework NOT corpus-tagged →
      **REDESIGN** candidate
-   - HIRE additionally requires: fix-corpus + redesign + automate not
-     currently firing ~ the chain enforced in code, not just in prose
+   - HIRE requires ALL of: sustained load over the structural line (the
+     live rule) AND corroborating capacity evidence (WIP per analyst
+     elevated vs baseline, on-cadence rate degraded) AND automate +
+     redesign + fix-corpus not currently firing ~ the chain enforced in
+     code, not just in prose. Load alone never fires HIRE in v2; feeling
+     slammed without capacity metrics backing it routes to WATCH, not hire
 3. **Panel order = chain order.** Signals display automate → redesign →
    fix-corpus → hire (severity shown, but position tells the story: hire
    sits last visually, always).
@@ -163,8 +167,9 @@ thresholds are living numbers, and the instrument reads the whole system
 - **Runs on their stack:** Drive + Telegram + the tools they already touch.
 - **~5 signals, not 20.** A COO reads it in 30 seconds or it's wrong.
 - **Not a hire/no-hire binary.** A router with an evidence trail.
-- **Feeding it is never a second job.** 3 taps daily + one 60-second row
-  per shipped report. That's the entire cost.
+- **Feeding it is never a second job.** 3 taps daily + one row per shipped
+  report (~30s at ship, ~30s finalizing rounds at client acceptance).
+  That's the entire cost.
 
 ## The lines to hold
 
