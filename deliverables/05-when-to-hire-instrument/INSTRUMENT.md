@@ -153,18 +153,34 @@ No code, no wiring, no waiting on capchecker. Once each client's
 `delivery-log.md` has 3–4 weeks of rows (see §7):
 
 1. **AUTOMATE check:** open the capchecker dashboard's theme breakdown
-   (live today). One theme ≥40% of high-load reasons, ≥3 occurrences →
-   AUTOMATE fires, evidence is right there.
+   (live today). First ask the eligibility question §3 actually poses ~
+   **is the dominant theme repetitive and rules-based** (data sync,
+   formatting, first-draft pulls)? Themes like "client meetings," "supplier
+   delays," or "too many accounts" can dominate the reasons list without
+   being automatable at all ~ prevalence alone doesn't clear the bar. Only
+   once a theme passes that eligibility test does the ≥40%-of-high-load,
+   ≥3-occurrences threshold matter, and only then does AUTOMATE fire. A
+   non-automatable dominant theme is real information (it may point at
+   REDESIGN instead ~ see below) but it is NOT an AUTOMATE routing.
 2. **REDESIGN check:** open each client's `delivery-log.md`. Compute
-   on-cadence rate by hand (`Delivered ≤ Due` count ÷ total cycles,
-   counting overdue `open` rows as misses). Below threshold, with
-   `Rework tag` mostly `client-new-ask`/`data`/`none` rather than
+   on-cadence rate by hand: numerator = rows with `Delivered ≤ Due`;
+   denominator = rows that have shipped (`delivered`/`revising`/
+   `accepted`) **plus** `open` rows already past `Due` (overdue-in-
+   progress misses) ~ **excluding** `open` rows whose `Due` hasn't arrived
+   yet (that's future work, not yet a hit or a miss; counting it dilutes
+   the rate and can mask a real problem). Below threshold, with `Rework
+   tag` mostly `client-new-ask`/`data`/`none` rather than
    `brief-misalign`/`brand` → REDESIGN fires, name the clustering (one
    client? one handoff step?) as the evidence.
-3. **FIX_CORPUS check:** same logs, count rows with `Rounds ≥ 1`. Half or
-   more tagged `brief-misalign`/`brand` → FIX_CORPUS fires, and the tag
-   itself tells you which corpus file is stale (the brief, or the brand
-   standard).
+3. **FIX_CORPUS check:** same logs, but two gates in order, not one ~
+   (a) first, is overall rework meaningful at all: rounds-per-report (or
+   rows with `Rounds ≥ 1` as a share of all accepted rows) above threshold?
+   If rework is rare, stop here ~ one brand-tagged revision among many
+   clean reports is noise, not a corpus signal, even though it'd be
+   "100% corpus-tagged" by count alone. (b) Only once (a) clears: of the
+   rework that exists, is half or more tagged `brief-misalign`/`brand`?
+   If both gates clear, FIX_CORPUS fires, and the tag itself tells you
+   which corpus file is stale (the brief, or the brand standard).
 4. **HIRE check:** only if none of the above fired. Cross-reference
    capchecker's sustained-load signal against WIP per analyst (capchecker
    Q3, read manually until §5b's automation exists) ~ both maxed, no
@@ -190,9 +206,13 @@ above by hand:
    the router (`lib/analytics.ts`), fed by rework tags + cadence data.
    **REDESIGN and HIRE are built on deliberately non-overlapping evidence**
    ~ this matters, see the note below:
-   - rework rounds/report above threshold with ≥half tagged
-     `brief-misalign`/`brand` → **FIX_CORPUS**, pointing at the exact
-     corpus file to fix
+   - rework rounds/report above threshold FIRST (rework has to be
+     meaningfully frequent, not just present ~ a single tagged revision
+     among many clean reports is noise, not signal), AND, only among that
+     qualifying rework, ≥half tagged `brief-misalign`/`brand` →
+     **FIX_CORPUS**, pointing at the exact corpus file to fix. Same
+     two-gate order as §5a's manual version ~ frequency gate before
+     tag-share gate, always.
    - on-cadence rate below threshold, on cycles FIX_CORPUS hasn't already
      claimed (i.e. rework there is low, or tagged `client-new-ask`/`data`
      rather than `brief-misalign`/`brand`) → **REDESIGN** candidate. This

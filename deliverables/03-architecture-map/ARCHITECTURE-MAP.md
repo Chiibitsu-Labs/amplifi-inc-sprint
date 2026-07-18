@@ -61,7 +61,7 @@ AI starts. Here, every handoff is a decision, not a default.
 
 | # | Step | Who does what | Vault touchpoint |
 |---|---|---|---|
-| 1 | Brief | **H** owns client relationship · AI summarizes into living-brief shape | **V** `brief.md` created/updated; FAQs start |
+| 1 | Brief | **H** owns client relationship · AI summarizes into living-brief shape | **V** `brief.md` created/updated; FAQs start; **delivery-log row opened** (`Status = open`) ~ this is what makes an overdue cycle visible before anything ships |
 | 2 | Baseline | AI drafts from brief + data · **H** shapes unique asks | **V** reads `brief.md`; unique asks written back |
 | 3 | Internal alignment | **H** judgment call | **V** misalignments → learnings |
 | 4 | Present | **H** ~ the room is human | — |
@@ -69,7 +69,7 @@ AI starts. Here, every handoff is a decision, not a default.
 | 6 | Implement | **H** manages suppliers/vendors (process, not AI ~ see risks) | — |
 | 7 | Monthly analysis | AI synthesizes Sentimo/MCP pulls · **H** spot-checks | **V** reads `context.md` for what matters to this client |
 | 8 | Insights | **AI drafts** (insight skill) · **H** verifies ~ "VERIFICATION OF AI RESULTS" stays | **V** reads standards + full `insight-log.md` |
-| 9 | Report | AI outputs template-shaped draft → **QA gate** → **H** final verify → Canva polish | **V** reads `report-template-rules.md`; ship writes: insight-log entry + delivery-log row |
+| 9 | Report | AI outputs template-shaped draft → **QA gate** → **H** final verify → Canva polish → **second QA pass on the assembled deck** | **V** reads `report-template-rules.md`; ship writes: insight-log entry + delivery-log row UPDATED to `delivered` (row already existed from step 1, opened at period start) |
 | 10 | Internal alignment | **H** ~ faster because the QA gate ran first | — |
 | 11 | Client presentation | **H** ~ the relationship is the product | — |
 | 12 | Repeat | improve skill closes the loop | **V** learnings promoted weekly → next cycle starts smarter |

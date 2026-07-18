@@ -12,11 +12,18 @@ replace it. Flags are suggestions to a human who decides.
 ## Step 0 ~ Load the bar (rules live in the corpus, never in this skill)
 
 Required inputs, all of them:
-1. The report **draft** ~ markdown pre-Canva for the first pass, OR the
-   assembled deck (exported text/PDF, or screenshots of the key numbers)
-   for the required second pass after Canva transfer (see
-   `standards/report-template-rules.md` §"Two checkpoints, not one"). Same
-   checks, either input ~ note in the output header which one you ran.
+1. The report content, one of two forms depending on which checkpoint:
+   - **First pass (pre-Canva):** the full markdown draft. Run all five
+     checks.
+   - **Second pass (post-Canva, see `standards/report-template-rules.md`
+     §"Two checkpoints, not one"):** the FULL assembled deck (exported
+     text or PDF) if you want all five checks re-run. **Screenshots of
+     just the key numbers are only enough for check 4, Data integrity** ~
+     you cannot evaluate brief alignment, voice, actionability, or
+     compounding from numbers alone. If only screenshots are provided,
+     run check 4 only and mark checks 1, 2, 3, 5 as `NOT EVALUATED (deck
+     not provided)` in the output ~ never emit a PASS for checks you
+     couldn't actually see the content for.
 2. The **current period's source data** (the same Sentimo/MCP exports the
    draft was generated from). Without it, check 4 cannot trace a single
    figure ~ so if it's not provided, STOP and ask for it. Never run
@@ -51,21 +58,25 @@ If a standards file is an unfilled frame, run anyway but say so at the top:
    List any number that fails its OWN check ~ isn't in the export, can't
    be re-derived from it, and isn't a labeled historical figure ~ these go
    to the human verify step first. Also flag: any CURRENT-labeled figure
-   that's actually identical to a past insight-log entry (stale-template
-   ghost hiding as current data).
+   that matches a past insight-log entry AND cannot independently be
+   confirmed in the current-period export ~ that combination is the
+   stale-template ghost. A figure that matches a past value BUT is also
+   genuinely present in this period's export is a real flat metric, not a
+   ghost ~ flat is expected and explicitly allowed elsewhere in this
+   deliverable (the "boring months" trend-read case); don't flag it.
 5. **Compounding** ~ does the draft use the insight-log trend where it
    should? A quiet month with no trend read = flag.
 
 ## Step 2 ~ Report format (fixed)
 
 ```
-QA GATE ~ {client} {period} ~ {PASS | N flags}
+QA GATE ~ {client} {period} ~ {input: full draft | full deck | screenshots-only} ~ {PASS | N flags | partial}
 
-✔/✘ Brief alignment
-✔/✘ Voice & brand
-✔/✘ Actionability
-✔/✘ Data integrity
-✔/✘ Compounding
+✔/✘/— Brief alignment       (— = not evaluated, screenshots-only input)
+✔/✘/— Voice & brand         (— = not evaluated, screenshots-only input)
+✔/✘/— Actionability         (— = not evaluated, screenshots-only input)
+✔/✘   Data integrity        (always evaluated when any data is provided)
+✔/✘/— Compounding           (— = not evaluated, screenshots-only input)
 
 FLAGS (each: location → issue → suggested fix, one line each)
 1. {Exec summary ¶2} → {"maintain momentum" is a sole reco} → {add watch-threshold + experiment}

@@ -10,11 +10,17 @@ Format per entry ~ keep it tight, 5–10 lines. Link the full report, don't
 paste it.
 
 **Two touches per entry:** create it at ship (client reaction is genuinely
-unknown yet ~ don't guess), then update the one line at the next feedback
-moment (internal alignment, client presentation, or the delivery-log's
-acceptance touch, whichever comes first). A `pending` left unupdated for
-more than a cycle is a sign the feedback loop broke somewhere, not a
-sign nothing happened ~ worth a PROCESS note to the improve skill.
+unknown yet ~ don't guess), then update the one line at the next REAL
+client feedback moment ~ the client presentation, a client email/call
+reacting to the report, or (as a proxy for silent acceptance) the
+delivery-log's acceptance touch. **Internal alignment doesn't count** ~
+that's Amplifi reviewing its own work before the client ever sees it, and
+the insight skill reads this field as what the CLIENT thinks. Recording an
+internal reviewer's reaction here would make the skill treat internal
+opinions as client preference, which is worse than leaving it pending. A
+`pending` left unupdated for more than a cycle is a sign the feedback loop
+broke somewhere, not a sign nothing happened ~ worth a PROCESS note to the
+improve skill.
 
 ---
 
