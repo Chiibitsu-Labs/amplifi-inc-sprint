@@ -90,10 +90,13 @@ threshold crossed →
                  on-cadence.
  3. FIX CORPUS?  Is quality inconsistent because the standard lives in heads?
                  Evidence: rework is meaningfully frequent (not just
-                 present) AND, of that rework, half or more is tagged
-                 brief-misalign or brand ~ their exact loudest pain, and
-                 the two-gate order that keeps one stray tag from firing
-                 this on its own (see §5).
+                 present) AND, of the individual revision ROUNDS behind
+                 that rework (not the rows ~ a 5-round report with one
+                 brand fix and four client-new-ask fixes is 20% corpus,
+                 not 100%), half or more are tagged brief-misalign or
+                 brand ~ their exact loudest pain, and the two-gate order
+                 that keeps one stray tag from firing this on its own
+                 (see §5).
                  → route: Deliverable 1+2 ~ align the brief, encode the
                  standard. NEVER route this to hire.
  4. HIRE.        Only when 1–3 are ruled out AND capchecker's REBALANCE
@@ -206,17 +209,19 @@ No code, no wiring, no waiting on capchecker. Once each client's
      Below threshold, with `Rework tag` mostly `client-new-ask`/`data`/
      `none` rather than `brief-misalign`/`brand` → REDESIGN.
    - **Early warning (cycle time):** compare recent `Delivered − Start`
-     spans against the baseline (§7). Trending up even while still
+     spans against the baseline (§7), **on cycles whose rework (if any)
+     stays low or isn't corpus-tagged** ~ the same qualifier the
+     on-cadence read above already uses, applied here too so this bullet
+     is self-contained and doesn't need to borrow step 3's answer to
+     resolve itself. Trending up under that condition, even while still
      narrowly hitting `Due` → REDESIGN, flagged as "before it becomes a
      miss" ~ this is the row that keeps a slow slide from going unnoticed
-     until on-cadence formally breaches.
-   **Same exclusion applies to both reads:** only count cycles the
-   FIX_CORPUS check (step 3, below) hasn't already claimed ~ if the same
-   cycles driving a rising cycle-time trend are ALSO frequent and
-   majority corpus-tagged, that's FIX_CORPUS's evidence, not REDESIGN's.
-   Do step 3's frequency-and-tag-share read first if a cycle looks like it
-   could qualify for either, so the manual walkthrough and §5b's coded
-   version never disagree on the same data (Codex catch, 2026-07-18).
+     until on-cadence formally breaches. (A cycle that's slow BECAUSE its
+     rework is heavily corpus-tagged was never REDESIGN evidence to begin
+     with ~ that's what step 3 is for. Declared order stays intact:
+     AUTOMATE, then REDESIGN, then FIX_CORPUS, then HIRE, each with
+     self-contained evidence, none needing to look ahead at the next
+     step's answer first ~ Codex catch, 2026-07-18.)
    Either way REDESIGN does fire, name the clustering (one client? one
    handoff step?) as the evidence.
 3. **FIX_CORPUS check:** same logs, but two gates in order, not one ~
@@ -224,10 +229,15 @@ No code, no wiring, no waiting on capchecker. Once each client's
    rows with `Rounds ≥ 1` as a share of all accepted rows) above threshold?
    If rework is rare, stop here ~ one brand-tagged revision among many
    clean reports is noise, not a corpus signal, even though it'd be
-   "100% corpus-tagged" by count alone. (b) Only once (a) clears: of the
-   rework that exists, is half or more tagged `brief-misalign`/`brand`?
-   If both gates clear, FIX_CORPUS fires, and the tag itself tells you
-   which corpus file is stale (the brief, or the brand standard).
+   "100% corpus-tagged" by count alone. (b) Only once (a) clears: **count
+   at the round level, not the row level** ~ a 5-round report with one
+   `brand` cause and four `client-new-ask` causes is 20% corpus-driven,
+   not 100%; the delivery log keeps one tag entry per round specifically
+   so this is countable (see `delivery-log.md`). Of all the rework rounds
+   that exist across qualifying rows, is half or more tagged
+   `brief-misalign`/`brand`? If both gates clear, FIX_CORPUS fires, and
+   the tag itself tells you which corpus file is stale (the brief, or the
+   brand standard).
 4. **HIRE check:** only if none of the above fired ~ **including
    REBALANCE**, capchecker's live signal for one analyst overloaded while
    the team has headroom (check the dashboard's REBALANCE flag before
@@ -241,10 +251,13 @@ No code, no wiring, no waiting on capchecker. Once each client's
    evidence trail, already written down.
 
 Fifteen minutes, monthly, two documents open. This is the real router ~
-write the routing decision + evidence into a line in `learnings/patterns.md`
-or a short note to Mells, dated. **This is what Phase 3's "monthly
-threshold read" in the roadmap actually means** ~ it starts as soon as the
-data exists, not after any software ships.
+write the routing decision + evidence into
+`learnings/router-decisions.md` (its own file, own format ~ NOT
+`patterns.md`, which has a strict weekly tally schema written only by the
+promotion pass; a free-form decision entry would corrupt those counts).
+**This is what Phase 3's "monthly threshold read" in the roadmap actually
+means** ~ it starts as soon as the data exists, not after any software
+ships.
 
 ### 5b. Automating it into capchecker's dashboard (60–90d roadmap item)
 
@@ -261,18 +274,23 @@ above by hand:
    ~ this matters, see the note below:
    - rework rounds/report above threshold FIRST (rework has to be
      meaningfully frequent, not just present ~ a single tagged revision
-     among many clean reports is noise, not signal), AND, only among that
-     qualifying rework, ≥half tagged `brief-misalign`/`brand` →
+     among many clean reports is noise, not signal), AND, counted at the
+     ROUND level (not the row level ~ a row with one `brief-misalign`
+     round and four `client-new-ask` rounds is 20% corpus, not 100%; the
+     delivery log stores one tag per round so this is directly countable),
+     ≥half of qualifying rework rounds tagged `brief-misalign`/`brand` →
      **FIX_CORPUS**, pointing at the exact corpus file to fix. Same
      two-gate order as §5a's manual version ~ frequency gate before
      tag-share gate, always.
    - on-cadence rate below threshold, OR cycle time trending up against
      baseline while on-cadence still narrowly holds (the early-warning
-     path ~ §2), on cycles FIX_CORPUS hasn't already claimed (i.e. rework
-     there is low, or tagged `client-new-ask`/`data` rather than
-     `brief-misalign`/`brand`) → **REDESIGN** candidate. This is the
-     workflow/scheduling signal ~ on-cadence and cycle time live here and
-     nowhere else in the router.
+     path ~ §2), where the rework on those specific cycles (if any) is low
+     or isn't corpus-tagged → **REDESIGN** candidate. This condition is
+     self-contained (doesn't reference FIX_CORPUS's output) by design ~
+     both branches read the same rework-tag data independently, so which
+     one evaluates "first" in code never changes the answer for a given
+     cycle. This is the workflow/scheduling signal ~ on-cadence and cycle
+     time live here and nowhere else in the router.
    - HIRE requires ALL of: sustained load over the structural line (the
      live rule) AND WIP per analyst sustainedly elevated vs baseline (the
      capacity-ceiling signal ~ independent of cadence) AND capchecker's

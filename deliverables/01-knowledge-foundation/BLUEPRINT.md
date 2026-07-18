@@ -62,7 +62,8 @@ amplifi-knowledge/
     report-template-rules.md    # structure + branding rules every report follows
   learnings/
     README.md                   # how the improve skill writes here + the promotion path
-    patterns.md                 # the durable running tally, written by promotion, read by the instrument
+    patterns.md                 # weekly REWORK/PROCESS tally, written by promotion only
+    router-decisions.md         # monthly router walkthrough log (Instrument §5a) ~ separate schema from patterns.md
     (dated learning files accumulate here automatically)
 ```
 

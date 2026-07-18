@@ -49,14 +49,19 @@ was clean in the draft can still ship stale if the deck retained an old
 chart image or a typed-over number. So:
 - The markdown QA pass is checkpoint one: catches skill-introduced errors
   before Canva.
-- **Before sending to the client, re-run the QA skill's data-integrity
-  check against the assembled deck** (export as text/PDF, or screenshot
-  the key numbers) ~ same check, second checkpoint, catches what the
-  transfer step introduced. This is a few minutes, not a re-review.
+- **Before sending to the client, re-run the full QA skill against the
+  ASSEMBLED DECK EXPORT (text/PDF) ~ this is what clears the report to
+  ship.** Screenshots of just the key numbers are a faster interim
+  sanity-check an analyst can run anytime, but they only cover check 4
+  (data integrity) ~ see `skills/amplifi-qa/SKILL.md`. A screenshots-only
+  run cannot see stale charts, leftover branding, or structure drift
+  living outside whatever was screenshotted, which is exactly what this
+  checkpoint exists to catch. **Screenshots-only never counts as
+  clearance to send** ~ only a full-deck pass does.
 - Until this second pass is habitual, the existing human "VERIFICATION OF
-  AI RESULTS" step should explicitly include "does every number in the
-  deck match the QA'd draft" as a checklist line ~ don't let the deck be
-  the one artifact nothing checks.
+  AI RESULTS" step should explicitly include "has the full-deck QA pass
+  run and passed" as a checklist line ~ don't let the deck be the one
+  artifact nothing fully checks.
 
 ## Format notes
 

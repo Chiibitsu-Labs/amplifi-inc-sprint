@@ -50,7 +50,8 @@ clients/           per-client: living brief, brand standard, context,
 standards/         the Amplifi bar: what good looks like, house voice,
                    report template rules
 learnings/         auto-captured session learnings, promoted weekly;
-                   patterns.md is the durable tally the instrument reads
+                   patterns.md is the durable tally the instrument reads;
+                   router-decisions.md is the monthly hire-router audit trail
 ```
 
 *Chiibitsu Labs ~ more human, by design.*

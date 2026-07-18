@@ -75,7 +75,15 @@ later.
    have Rica (or whoever has edit access) apply them ~ don't claim
    "promoted" for anything not actually written.
 4. Prefix processed learning files with `archived-` (never archive before
-   step 2's destinations ~ including `patterns.md` ~ are written).
+   step 2's destinations ~ including `patterns.md` ~ are written). **This
+   step is not optional in the no-write fallback either** ~ if you printed
+   fenced-block edits in step 3 for Rica to apply by hand, the pass isn't
+   done until the renames ALSO happen (by Rica, or by you if you regain
+   write access later in the session). A source file left un-archived
+   still matches the dated-session-file pattern and gets read again next
+   week, double-counting its REWORK/PROCESS entries into `patterns.md`.
+   Don't report the promotion pass as complete until archival is
+   confirmed, same as you wouldn't claim "promoted" for an unwritten edit.
 
 Rica authors the standard; you sort, draft, and file. Never promote a
 STANDARD or CONTRADICTS item without a human yes.

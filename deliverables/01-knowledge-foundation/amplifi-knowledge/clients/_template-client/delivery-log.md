@@ -19,12 +19,17 @@
 3. **If the client asks for a revision:** bump `Rounds` by 1, top up
    `Effort (h)`, set `Rework tag`. First revision **replaces** the
    provisional `none` with the real cause. Every revision after that
-   **adds** to the existing tag(s) rather than replacing them ~ round 1
-   `brand`, round 2 `client-new-ask` → cell reads `brand, client-new-ask`,
-   never just the latest one (a later cause overwriting an earlier one
-   would hide a real corpus gap behind a coincidental second ask; `none`
-   never re-appears once a real cause has landed). `Status = revising` ~
-   **not** `accepted`. Repeat this touch for every additional round.
+   **appends** its own cause as a NEW entry ~ **one entry per round,
+   repeats allowed, never deduplicated.** Round 1 `brand`, round 2
+   `client-new-ask`, round 3 also `client-new-ask` → cell reads `brand,
+   client-new-ask, client-new-ask` (three entries for three rounds, not
+   two). This matters beyond bookkeeping: the instrument's FIX_CORPUS
+   check computes the corpus share PER ROUND (how many of the actual
+   revision rounds were corpus-caused, not just whether any round ever
+   was) ~ a row with one `brand` fix among four `client-new-ask` fixes is
+   20% corpus-driven, not 100%, and only the un-deduped list makes that
+   countable. `Status = revising` ~ **not** `accepted`. Repeat this touch
+   for every additional round.
 4. **At actual client acceptance ~ or after 5 business days of silence
    post-delivery with no revision request:** `Status = accepted`. Explicit
    sign-off and "no news" are both real acceptance signals ~ most reports
@@ -81,16 +86,17 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   every touch. Gut feel is fine; consistency beats precision.
 - **Rework tag** ~ **required, not optional, the moment `Rounds` goes above
   0** ~ the first round REPLACES the provisional `none`; every round after
-  that ADDS its cause, comma-separated, never overwrites the ones already
-  there: `brief-misalign` · `brand` · `data` · `client-new-ask`. `none` is
-  valid ONLY while `Rounds = 0`; a row with `Rounds ≥ 1` and tag `none` is an
-  incomplete row, not a real zero-rework report ~ the router can't act on
-  untagged rework, so it goes unrouted instead of pointing at
+  that APPENDS its own entry, one per round, repeats allowed, never
+  deduplicated: `brief-misalign` · `brand` · `data` · `client-new-ask`.
+  `none` is valid ONLY while `Rounds = 0`; a row with `Rounds ≥ 1` and tag
+  `none` is an incomplete row, not a real zero-rework report ~ the router
+  can't act on untagged rework, so it goes unrouted instead of pointing at
   automate/redesign/fix-corpus. (`brief-misalign` and `brand` are corpus
   gaps ~ they route to a corpus fix in the instrument, not to a hire. The
-  instrument reads "any `brief-misalign`/`brand` present" per row, so a
-  multi-tag row like `brand, client-new-ask` still counts toward
-  FIX_CORPUS's tag-share check.)
+  instrument computes FIX_CORPUS's tag share PER ROUND ~ count of
+  `brief-misalign`/`brand` entries ÷ total entries, which equals `Rounds`
+  ~ not per row, so a row like `brand, client-new-ask, client-new-ask`
+  counts as 1-in-3 corpus-tagged, not "corpus-tagged: yes/no.")
 
 ## The log
 
