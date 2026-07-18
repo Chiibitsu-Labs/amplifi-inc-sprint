@@ -53,7 +53,7 @@ a second job. Capture as byproduct, both times.
 
 | Signal | Definition | Feed | Why it predicts strain |
 |---|---|---|---|
-| **WIP per analyst** | active clients/tasks in flight per person | capchecker (daily Q3) | the "full hands" ceiling |
+| **WIP per analyst** | active clients/tasks in flight per person, from capchecker's `client_count` field (Q3, parsed to a number) | capchecker (daily Q3) | the "full hands" ceiling. **v1 threshold, same pattern as capchecker's other signals:** WIP baseline = trailing per-analyst average `client_count` once ≥10 working days of post-epoch data exist (mirrors `minHistoryDays`); WIP threshold = `client_count` ≥ baseline + 2, sustained on ≥5 of the last 10 working days (a lower bar than load's `structuralDays: 7` since WIP moves more slowly, day to day, than a self-rated feeling). Gut-seed like every other v1 number here ~ Michele adjusts once real distributions exist (§7). Without a stated number, "WIP sustainedly elevated" isn't checkable and two people could read the same dashboard and disagree ~ this is that number, however roughly. |
 | **Perceived load** | daily 1–10 self-rating + reason | capchecker (Q1+Q2) | earliest warning ~ people feel strain before metrics show it |
 | **Cycle time per report** | period start → delivered | delivery log | rising = falling behind cadence; the early-warning half of REDESIGN's evidence (see §3) ~ cycle time can trend up for weeks before it actually breaches the due date and shows up in on-cadence rate |
 | **On-cadence rate** | % reports delivered by their due date | delivery log | mixed weekly/bi-weekly/monthly clients; CLUSTERED misses (one client, one handoff) point at a workflow problem (routes to REDESIGN ~ see §3); BROAD misses across most clients/analysts, with WIP/load also elevated, point at capacity instead |
@@ -115,8 +115,26 @@ threshold crossed →
                  that keeps one stray tag from firing this on its own
                  (see §5).
                  → route: Deliverable 1+2 ~ align the brief, encode the
-                 standard. NEVER route this to hire.
- 4. HIRE.        Only when 1–3 are ruled out AND capchecker's REBALANCE
+                 standard. NEVER route this to hire. (Watch survivorship
+                 bias: `revising` rows aren't counted yet by design, but a
+                 backlog of long-open, high-round `revising` rows during
+                 an active problem means the accepted-only rate reads as a
+                 lower bound, not the truth ~ see §5.)
+ 4. HIRE.        Only when 1–3 are **portfolio-wide** ruled out ~ not just
+                 "some AUTOMATE/REDESIGN/FIX_CORPUS signal exists
+                 somewhere." A narrow signal on ONE client or theme,
+                 sitting alongside WIP/load elevated broadly across MOST
+                 clients and analysts, does not explain away team-wide
+                 strain ~ fixing that one thing wouldn't relieve the
+                 pressure the capacity signals are actually reporting.
+                 Only let an earlier branch block HIRE when its fix would
+                 plausibly absorb enough of the breach to matter; a small,
+                 already-being-handled signal shouldn't be allowed to
+                 permanently shield a real portfolio-wide capacity need
+                 (same principle as REDESIGN's clustering requirement
+                 above, applied to the whole chain: narrow ≠ portfolio-
+                 wide, and only portfolio-wide explanations rule out HIRE)
+                 AND capchecker's REBALANCE
                  signal is ALSO ruled out (this isn't one person absorbing
                  load while the team has headroom ~ that's a redistribution
                  fix, cheaper than a hire) AND capchecker's DATA signal is
@@ -214,7 +232,9 @@ the hard part, and it's done.
 ### 5a. How Michele runs the full chain by hand today
 
 No code, no wiring, no waiting on capchecker. Once each client's
-`delivery-log.md` has 3–4 weeks of rows (see §7):
+`delivery-log.md` has 3–4 weeks of rows (see §7 for why "3–4 weeks" means
+practice-ready, not calibrated ~ trust per client scales with completed
+cycles, not elapsed time):
 
 0. **Skim `learnings/patterns.md` first.** This is where the read
    actually happens ~ it's cross-week corroborating context for steps 1
@@ -288,7 +308,25 @@ No code, no wiring, no waiting on capchecker. Once each client's
    `brief-misalign`/`brand`? If both gates clear, FIX_CORPUS fires, and
    the tag itself tells you which corpus file is stale (the brief, or the
    brand standard).
-4. **HIRE check:** only if none of the above fired ~ **including
+   **Watch for survivorship bias before trusting a low reading:** clean
+   reports auto-resolve to `accepted` within 5 business days (the silent-
+   acceptance rule), but a report stuck in `revising` for weeks ~ the
+   worst-performing ones, almost by definition ~ never enters this
+   calculation until it finally finalizes. During an active quality
+   problem, that means the accepted-only rate can read artificially LOW
+   precisely because the highest-rework cycles haven't resolved yet. If
+   any `revising` rows are sitting with elevated `Rounds` and no
+   resolution in sight, treat the accepted-only number as a **lower
+   bound, not the real rate** ~ note the open backlog explicitly rather
+   than reporting a clean FIX_CORPUS read that a few weeks of hindsight
+   would contradict.
+4. **HIRE check:** only if none of the above fired **portfolio-wide** ~ a
+   narrow AUTOMATE/REDESIGN/FIX_CORPUS signal on ONE client while WIP/load
+   are elevated broadly across MOST clients/analysts doesn't explain away
+   the team-wide breach; that narrow fix wouldn't relieve it. Only let an
+   earlier branch block HIRE when fixing it would plausibly absorb enough
+   of the strain to matter ~ don't let a small, already-handled signal
+   permanently shield a real capacity need. This **including
    REBALANCE**, capchecker's live signal for one analyst overloaded while
    the team has headroom (check the dashboard's REBALANCE flag before
    anything else here; if it's firing, that's redistribution, not a hire,
@@ -345,7 +383,11 @@ above by hand:
      ≥half of qualifying rework rounds tagged `brief-misalign`/`brand` →
      **FIX_CORPUS**, pointing at the exact corpus file to fix. Same
      two-gate order as §5a's manual version ~ frequency gate before
-     tag-share gate, always.
+     tag-share gate, always. Also surface a separate warning (not a
+     blocking gate, just visibility) when `revising` rows with elevated
+     `Rounds` have been open unusually long ~ the accepted-only
+     calculation above is a lower bound while those exist, per §5a's
+     survivorship-bias note.
    - on-cadence rate below threshold, OR cycle time trending up against
      baseline while on-cadence still narrowly holds (the early-warning
      path ~ §2), where the rework on those specific cycles (if any) is low
@@ -366,14 +408,20 @@ above by hand:
      point at.
    - HIRE requires ALL of: sustained load over the structural line (the
      live rule) AND WIP per analyst sustainedly elevated vs baseline (the
-     capacity-ceiling signal ~ independent of cadence) AND capchecker's
-     REBALANCE not currently firing (no single analyst absorbing the load
-     while the team has headroom ~ that's redistribution, cheaper than a
-     hire) AND capchecker's DATA signal NOT currently firing (response
-     rate ≥70%/7d, ≥10 days history ~ "team-wide maxed" is only a real
-     claim when the responding sample actually represents the team) AND
-     automate + redesign + fix-corpus not currently firing ~ the chain
-     enforced in code, not just in prose. **HIRE never reads
+     capacity-ceiling signal ~ independent of cadence, threshold defined
+     in §2) AND capchecker's REBALANCE not currently firing (no single
+     analyst absorbing the load while the team has headroom ~ that's
+     redistribution, cheaper than a hire) AND capchecker's DATA signal NOT
+     currently firing (response rate ≥70%/7d, ≥10 days history ~
+     "team-wide maxed" is only a real claim when the responding sample
+     actually represents the team) AND automate + redesign + fix-corpus
+     not firing **portfolio-wide** ~ a narrow signal scoped to one client
+     or theme, isolated from the broad WIP/load elevation, shouldn't count
+     as an explanation (v1 code check: is the automate/redesign/fix-corpus
+     signal's scope ~ client(s)/theme it names ~ a small fraction of the
+     clients showing elevated WIP/load, or most of them? Small fraction
+     doesn't block HIRE; most of them does) ~ the chain enforced in code,
+     not just in prose. **HIRE never reads
      on-cadence or cycle time.** A cadence problem is, by construction, a
      REDESIGN or FIX_CORPUS matter first; if HIRE also required cadence
      degraded as corroboration, any miss severe enough to justify a hire
@@ -409,13 +457,23 @@ above by hand:
 ## 7. Baselines & calibration (v1 honesty)
 
 Thresholds can't be known upfront ~ v1 sets baselines, reality sharpens
-them. Say it plainly; it's not a weakness, it's the method:
+them. Say it plainly; it's not a weakness, it's the method.
+
+**Elapsed weeks aren't the same as completed cycles, and that matters
+here.** A weekly-cadence client has ~4 completed reports by week 4 ~
+enough for a rough trend. A monthly-cadence client has exactly ONE. One
+data point isn't a baseline, it's an anecdote ~ treating week-4 as
+"calibrated" for a monthly client would let a single early-or-late report
+silently become the number REDESIGN/FIX_CORPUS get judged against. So
+calibration is gated on **completed cycles per client, not calendar
+time**:
 
 | Phase | What happens |
 |---|---|
 | Weeks 1–2 | delivery logs start filling; capchecker keeps accumulating post-epoch data |
-| Weeks 3–4 | first baselines: normal cycle time, rework rounds, on-cadence rate per client cadence-type; Michele sets first-pass thresholds (her gut numbers ~ the seed, not the truth). **First manual router walk-through (§5a) happens here** ~ rough thresholds are enough to practice the chain and catch obvious REDESIGN/FIX_CORPUS calls, even before they're calibrated |
-| Weeks 5+ | thresholds calibrate against real distributions; quarterly review with Michele; manual router walk-through continues monthly whether or not §5b's automation has shipped yet |
+| Weeks 3–4 | **First manual router walk-through (§5a) happens here, as PRACTICE, not as a trusted baseline** ~ weekly-cadence clients have enough completed cycles by now for a rough real read; monthly-cadence clients have one data point, so treat any monthly-client REDESIGN/FIX_CORPUS call from this walkthrough as provisional and say so out loud, not as calibrated fact. Michele sets first-pass thresholds (her gut numbers ~ the seed, not the truth) |
+| Per client, once ≥3 completed cycles exist | **THIS is when a client's baseline is actually trustworthy** ~ weekly clients: ~3 weeks in. Bi-weekly: ~6 weeks. Monthly: ~3 months. Don't force a single elapsed-time milestone across cadences that move at different speeds; gate trust on sample size, not the calendar. Until a client crosses this bar, pool it qualitatively with `patterns.md`'s cross-week themes rather than trusting its own thin numbers in isolation. |
+| Weeks 5+ (team-wide) | thresholds calibrate against real distributions as more clients cross their own 3-cycle bar; quarterly review with Michele; manual router walk-through continues monthly whether or not §5b's automation has shipped yet |
 
 **Ongoing calibration + evolution is the continuing relationship** ~
 thresholds are living numbers, and the instrument reads the whole system

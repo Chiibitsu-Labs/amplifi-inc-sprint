@@ -73,15 +73,17 @@ was clean in the draft can still ship stale if the deck retained an old
 chart image or a typed-over number. So:
 - The markdown QA pass is checkpoint one: catches skill-introduced errors
   before Canva.
-- **Before sending to the client, re-run the full QA skill against the
-  ASSEMBLED DECK EXPORT (text/PDF) ~ this is what clears the report to
-  ship.** Screenshots of just the key numbers are a faster interim
-  sanity-check an analyst can run anytime, but they only cover check 4
-  (data integrity) ~ see `skills/amplifi-qa/SKILL.md`. A screenshots-only
-  run cannot see stale charts, leftover branding, or structure drift
-  living outside whatever was screenshotted, which is exactly what this
-  checkpoint exists to catch. **Screenshots-only never counts as
-  clearance to send** ~ only a full-deck pass does.
+- **Before sending to the client, re-run the full QA skill against a
+  VISUALLY-RENDERED export of the assembled deck ~ page images or a PDF
+  that actually shows charts/logos/layout, not a text-only extraction.
+  This is what clears the report to ship.** A text-only export or
+  screenshots of just the key numbers are a faster interim sanity-check
+  an analyst can run anytime, but they only cover check 4 (data
+  integrity) ~ see `skills/amplifi-qa/SKILL.md`. Neither can see stale
+  chart IMAGES, wrong logos, or off-brand layout ~ exactly what this
+  checkpoint exists to catch, and exactly what a text extraction drops
+  even when it technically counts as "the full deck." **Only a
+  visually-rendered full-deck pass counts as clearance to send.**
 - Until this second pass is habitual, the existing human "VERIFICATION OF
   AI RESULTS" step should explicitly include "has the full-deck QA pass
   run and passed" as a checklist line ~ don't let the deck be the one

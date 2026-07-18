@@ -15,14 +15,18 @@
    still `open`, that cycle is already a cadence miss even though nothing
    has shipped yet. Don't wait for delivery to log the cycle.
 1.5. **If the QA gate or internal alignment (steps 9–10) catches and
-   corrects a `brief-misalign` or `brand` issue BEFORE the client ever
-   sees the report:** bump `Rounds`, append the cause (same rules as
-   touch 3, below) ~ right then, while `Status` is still `open` (nothing
-   has shipped yet). This is real rework and a real corpus signal ~ if it
-   only counted client-requested revisions, FIX_CORPUS would never see
-   the brief/brand problems the QA gate is specifically catching and
-   fixing before they reach the client, which understates the exact
-   pain (rework, standard-in-heads) this instrument exists to route on.
+   corrects ANY material issue BEFORE the client ever sees the report ~
+   `brief-misalign`, `brand`, or `data`** (not just the corpus-tagged
+   two): bump `Rounds`, append the cause (same rules as touch 3, below)
+   ~ right then, while `Status` is still `open` (nothing has shipped
+   yet). This is real rework regardless of which tag it carries ~
+   recording only `brief-misalign`/`brand` internal catches while
+   silently skipping internal `data` corrections would inflate the
+   corpus-tag SHARE artificially (imagine four internal `data` fixes and
+   one `brand` fix in one cycle: skipping the four makes that a
+   single 100%-corpus round instead of five rounds at a real 20% share).
+   The tag vocabulary doesn't change ~ `client-new-ask` still can't apply
+   here, there's no client yet ~ only which catches get recorded does.
    Skip this touch entirely for cycles where internal review found
    nothing to fix ~ most of them, hopefully.
 2. **At ship:** fill `Delivered`, top up `Effort (h)`. `Status = delivered`.

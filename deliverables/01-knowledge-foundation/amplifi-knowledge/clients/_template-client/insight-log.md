@@ -11,16 +11,26 @@ paste it.
 
 **Two touches per entry:** create it at ship (client reaction is genuinely
 unknown yet ~ don't guess), then update the one line at the next REAL
-client feedback moment ~ the client presentation, a client email/call
-reacting to the report, or (as a proxy for silent acceptance) the
-delivery-log's acceptance touch. **Internal alignment doesn't count** ~
-that's Amplifi reviewing its own work before the client ever sees it, and
-the insight skill reads this field as what the CLIENT thinks. Recording an
-internal reviewer's reaction here would make the skill treat internal
-opinions as client preference, which is worse than leaving it pending. A
-`pending` left unupdated for more than a cycle is a sign the feedback loop
-broke somewhere, not a sign nothing happened ~ worth a PROCESS note to the
-improve skill.
+client feedback moment ~ the client presentation, or a client email/call
+reacting to the report. **Two things don't count as real feedback, and
+recording them as if they were is the same category error either way:**
+- **Internal alignment** ~ that's Amplifi reviewing its own work before
+  the client ever sees it.
+- **The delivery-log's 5-day silent-acceptance touch** ~ that touch
+  exists to let the REWORK signal treat "no news" as a real, countable
+  zero-rework outcome (§ elsewhere in this corpus), which is a fair
+  proxy for "nothing needed fixing." It is NOT a fair proxy for "the
+  client liked the recommendations" ~ silence isn't endorsement, it
+  might just mean nobody read it closely yet. If that touch fires before
+  any real feedback moment, set `Client reaction` to `no feedback /
+  administratively accepted` ~ a distinct value, never `accepted`.
+The insight skill reads this field as what the CLIENT thinks; treating
+internal opinion OR silence as client preference is worse than leaving it
+pending, because a future report might then deliberately avoid a
+recommendation the client never actually rejected. A `pending` (or
+`no feedback`) left unupdated for more than a cycle is a sign the
+feedback loop broke somewhere, not a sign nothing happened ~ worth a
+PROCESS note to the improve skill.
 
 ---
 
@@ -30,7 +40,7 @@ improve skill.
 **Data notes:** {volume/engagement level, anomalies, source gaps}
 **Recommendations made:** {1–3 bullets}
 **Client reaction:** `pending` at ship → update once known: {accepted /
-pushed back / asked for X}
+pushed back / asked for X / no feedback ~ administratively accepted}
 **Watch next period:** {the thread to pick up}
 **Full report:** {Drive link}
 

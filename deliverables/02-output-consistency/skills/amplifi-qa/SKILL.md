@@ -12,18 +12,29 @@ replace it. Flags are suggestions to a human who decides.
 ## Step 0 ~ Load the bar (rules live in the corpus, never in this skill)
 
 Required inputs, all of them:
-1. The report content, one of two forms depending on which checkpoint:
+1. The report content, one of three tiers depending on which checkpoint
+   AND what you're actually shown ~ these are not interchangeable:
    - **First pass (pre-Canva):** the full markdown draft. Run all five
      checks.
-   - **Second pass (post-Canva, see `standards/report-template-rules.md`
-     §"Two checkpoints, not one"):** the FULL assembled deck (exported
-     text or PDF) if you want all five checks re-run. **Screenshots of
-     just the key numbers are only enough for check 4, Data integrity** ~
-     you cannot evaluate brief alignment, voice, actionability, or
-     compounding from numbers alone. If only screenshots are provided,
-     run check 4 only and mark checks 1, 2, 3, 5 as `NOT EVALUATED (deck
-     not provided)` in the output ~ never emit a PASS for checks you
-     couldn't actually see the content for.
+   - **Second pass, FULL CLEARANCE (post-Canva, see
+     `standards/report-template-rules.md` §"Two checkpoints, not one"):**
+     a **visually-rendered export** ~ page images/screenshots of every
+     slide, or a PDF exported so charts, logos, and positioned text are
+     actually rendered (not a raw text-extraction of a PDF, which drops
+     exactly the visual layer this checkpoint exists to check). Run all
+     five checks. This is the ONLY tier that counts as clearance to ship.
+   - **Second pass, TEXT-ONLY (a lesser tier, not clearance):** a bare
+     text export/extraction with no visual rendering. Run check 4 only ~
+     text can confirm numbers but tells you nothing about a stale chart
+     image, wrong logo, or off-brand layout, which is most of what this
+     checkpoint is FOR. Mark checks 1, 2, 3, 5 as `NOT EVALUATED (no
+     visual render provided)`.
+   - **Screenshots of just the key numbers:** same tier as text-only ~
+     check 4 only, same `NOT EVALUATED` marks on the rest.
+   Never emit a PASS, and never imply clearance, for checks you couldn't
+   actually see the content for. If what you're given doesn't visually
+   render the deck, say so explicitly in the output header before running
+   anything.
 2. The **current period's source data** (the same Sentimo/MCP exports the
    draft was generated from). Without it, check 4 cannot trace a single
    figure ~ so if it's not provided, STOP and ask for it. Never run
@@ -70,7 +81,7 @@ If a standards file is an unfilled frame, run anyway but say so at the top:
 ## Step 2 ~ Report format (fixed)
 
 ```
-QA GATE ~ {client} {period} ~ {input: full draft | full deck | screenshots-only} ~ {PASS | N flags | partial}
+QA GATE ~ {client} {period} ~ {input: full draft | visually-rendered deck (clears) | text-only/screenshots (does NOT clear)} ~ {PASS | N flags | partial}
 
 ✔/✘/— Brief alignment       (— = not evaluated, screenshots-only input)
 ✔/✘/— Voice & brand         (— = not evaluated, screenshots-only input)
