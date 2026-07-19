@@ -347,16 +347,23 @@ this, `brief-misalign (not-followed)` if it already did and this pass
 just caught it not being applied. This isn't optional: delivery-log.md's
 router treats a corpus-tagged entry with no qualifier as incomplete data,
 same as a missing tag entirely. IF THE TAG IS BRAND SPECIFICALLY: the
-qualifier needs a SECOND part too, since check 2 covers two different
+qualifier needs a SECOND part too, since check 2 covers THREE different
 corpus files ~ SLASH-separated, never comma-separated (a comma here would
 parse as a second round entry and break the round-count check).
 **The two parts are chosen INDEPENDENTLY, never a fixed pairing:** pick
 `missing` or `not-followed` based on WHY (the standard didn't cover this,
-vs it did and just wasn't applied), and SEPARATELY pick `house-voice` or
-`brand-standard` based on WHICH file the violation was actually against
-~ all four combinations are real (`brand (missing/house-voice)`, `brand
+vs it did and just wasn't applied), and SEPARATELY pick `house-voice`,
+`brand-standard`, or `report-template-rules` based on WHICH file the
+violation was actually against
+~ all six combinations are real (`brand (missing/house-voice)`, `brand
 (not-followed/house-voice)`, `brand (missing/brand-standard)`, `brand
-(not-followed/brand-standard)`). Don't default to `missing` just because
+(not-followed/brand-standard)`, `brand (missing/report-template-rules)`,
+`brand (not-followed/report-template-rules)`). Check 2's own scope
+(above) covers terminology/formatting/structure against
+`report-template-rules.md` AND `clients/{client}/brand-standard.md` as
+two SEPARATE files, so a catch against the template rules needs
+`report-template-rules` here, never folded into `brand-standard` just
+because both are formatting-adjacent. Don't default to `missing` just because
 the file is `house-voice`, or to `not-followed` just because it's
 `brand-standard` ~ an already-encoded house-voice rule someone simply
 didn't apply is `not-followed/house-voice`, not `missing/house-voice`;

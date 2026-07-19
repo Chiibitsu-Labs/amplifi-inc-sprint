@@ -439,8 +439,11 @@ pipe in any cell (`Dale \| Janelle`), never a bare `|`.
   contradicting the trust rule stated elsewhere in this same file at the
   `Status` bullet below and `INSTRUMENT.md` §5a's gate (a), Codex catch,
   2026-07-19). A `cancelled` row's dated rounds are ALSO trusted, but
-  narrower still ~ see `INSTRUMENT.md` §5a's round-level cohort for the
-  numerator/gate-(b)-only scope that applies there.
+  narrower still ~ gate (b)'s tag-share ONLY, never gate (a)'s
+  rounds-per-report numerator (a cancelled row never became a report, so
+  it has no place in gate (a)'s denominator either) ~ see
+  `INSTRUMENT.md` §5a's gate (b) definition for exactly why the two
+  gates read different round sets here.
 - **Effort (h)** ~ rough total hours, self-estimated, running total across
   every touch. Gut feel is fine; consistency beats precision.
 - **Rework tag** ~ **required, not optional, the moment `Rounds` goes above
@@ -526,20 +529,37 @@ pipe in any cell (`Dale \| Janelle`), never a bare `|`.
   WHERE to look, this qualifier as WHETHER editing the corpus is actually
   the fix.
 
-  **`brand` specifically covers TWO different corpus files, and the tag
+  **`brand` specifically covers THREE different corpus files, and the tag
   alone can't say which ~ its qualifier carries a second component to
   disambiguate, SLASH-separated, never comma-separated.** **The two
   components are INDEPENDENT axes, never a fixed pairing ~ cause
   (`missing`/`not-followed`) says WHY, source (`house-voice`/
-  `brand-standard`) says WHICH FILE, and all four combinations are real,
+  `brand-standard`/`report-template-rules`) says WHICH FILE, and all six
+  combinations are real,
   distinct findings:** `brand (missing/house-voice)` (the shared standard
   genuinely didn't cover this), `brand (not-followed/house-voice)` (the
   shared standard already covered it, just wasn't applied), `brand
   (missing/brand-standard)` (this client's own standard genuinely didn't
   cover this), `brand (not-followed/brand-standard)` (this client's own
-  standard already covered it, just wasn't applied). Never assume
+  standard already covered it, just wasn't applied), `brand
+  (missing/report-template-rules)` (the current template's own
+  formatting/structure rules genuinely didn't cover this), `brand
+  (not-followed/report-template-rules)` (the template rules already
+  covered it, just wasn't applied). **`report-template-rules` is a
+  distinct third source, not folded into `brand-standard`** ~
+  `amplifi-qa/SKILL.md` check 2 explicitly checks terminology/formatting/
+  structure against `report-template-rules.md` AND
+  `clients/{client}/brand-standard.md` as two separate files, and without
+  a matching qualifier value a check-2 catch against
+  `report-template-rules.md` has no valid source to record: `house-voice`
+  is factually wrong (a different file caught it), `brand-standard` is
+  also wrong (a different file caught it), and logging no source at all
+  makes the row incomplete data, hard-blocking routing the same as a
+  missing qualifier does elsewhere in this cell (Codex catch,
+  2026-07-19). Never assume
   `missing` implies `house-voice` or `not-followed` implies
-  `brand-standard` ~ an already-encoded house-voice rule that was simply
+  `brand-standard` (or any other fixed pairing across the three sources)
+  ~ an already-encoded house-voice rule that was simply
   ignored is `not-followed/house-voice`, not `missing/house-voice`, and
   logging it as `missing` would incorrectly send FIX_CORPUS to edit a
   file that was never broken while masking the real execution gap; a

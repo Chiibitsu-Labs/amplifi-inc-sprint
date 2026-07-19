@@ -203,8 +203,29 @@ grouping rule below for why that corrupts cross-week recurrence).
      point of promoting it. Purely qualitative CLIENT-FACTs (a preference,
      a rejected idea, "don't use humor in captions") don't need this ~
      the date requirement is for metrics specifically.
-   - `STANDARD` → the matching `standards/` file, drafted as an edit in that
-     file's own format
+   - `STANDARD` → **two different destinations depending on WHOSE standard
+     it is, not one.** A lesson about Amplifi's own house voice, the
+     quality bar, or the current report template ~ true for every client
+     ~ goes to the matching shared `standards/` file, drafted as an edit
+     in that file's own format. **But a lesson that's specific to ONE
+     client** (a revision teaches a client-specific voice preference,
+     terminology correction, or formatting deviation ~ "this client hates
+     the word 'viral'," "always spell out their product name in full")
+     **goes to THAT client's `clients/{x}/brand-standard.md` instead,
+     under its "Revision history lessons" section, per that file's own
+     documented mechanism and `ARCHITECTURE-MAP.md`'s workflow step 5**
+     ("every correction → `brand-standard.md` / FAQs ~ the same note
+     never twice"). Writing a client-specific lesson into the shared
+     `standards/` file would globalize one client's preference across
+     every account; leaving it uncaptured because the shared file felt
+     like the only STANDARD destination would let the same correction
+     recur next cycle, exactly what `brand-standard.md`'s revision-history
+     section exists to prevent (Codex catch, 2026-07-19). Resolve `{x}`
+     the SAME way the `CLIENT-FACT` bullet above does ~ against the
+     learning's own client identity (header or `[ClientName]` bracket),
+     matched to the actual slugged folder via `brief.md` Snapshot, never
+     the raw display name; flag to Rica rather than guess if no folder
+     matches or more than one plausibly does, same as `CLIENT-FACT`.
    - `CONTRADICTS` → the correction, highlighted for Rica's explicit yes/no
    - `REWORK` / `PROCESS` → append a dated pattern entry (theme, count,
      which clients) to `learnings/patterns.md` ~ the durable, append-only

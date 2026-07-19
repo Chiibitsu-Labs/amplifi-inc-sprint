@@ -55,7 +55,7 @@ a second job. Capture as byproduct, both times.
 |---|---|---|---|
 | **WIP per analyst** | active clients/tasks in flight per person, from capchecker's `client_count` field (Q3, parsed to a number) | capchecker (daily Q3) | the "full hands" ceiling. **v1 threshold, same pattern as capchecker's other signals:** WIP baseline = per-analyst average `client_count` over a **FROZEN** reference window ~ the first 10 working days once `client_count` data starts (mirrors `SCALE_EPOCH`'s frozen-reference pattern, not `minHistoryDays`'s rolling one). **The healthy-window guard applies to THIS initial freeze too, not just quarterly recalibration** ~ there's no prior baseline to compare the first window against, so the check instead cross-reads capchecker's perceived-load signal (Q1, already live daily) over that same first-10-days window: if load is ALSO reading structurally elevated during it (not just a rough day or two), that's a sign tracking started mid-overload, and the initial window normalizes strain instead of measuring a genuine baseline ~ the exact failure mode the quarterly guard exists to prevent, just hit on day one instead of at a quarterly boundary. In that case, don't freeze from this window: flag it to Michele and either **discard it entirely and start a fresh 10-working-day window once load reads normal** (extending the same tainted window by appending more days still leaves the original overloaded days inside the average, keeping the frozen baseline elevated and making later `baseline + 2` breaches harder to reach than they honestly should be ~ the average has to be over a genuinely clean window, not a padded one), or seed the baseline manually from her judgment of what a normal WIP count looks like, noting it as a judgment call to revisit once a genuinely calm window is observed. **A second, independent gate on the same window: per-analyst observation completeness.** The healthy-window check above validates that the window isn't a hidden overload; it says nothing about whether a given analyst actually ANSWERED enough of it to average meaningfully ~ Q3 is one of three daily taps and can go unanswered like any of them, and an analyst who logs a parseable `client_count` on only 2 of the 10 window days can have their personal baseline set almost entirely by whichever 2 days happened to be light, making every ordinary day afterward misread as `baseline + 2` sooner than it honestly should. Require, per analyst, **at least 7 of the 10 window days with a valid parsed `client_count`** before freezing THAT analyst's baseline (mirrors DATA's own ≥70%/7d response-rate bar, same reasoning, applied to WIP instead of daily-checkin-as-a-whole) ~ an analyst who falls short gets their window quietly extended a few more working days rather than frozen on a thin sample, flagged to Michele as running on a manual/unseeded baseline meanwhile. **Extension defined precisely, not left as "add some more days":** extend one working day at a time and re-test after each ~ does the analyst's MOST RECENT 10 working days (a sliding 10-day window, not a growing one) now contain ≥7 valid observations? Stop extending the moment yes. Freeze the baseline from THAT final 10-working-day window specifically (average the valid observations within it, not every observation collected across the whole extended span ~ older days that fell out of the final 10-day window don't count, same as they wouldn't for an analyst who cleared the bar on day one). Re-apply the healthy-window guard (the perceived-load cross-check, above) to this SAME final window before freezing, not just the original first 10 days ~ extending for observation-completeness doesn't exempt the extended window from also needing to be a genuinely healthy one. This is a per-analyst gate, not a per-team one ~ one analyst's sparse week shouldn't hold up freezing everyone else's baseline on schedule. **Deliberately not a continuously-rolling trailing average** ~ a rolling baseline absorbs the same sustained increase the threshold is supposed to catch (10 days at 3, then a genuine step up to 5: a rolling baseline creeps from 3.0 toward 3.2 on day one of the increase, chasing the threshold it's compared against, so a real sustained rise can mathematically never clear "baseline + 2" ~ Codex catch, 2026-07-18). WIP threshold = `client_count` ≥ frozen baseline + 2, sustained on ≥5 of the last 10 working days (a lower bar than load's `structuralDays: 7` since WIP moves more slowly, day to day, than a self-rated feeling) ~ **and the same ≥7-of-10-valid-observations bar from the initial freeze applies to EVERY evaluated 10-day window, not just the freeze itself.** Q3 can go unanswered or come back unparsable independently of the other two daily taps, so an analyst with only 5 valid `client_count` readings (all of them high) and 5 missing/unparsable ones in the current window could technically satisfy "≥5 of the last 10 working days ≥ baseline + 2" on a half-empty sample, even while capchecker's general DATA flag stays clear off their Q1/Q2 answers. Require the same ≥7-of-10-valid-`client_count` coverage before letting a live window corroborate HIRE ~ a window that falls short doesn't clear WIP's threshold either way, it's read as insufficient data and flagged, not as evidence of anything. The frozen baseline itself still recalculates only at quarterly calibration (§7) ~ **and only from a window confirmed to be healthy, never blindly from "whatever the last N days looked like."** A blind quarterly reset reproduces the exact bug the freeze exists to prevent: if WIP rose from a genuine baseline of 3 to a sustained breach at 5 shortly before a quarterly boundary, recalculating from the most recent days would set the new baseline to 5 and the new threshold to 7 ~ silently clearing an overload that was never resolved, just relabeled as normal. Rule: if the WIP threshold is CURRENTLY firing (or fired at any point in the window under consideration) when quarterly calibration comes around, carry the OLD baseline forward unchanged rather than recalculating from an active-breach window; only recalculate from a period that was itself below threshold, confirming it reflects genuinely healthy load, not a new-normal that's actually still the problem (Codex catch, 2026-07-18). Gut-seed like every other v1 number here ~ Michele adjusts the FORMULA (window length, +2 margin) at quarterly review, and the baseline VALUE only from confirmed-healthy data ~ **at the initial freeze as well as every quarterly recalibration after it** ~ never mid-cycle and never from an unresolved breach. Without a stated number, "WIP sustainedly elevated" isn't checkable and two people could read the same dashboard and disagree ~ this is that number, however roughly. |
 | **Perceived load** | daily 1–10 self-rating + reason | capchecker (Q1+Q2) | earliest warning ~ people feel strain before metrics show it |
-| **Cycle time per report** | period start → delivered | delivery log | rising = falling behind cadence; the early-warning half of REDESIGN's evidence (see §3) ~ cycle time can trend up for weeks before it actually breaches the due date and shows up in on-cadence rate. **v1 threshold, same frozen-reference pattern as WIP above, so "trending up" is a checkable number instead of a vibe:** `Delivered − Start` is counted in **WORKING days, not calendar days** ~ same unit as WIP's window and the 5-business-day silent-acceptance rule elsewhere in this doc, for one consistent business calendar across every signal here rather than mixing units; a Friday `Start` to Monday `Delivered` is 1 working day, not 3 calendar days, and holidays follow whatever calendar capchecker/the team already treats as non-working (no new calendar to maintain). Per-client baseline = that client's average `Delivered − Start` WORKING-day span over their first 3 completed cycles ~ reuses §7's existing ≥3-completed-cycles mark (the point §7 already calls a client's own numbers trustworthy) instead of inventing a second threshold. **Healthy-seed guard, same principle as WIP's above, but no live independent cross-signal exists here to automate it against** ~ WIP could cross-check perceived load because both are captured in real time; cycle time's first 3 cycles are, by construction, the ONLY data that exists yet, so there's nothing independent to compare them against. A client whose first 3 cycles are already slow but still narrowly meet `Due` would freeze that slowness as "normal," and neither on-cadence (still clean) nor the `+20%` threshold (measured against an already-elevated baseline) would ever catch it. So this gate is a human judgment call, not a code check: before trusting the freeze, Michele/Rica confirm out loud that the seed cycles reflect ordinary pace ~ not a client's first-ever onboarding cycles, not a known short-staffed stretch, nothing already flagged as unusual. If there's real doubt, don't freeze silently: seed the baseline manually from Michele's judgment of what normal cycle time looks like for that cadence (same manual-seed fallback WIP offers), and revisit once enough cycles exist to judge it properly. FROZEN, not rolling, same reason as WIP's baseline: a rolling average would absorb the exact sustained slide this signal exists to catch. "Trending up" = the client's trailing-90-day cohort (§3's fixed-cohort rule) average cycle time exceeds the frozen baseline by ≥20%, **OR by ≥1 full working day, whichever margin is LARGER** ~ the absolute floor matters specifically when the frozen baseline itself is zero or near-zero (a client whose first 3 cycles all shipped same-day as their scheduled `Start`, `Delivered − Start` = 0 working days each): a pure percentage margin off a zero baseline is mathematically undefined, or worse, trivially satisfied by ANY nonzero cycle time at all (0 × 1.2 = 0, so a single perfectly normal 1-day cycle would already read as "exceeding" the threshold), spuriously firing REDESIGN's early-warning check on a client that's actually still shipping same-day or next-day (Codex catch, 2026-07-19). This floor changes nothing for a normal, nonzero baseline, where the percentage margin is already the larger and more sensitive of the two in most cases ~ gut-seeded like every other v1 margin here, Michele adjusts both numbers at quarterly review. Recalibrates only at quarterly review, from a confirmed-healthy window ~ same guard as WIP's baseline (above): never recalculate from a window where cycle time is itself currently trending up, or the baseline just relabels the slide as the new normal. |
+| **Cycle time per report** | period start → delivered | delivery log | rising = falling behind cadence; the early-warning half of REDESIGN's evidence (see §3) ~ cycle time can trend up for weeks before it actually breaches the due date and shows up in on-cadence rate. **v1 threshold, same frozen-reference pattern as WIP above, so "trending up" is a checkable number instead of a vibe:** `Delivered − Start` is counted in **WORKING days, not calendar days** ~ same unit as WIP's window and the 5-business-day silent-acceptance rule elsewhere in this doc, for one consistent business calendar across every signal here rather than mixing units; a Friday `Start` to Monday `Delivered` is 1 working day, not 3 calendar days, and holidays follow whatever calendar capchecker/the team already treats as non-working (no new calendar to maintain). Per-client baseline = that client's average `Delivered − Start` WORKING-day span over their first 3 completed cycles ~ reuses §7's existing ≥3-completed-cycles mark (the point §7 already calls a client's own numbers trustworthy) instead of inventing a second threshold. **Healthy-seed guard, same principle as WIP's above, but no live independent cross-signal exists here to automate it against** ~ WIP could cross-check perceived load because both are captured in real time; cycle time's first 3 cycles are, by construction, the ONLY data that exists yet, so there's nothing independent to compare them against. A client whose first 3 cycles are already slow but still narrowly meet `Due` would freeze that slowness as "normal," and neither on-cadence (still clean) nor the `+20%` threshold (measured against an already-elevated baseline) would ever catch it. So this gate is a human judgment call, not a code check: before trusting the freeze, Michele/Rica confirm out loud that the seed cycles reflect ordinary pace ~ not a client's first-ever onboarding cycles, not a known short-staffed stretch, nothing already flagged as unusual. If there's real doubt, don't freeze silently: seed the baseline manually from Michele's judgment of what normal cycle time looks like for that cadence (same manual-seed fallback WIP offers), and revisit once enough cycles exist to judge it properly. FROZEN, not rolling, same reason as WIP's baseline: a rolling average would absorb the exact sustained slide this signal exists to catch. "Trending up" = the client's trailing-90-day cohort (§3's fixed-cohort rule) average cycle time exceeds the frozen baseline by ≥20%, **OR by ≥1 full working day, whichever margin is LARGER** ~ the absolute floor matters specifically when the frozen baseline itself is zero or near-zero (a client whose first 3 cycles all shipped same-day as their scheduled `Start`, `Delivered − Start` = 0 working days each): a pure percentage margin off a zero baseline is mathematically undefined, or worse, trivially satisfied by ANY nonzero cycle time at all (0 × 1.2 = 0, so a single perfectly normal 1-day cycle would already read as "exceeding" the threshold), spuriously firing REDESIGN's early-warning check on a client that's actually still shipping same-day or next-day (Codex catch, 2026-07-19). This floor changes nothing for a normal, nonzero baseline, where the percentage margin is already the larger and more sensitive of the two in most cases ~ gut-seeded like every other v1 margin here, Michele adjusts both numbers at quarterly review. Recalibrates only at quarterly review, from a confirmed-healthy window ~ same guard as WIP's baseline (above): never recalculate from a window where cycle time is itself currently trending up, or the baseline just relabels the slide as the new normal. **One more trigger reseeds this baseline outside the quarterly schedule: a client CHANGING reporting cadence** (`delivery-log.md`'s own supported "pauses future reporting or changes cadence" transition ~ e.g. weekly to monthly). A cadence change can genuinely shift what a normal `Delivered − Start` span looks like (more prep work for a monthly rollup than a weekly one, say), so a baseline frozen under the OLD cadence and a trailing-90-day window that now mixes cycles from both schedules can either spuriously fire REDESIGN off a new cadence's naturally-different pace, or mask a real slowdown inside the noise of the mismatch (Codex catch, 2026-07-19). The moment a cadence change is noted (per `delivery-log.md`'s `brief.md`/`context.md` note), version the baseline rather than silently reusing it: freeze a NEW baseline from the client's first 3 completed cycles under the NEW cadence (same rule as the original freeze, same healthy-seed judgment call), and until that new baseline exists, exclude this client's cycle-time reading from REDESIGN's early-warning check entirely rather than comparing new-cadence cycles against an old-cadence number ~ "not yet evaluable" is the honest state, not a number that quietly compares apples to oranges. Once both a pre-change and post-change baseline exist, the trailing-90-day comparison window itself must also only pool cycles governed by the SAME baseline version ~ never average a pre-change and post-change cycle together into one reading. |
 | **On-cadence rate** | % reports delivered by their due date | delivery log | mixed weekly/bi-weekly/monthly clients; CLUSTERED misses (one client, one handoff) point at a workflow problem (routes to REDESIGN ~ see §3); BROAD misses across most clients/analysts, with WIP/load also elevated, point at capacity instead |
 | **Rework rounds per report** | revision rounds before client-accepted, + tag | delivery log | their #1 pain ~ and usually a **corpus gap, not a headcount gap** |
 
@@ -421,7 +421,8 @@ out-of-window, not flagged as broken data either. That row was never
 going to enter the round-level filter's view long enough for the
 completeness gate to catch it if the gate only ran on rows the filter
 already surfaced (Codex catch, 2026-07-19). Running validation first,
-against the FULL set of `accepted`/`revising (reopened)` `Rounds ≥ 1`
+against the FULL set of `accepted`/`revising (reopened)`/`cancelled`
+`Rounds ≥ 1`
 rows regardless of `Due`, closes this ~ an undated entry gets caught and
 hard-blocks its row whether or not that row's `Due` would ever have made
 it "interesting" to the window filter on its own.
@@ -429,22 +430,11 @@ it "interesting" to the window filter on its own.
 **Read every individual dated `Rework tag` entry, across every `accepted`
 OR `revising (reopened)` row (regardless of that row's own `Due`,
 `Delivered`, or `Last Sent`), whose OWN date falls in the trailing 90
-days ~ PLUS every dated entry on a `cancelled` row.** A cancelled row's
-entries are, by construction, ALL pre-send catches (`delivery-log.md`
-touch 1.5 ~ touches 3/4, which log post-ship rounds, can only ever fire
-on a row that already shipped, which a cancelled-from-`open` row never
-did), so they need no extra pre-send/post-send filtering of their own ~
-the whole row qualifies. Excluding cancelled rows from this round-level
-read entirely would silently drop real, dated corpus-vs-process evidence
-the moment a client cancels a cycle mid-flight, understating gate (b)'s
-tag-share off nothing more than a cancellation timing coincidence (Codex
-catch, 2026-07-19). **This is a NUMERATOR/gate-(b)-only addition ~ a
-cancelled row NEVER enters gate (a)'s row-level denominator**, since it
-never became a delivered, accepted report; its rounds count toward "how
-much of the rework that happened was corpus-caused," not toward "how many
-reports existed this window." That's the cohort test for
+days.** That's the cohort test for
 COUNTING ROUNDS ~ a filter on rounds, not rows, and it's what gate (a)'s
-numerator and all of gate (b) read. A row's `Due` sitting outside the
+numerator reads (gate (b) reads a wider set that also includes cancelled
+rows' entries ~ see gate (b) below for exactly why the two aren't the
+same set here). A row's `Due` sitting outside the
 90-day window doesn't exclude its recent rounds, and a row's `Due` sitting
 inside the window doesn't pull in its old ones ~ each round is judged
 solely on its own date, which is exactly what the row-level approximation
@@ -519,17 +509,41 @@ why that's a second, deliberately separate test, not a contradiction of
   `revising` rows stay excluded from BOTH numerator and denominator,
   full stop ~ genuinely unresolved, first-pass reports contribute nothing
   to this gate's math until they finalize.
-- **Tag-share (gate b):** of the SAME in-window ROUND set gate (a)'s
-  numerator uses (not gate (a)'s row-level denominator), what fraction
-  are tagged `brief-misalign`/`brand`/`quality-bar`. Zero-round rows
+- **Tag-share (gate b):** of gate (a)'s in-window numerator round set,
+  **PLUS every in-window dated entry on a `cancelled` row** (NOT the same
+  set as gate (a)'s numerator ~ this is the one deliberate divergence),
+  what fraction
+  are tagged `brief-misalign`/`brand`/`quality-bar`. A cancelled row's
+  entries are, by construction, ALL pre-send catches (`delivery-log.md`
+  touch 1.5 ~ touches 3/4, which log post-ship rounds, can only ever fire
+  on a row that already shipped, which a cancelled-from-`open` row never
+  did), so they need no extra pre-send/post-send filtering before being
+  added here. **Why gate (b) specifically, and not gate (a)'s numerator
+  too:** gate (a) measures rounds PER REPORT, and a cancelled row never
+  became a report (no `Delivered`, no place in the row-level denominator)
+  ~ adding its rounds to gate (a)'s numerator while it can never appear in
+  gate (a)'s denominator would inflate "rounds per accepted report" off
+  work attached to no report at all, and in the extreme case (a window
+  where every dated round happens to sit on cancelled rows, none on an
+  accepted/reopened one) could produce a nonzero numerator over a zero
+  denominator, a false FIX_CORPUS route from a division that should never
+  have run (Codex catch, 2026-07-19: an earlier draft of this addition put
+  cancelled rows in BOTH gate (a)'s numerator and gate (b), reproducing
+  exactly the numerator-without-a-denominator-place bug this document's
+  own gate (a) history already worked through and fixed once). Gate (b)
+  has no such row-level denominator to protect ~ it's a pure round-level
+  ratio (real rework rounds that happened, tagged or not), so a cancelled
+  row's rounds are unambiguously real REWORK evidence there with no
+  matching risk. Zero-round rows
   contribute nothing to this ratio either way (they have no round-level
   entries to weigh in), so gate (b) doesn't need the row-level cohort
   gate (a) does ~ it stays a pure round-level ratio, no denominator
   distinction to make.
 - The qualifier-majority read (`missing` vs `not-followed`, step 3's
-  cause-qualifier gate below) also reads only the in-window, corpus-tagged
-  subset of this same round set ~ one consistent population feeds every
-  downstream FIX_CORPUS question.
+  cause-qualifier gate below) also reads gate (b)'s round set (including
+  cancelled rows), not gate (a)'s narrower numerator set ~ one consistent
+  population feeds it and gate (b) together, both deliberately wider than
+  gate (a)'s numerator for the same reason.
 
 Worked example (numerator, round-level, and denominator via set (ii)): a
 row's `Due` was 150 days ago (well outside the 90-day window) and it was
@@ -733,12 +747,14 @@ dated entries get counted this month).
    `brief-misalign`/`brand`/`quality-bar`? If both gates clear, FIX_CORPUS
    fires, and the tag itself tells you which corpus file is stale (the
    brief, `what-good-looks-like.md`, or ~ for `brand` specifically, read
-   the qualifier's SECOND component, `house-voice` or `brand-standard`,
-   since check 2 covers two different files and the bare tag alone can't
+   the qualifier's SECOND component, `house-voice`, `brand-standard`, or
+   `report-template-rules`,
+   since check 2 covers THREE different files and the bare tag alone can't
    tell them apart ~ this second component is picked INDEPENDENTLY of the
    missing/not-followed cause, never a fixed pairing (a `not-followed/
-   house-voice` finding is just as real as `missing/brand-standard` ~ see
-   `delivery-log.md`'s Rework tag bullet for the full four-combination
+   house-voice` finding is just as real as `missing/brand-standard` or
+   `missing/report-template-rules` ~ see
+   `delivery-log.md`'s Rework tag bullet for the full six-combination
    reasoning) ~ **but check
    the qualifier on each qualifying round's TAG ENTRY (`missing` vs
    `not-followed`, e.g. `brand (not-followed/brand-standard)` ~ slash, not
@@ -1151,18 +1167,29 @@ above by hand:
    code harmlessly rather than needing a removal step. REDESIGN's on-cadence/cycle-time reads stay row-level and
    `Due`-anchored (a row is in or out based on its own `Due` date).
    FIX_CORPUS's tag-share (gate b) AND rounds-per-report's NUMERATOR
-   (gate a) are round-level instead: filter individual
+   (gate a) are round-level instead, but NOT the identical round set ~
+   **gate (a)'s numerator: filter individual
    dated `Rework tag` entries (each stamped `[YYYY-MM-DD]` at the moment
    it's logged, per `delivery-log.md`) to those whose OWN date falls in
    the trailing 90 days, across every row with STATUS `accepted` OR
    `revising (reopened)` regardless of that row's `Due` (NOT bare
-   `revising`, NOT `delivered` ~ see below for why), **PLUS every dated
-   entry on a `cancelled` row, numerator/gate-(b) only, never contributing
-   to the denominator below** ~ a cancelled row's entries are always
+   `revising`, NOT `delivered`, and NOT `cancelled` either ~ see below for
+   why).** **Gate (b) reads a WIDER set: the same filter, PLUS every dated
+   entry on a `cancelled` row** ~ a cancelled row's entries are always
    pre-send catches by construction (post-ship touches can't fire on a
-   row that never shipped), so excluding cancelled rows here would
-   silently drop real, dated corpus-vs-process evidence purely because a
-   client cancelled mid-flight (Codex catch, 2026-07-19; see §5a for the
+   row that never shipped), so excluding cancelled rows from gate (b)
+   entirely would silently drop real, dated corpus-vs-process evidence
+   purely because a client cancelled mid-flight. **Cancelled rows stay
+   OUT of gate (a)'s numerator specifically, though** ~ gate (a) measures
+   rounds PER REPORT, a cancelled row never became a report (no
+   `Delivered`, no denominator entry below), and adding its rounds to a
+   numerator with no matching denominator place would inflate "rounds per
+   accepted report" and risks a nonzero-numerator-over-zero-denominator
+   false FIX_CORPUS fire in a window where cancelled-row activity is all
+   there is (Codex catch, 2026-07-19: an earlier draft of this addition
+   put cancelled rows in BOTH gate (a)'s numerator and gate (b),
+   reproducing the exact numerator-without-a-denominator-place bug this
+   document's own gate (a) history already fixed once; see §5a for the
    full reasoning). Rounds-per-report's
    DENOMINATOR is a THIRD mechanism ~ the UNION of two row sets, not one:
    (i) rows with STATUS `accepted` OR `revising (reopened)` SPECIFICALLY
@@ -1253,12 +1280,14 @@ above by hand:
        entry's parenthetical would parse as a second round entry against
        this same cell's top-level comma-separated list ~ for
        `brand` specifically, ALSO read the qualifier's second component
-       (`house-voice` or `brand-standard`) to resolve which of the two
+       (`house-voice`, `brand-standard`, or `report-template-rules`) to
+       resolve which of the three
        files check 2 actually failed against before prescribing an edit ~
        chosen INDEPENDENTLY of the missing/not-followed cause component,
        never inferred from it (a `not-followed/house-voice` reading is
-       just as real as `missing/brand-standard` ~ don't default `missing`
-       to one file or `not-followed` to the other; see
+       just as real as `missing/brand-standard` or
+       `missing/report-template-rules` ~ don't default `missing`
+       to one file or `not-followed` to another; see
        `delivery-
        log.md`) before prescribing a corpus edit: majority `not-followed`
        means the corpus was already correct and this isn't a real gap ~
