@@ -100,3 +100,23 @@ VERIFY-FIRST LIST (numbers the human must check before anything else)
 Order flags by severity: data integrity first, then brief alignment, then
 the rest. Be terse ~ the analyst should clear this list in minutes, not
 re-read the report.
+
+## Step 3 ~ If a flag gets corrected, log it
+
+End every output with this reminder, verbatim:
+
+```
+If you fix any flag above before this report ships, log it now ~
+delivery-log.md touch 1.5: bump Rounds, append the cause tag
+(brief-misalign / brand / data), right on this row, before you move on.
+```
+
+This QA gate is one of the three pre-send checkpoints touch 1.5 exists to
+catch (the other two are internal alignment and the post-Canva pass ~ see
+`delivery-log.md` and `ARCHITECTURE-MAP.md` step 9). Without this
+reminder, an analyst can clear every flag here, ship a clean-looking
+report, and never touch the delivery-log row ~ the correction happened,
+but the instrument's `Rounds` and `Rework tag` stay at their defaults,
+silently understating both rounds-per-report and the corpus-tag share
+FIX_CORPUS routes on. A `PASS` with nothing to fix needs no entry ~ only
+an actual correction does.

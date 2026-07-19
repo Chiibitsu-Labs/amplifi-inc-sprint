@@ -120,16 +120,29 @@
    no revisions, explicit or by silence = go straight from `delivered` to
    `accepted`, numbers stay at 0/none.
 
-**If a client pauses reporting, cancels a period, or changes cadence after
-a row is already open:** set `Status = cancelled` and note the reason in
-**Notes** (`client paused, wk3` / `cadence changed to monthly, see brief`).
-This can happen from ANY prior status, not just `open`. A `cancelled` row
-is excluded entirely from on-cadence's numerator AND denominator ~ it was
-never delivered late, it was never going to be delivered at all, and
-counting it as a miss would permanently and unfairly depress the rate for
-something no analyst failed at. Don't delete the row ~ the cancellation
-itself is real history, and a pattern of client-cancelled cycles is worth
-noticing in its own right.
+**If a client pauses reporting or cancels a period BEFORE it ships ~ the
+row is still `open`:** set `Status = cancelled` and note the reason in
+**Notes** (`client paused, wk3` / `cadence cancelled, see brief`). This
+transition is ONLY valid from `open` ~ a cycle that never shipped has no
+completed-work evidence to lose. A `cancelled` row is excluded entirely
+from on-cadence's numerator AND denominator ~ it was never delivered late,
+it was never going to be delivered at all, and counting it as a miss would
+permanently and unfairly depress the rate for something no analyst failed
+at. Don't delete the row ~ the cancellation itself is real history, and a
+pattern of client-cancelled cycles is worth noticing in its own right.
+
+**If a client pauses FUTURE reporting or changes cadence AFTER a cycle has
+already shipped** (`delivered`/`revising`/`accepted`)**: leave that row
+exactly as it is.** Never retarget an already-shipped row to `cancelled`
+~ it represents a report that was genuinely produced, with real
+`Delivered`/`Effort (h)`/`Rounds` evidence behind it, and overwriting its
+status would erase completed cadence and rework data the instrument still
+needs (a client who accepts cycle 6 clean, then pauses before cycle 7, did
+NOT fail to deliver cycle 6 late ~ that row stays `accepted`, full stop).
+The pause itself is represented by simply not opening a touch-1 row for
+the next scheduled period, plus a note in `brief.md`/`context.md` on why
+~ future-tense cadence changes and past-tense delivered cycles are
+different facts and belong in different places, never the same row.
 
 **Why `Status` exists:** without it, a report still mid-revision or still
 awaiting sign-off looks identical to one that shipped clean ~ all read
@@ -179,9 +192,12 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   round resolves (see touch 4) ~ not a violation of "exactly once" so much
   as "once per actual finalization," and the documented way late feedback
   stays counted instead of vanishing; (2) a row can exit to `cancelled`
-  from ANY prior status if the client pauses, cancels, or changes cadence
-  for that cycle (see above) ~ a terminal state outside the normal chain,
-  never followed by `accepted`. On-cadence is computed as `Delivered ≤ Due`
+  ONLY from `open`, if the client pauses or cancels that cycle before it
+  ships (see above) ~ a terminal state outside the normal chain, never
+  followed by `accepted`, and never applied to a row that's already
+  `delivered`/`revising`/`accepted` (a shipped cycle's evidence stays
+  exactly as recorded, even if the client pauses future reporting
+  afterward). On-cadence is computed as `Delivered ≤ Due`
   for any row that has shipped (`delivered`/`revising`/`accepted`), an
   automatic miss for any `open` row where `Due` has already passed, and
   **excluded entirely from both numerator and denominator** for any
