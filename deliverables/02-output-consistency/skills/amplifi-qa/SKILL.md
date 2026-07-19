@@ -130,7 +130,27 @@ Required inputs, all of them:
    - `standards/house-voice.md`
    - `standards/report-template-rules.md`
    - `clients/{client}/brand-standard.md`, `brief.md`, `context.md`,
-     `insight-log.md` ~ **resolve `{client}` to its ACTUAL folder name
+     `insight-log.md`, **`delivery-log.md`** ~ **resolve THIS run's
+     specific row before Step 3 can produce a usable reminder, not just
+     the client folder.** Step 3's reminder tells the analyst to log any
+     fix on "this row," but this skill has no idea which row that is
+     without reading `delivery-log.md` and matching it to the report
+     being QA'd: a client can have MORE THAN ONE `open` row at once (an
+     overdue cycle stays open while the next scheduled cycle's row also
+     opens, `delivery-log.md`'s own scheduled-open rule), and a QA run
+     against a manually-assembled draft may have no session context
+     pointing at a row at all. Match by the report's own `Period` (the
+     same period-stamp this Step already needs for the export-window
+     check above) against `delivery-log.md`'s `Period` column, resolving
+     to whichever status actually fits (`open` for a first pass, `revising`/
+     `revising (reopened)` for a re-QA after a flagged correction). If
+     more than one row could plausibly match and the report doesn't carry
+     enough to disambiguate, STOP and ask which cycle this QA run is for
+     ~ never guess, and never let Step 3 emit "log it on this row" against
+     an unresolved or ambiguous row (Codex catch, 2026-07-19: this skill
+     never loaded `delivery-log.md` at all, so its own logging reminder
+     referenced a row it had no way to actually identify). **resolve
+     `{client}` to its ACTUAL folder name
      under `clients/` first, never assume the display name IS the folder
      name ~ even when that name has no reserved characters and a folder
      matching it literally exists.** A client name with a `/` or other
@@ -405,7 +425,9 @@ End every output with this reminder, verbatim:
 If you fix any flag above before this report ships, log it now ~
 delivery-log.md touch 1.5: bump Rounds by ONE (this whole pass, not once
 per flag fixed) and append ONE cause tag, chosen by priority if more than
-one check flagged something, right on this row, before you move on.
+one check flagged something, right on the row Step 0 resolved for THIS
+report's period (never guess which row if Step 0 flagged it ambiguous ~
+resolve that first), before you move on.
 QUALIFIER FIRST, THEN CATEGORY: if more than one of the flagged causes is
 brief-misalign/brand/quality-bar (a corpus cause) carrying its own
 missing/not-followed qualifier (see below), pick whichever is qualified

@@ -180,7 +180,20 @@
    downstream (the abandoned-revision closure, exception 3 below, has no
    other way to recover it once the field itself goes blank, and can't
    complete its own prescribed restoration step without it, Codex catch,
-   2026-07-19).** Then **blank
+   2026-07-19). ONLY overwrite this note when `Last Sent` CURRENTLY holds
+   a real, non-blank date ~ if a SECOND (or later) revision request
+   stacks on top of a FIRST one that hasn't been resent yet, `Last Sent`
+   is already blank from that first request's own trip through this same
+   step, and there is no new value to capture. Overwriting the note with
+   a blank in that case destroys the only recoverable real send date the
+   abandoned-revision closure depends on, with no way to get it back
+   (Codex catch, 2026-07-19: this instruction unconditionally overwrote
+   the note every time this step runs, not accounting for the stacked-
+   request case where `Last Sent` is already empty). Leave the existing
+   `"prior Last Sent"` note exactly as it is when `Last Sent` is already
+   blank at this step; it still correctly names the last version actually
+   sent, and stays correct until an actual resend gives it a genuinely
+   new value to record.** Then **blank
    `Last Sent` too, at this same moment ~ don't leave the old date sitting
    there while the fix is still in progress.** A revision request logged
    this way but not yet resent is otherwise indistinguishable from a

@@ -418,10 +418,30 @@ own sources. End with:
 
 ```
 DATA NOTES: {gaps, anomalies, anything a human should verify}
-INSIGHT-LOG ENTRY (paste into clients/{resolved folder}/insight-log.md):
+INSIGHT-LOG ENTRY ({paste as a NEW entry / REPLACE the existing `## {Period}`
+block} in clients/{resolved folder}/insight-log.md):
 ## {Period}
 {the 5–10 line entry per the log's format}
 ```
+
+**Paste vs. replace depends on which kind of run this is, and getting it
+wrong duplicates or loses history:** an ORDINARY draft (Step 0 resolved an
+`open` row) pastes as a brand-new entry, same as always. A
+substantive-revision rerun (Step 0 resolved a `revising`/`revising
+(reopened)` row instead) must REPLACE the entry already sitting under
+that SAME `## {Period}` heading, never append a second one under it ~
+`insight-log.md`'s own conditional-third-touch rule requires updating
+THAT cycle's existing entry when a revision changes substantive content,
+specifically so there's still exactly one entry per period. Appending
+instead leaves TWO `## {Period}` blocks with the identical heading,
+which breaks the exact-match lookup the silent-acceptance scan and this
+same substantive-revision procedure both depend on (which one is "the"
+entry for that period?) and leaves conflicting historical facts sitting
+side by side for future generation and QA to pull from (Codex catch,
+2026-07-19: this trailer told the analyst to "paste" unconditionally, with
+no distinction for the revision-rerun case Step 0 already special-cases).
+State which action this run needs explicitly in the trailer's own header
+line, not just implicitly through Step 0's resolved status.
 
 **`{Period}` is Step 0's already-resolved value for THIS cycle's
 delivery-log row, pasted verbatim ~ never re-typed from the client name
