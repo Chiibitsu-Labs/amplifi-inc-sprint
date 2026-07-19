@@ -643,6 +643,24 @@ writing the composite there in the first place, escaped or not.
   is the last real send). Once restored, that `Notes` line has served its
   purpose ~ leave it as part of the row's history, same as the closure
   note beside it (Codex catch, 2026-07-19).
+  **Top up `Effort (h)` as part of THIS SAME closure too, for whatever
+  revision work was actually done on the now-abandoned fix before it
+  stopped** ~ touch 3 deliberately defers recording revision effort until
+  the moment a corrected version actually resends (a request that's
+  abandoned mid-fix never reaches that moment), but "no resend" doesn't
+  mean "no hours spent": an analyst can genuinely work a fix for a while
+  before the client says "don't bother" or the engagement pauses, and
+  without an explicit step here those real hours are never recorded
+  anywhere, understating the instrument's effort-per-deliverable signal on
+  exactly the rework this whole exception exists to keep visible (Codex
+  catch, 2026-07-19: this closure restores `Status`/`Last Sent` but has no
+  equivalent step for `Effort (h)`, even though the closure's own point is
+  that abandonment is real rework, not a non-event). Ask the analyst how
+  much time was actually spent on the abandoned fix (zero is a legitimate
+  answer if the request was abandoned before any work began) and add it to
+  `Effort (h)` at this same closure moment, same "the analyst actually
+  knows how long it took" timing touch 3 already uses for a completed
+  resend.
   The row's already-accrued `Rounds`/`Rework tag` entries stay exactly as
   recorded, same as any other finalization. On-cadence is computed as `Delivered ≤ Due` for any row that
   has shipped (`delivered`/`revising`/`revising (reopened)`/`accepted` ~ on-cadence reads the shipped-or-not fact, unaffected by which revising variant applies), an automatic miss for

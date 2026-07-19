@@ -84,6 +84,34 @@ the skill's output and the Canva deck.}
   accepts a brief-sourced target/baseline/budget as a pass, not a flag ~
   this rule needs the same carve-out, or QA can clear a figure this
   section still forbids (Codex catch, 2026-07-19).
+- **A second, separate exception, this one for section 6 (Recommendations)
+  specifically: a labeled PROPOSED ACTION PARAMETER is not a factual claim
+  at all, and this rule's four-source whitelist was never meant to cover
+  it.** "Test three posts per week for two weeks" or "raise the daily
+  budget to $150 for the trial window" states what the recommendation
+  itself IS ~ a number the analyst is proposing going forward, not a
+  current-period result, a historical figure, or a brief-sourced
+  contractual target. As written, this rule's source list has no category
+  for it, so a genuinely well-formed, actionable recommendation reads as
+  an untraceable figure under `skills/amplifi-qa/SKILL.md` check 4,
+  penalizing exactly the concrete specificity the insight skill is
+  required to produce there (Codex catch, 2026-07-19: this rule's number
+  sourcing requirement, written for factual/performance figures, was
+  applied unmodified through section 6, where the insight skill's own
+  actionability bar explicitly demands numeric experiment settings and
+  watch-thresholds that by definition describe a proposal, not a
+  measurement). Add a labeled `PROPOSED`/`ASSUMPTION` category, scoped
+  OUT of source tracing entirely: a number in section 6 explicitly framed
+  as the recommendation's own parameter (a test duration, a cadence, a
+  budget change, a threshold to watch for) needs no citation to any of the
+  four sources above ~ it only needs to read unambiguously as a proposal,
+  not a reported fact, so a reader (and QA check 4) can't mistake it for
+  an unsourced current-period claim. A number in section 6 that DOES claim
+  to describe something that already happened (past performance cited to
+  justify the recommendation) still needs the normal four-source tracing
+  ~ this exception covers only the forward-looking parameter itself, never
+  smuggles an untraced factual claim through under a "recommendation"
+  label.
 - Period-stamp the exec summary: "{Month YYYY} · data window {start}–{end}."
 - The QA skill cross-checks the deck's period stamp against the data window
   and flags any figure that matches last period's report verbatim AND

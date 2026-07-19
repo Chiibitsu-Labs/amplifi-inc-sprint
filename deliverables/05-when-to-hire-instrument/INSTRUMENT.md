@@ -768,6 +768,32 @@ dated entries get counted this month).
        ~ `§5b`'s ingestion filter doesn't close this either, since it only
        rejects unresolved `{...}` template markers, not a real-looking but
        invalid date a human typo produced).
+     - A parseable `Delivered` or cancellation `Last Sent` ALSO needs to be
+       NO LATER than the evaluation date this walkthrough/run is actually
+       reading as of ~ "parseable" alone isn't enough, since a plausible
+       year typo (`Delivered = 2027-07-10` entered during a 2026
+       evaluation) parses cleanly as a real calendar date and clears every
+       ordering check above and below it (it can still honestly satisfy
+       `Start ≤ Delivered` and `Start ≤ Due`). These two fields are only
+       ever written the moment an outcome actually happens ~ delivery-log's
+       own touch 2/3 rules stamp `Delivered`/`Last Sent` with the date the
+       event genuinely occurred, never a projected future date ~ so any
+       value later than today is provably wrong data, not a real future
+       outcome the calculation should somehow anticipate. Left unvalidated,
+       a future-dated `Delivered` produces both an extreme, corpus-
+       distorting cycle-time span (§2) and a `Delivered > Due` miss (or
+       clean hit) that isn't actually earned, and a future-dated
+       cancellation `Last Sent` flips this exact row's before/after-`Due`
+       classification on a date that was never real (Codex catch,
+       2026-07-19: this instrument's rework-entry-date validation already
+       rejects a future-dated tag entry on exactly this reasoning, but the
+       outcome-date fields on-cadence and cycle-time read directly, arguably
+       more consequential since they drive the hit/miss and span math
+       itself, were left exposed to the identical failure mode one field
+       category over). Exclude a row failing this check the same way as
+       every other validation failure here ~ pulled from both numerator and
+       denominator, flagged as a data-hygiene gap to fix, never silently
+       computed as an extreme but "valid-looking" result.
      - Any row whose `Delivered` cell IS parseable (cleared the check
        above) also needs its `Start` cross-checked against it, not just
        parsed in isolation: a blank/not-parseable `Start` is fine here ~
@@ -1491,12 +1517,26 @@ above by hand:
    that's present, non-placeholder, and still wrong). Validate every
    ingested row's `Period` (non-blank, parses to the expected format),
    `Status` (exact match against the six defined values, nothing else),
-   AND `Cadence` (non-blank, parses to EITHER `delivery-log.md`'s versioned
-   `{cadence}, v{n}` format OR its documented unversioned backfill form,
+   AND `Cadence` (non-blank, parses to EITHER `delivery-log.md`'s ACTUAL
+   versioned form, `{cadence} (v{n}, since {YYYY-MM-DD})` ~ the cadence
+   word followed by a PARENTHESIZED, comma-joined version tag and
+   effective-date, exactly what `delivery-log.md`'s own `Cadence` field
+   instructions and every worked example in this corpus actually emit
+   (`weekly (v2, since 2026-09-01)`), never the comma-separated
+   `{cadence}, v{n}` shorthand a prior draft of this validator described
+   ~ OR its documented unversioned backfill form,
    `{cadence} (pre-tracking)` ~ `ROADMAP.md` task 1.5a's own carve-out for
    a cycle whose real `Cadence` predates `brief.md`'s v1 seed, with no
    version number to honestly stamp it with) before it's eligible for the
-   upsert. **Rejecting the `(pre-tracking)` form here would be validating
+   upsert. **Describing the wrong grammar here isn't cosmetic ~ a
+   validator built to this spec would reject every NORMAL versioned row
+   the corpus actually produces, not just malformed ones, since none of
+   them are ever comma-separated at the top level** (Codex catch,
+   2026-07-19: the prior wording invented a `{cadence}, v{n}` shape that
+   matches neither `brief.md`'s Snapshot field definition nor any row this
+   template or its examples ever generate, which would have left the
+   automated REDESIGN/FIX_CORPUS branches with no delivery data to route
+   on at all once built). **Rejecting the `(pre-tracking)` form here would be validating
    AGAINST the exact backfill format task 1.5a instructs analysts to use,
    dropping every one of those genuinely real, on-cadence-countable rows
    out of BOTH gates entirely, not just out of cycle-time's baseline
@@ -1527,7 +1567,41 @@ above by hand:
    client as a data-hygiene gap to fix in the log, never silently upserted
    with a broken key or dropped from every status-scoped or cadence-scoped
    read with no
-   trace. Plus `patterns.md`'s theme tally as
+   trace. **A side-channel hygiene flag alone isn't enough here, though ~
+   it tells a human to go fix the log, but says nothing to the ROUTER
+   about the row it just lost.** A row that fails THIS gate never reaches
+   on-cadence's, cycle-time's, or gate (a)/(b)'s OWN validation and
+   bracket/PROVISIONAL machinery at all (those mechanisms exist to handle
+   a row excluded at THEIR level, further downstream ~ they have no
+   visibility into a row this earlier ingestion gate already dropped
+   before it ever arrived). A real, previously-valid row silently
+   regressing here (a stray edit turning `accepted` into `acceptd`, a
+   `Cadence` cell corrupted mid-typo) can be a client's single
+   heaviest-reworked, latest-delivered report ~ exactly the evidence
+   REDESIGN/FIX_CORPUS most need to see ~ and a pure omit-plus-flag
+   response lets the router read that client's REDESIGN/FIX_CORPUS
+   branches as cleanly "not firing" and proceed toward HIRE on a feed
+   that's missing its most decisive row, with nothing structural stopping
+   it (Codex catch, 2026-07-19: excluding an invalid row from the upsert
+   is correct ~ never write bad data ~ but exclusion here has no analogue
+   to on-cadence/cycle-time's own "could this excluded row have swung the
+   result" bracket test, the exact discipline this doc applies everywhere
+   else a row gets pulled from a calculation). Fix: treat a row rejected
+   HERE the same way those downstream mechanisms already treat a row THEY
+   exclude ~ feed it into the SAME bracket/PROVISIONAL reasoning each
+   affected signal already has, not silently before it. Concretely, for
+   every row this gate rejects: identify which signals it would have fed
+   (on-cadence and/or gate (a)/(b) by its `Status`; cycle-time by its
+   `Cadence`/dates) using whatever of its fields ARE still readable even
+   though the row as a whole fails validation, and mark THAT client's
+   corresponding signal(s) PROVISIONAL rather than letting them read as a
+   clean, fully-evaluated pass ~ the same standard this doc already
+   requires when an excluded row could plausibly swing a threshold either
+   way. Only a row that's genuinely just the unfilled template placeholder
+   (every structured column reading its own literal brace SIMULTANEOUSLY,
+   per the row-level filter above) skips this ~ that row was never real
+   evidence to begin with, unlike a row that fails validation on ONE field
+   while every other field still describes a real report. Plus `patterns.md`'s theme tally as
    corroborating signal strength for AUTOMATE/REDESIGN (a theme recurring
    there across multiple weeks raises confidence on a borderline
    14-day-window call) ~ without this second ingest, `patterns.md` keeps
@@ -2672,20 +2746,35 @@ above by hand:
      rule out FIRST (Codex catch, 2026-07-19: every other REDESIGN/
      FIX_CORPUS/HIRE gate above assumes both feeds describe the SAME
      moment, an assumption the two feeds' different sync cadences don't
-     actually guarantee). Fix: track feed 2's last-successful-sync
-     timestamp per client (already a natural byproduct of the weekly
-     ingestion pass, item 1 above) and gate any HIRE-direction routing
-     decision on it being CURRENT as of THIS evaluation ~ specifically, if
-     ANY active client's feed-2 data is more than one weekly-pull cycle
-     stale (the sync that should have run since the last successful one
-     hasn't), don't let the router conclude REDESIGN/FIX_CORPUS are absent
-     for that client; either trigger an immediate resync before evaluating,
-     or surface the routing decision as "incomplete, pending feed 2 sync"
-     rather than silently proceeding to HIRE on a comparison between a
-     live signal and a stale one. This is a freshness gate on the
-     COMPARISON, not a delay on ingestion itself ~ a client whose feed 2 IS
-     current syncs and routes normally the same week; only a client
-     actually behind its own sync schedule gets held.
+     actually guarantee). **"On schedule" is not the same thing as
+     "current," though, and a gate that only checks whether the last pull
+     happened on time doesn't close this gap ~ it just narrows the window
+     it's silently blind in:** a pull that succeeds Monday reads as
+     perfectly "on schedule" every single day until the FOLLOWING pull is
+     also due, up to nearly a full week later, even though a report going
+     overdue or picking up corpus-caused rework on Tuesday is real evidence
+     feed 2 hasn't seen for most of that week ~ the exact scenario this
+     whole gate exists to catch, just relabeled "fresh" because the sync
+     job itself is behaving normally (Codex catch, 2026-07-19: gating
+     HIRE-direction routing on the sync being "not overdue" still lets HIRE
+     evaluate against a feed that's honestly stale relative to THIS
+     evaluation moment, whenever that moment falls between two scheduled
+     pulls). Fix: don't gate on schedule-adherence at all ~ gate on
+     ACTUAL RECENCY relative to the moment of evaluation. Track feed 2's
+     last-successful-sync timestamp per client (already a natural byproduct
+     of the weekly ingestion pass, item 1 above), and before ANY
+     HIRE-direction routing decision runs, either (a) trigger an on-demand
+     feed-2 resync for every active client right then, so the comparison
+     against feed 1's live data is genuinely same-moment, or (b) if an
+     on-demand resync isn't available at evaluation time, require the
+     existing watermark to be current as of TODAY specifically (not merely
+     "within one scheduled cycle") before treating REDESIGN/FIX_CORPUS as
+     evaluated-and-clear for that client ~ any watermark older than today
+     holds that client's HIRE-direction decision as "incomplete, pending
+     feed 2 sync" rather than proceeding. This is a freshness gate on the
+     COMPARISON, not a delay on ingestion itself ~ a client whose feed 2
+     resyncs cleanly routes normally the same day; only a client whose feed
+     2 can't be brought current right now gets held.
 3. **Panel order = chain order.** Signals display automate → redesign →
    fix-corpus → hire (severity shown, but position tells the story: hire
    sits last visually, always).

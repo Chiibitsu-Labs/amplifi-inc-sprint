@@ -11,6 +11,27 @@ human work ~ that means reading the encoded standard before writing a word.
 
 ## Step 0 ~ Read the corpus (never skip)
 
+**Resolve the live `amplifi-knowledge/` root before any read below, every
+run** ~ `DRIVE-HANDOFF.md`'s installation steps put this skill's own file
+in the invoking client's skills location (`.claude/skills/amplifi-insights/
+SKILL.md`, project- or user-level), a different filesystem location from
+the Drive-synced corpus itself, and the two aren't guaranteed to share a
+working directory. Every `clients/...` and `standards/...` path anywhere
+in this skill (including the client-folder resolution immediately below)
+is relative to the ACTUAL live `amplifi-knowledge/` folder (`README.md`'s
+"the one home"), never to wherever this skill happens to be invoked from.
+Confirm the real, synced filesystem path to that root before touching any
+path below ~ don't assume the invoking client's current working directory
+already IS it, even in the primary one-client deployment tier where that's
+usually true (Codex catch, 2026-07-19: `amplifi-improve` states this exact
+requirement for its own corpus access, but this skill's mandatory reads,
+just as dependent on the same root, assumed it without saying so ~ invoked
+from any other project directory, every read below fails or silently
+targets the wrong location). A relative read with no confirmed root can
+fail outright or, worse, silently resolve against an unrelated local
+folder that happens to share the same relative names, producing a report
+grounded in nothing this skill was actually supposed to read.
+
 **Resolve `{client}` to its ACTUAL folder name under `clients/` before any
 of the reads below ~ never assume the display name IS the folder name,
 EVEN when the name has no reserved characters and a folder matching it
@@ -404,7 +425,21 @@ platform pulls). Rules:
 - **"Just continue" / "maintain current strategy" is banned as a sole
   recommendation.** If the data genuinely says steady: recommend what to
   WATCH, the threshold that would change the call, and one experiment
-  worth running.
+  worth running. **Any number in a threshold or experiment parameter (a
+  test duration, a posting cadence, a budget change, a watch-threshold
+  value) must read unambiguously as the recommendation's OWN proposed
+  figure, not a reported fact** ~ `report-template-rules.md`'s Fresh-data
+  rules and `skills/amplifi-qa/SKILL.md` check 4 both carve out exactly
+  this kind of number from source-tracing specifically because it's a
+  forward-looking proposal, never a current or historical claim, but that
+  carve-out only protects a number that's actually WRITTEN as one ("test
+  three posts per week for two weeks," not a bare "3/wk" sitting next to
+  performance figures that ARE sourced) ~ an ambiguously-phrased proposal
+  number reads indistinguishably from an unsourced factual claim and gets
+  flagged as untraceable by check 4 regardless of the exception existing
+  (Codex catch, 2026-07-19: the exception this skill's own numbers depend
+  on requires the number to be clearly labeled as proposed; nothing here
+  told the skill to actually phrase it that way).
 - Check `context.md` ~ don't re-recommend what the client already rejected.
 
 ## Step 4 ~ Output shape

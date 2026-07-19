@@ -11,6 +11,23 @@ replace it. Flags are suggestions to a human who decides.
 
 ## Step 0 ~ Load the bar (rules live in the corpus, never in this skill)
 
+**Resolve the live `amplifi-knowledge/` root before any corpus read below,
+every run** ~ `DRIVE-HANDOFF.md`'s installation steps put this skill's own
+file in the invoking client's skills location (`.claude/skills/amplifi-qa/
+SKILL.md`, project- or user-level), a different filesystem location from
+the Drive-synced corpus itself, and the two aren't guaranteed to share a
+working directory. Every `standards/...` and `clients/...` path in
+required input 3 below (and the `delivery-log.md` read it requires) is
+relative to the ACTUAL live `amplifi-knowledge/` folder (`README.md`'s
+"the one home"), never to wherever this skill happens to be invoked from.
+Confirm the real, synced filesystem path to that root before touching any
+path below (Codex catch, 2026-07-19: `amplifi-improve` states this exact
+requirement for its own corpus access; this skill's mandatory standards
+reads, just as dependent on the same root, assumed it silently ~ invoked
+from any other project directory, every required input below fails or
+resolves against the wrong location, and this gate can't actually check
+anything against the encoded standard it exists to enforce).
+
 Required inputs, all of them:
 1. The report content, one of three tiers depending on which checkpoint
    AND what you're actually shown ~ these are not interchangeable:
@@ -360,6 +377,27 @@ never as part of this whole-file STOP condition.
    performance). A number that claims to be a brief-sourced target but
    ISN'T actually in `brief.md` still fails its own check, same as any
    other unsupported figure.
+   **A labeled PROPOSED/ASSUMPTION figure in section 6 (Recommendations)
+   is a FOURTH kind of number, and needs no source at all, not even
+   `brief.md`** ~ `report-template-rules.md`'s Fresh-data rules carve this
+   out explicitly: a recommendation's own parameter ("test three posts per
+   week for two weeks," "raise the daily budget to $150 for the trial
+   window") states what the analyst is PROPOSING going forward, not a
+   current result, a historical figure, or a brief-sourced target, so none
+   of the three source checks above can ever pass it, and none of them are
+   supposed to (Codex catch, 2026-07-19: this check's number-sourcing
+   requirements, all three of them factual/historical in nature, ran
+   unmodified through section 6, where well-formed recommendations are
+   REQUIRED to state numeric experiment settings by design). Pass a number
+   in section 6 clearly labeled as the recommendation's own proposed
+   parameter without requiring a source ~ it only has to read
+   unambiguously as a proposal, not a reported fact. A number in section 6
+   that instead claims something already happened (past performance cited
+   to justify the recommendation) is NOT covered by this exception and
+   still needs the normal CURRENT/HISTORICAL/brief-sourced tracing above ~
+   this pass is for the forward-looking parameter itself only, never a
+   route to smuggle an untraced factual claim through under a
+   "recommendation" label.
    List any number that fails its OWN check ~ isn't in the export, can't
    be re-derived from it, and isn't a labeled historical figure ~ these go
    to the human verify step first. Also flag: any CURRENT-labeled figure
@@ -459,12 +497,34 @@ step to use depends on that row's resolved status:
   for the pre-delivery/`open` case; a post-delivery revision has already
   gone through touch 3's own round-counting by the time this pass runs).
   If what THIS pass catches names a genuinely different cause than
-  whatever touch 3 already tagged the round with, don't create a second
-  entry for it ~ note it in **Notes** instead (`"QA also caught {cause}
-  before resend"`), the same one-round/multiple-causes bundling touch 3
-  itself already uses for a single message naming more than one cause.
-  Stop here for this branch ~ the tag-selection/qualifier steps below only
-  apply when an actual NEW entry is being written, which the OPEN branch
+  whatever touch 3 already tagged the round with, do NOT just note it in
+  Notes and leave the existing tag as-is ~ RE-APPLY the qualifier-first,
+  then-category priority pick (below) across BOTH the round's existing tag
+  AND this newly-caught cause together, exactly as if both had been known
+  at once, and REPLACE the round's single entry with whichever one wins
+  that pick (keep the entry's existing date ~ this is still the same
+  round touch 3 opened, not a new one). Note whichever cause LOSES the
+  priority pick in **Notes** instead (`"QA also caught {cause} before
+  resend"`), same as the OPEN branch already does for a single pass
+  catching more than one cause (Codex catch, 2026-07-19: an earlier
+  version of this branch always deferred to touch 3's original tag and
+  only ever noted the new cause in Notes, which can leave a round that's
+  ACTUALLY corpus-caused tagged as non-corpus just because the client's
+  own stated reason wasn't the corpus one ~ `delivery-log.md`'s touch 3
+  itself requires re-applying this exact priority pick across every cause
+  a still-open round has accumulated, not freezing the tag at whichever
+  cause happened to be recorded first). This REPLACE-if-it-wins step is
+  the ONLY way the REVISING branch touches the tag entry ~ still one
+  entry, one round, per report, never a second one for this pass, the
+  same one-round/multiple-causes-bundling discipline touch 3 itself uses
+  for a single message naming more than one cause. Use the SAME
+  qualifier-first-then-category rule below to make this pick ~ it doesn't
+  change between branches, only whether the OUTCOME is a brand-new entry
+  (OPEN) or a replacement of the round's existing one (REVISING).
+  Stop here for this branch once the replace-or-note decision is made ~
+  the "FINALLY, append TODAY's date" step below does NOT apply to a
+  REVISING-branch replacement (the entry keeps its original date, per
+  above); it only applies when an actual NEW entry is being written, which the OPEN branch
   above is the only case that does.
 QUALIFIER FIRST, THEN CATEGORY: if more than one of the flagged causes is
 brief-misalign/brand/quality-bar (a corpus cause) carrying its own
