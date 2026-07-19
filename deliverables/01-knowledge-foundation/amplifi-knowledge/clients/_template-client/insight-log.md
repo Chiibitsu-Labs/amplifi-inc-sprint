@@ -12,9 +12,24 @@ paste it.
 **Two touches per entry, plus a conditional third:** create it at ship
 (client reaction is genuinely unknown yet ~ don't guess), then update the
 one line at the next REAL client feedback moment ~ the client
-presentation, or a client email/call reacting to the report. **Two things
-don't count as real feedback, and recording them as if they were is the
-same category error either way:**
+presentation, or a client email/call reacting to the report.
+
+**Creating it at ship means pasting what actually shipped, not the insight
+skill's original draft trailer verbatim.** The skill drafts its
+`INSIGHT-LOG ENTRY` trailer BEFORE the QA gate, human verify, or the
+post-Canva pass run ~ any of those three pre-send checkpoints (delivery-log
+touch 1.5) can still correct a number, a claim, or a recommendation before
+this report ever reaches the client. If the analyst pastes the
+skill's original trailer unchanged at ship, this file permanently records
+content that was already known to be wrong before anyone outside Amplifi
+saw it. Before saving this entry, check it against whatever touch 1.5
+actually corrected and update `Headline insight` / `Data notes` /
+`Recommendations made` to match what shipped, not what the skill first
+drafted ~ same standard as the conditional third touch below, just
+applied at creation time instead of after the fact.
+
+**Two things don't count as real feedback, and recording them as if they
+were is the same category error either way:**
 - **Internal alignment** ~ that's Amplifi reviewing its own work before
   the client ever sees it.
 - **The delivery-log's 5-day silent-acceptance touch** ~ that touch

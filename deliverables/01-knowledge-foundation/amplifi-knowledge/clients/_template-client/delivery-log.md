@@ -59,9 +59,18 @@
    hopefully.
 2. **At ship:** fill `Delivered`, top up `Effort (h)`. `Status = delivered`.
    Stamp `Last Sent = Delivered` too (same date ~ the first version sent is
-   so far also the last). `Rounds`/`Rework tag` carry forward whatever
-   touch 1.5 already logged (default `0`/`none` if internal review caught
-   nothing) ~ never reset to zero out pre-delivery catches.
+   so far also the last). **If ownership changed since touch 1** (Rica
+   opened the row for the queue, or a different analyst started it, but
+   someone else is actually shipping) **~ update `Analyst` NOW to whoever
+   is delivering,** and note the handback in **Notes** (`handed off from
+   Dale, wk2`). Touch 1 only ever fills `Analyst` with whoever owns the
+   queue at period start, which may not be the ship-of-record this field's
+   definition actually requires (see "How to fill a row" below) ~ leaving
+   it unrefreshed at ship attributes the whole cycle to the wrong person in
+   capchecker's per-analyst join, including the HIRE router's
+   analyst-level scope check (§3). `Rounds`/`Rework tag` carry forward
+   whatever touch 1.5 already logged (default `0`/`none` if internal
+   review caught nothing) ~ never reset to zero out pre-delivery catches.
 3. **If the client asks for a revision:** bump `Rounds` by 1, top up
    `Effort (h)`, set `Rework tag`. **One tag entry per round, always ~
    if a single round has more than one cause** (e.g. a brand correction
@@ -124,12 +133,26 @@
 row is still `open`:** set `Status = cancelled` and note the reason in
 **Notes** (`client paused, wk3` / `cadence cancelled, see brief`). This
 transition is ONLY valid from `open` ~ a cycle that never shipped has no
-completed-work evidence to lose. A `cancelled` row is excluded entirely
-from on-cadence's numerator AND denominator ~ it was never delivered late,
-it was never going to be delivered at all, and counting it as a miss would
-permanently and unfairly depress the rate for something no analyst failed
-at. Don't delete the row ~ the cancellation itself is real history, and a
-pattern of client-cancelled cycles is worth noticing in its own right.
+completed-work evidence to lose. **But "still `open`" splits into two
+different cases, and only ONE of them is a clean exclusion:**
+- **Cancelled BEFORE `Due` passes:** the cycle was never late and was
+  never going to exist ~ fully excluded from on-cadence's numerator AND
+  denominator. It was never a miss, so there's nothing to preserve.
+- **Cancelled AFTER `Due` has already passed, while still `open`:** this
+  row was ALREADY counted as an automatic overdue-in-progress miss the
+  moment `Due` passed (see "How to fill a row" → Status, below) ~ that
+  miss is a fact that already happened, not a future obligation the
+  client can retroactively un-create by cancelling now. Setting `Status =
+  cancelled` here still stops the row from generating any FURTHER
+  tracking (no phantom future delivery expected), but **the miss it
+  already accrued stays counted** ~ don't let cancellation silently
+  subtract an overdue cycle from the denominator and inflate on-cadence
+  after the fact. Note both facts in **Notes** (`overdue since {Due
+  date}, then cancelled {date}, see brief`) so a human reading the row
+  sees why it still counts against the rate.
+Either way, don't delete the row ~ the cancellation itself is real
+history, and a pattern of client-cancelled cycles is worth noticing in its
+own right.
 
 **If a client pauses FUTURE reporting or changes cadence AFTER a cycle has
 already shipped** (`delivered`/`revising`/`accepted`)**: leave that row
@@ -197,12 +220,16 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   followed by `accepted`, and never applied to a row that's already
   `delivered`/`revising`/`accepted` (a shipped cycle's evidence stays
   exactly as recorded, even if the client pauses future reporting
-  afterward). On-cadence is computed as `Delivered ≤ Due`
-  for any row that has shipped (`delivered`/`revising`/`accepted`), an
-  automatic miss for any `open` row where `Due` has already passed, and
-  **excluded entirely from both numerator and denominator** for any
-  `cancelled` row and for any `open` row not yet past `Due` (future work,
-  not yet resolved either way).
+  afterward). On-cadence is computed as `Delivered ≤ Due` for any row that
+  has shipped (`delivered`/`revising`/`accepted`), an automatic miss for
+  any `open` row where `Due` has already passed, and excluded entirely
+  from both numerator and denominator for any `open` row not yet past
+  `Due` (future work, not yet resolved either way). **`cancelled` rows are
+  NOT uniformly excluded** ~ cancelled BEFORE `Due` passed, exclude fully
+  (never a miss); cancelled AFTER `Due` had already passed while still
+  `open`, the automatic miss it already accrued STAYS in the numerator
+  shortfall and denominator (see above) ~ cancelling only stops further
+  tracking, it doesn't retroactively erase a miss that already happened.
 - **Rounds** ~ running count of revision rounds, from EITHER source:
   pre-delivery catches (QA gate, internal alignment, OR pass 2 ~ touch
   1.5, any point before the ship write) or client-requested revisions

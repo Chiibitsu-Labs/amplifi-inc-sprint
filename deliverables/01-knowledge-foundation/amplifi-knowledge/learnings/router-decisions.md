@@ -28,13 +28,25 @@ on its own; the numbers that fired them have to be dated too.
 
 ```markdown
 ## {YYYY-MM-DD} ~ monthly walkthrough
-- Thresholds snapshot (every signal evaluated this walkthrough, as of
-  today ~ note any value changed since the LAST entry, and when):
+- Thresholds snapshot (EVERY signal evaluated this walkthrough, not just
+  the ones checked below ~ as of today, note any value changed since the
+  LAST entry, and when. Leave a line blank/`n/a` if that route genuinely
+  wasn't evaluated this month, but don't drop the line):
+  - AUTOMATE: {prevalence threshold, e.g. ≥40% of high-load days · min
+    occurrence count, e.g. ≥3}
+  - Cycle-time baseline (REDESIGN early-warning): {per-client baseline
+    span, §7}
+  - On-cadence threshold: {N%} · evaluation cohort: {trailing 90 days,
+    per §3}
+  - Rework (FIX_CORPUS): {N rounds/accepted-report threshold, AND/OR N%
+    round-tag-share threshold ~ whichever actually fired or was checked}
+    · evaluation cohort: {trailing 90 days, same as on-cadence}
   - WIP baseline: {N per analyst, frozen {date}}
-  - On-cadence threshold: {N%}
-  - Rework: {N rounds/accepted-report threshold, AND/OR N% round-tag-share
-    threshold ~ whichever actually fired or was checked}
   - Load structural line: {N ~ capchecker default unless Michele changed it}
+  - DATA completeness gate: {response-rate floor, e.g. ≥70%/7d · min
+    history, e.g. ≥10 days}
+  - REBALANCE headroom threshold: {relative-gap trigger, e.g. ≥2pt · rest-
+    of-team absolute-headroom ceiling, e.g. ≤5}
 - Routes fired: {one or more of AUTOMATE | REDESIGN | FIX_CORPUS |
   REBALANCE | HIRE | none crossed ~ list every one that actually fired,
   not just the "final" one}

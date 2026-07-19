@@ -35,6 +35,23 @@ extraction pass fills them). File-not-empty is not the same test as
 file-actually-filled-in ~ check for these before treating a read as
 successful.
 
+**Exception, or every brand-new client permanently blocks their own first
+report:** `brief.md` and `brand-standard.md` (files 4–5 above) still MUST
+be filled before generating ~ they're what the client actually asked for,
+never optional. But `context.md` and `insight-log.md` (files 6–7)
+legitimately START templated for a client's very first period ~ the
+roadmap only requires 4–5 filled before work begins (1.3a/1.3b);
+`context.md` accumulates from real work over time, and `insight-log.md` is
+by definition empty until a first report has ever shipped. Applying the
+same "still-templated = missing = refuse to generate" rule to these two
+would deadlock every new client's bootstrap: no first report without a
+filled insight-log, no filled insight-log without a first report. For a
+client's genuinely first period ONLY, treat unresolved `context.md`/
+`insight-log.md` as "no history yet" ~ note it plainly ("no prior context/
+trend to draw on, first period for this client") and generate anyway.
+Once a real entry exists in either file, the normal missing/templated
+check applies again as usual.
+
 ## Step 1 ~ Ground in the period's data
 
 Work ONLY from the data provided for this period (Sentimo/MCP exports,
