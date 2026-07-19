@@ -1056,12 +1056,35 @@ above by hand:
    identical failure class the reset-handling paragraph above already
    solves for the wipe-and-rebuild path, just untreated here for the far
    more common incremental path). Fix: **derive a stable per-block key
-   for each ingested bullet** ~ `{week-of date}#{tag: REWORK or
-   PROCESS}#{theme, normalized}` is naturally unique and stable, since
-   `patterns.md`'s own writing rule already requires one bullet per
-   distinct theme per week (see "How a promotion pass writes here"
-   above), and use it to UPSERT-replace that bullet's contribution
-   (set-to, not add-to) rather than blindly incrementing a running total.
+   for each ingested bullet ~ but `{week-of date}#{tag: REWORK or
+   PROCESS}#{theme, normalized}` alone is NOT that key.** It's unique for
+   an ordinary week-block bullet (`patterns.md`'s own writing rule
+   guarantees one bullet per distinct theme per week, see "How a
+   promotion pass writes here" above), but a `LATE ADDITION to {week}`
+   block can legitimately add ANOTHER bullet for that SAME week/tag/theme
+   combination later ~ a further late-arriving `+1` on a theme this file
+   already tallied for that week. That later bullet collides with the
+   original on this three-part key, and an UPSERT-REPLACE on a colliding
+   key overwrites the original bullet's count with the late addition's
+   instead of folding the two together, silently dropping whichever
+   contribution got overwritten and undercounting the exact recurrence
+   signal AUTOMATE/REDESIGN read (Codex catch, 2026-07-19) ~ the same
+   failure this key was built to prevent, just triggered by a second
+   legitimate bullet instead of a crash replay. **The actual key needs a
+   fourth part identifying WHICH bullet, not just which week/tag/theme:**
+   `{week-of date}#{tag}#{theme}#{origin}`, where `origin` is `original`
+   for the week-block's own bullet, or `late#{that late-addition block's
+   own append position/byte offset in patterns.md}` for a LATE ADDITION
+   bullet ~ since a file position never repeats, this disambiguates the
+   original bullet from every subsequent late addition to the same
+   week/tag/theme, including a second or third late addition to the same
+   one. Store ONE idempotent contribution row per this four-part key
+   (UPSERT-replace is safe again here, since each key now names exactly
+   one bullet, never more) and SUM every row sharing the same
+   `{week-of date}#{tag}#{theme}` prefix when reading a theme's running
+   total ~ this is what actually folds a late addition's count into the
+   week it names (per "How a late-arriving capture" above) instead of
+   silently replacing what was already tallied there.
    With that key in place, re-processing the same bullet after a crash is
    a no-op regardless of whether the cursor actually advanced ~ the
    destination's per-key state is idempotent to replay, so the job

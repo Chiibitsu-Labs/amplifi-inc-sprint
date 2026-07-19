@@ -177,8 +177,16 @@ it's the corpus.
 
 ## 7. Open items
 
-1. **Rica fills the three standards frames** from gold reports (roadmap:
-   week 1–2). The extraction prompts are in the files.
+1. **Rica fills the three standards frames** (roadmap: week 1–2). The
+   extraction prompts are in the files, and the source is NOT the same
+   for all three ~ `what-good-looks-like.md` and `house-voice.md` extract
+   from gold reports; `report-template-rules.md` extracts from the
+   CURRENT Canva template and brand kit instead, per `ROADMAP.md` task 1.2
+   and `standards/report-template-rules.md`'s own fresh-data rules ~
+   sourcing it from gold reports would encode whatever structure, fonts,
+   colors, or logo placement those historical reports happened to use,
+   which can already be stale against the live template (Codex catch,
+   2026-07-19).
 2. Team names their real observed "AI tells" into `house-voice.md` ~ the
    seed list is generic on purpose.
 3. QA flag format confirmed after first live use: current v1 = checklist +

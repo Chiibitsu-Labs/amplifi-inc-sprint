@@ -258,9 +258,14 @@ different facts and belong in different places, never the same row.
 awaiting sign-off looks identical to one that shipped clean ~ all read
 `Rounds = 0` or an unfinished count. A forgotten row silently tells the
 instrument "no rework happened," and a between-rounds row read as final
-undercounts the rework that's still coming. `accepted` is the only status
-the rework signal trusts; `open` past `Due` is a cadence miss in progress;
-`delivered` and `revising` are both "not final yet."
+undercounts the rework that's still coming. `accepted` AND
+`revising (reopened)` are the statuses the rework signal trusts ~ a
+reopened row already has an established `accepted` baseline behind it, so
+Instrument §5a deliberately counts its dated rounds too, not just a bare
+`accepted` row's (excluding it during the reopened interval would drop
+real, dated late rounds and understate rounds-per-report/corpus-tag
+share, Codex catch, 2026-07-19); `open` past `Due` is a cadence miss in
+progress; `delivered` and bare `revising` are both "not final yet."
 
 ## How to fill a row
 
