@@ -83,6 +83,20 @@ one-line session note read cold a week on). Purely qualitative
 `CLIENT-FACT`s don't need this ~ the period requirement is for metrics
 specifically, same scope as Mode 2's rule below.
 
+**If THIS capture is happening on a LATER date than the work session it
+describes** (this skill wasn't run same-day, so `REWORK`/`PROCESS` items
+are being written up after the fact) **~ prefix each `REWORK`/`PROCESS`
+line with the ACTUAL occurrence date, not just the filename's capture
+date:** `REWORK: {2026-06-13} {what got revised...}`. This is the
+exception, not the rule ~ Mode 1 is meant to run "at the end of any work
+session," so the filename date and the work date are the SAME day in the
+normal case, and no prefix is needed. But when they diverge (a Monday
+catch-up capture for Friday's session, say), Mode 2's weekly grouping
+needs the REAL date the friction happened on, not the date someone got
+around to writing it down ~ grouping by filename date alone would file a
+Friday occurrence under Monday's week, misattributing it (see Mode 2's
+grouping rule below for why that corrupts cross-week recurrence).
+
 4. If the session delivered a report, remind the analyst of the two ship
    writes: insight-log entry + delivery-log row (~2 minutes).
 
@@ -158,9 +172,19 @@ specifically, same scope as Mode 2's rule below.
      read. Summarizing into chat and archiving the sources would lose the
      cross-week counts; the tally file is the memory. **If a Friday pass
      was skipped and this run is reading a backlog spanning more than one
-     capture week, group the input files by their OWN filename date
-     (`YYYY-MM-DD` in `learnings/YYYY-MM-DD-HHMMSS-*.md`) before tallying
-     ~ never lump a multi-week backlog into a single "this week" entry.**
+     capture week, group EACH `REWORK`/`PROCESS` item by the date it
+     actually happened on ~ its own occurrence-date prefix if Mode 1 wrote
+     one (`REWORK: {2026-06-13} {...}`), or the file's filename date ONLY
+     when no such prefix is present** (the normal case, filename date and
+     work date match) **~ never group by filename date alone when an
+     occurrence-date prefix exists, and never lump a multi-week backlog
+     into a single "this week" entry.** Grouping by filename date alone
+     misattributes a delayed capture (a Monday write-up for Friday's
+     session) to the WRONG week, and can turn one real week's occurrence
+     into apparent cross-week recurrence if the misattributed week already
+     has its own genuine entry (Codex catch, 2026-07-19) ~ the whole point
+     of Mode 1's occurrence-date prefix is giving this step the date it
+     actually needs.
      `patterns.md`'s schema is one week-block per calendar week specifically
      because AUTOMATE/REDESIGN read RECURRENCE ACROSS weeks; collapsing
      three weeks of backlog into one block either manufactures a

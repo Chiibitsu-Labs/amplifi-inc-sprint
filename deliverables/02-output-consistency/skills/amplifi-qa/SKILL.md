@@ -243,6 +243,14 @@ brand-standard)` if it was against THIS client's own brand-standard.md.
 Never log a bare `brand (missing)` or `brand (not-followed)` with no file
 named ~ that's incomplete the same way a missing qualifier is, because it
 points FIX_CORPUS at "the brand standard" without saying which one.
+FINALLY, append TODAY's date to the entry as `[YYYY-MM-DD]`, e.g.
+`brief-misalign (missing) [2026-06-01]` ~ every entry needs this, not just
+corpus-tagged ones. This is NOT optional either: the instrument only
+counts rework rounds whose OWN date falls in its trailing 90-day window,
+so an otherwise-correct but undated entry silently drops out of that
+count entirely ~ the correction genuinely happened, but the router never
+sees it, and the corpus-tag share or rounds-per-report reading FIX_CORPUS
+(and HIRE, downstream of it) acts on comes out artificially clean.
 ```
 
 This QA gate is one of the three pre-send checkpoints touch 1.5 exists to

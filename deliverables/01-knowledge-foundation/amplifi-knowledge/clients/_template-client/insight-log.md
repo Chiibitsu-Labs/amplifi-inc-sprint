@@ -64,6 +64,22 @@ exists to prevent. The delivery-log row already carries the evidence
 it does, correct this entry in the same edit that updates `Client
 reaction`, don't leave the two out of sync.
 
+**If the corrected figure was ALREADY promoted into `context.md` as a
+dated `CLIENT-FACT`, fixing only THIS entry isn't enough ~ check
+`context.md` for a matching promoted fact and correct or supersede it too,
+in the same edit.** Both files are accepted historical sources for the
+SAME kind of figure (`amplifi-insights` Step 1 and `amplifi-qa` check 4
+both read a dated `context.md` entry exactly like an insight-log entry,
+see either `SKILL.md`) ~ correcting one while leaving the other stale
+doesn't fix the problem, it just adds a second, conflicting "trusted"
+value to the corpus, and a future report could easily pull the WRONG one
+(Codex catch, 2026-07-19). Update the `context.md` fact's own value (keep
+its original promotion date, since that's still when it was FIRST
+recorded ~ note the correction date alongside it, e.g. "as of Mar 2026,
+corrected Jun 2026") rather than leaving a second, newer fact for the
+same period sitting next to the stale one ~ two dated facts for one
+period is the same ambiguity as one wrong one, just harder to notice.
+
 ---
 
 ## {YYYY-MM} ({cadence period})

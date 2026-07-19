@@ -16,7 +16,19 @@ in the path (that creates an unintended nested directory, or fails
 outright, and breaks every skill's `clients/{client}/...` read). Same
 slugging rule the improve skill uses for learning filenames. Keep the
 REAL, unslugged name inside `brief.md`'s Snapshot table ~ the slug is a
-filesystem-safety measure for the folder name only.
+filesystem-safety measure for the folder name only. **If the real name
+contains a literal `|`** (one of the same reserved characters that
+already triggers folder slugging above, e.g. "ACME|EMEA") **~ escape it
+as `\|` when writing that Snapshot table cell, never a bare `|`.** The
+Snapshot itself is a Markdown table, and an unescaped `|` inside a cell
+is read as a NEW column boundary by any Markdown parser, corrupting the
+row and breaking the exact lookup `amplifi-improve`, `amplifi-qa`, and
+`amplifi-insights` all now rely on (matching a requested display name
+against this table to resolve the slugged folder, per each skill's own
+Step 0/Mode 2 ~ Codex catch, 2026-07-19). The escaped form still displays
+and reads back as the real `ACME|EMEA` ~ un-escape `\|` → `|` when
+comparing a requested name against this cell, same as any other
+Markdown-escaped value.
 
 **A client clarifies something?** Write it into that client's `brief.md`
 FAQ section, once. Nobody re-infers it again.
