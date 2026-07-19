@@ -425,12 +425,25 @@ count this produces: they're always the LAST that-many entries in the
 `Rework tag` list (entries append in order, oldest to newest, so the
 freshest ones are always the tail).
 
-If a row genuinely
-has NO `late-reopen` marker at all, it can't be in the cohort via `Last
-Sent` in the first place ~ `Last Sent` only moves after a row has already
-reached `accepted` once via a reopen (see `delivery-log.md`); an
-un-reopened row's `Last Sent` tracks its normal pre-acceptance revisions
-and was never excluded from the `Due`-anchored cohort to begin with. A row
+**A row CAN enter the cohort via `Last Sent` with NO `late-reopen` marker
+at all ~ don't assume that case is impossible.** A reopen marker only
+exists when a row was accepted, went quiet, and got reopened by LATE
+feedback (touch 4). But a row can just as easily still be working through
+its FIRST, never-yet-accepted round of revisions when `Due` is already
+outside the 90-day window ~ e.g. `Due` 100 days ago, shipped late at 95
+days ago, client asked for a normal (non-reopen) revision at 80 days ago
+(an ordinary touch 3, `Last Sent` stamped, no marker involved because the
+row was never `accepted` yet to reopen FROM). That row is in cohort via
+`Last Sent` (80 days, inside the window) with zero markers to compute a
+delta from. Treatment: **when a `Last Sent`-only row has NO `late-reopen`
+marker, count its FULL `Rounds`, same as a `Due`-anchored row** ~ there's
+no "old, already-counted episode" to subtract, because this row has never
+reached `accepted` before now; every round on it is happening during its
+one, still-unfolding first pass through delivery, none of it could have
+been counted in an earlier walkthrough. The marker-and-delta math above
+is ONLY for rows that reached `accepted` at least once and got reopened
+later ~ it doesn't apply, and isn't needed, when no reopen ever happened.
+A row
 in the cohort via
 `Due` (the normal case) still counts in full ~ its rounds genuinely
 happened within, or close to, this window already. 90 days
@@ -460,8 +473,21 @@ over different windows or different anchor dates.
      problem) and excluding `cancelled` rows where `Last Sent ≤ Due`
      (cancelled before or on `Due`, never became a miss, fully out of both
      numerator and denominator). Below threshold, with `Rework tag` mostly
-     `client-new-ask`/`data`/`none` rather than
-     `brief-misalign`/`brand`/`quality-bar` → REDESIGN. **This tag
+     `client-new-ask`/`data`/`none`, **OR corpus-tagged but qualified
+     `(not-followed)`,** rather than
+     `brief-misalign`/`brand`/`quality-bar` **qualified `(missing)`** →
+     REDESIGN. **The `(not-followed)` reclassification matters, don't skip
+     it:** a `brand (not-followed)` round means the brand standard was
+     already correct and someone just didn't apply it ~ that's a process/
+     execution question, REDESIGN's territory, not FIX_CORPUS's, no matter
+     what tag it's wearing. Without this, a slow client with heavy
+     `(not-followed)` rework satisfies neither REDESIGN (its rounds look
+     corpus-tagged on the surface) nor FIX_CORPUS (the qualifier gate
+     correctly refuses to fire on an already-correct corpus) ~ the row
+     falls through BOTH branches unrouted, and a real, already-identified
+     non-capacity explanation goes silently unaccounted for, leaving
+     nothing to stop HIRE from proceeding as if no explanation existed at
+     all. **This tag
      read is scoped to the LATE cycles specifically ~ the rows actually
      missing `Due` (`Delivered > Due`, plus overdue `open` rows) ~ not the
      full accepted-row population.** Averaging tags across every accepted
@@ -493,7 +519,24 @@ over different windows or different anchor dates.
      letting HIRE fire before the pending rework tags reveal whether the
      slowdown was actually corpus- or process-driven. "Can't be evaluated
      yet" and "evaluated and absent" are different findings; only the
-     second one lets HIRE proceed.
+     second one lets HIRE proceed. **But scope this PROVISIONAL block to
+     genuinely CLUSTERED/narrow candidates ~ run the clustering check
+     below FIRST, or at minimum don't let a provisional tag-share reading
+     block HIRE when the SHAPE of the miss is already clearly broad.** A
+     portfolio-wide capacity incident (many clients overdue at once, most
+     still `open`/`revising`, team-wide WIP/load already elevated) will
+     naturally have few-to-no late rows freshly `accepted` yet ~ that's
+     what an active incident looks like. Marking REDESIGN provisional
+     ~and~ letting that provisional state block HIRE in that exact
+     scenario would leave the instrument unable to ever confirm the
+     capacity explanation it exists to catch, precisely when it's most
+     real: the clustering check below already rules REDESIGN out for broad
+     situations REGARDLESS of what the tags eventually say, so a broad
+     pattern shouldn't wait on a qualifier question that was never going
+     to change REDESIGN's answer anyway. Reserve PROVISIONAL for the
+     genuinely ambiguous case: a NARROW, clustered-looking candidate where
+     the qualifier itself (not the shape of the miss) is the open
+     question.
    - **Early warning (cycle time):** compare recent `Delivered − Start`
      spans against the frozen per-client baseline (defined in §2's signal
      table ~ first 3 completed cycles, ≥20% margin; §7 only governs WHEN
@@ -545,8 +588,13 @@ over different windows or different anchor dates.
    `brief-misalign`/`brand`/`quality-bar`? If both gates clear, FIX_CORPUS
    fires, and the tag itself tells you which corpus file is stale (the
    brief, the brand standard, or `what-good-looks-like.md`) ~ **but check
-   the qualifying rounds' Notes (`missing` vs `not-followed`) before
-   actually opening that file to edit it.** The tag says what kind of
+   the qualifier on each qualifying round's TAG ENTRY (`missing` vs
+   `not-followed`, e.g. `brand (not-followed)` ~ NOT free text in Notes,
+   see `delivery-log.md`) before actually opening that file to edit it.**
+   A correctly-filled row will normally have no qualifier sitting in
+   Notes at all ~ Notes can't reliably bind a qualifier to a specific
+   round on a multi-round row, which is exactly why the qualifier lives on
+   the tag entry itself instead. The tag says what kind of
    defect; the qualifier says whether the corpus was really at fault. A
    majority `not-followed` reading means the file was already right and
    editing it fixes nothing ~ the real cause is execution or process, not
@@ -563,15 +611,29 @@ over different windows or different anchor dates.
    resolution in sight, treat the accepted-only number as a **lower
    bound, not the real rate** ~ note the open backlog explicitly rather
    than reporting a clean FIX_CORPUS read that a few weeks of hindsight
-   would contradict.
+   would contradict. **This is a THIRD source of PROVISIONAL, same
+   consequence as the other two (step 2's REDESIGN, this step's qualifier
+   gate): if the unresolved `revising` backlog is large or corpus-tagged
+   enough that resolving it could plausibly flip this reading from
+   below-threshold to above (or from majority-`not-followed` to
+   majority-`missing`), mark FIX_CORPUS PROVISIONAL and let it block HIRE
+   too, not just "noted."** A falsely-low FIX_CORPUS reading, acted on as
+   if it were final, is exactly the false-absence failure mode the other
+   two provisional gates already exist to prevent ~ a portfolio-wide
+   backlog of unresolved, heavily-tagged revisions must not be waved
+   through to HIRE just because none of it has finalized yet.
 4. **HIRE check:** only if none of the above fired **portfolio-wide** ~ AND
-   none of the above sits **PROVISIONAL** either. Two sources of
-   PROVISIONAL, both block HIRE the same way a fired branch would, until
+   none of the above sits **PROVISIONAL** either. THREE sources of
+   PROVISIONAL, all block HIRE the same way a fired branch would, until
    resolved: step 2's REDESIGN read, when too few late/trending cycles
-   have reached `accepted` to evaluate the rework qualifier; and step 3's
-   FIX_CORPUS read, when qualifying rounds are missing their `missing`/
-   `not-followed` tag-entry qualifier entirely (genuinely missing data,
-   waitable). A COMPLETE tie in that same qualifier ~ every round tagged,
+   have reached `accepted` to evaluate the rework qualifier (but NOT when
+   the miss is already clearly broad + WIP/load-elevated ~ see step 2's
+   clustering-first note); step 3's FIX_CORPUS tag-qualifier read, when
+   qualifying rounds are missing their `missing`/`not-followed` tag-entry
+   qualifier entirely (genuinely missing data, waitable); and step 3's
+   survivorship-bias backlog, when an unresolved `revising` backlog is
+   large/tagged enough to plausibly flip the FIX_CORPUS reading. A
+   COMPLETE tie in the missing/not-followed qualifier ~ every round tagged,
    the `missing`/`not-followed` counts landing exactly equal ~ is NOT
    provisional (see step 3): it's a resolved "no clear corpus-cause
    majority" finding with no missing data left to wait for, so it does not
@@ -783,38 +845,52 @@ above by hand:
      none either ~ so a test phrased as "fraction of CLIENTS showing
      elevated WIP/load" has no data behind it to actually run. What's
      knowable instead: which ANALYST(S) own the narrow signal's named
-     client(s) (the delivery log's `Analyst` field is exactly this join
-     key, already collected for its own reasons) and whether WIP/load
+     client(s) and whether WIP/load
      elevation is confined to THOSE analyst(s) or spans most of the
-     roster. So: map the narrow signal's client(s) to their analyst(s) via
-     delivery-log rows ~ **the CURRENT owner only, not every historical
-     ship-of-record.** `Analyst` records whoever delivered EACH cycle, and
-     ownership can rotate over a client's history (Dale for six months,
-     then Janelle); mapping through every row a client has ever had would
-     pull in analysts who haven't touched that client in months, and their
-     unrelated WIP/load elevation could get misread as "confined to the
-     narrow signal" when it has nothing to do with it, or vice versa.
-     Use the analyst on the client's MOST RECENT row within the trailing
-     90-day cohort (same cohort the rest of this section reads from) ~
-     that's who actually owns the problem the narrow signal names right
-     now. Is WIP/load ALSO elevated only for that same small
+     roster. So: map the narrow signal's client(s) to their analyst(s) ~
+     **read the CURRENT owner from `brief.md`'s Snapshot table ("Amplifi
+     lead analyst: {name} · backup: {name}"), NOT the delivery-log's most
+     recent row.** `Analyst` on a delivery-log row records whoever
+     delivered THAT ONE cycle, which isn't the same question as who
+     currently owns the account: a backup who shipped a single cycle
+     covering for the lead's leave becomes "most recent" the moment that
+     row lands, even after the lead has already resumed the account and
+     simply hasn't shipped the NEXT cycle yet at walkthrough time ~
+     mapping through the delivery log alone can point the scope test at
+     the wrong analyst's WIP/load entirely. `brief.md`'s lead-analyst field
+     is the deliberately-maintained, current-as-of-now ownership record
+     (updated whenever ownership actually changes, not just whenever
+     someone happens to ship); use it as the primary source. Fall back to
+     the delivery-log's most recent row ONLY if `brief.md`'s field is
+     itself still templated/unfilled for that client. Is WIP/load ALSO
+     elevated only for that same small
      set of analysts, or for most of the team? **"MOST," defined exactly,
-     not left to operator judgment:** more than half of the analysts who
-     have SUFFICIENT WIP data this cohort (the ≥7-of-10-valid-observations
-     bar from §2's WIP row) ~ for today's 6-person function, that's ≥4 of
-     6. An analyst without sufficient data this cohort is excluded from
-     BOTH sides of the count (not counted as elevated, not counted as
-     not-elevated, not counted in the denominator either) ~ their absence
-     is a data gap, not evidence either way. Record the exact headcount
-     used (how many had sufficient data, how many of those read elevated)
-     in `router-decisions.md`'s threshold snapshot alongside the other
-     signals, so a borderline month (e.g. 3-of-5-with-data elevated, one
-     analyst excluded for thin data) is reproducible, not re-litigated.
-     **Confined to the narrow
+     not left to operator judgment, and ANCHORED TO THE FULL ROSTER, not
+     just whoever has data this cohort:** more than half of the FULL,
+     fixed roster count ~ for today's 6-person function, that's ALWAYS ≥4
+     of 6, regardless of how many analysts happen to clear the WIP
+     observation-completeness bar this cohort. **Do not shrink the
+     denominator to "analysts with sufficient data" here** ~ that's a
+     different question (§2's WIP row already gates whether WIP can
+     corroborate HIRE AT ALL on a separate ≥70%-roster-coverage floor); if
+     THIS test's denominator shrank too, a thin-but-passing-coverage month
+     (say 5 of 6 with data) would silently lower the portfolio-wide bar to
+     3-of-5-elevated, when genuine portfolio-wide evidence still means
+     reaching most of the ACTUAL team, not most of whoever reported in.
+     Count elevated analysts against the fixed ≥4-of-6 bar directly; an
+     analyst without sufficient data simply can't be counted as elevated
+     (missing data isn't evidence of elevation), which makes reaching the
+     fixed bar harder when coverage is thin, exactly as it should be ~
+     thin coverage should make broad evidence HARDER to establish, never
+     easier. Record the exact headcount
+     used (full roster size, how many had sufficient data, how many of
+     those read elevated) in `router-decisions.md`'s threshold snapshot
+     alongside the other signals, so a borderline month is reproducible,
+     not re-litigated. **Confined to the narrow
      signal's own analyst(s) DOES block HIRE** ~ their already-named
      problem plausibly explains all the observed strain, so that gets
-     fixed first, not hired around. **Elevation reaching ≥4 of 6 (or
-     whatever the current sufficient-data headcount implies), well beyond
+     fixed first, not hired around. **Elevation reaching the fixed ≥4-of-6
+     full-roster bar, well beyond
      just the analyst(s) the narrow signal names, does
      NOT block HIRE** ~ a client-scoped fix can't explain strain in
      analysts who were never part of that narrow signal at all, so letting

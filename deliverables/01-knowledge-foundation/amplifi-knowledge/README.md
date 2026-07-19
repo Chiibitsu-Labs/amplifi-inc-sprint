@@ -9,6 +9,14 @@ without a rebuild.
 
 **Starting a new client?** Copy `clients/_template-client/` → rename to the
 client's name → fill `brief.md` and `brand-standard.md` from the kickoff.
+**Slug the folder name first if the client's real name has a `/` or any
+other filesystem-reserved character** (`\ : * ? " < > |`) ~ a client like
+"ACME/EMEA" becomes the folder `clients/ACME-EMEA/`, never a literal `/`
+in the path (that creates an unintended nested directory, or fails
+outright, and breaks every skill's `clients/{client}/...` read). Same
+slugging rule the improve skill uses for learning filenames. Keep the
+REAL, unslugged name inside `brief.md`'s Snapshot table ~ the slug is a
+filesystem-safety measure for the folder name only.
 
 **A client clarifies something?** Write it into that client's `brief.md`
 FAQ section, once. Nobody re-infers it again.

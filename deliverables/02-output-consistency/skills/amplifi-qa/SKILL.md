@@ -198,7 +198,13 @@ what-good-looks-like.md's bar, not the brief, brand standard, or a data
 problem specifically. Fixing BOTH a brief-alignment flag and a data flag
 in this one pass is still ONE round, ONE tag (brief-misalign wins the
 priority, data goes in Notes) ~ never one bump per flag, never more than
-one tag entry for this pass.
+one tag entry for this pass. IF the tag is brief-misalign, brand, or
+quality-bar: attach its qualifier too, right on the same entry ~
+`brief-misalign (missing)` if the brief/standard genuinely didn't cover
+this, `brief-misalign (not-followed)` if it already did and this pass
+just caught it not being applied. This isn't optional: delivery-log.md's
+router treats a corpus-tagged entry with no qualifier as incomplete data,
+same as a missing tag entirely.
 ```
 
 This QA gate is one of the three pre-send checkpoints touch 1.5 exists to
