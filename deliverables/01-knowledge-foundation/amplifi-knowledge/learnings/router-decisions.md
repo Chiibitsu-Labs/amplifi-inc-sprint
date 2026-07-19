@@ -153,22 +153,51 @@ on its own; the numbers that fired them have to be dated too.
     ONE reason this count matters, not the only one this line applies to.
     **When a narrow AUTOMATE/REDESIGN/FIX_CORPUS signal DOES coexist,
     record a SECOND, separate line: the narrow signal's own named
-    analyst(s), and the post-exclusion elevated count/bar** (`INSTRUMENT.md`
-    §3's narrow-signal override recomputes the numerator EXCLUDING those
-    named analysts before testing it against the same more-than-half bar)
-    ~ the total-elevated count above answers the unconditional base
-    predicate, but it does NOT by itself answer whether elevation survives
-    independently of the narrow signal, and owner mappings (`brief.md`'s
+    analyst(s), and the post-exclusion elevated count/bar, recorded
+    SEPARATELY FOR WIP AND FOR LOAD, never one combined figure** ~ the
+    excluded analyst set can leave the two predicates in different states
+    (excluding a narrow signal's owner might drop WIP to 4-of-6 while
+    load, a different set of people running hot, stays at 3-of-6, or vice
+    versa), and Instrument §5b's HIRE predicate requires BOTH to
+    independently clear, so one merged number can't show whether the
+    override actually passed both, only that it passed AT LEAST one
+    (Codex catch, 2026-07-19). Record each signal's own post-exclusion
+    count/bar plus its own coverage/window evidence (WIP: ≥7-of-10-valid-
+    observations coverage per analyst, same as the unconditional line
+    above; load: the active sustain window it was evaluated over, same
+    as the unconditional line above) (`INSTRUMENT.md`
+    §3's narrow-signal override recomputes EACH signal's numerator
+    EXCLUDING those named analysts before testing it against the same
+    more-than-half bar)
+    ~ the total-elevated counts above answer the unconditional base
+    predicate, but they do NOT by themselves answer whether EITHER
+    signal's elevation survives independently of the narrow signal, and
+    owner mappings (`brief.md`'s
     lead-analyst field) can change after the walkthrough ~ without logging
-    the excluded set and the adjusted count/bar separately, a later
-    reviewer can't tell whether the override actually cleared, only that
-    the unconditional total did (Codex catch, 2026-07-19).
+    the excluded set and BOTH adjusted counts/bars separately, a later
+    reviewer can't tell whether the override actually cleared both
+    predicates, only that the unconditional totals did (Codex catch,
+    2026-07-19).
 - Routes fired: {one or more of AUTOMATE | REDESIGN | FIX_CORPUS |
-  REBALANCE | HIRE | none crossed ~ list every one that actually fired,
-  not just the "final" one}
+  EXECUTION-GAP | REBALANCE | HIRE | none crossed ~ list every one that
+  actually fired, not just the "final" one}
   (REBALANCE = capchecker's live signal, one analyst overloaded while the
   team has headroom, WITH genuine absolute headroom confirmed behind it ~
   see Instrument §3/§5a; a narrow signal here does not by itself block HIRE)
+  **EXECUTION-GAP is its own distinct value, not a stand-in for FIX_CORPUS
+  and not folded into "none crossed" either** ~ Instrument §3 step 3's
+  clustered majority-`not-followed` finding (rework frequent and
+  corpus-tagged, gates (a)/(b) both clear, but the STANDARD was already
+  right, so the corpus-edit action correctly does NOT fire) is a fully
+  RESOLVED check, not an absence: it names a real, clustered
+  execution/coaching gap and blocks HIRE for that scope exactly like a
+  narrow REDESIGN or FIX_CORPUS signal would. Neither existing value fits
+  it: recording `FIX_CORPUS` here would falsely claim a corpus edit
+  fired, and recording `none crossed` would falsely claim nothing
+  explained the elevated rework at all, when this month's audit actually
+  needs to say "checked, found a real cause, it just isn't a corpus
+  problem" (Codex catch, 2026-07-19: this schema had no value for that
+  resolved-but-not-a-corpus-edit outcome at all).
 - **Provisional/blocked routes, recorded SEPARATELY from "fired" and
   "none crossed":** {list any of REDESIGN or FIX_CORPUS marked PROVISIONAL
   this walkthrough (too few late/trending rows accepted yet; missing

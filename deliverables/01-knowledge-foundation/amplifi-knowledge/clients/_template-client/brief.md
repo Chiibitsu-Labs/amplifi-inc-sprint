@@ -10,6 +10,7 @@
 |---|---|
 | Client | {name} |
 | Account label | {blank, unless this name collides with another account ~ see `README.md`'s duplicate-name handling. Internal disambiguation only, e.g. "Chicago office, since 2024" ~ never shown to the client, never used as the display name in generated output. `Client` above always stays the real, unqualified name} |
+| Account status | {active / paused / ended}, since {YYYY-MM-DD} ~ see note below |
 | Reporting cadence | {weekly / bi-weekly / monthly} (v{n}, since {YYYY-MM-DD}) ~ see note below |
 | Report due | {e.g. every Friday / 5th working day of month} |
 | Platforms monitored | {FB / IG / Reddit / YouTube / TikTok / …} |
@@ -36,6 +37,28 @@
 > `Analyst` for current ownership (Codex catch, 2026-07-19). `Dale` here
 > and `Dale S.` in capchecker silently points the scope check at nobody's
 > real data instead of the right person's.
+
+> **"Account status" exists specifically because `delivery-log.md`'s
+> `cancelled` status can't answer this question ~ that status is scoped
+> to one CYCLE (a client pausing or cancelling before a single report
+> ships), never to the client's whole engagement.** Without a per-client
+> field, a paused or ended account still sitting in `clients/*` is
+> indistinguishable, from the folder alone, from a genuinely active
+> client who simply hasn't had a cycle open recently ~ Instrument §5b's
+> REDESIGN clustering-breadth predicate reads this field specifically to
+> derive "the currently-active client roster" it needs and has no other
+> structured source for (Codex catch, 2026-07-19). Set to `active` at
+> onboarding; flip to `paused` the moment the client suspends future
+> reporting (`delivery-log.md`'s own supported transition, see its
+> `cancelled`-from-`open` rule for the per-cycle side of the same event)
+> or `ended` the moment the engagement genuinely concludes, stamping the
+> date either happens ~ same "update it here, right when it happens"
+> discipline as "Amplifi lead analyst" above. A `paused`/`ended` client
+> is excluded from the active-client roster denominator entirely, not
+> counted as a non-triggering (healthy) member of it ~ the two read very
+> differently for the breadth predicate (excluding it shrinks the
+> denominator; miscounting it as healthy would inflate the denominator
+> with an account that was never really available to trigger anything).
 
 > **"Client history" ~ "New"** means this system's own delivery-log/
 > insight-log ARE this client's whole history, genuinely period one when
