@@ -140,7 +140,31 @@ grows under their roof. Chii's repo remains the reference/spec copy.
    the whole session, even though the corpus connection and write path
    both check out (Codex catch, 2026-07-19). Verify the same way step 4
    already does: fresh session, confirm each skill actually runs and
-   reads the corpus back to you.
+   reads the corpus back to you. **This installation is PER MACHINE/PER
+   USER PROFILE, not a one-time, whole-team event ~ do this step, and its
+   verification, on EVERY analyst's own workstation, not just once on
+   whoever runs the setup.** A project-level install
+   (`.claude/skills/{skill-name}/SKILL.md`) lives inside one specific
+   local project folder; a user-level install
+   (`~/.claude/skills/{skill-name}/SKILL.md`) lives inside one specific
+   person's home directory. Neither is shared automatically across
+   different analysts' machines or separate user profiles on the same
+   machine, and connecting Drive (step 4) syncs the CORPUS, never a
+   locally-installed skill file ~ so completing this step once, on the
+   setup operator's own client, only ever proves it CAN work, not that it
+   DOES for the rest of the team (Codex catch, 2026-07-19: this step and
+   its "fresh session" verification describe a single client instance,
+   but the corpus this whole deliverable set exists to serve is used by
+   every analyst on the roster; an analyst on a different machine or user
+   profile than whoever ran this step has none of the three skills
+   installed, falls back to unstructured prompting or can't run the
+   capture loop at all, and the corpus stops filling consistently for
+   everyone but the one person who did the setup). Track completion
+   per analyst, same discipline `ROADMAP.md`'s other team-wide rollout
+   tasks already use ~ this step isn't "done" until EVERY analyst who
+   drafts/QAs/captures has confirmed all three skills actually run on
+   THEIR own client, not when the corpus connection and one verification
+   session both check out for the first person who tried it.
 
    **(b) Fallback ~ only if the team keeps drafting in Claude Enterprise.**
    If insights/QA work stays in Claude Enterprise (paid seat, org

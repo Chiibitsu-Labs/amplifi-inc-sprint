@@ -165,12 +165,37 @@ brace-pattern scan can't tell that apart from a genuinely unresolved
 `{Client Name}`/`{YYYY-MM-DD}`-style placeholder still sitting there
 unfilled, permanently blocking an otherwise-ready client the moment their
 real content happens to contain a brace (Codex catch, 2026-07-19). The
-test: does this cell/section still read VERBATIM as `_template-client`'s
-own placeholder text for that position, unchanged from the template file?
-If yes, it's unfilled. If the analyst replaced it with anything else ~
-even text that happens to also contain literal braces of its own ~ it's
-filled, full stop, regardless of whether a blind brace-pattern would still
-register a hit inside it.
+test is NOT "does this whole cell/section still read VERBATIM, byte-for-
+byte, as the template's placeholder text for that position" ~ a
+whole-field identity comparison only ever catches a field left COMPLETELY
+untouched, and misses a PARTIALLY-edited one entirely. A multi-token field
+like `Account status` (`{active/paused/ended}, since {YYYY-MM-DD}`) can
+have its enum token filled in (`active, since {YYYY-MM-DD}`) while its
+date token stays a genuine, unresolved placeholder ~ that string differs
+from the pristine template text, so a whole-cell match would call it
+"filled, full stop," even though it still contains a real unresolved
+runtime token and the field is only half-done (Codex catch, 2026-07-19:
+requiring whole-field byte-identity to flag "unfilled" only ever catches
+the specific case where NOTHING in the field was touched, not the more
+common case where an analyst filled part of a multi-token field and
+stopped). The correct test, per TOKEN, not per field: does this
+cell/section still contain ANY of `_template-client`'s own SPECIFIC,
+KNOWN placeholder tokens for that position (`{YYYY-MM-DD}`,
+`{active/paused/ended}`, `{Client Name}`, etc. ~ the literal strings the
+template file itself ships, not a blind brace pattern), REGARDLESS of
+whether other tokens in the same field or the surrounding text have
+already been filled in? If ANY known token for that position is still
+present verbatim, that position is unfilled, even if the rest of the
+field reads as real content around it. Only when EVERY known token for a
+given position has been replaced with something else does that position
+count as filled. This still isn't a blind brace scan ~ it matches against
+the template's own SPECIFIC token strings for THAT position, so a client's
+genuine `{{first_name}}` mail-merge token or pasted JSON example (neither
+of which is one of `_template-client`'s own known placeholder strings for
+that field) still passes clean, exactly as the brace-scan discipline above
+requires ~ this refinement only tightens what counts as "still a
+placeholder," it doesn't loosen what counts as "real content with
+incidental braces."
 
 **This ONE exception is scoped to `report-template-rules.md` BY NAME,
 never to "any file carrying a `Status: FRAME`/`Status: LIVE` marker" ~

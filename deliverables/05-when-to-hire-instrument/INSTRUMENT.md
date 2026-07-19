@@ -479,6 +479,26 @@ the identical way). Validate every row's `Status` against an exact match
 on the six defined values before building ANY of the sets below; a row
 matching none of them is excluded from every gate (a)/(b) set and flagged
 as a data-hygiene gap, never silently treated as if it doesn't exist.
+**Excluding it isn't the end of the story, though ~ exclude-and-flag alone
+still lets the REMAINING cohort produce a clean-looking gate (a)/(b)
+result, with nothing stopping HIRE from proceeding on it.** A rejected
+row can be the client's single most decisive one ~ its heaviest-reworked,
+most corpus-tagged report, now silently missing from both the numerator
+and the denominator ~ and a plain exclusion has no mechanism to say "this
+result might have looked different." This is a FOURTH source of
+PROVISIONAL, same consequence as the other three sources this doc already
+defines (step 2's REDESIGN read, step 3's qualifier gate, step 3's
+survivorship-bias backlog, all below): if the rejected row's own
+`Rounds`/tag entries (whatever of them ARE still legible even though its
+`Status` itself fails validation) could plausibly swing gate (a)'s
+frequency average past its threshold, or gate (b)'s tag-share past its
+own, mark THIS client's FIX_CORPUS reading PROVISIONAL and let it block
+HIRE the same way an already-fired branch would, rather than letting a
+hygiene flag alone silently clear the way (Codex catch, 2026-07-19: this
+gate's own HIRE-blocking PROVISIONAL list, step 4 below, enumerated three
+sources of provisional uncertainty but never this one, even though a
+rejected row is exactly as capable of hiding decisive evidence as the
+other three).
 
 **Validate BEFORE filtering, never after ~ the completeness/date gate
 (below) has to run across EVERY `accepted`/`revising (reopened)` row
@@ -560,7 +580,31 @@ looks at that row, so it can't catch it: gate (a)'s numerator, which
 reads dated entries directly, would either count a round the row's own
 `Rounds` field says doesn't exist, or a reading that trusts `Rounds`
 instead would silently ignore real, dated rework ~ neither path gets
-flagged as bad data (Codex catch, 2026-07-19). Run this gate across EVERY
+flagged as bad data (Codex catch, 2026-07-19). **Before either branch
+below can even apply, `Rounds` itself has to parse as a genuine
+nonnegative integer ~ "`Rounds = 0`" and "`Rounds ≥ 1`" are NOT the only
+two things a `Rounds` cell can actually contain.** A blank cell, a
+nonnumeric value, a fractional one (`1.5`), or a negative one (`-1`)
+matches neither branch as literally stated: it isn't the literal value
+`0`, so it doesn't trigger the `Rounds = 0` check, but it also isn't a
+real "≥ 1" count the entry-count comparison below can meaningfully test
+against. A row shaped exactly this way (`Rounds` blank or malformed,
+`Rework tag = none`) can fall through BOTH checks unflagged ~ it isn't
+caught by the zero-tag consistency test (its `Rounds` isn't literally
+`0`) and it isn't caught by the entry-count test either (there's no real
+number to compare `0` real entries against), so it stays in gate (a)'s
+denominator (an `accepted`/`revising (reopened)` row with `Due` in-window
+still qualifies for set (i) regardless of `Rounds`, below) while
+contributing nothing to the numerator, silently deflating the frequency
+average on bad data instead of a genuine clean report (Codex catch,
+2026-07-19: this gate's two branches, read literally, presuppose
+`Rounds` is already a clean integer, the same unvalidated-field assumption
+just closed for `Status` above, one field over). Validate `Rounds` parses
+as a nonnegative integer FIRST, before applying either branch; a row
+whose `Rounds` fails this parse is excluded from gate (a)/(b) the same
+swing-aware way an invalid `Status` now is (above) ~ flagged as a
+data-hygiene gap, and PROVISIONAL for this client's FIX_CORPUS reading if
+its exclusion could plausibly swing either gate. Run this gate across EVERY
 `accepted`/`revising (reopened)`/`cancelled` row regardless of its
 `Rounds` value, checking BOTH directions: a `Rounds = 0` row MUST carry
 `Rework tag = none` exactly, nothing else; any OTHER row (`Rounds ≥ 1`)
@@ -944,16 +988,41 @@ dated entries get counted this month).
        makes impossible (Codex catch, 2026-07-19: a uniform hit-or-miss
        bracket overstates uncertainty for exactly this shape ~ example
        below).
+     - A row excluded because its OWN `Status` value doesn't match any of
+       the six recognized statuses at all (round 78's validation gate,
+       above ~ a typo like `acceptd`, not a bad date on an otherwise-
+       readable status) carries the WIDEST uncertainty of the three types
+       here, since not even its status CATEGORY is known, only its dates.
+       Bound it the same as the confirmed-shipped case above, NOT the
+       narrower open/cancelled one: best case is a HIT (numerator +1,
+       denominator +1) ~ nothing about a completely unreadable `Status`
+       rules out the row having genuinely been an on-time shipped cycle,
+       so the most favorable honest interpretation still has to allow it;
+       worst case is a MISS (numerator +0, denominator +1), the same
+       reasoning the other two types already use (a miss drags the
+       computed rate down further than a full 0/0 exclusion would, so it's
+       the correct worst-case assumption for THIS bracket's purpose even
+       though "the row was actually open-not-yet-due" is also a genuinely
+       possible true state that would have contributed nothing at all).
+       Excluding this row-type from the bracket calculation ENTIRELY (the
+       prior gap) effectively assumed it always resolves to the mildest
+       possible case, silently treating "status completely unreadable" as
+       equivalent to "definitely not evidence" (Codex catch, 2026-07-19:
+       the bracket's two existing categories only ever covered a row whose
+       STATUS was legible but some other field wasn't ~ a row failing
+       validation on `Status` itself fell through both categories and
+       into neither bound at all).
      Compute `worst_case` = numerator using every excluded row's MINIMUM
      contribution (0 for all of them) over denominator using whichever
      option maximizes it per row (miss, +1, for every type above ~ a miss
      never helps the numerator and always swells the denominator, the
      worst combination for the rate on both counts at once). Compute
      `best_case` = numerator using each row's MAXIMUM possible
-     contribution (shipped-status rows: +1 as a hit; open/cancelled rows:
-     +0, since they can't contribute a hit) over denominator using
-     whichever option is most favorable per row (shipped-status: +1,
-     unavoidable; open/cancelled: +0, full exclusion). **Flag as
+     contribution (shipped-status AND status-invalid rows: +1 as a hit;
+     open/cancelled rows: +0, since they can't contribute a hit) over
+     denominator using
+     whichever option is most favorable per row (shipped-status and
+     status-invalid: +1, unavoidable; open/cancelled: +0, full exclusion). **Flag as
      data-incomplete whenever `worst_case < 80%` AND `best_case ≥ 80%`,
      not "80% strictly between" the two** ~ REDESIGN
      fires on `<80%`, so a best-case bracket that lands EXACTLY on 80% is
@@ -1362,16 +1431,20 @@ dated entries get counted this month).
    backlog of unresolved, heavily-tagged revisions must not be waved
    through to HIRE just because none of it has finalized yet.
 4. **HIRE check:** only if none of the above fired **portfolio-wide** ~ AND
-   none of the above sits **PROVISIONAL** either. THREE sources of
+   none of the above sits **PROVISIONAL** either. FOUR sources of
    PROVISIONAL, all block HIRE the same way a fired branch would, until
    resolved: step 2's REDESIGN read, when too few late/trending cycles
    have reached `accepted` to evaluate the rework qualifier (but NOT when
    the miss is already clearly broad + WIP/load-elevated ~ see step 2's
    clustering-first note); step 3's FIX_CORPUS tag-qualifier read, when
    qualifying rounds are missing their `missing`/`not-followed` tag-entry
-   qualifier entirely (genuinely missing data, waitable); and step 3's
+   qualifier entirely (genuinely missing data, waitable); step 3's
    survivorship-bias backlog, when an unresolved `revising` backlog is
-   large/tagged enough to plausibly flip the FIX_CORPUS reading. A
+   large/tagged enough to plausibly flip the FIX_CORPUS reading; and gate
+   (a)/(b)'s own `Status`-validation gate (above, where the cohort itself
+   is built), when a row rejected for an invalid `Status` could plausibly
+   have swung gate (a)'s frequency average or gate (b)'s tag-share had it
+   validated cleanly. A
    COMPLETE tie in the missing/not-followed qualifier ~ every round tagged,
    the `missing`/`not-followed` counts landing exactly equal ~ is NOT
    provisional (see step 3): it's a resolved "no clear corpus-cause
@@ -1606,8 +1679,23 @@ above by hand:
    cleaner trend than the data actually shows (Codex catch, 2026-07-19:
    the completeness gate validated the two fields that break the upsert
    key and status cohorts outright, but not the field a downstream signal
-   depends on for its own exact-match filter). A row failing any of the
-   three checks is
+   depends on for its own exact-match filter). **A FOURTH field needs the
+   same validation, for the identical reason the manual §5a procedure's
+   own gate (a)/(b) cohort-building now requires it (above): `Rounds`
+   itself has to parse as a genuine nonnegative integer before gate (a)'s
+   `Rounds = 0`/`Rounds ≥ 1` branches can be applied to it.** A blank,
+   nonnumeric, fractional, or negative `Rounds` cell matches neither
+   branch as literally stated, so an `accepted` row shaped this way (with
+   `Rework tag = none`) can pass straight through an implementation that
+   only checks for the literal value `0` on one side and a real integer
+   comparison on the other, staying in gate (a)'s denominator while
+   contributing nothing to the numerator and quietly deflating the
+   frequency average on bad data (Codex catch, 2026-07-19: the same
+   unvalidated-field assumption just closed for `Rounds` in §5a's manual
+   procedure was never carried over to this coded ingestion gate, even
+   though both read the identical field the identical way). A row failing
+   any of the
+   four checks is
    excluded the same way an unfilled placeholder row is, flagged once per
    client as a data-hygiene gap to fix in the log, never silently upserted
    with a broken key or dropped from every status-scoped or cadence-scoped
@@ -2264,7 +2352,36 @@ above by hand:
        apart once a bad date has already passed this gate). Treat a
        future-dated entry exactly like a malformed one: excluded from BOTH
        gates and flagged as a data-hygiene fix, never silently reclassified
-       as merely out-of-window. A bare `none` on a `Rounds ≥ 1` row, any partial mismatch (fewer
+       as merely out-of-window. **Entry count and date are only two of
+       three things this gate has to validate ~ the TAG VALUE itself, the
+       actual content the entry exists to carry, is currently unchecked.**
+       Validate every entry's base tag against an EXACT match on the five
+       defined values (`brief-misalign`/`brand`/`quality-bar`/`data`/
+       `client-new-ask`), and for the three corpus causes
+       (`brief-misalign`/`brand`/`quality-bar`), ALSO validate the required
+       `(missing)`/`(not-followed)` qualifier is present and exactly one of
+       those two values, and for `brand` specifically, the required SECOND,
+       slash-separated source component (`house-voice`/`brand-standard`/
+       `report-template-rules`) is also present and exact. A plausible typo
+       (`brief-misalgn (missing) [2026-10-01]`, one character off the real
+       `brief-misalign`) has a complete entry count and a valid, in-window
+       date, so it sails through both checks already in place ~ but it
+       matches NONE of the five recognized base tags, so gate (b)'s
+       tag-share calculation, which counts only entries matching the three
+       corpus causes, silently treats it as non-corpus, undercounting the
+       real corpus-tagged share on a round that WAS corpus-caused (Codex
+       catch, 2026-07-19: this gate validates that an entry exists, is
+       dated, and isn't in the future, but never that its actual VALUE is
+       one of the values the router's own tag-share math depends on ~
+       enough malformed-but-plausible tag typos can suppress a real
+       FIX_CORPUS finding and let HIRE proceed on evidence that was never
+       actually corpus-clean). Treat an entry whose tag fails ANY part of
+       this validation (unrecognized base tag, missing/invalid qualifier
+       on a corpus cause, missing/invalid source component on `brand`)
+       exactly like a malformed date ~ excluded from BOTH gates, flagged as
+       a data-hygiene fix, with the same swing-aware PROVISIONAL treatment
+       (below) if enough such entries could plausibly change either gate's
+       reading. A bare `none` on a `Rounds ≥ 1` row, any partial mismatch (fewer
        entries than `Rounds`), or any entry missing/malformed on its date
        suffix, excludes that row from BOTH gates, not
        just the tag-share calculation (gate b) ~ **gate (a)'s numerator
@@ -2697,7 +2814,33 @@ above by hand:
      data-blocked for that client specifically (don't silently guess an
      owner and don't silently drop the client from the count either) and
      flag the missing `brief.md` field as a data-hygiene gap to close
-     before the next walkthrough. Is WIP/load ALSO
+     before the next walkthrough. **A FILLED-but-WRONG value needs the
+     IDENTICAL treatment, not just a literally-blank/templated one ~ "does
+     this field resolve to a real capchecker identity" is the actual test,
+     never "is this field non-empty."** Attempt resolution against
+     capchecker's CURRENT identity list, checking the identity-alias table
+     (`ROADMAP.md` task 2.3, above) BEFORE falling back to a literal
+     spelling match, exactly the same two-step lookup the per-analyst join
+     already uses elsewhere in this doc; only if NEITHER the alias table
+     nor a literal match resolves this field to a real, currently-live
+     capchecker identity does the scope test proceed. A typo (`Dale S.`
+     for the real `Dale`) or a genuinely stale identity (the person's
+     capchecker handle changed and no alias entry was ever added) both
+     produce the SAME outcome as a blank field would ~ zero matching
+     analysts found ~ but neither one is literally empty, so a check that
+     only tests for blank/templated text lets both sail past this
+     data-block silently (Codex catch, 2026-07-19: this fallback only
+     named the unfilled-field case explicitly; a filled field that simply
+     fails to resolve produces no matching analyst with nothing routing it
+     through the SAME safeguard, leaving that analyst's WIP/load sitting in
+     the post-exclusion broad-evidence count as if the narrow signal never
+     explained it, which can misread client-specific strain as independent
+     portfolio-wide evidence and produce a false HIRE). Any lead value that
+     fails to resolve through this two-step lookup gets the exact same
+     unevaluable/data-blocked treatment as a blank field, flagged as a
+     data-hygiene gap (add the missing alias entry, or correct the typo)
+     rather than silently excluding that analyst from the narrow signal's
+     scope AND leaving them uncounted everywhere else too. Is WIP/load ALSO
      elevated only for that same small
      set of analysts, or for most of the team? **"MOST," defined exactly,
      not left to operator judgment, and ANCHORED TO THE FULL ROSTER, not
