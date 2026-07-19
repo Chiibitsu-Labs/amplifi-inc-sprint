@@ -76,7 +76,12 @@ If a standards file is an unfilled frame, run anyway but say so at the top:
    from it (total, average, rate, period-over-period change) that you can
    re-derive and show ~ that's a pass, not a flag; figures explicitly
    labeled with a past period (the insight-log trend reads the insights
-   skill is required to include) must exist in `insight-log.md` instead.
+   skill is required to include) must exist in `insight-log.md`'s entry
+   for that period, OR in the full report that entry links to (`Full
+   report: {Drive link}`) ~ the log entry itself is a terse headline, not
+   every figure from that period, so a historical number sourced from the
+   linked report is still a pass, not a flag, as long as it's traceable
+   and period-labeled the same as any other historical figure.
    List any number that fails its OWN check ~ isn't in the export, can't
    be re-derived from it, and isn't a labeled historical figure ~ these go
    to the human verify step first. Also flag: any CURRENT-labeled figure
@@ -93,8 +98,11 @@ If a standards file is an unfilled frame, run anyway but say so at the top:
    `amplifi-insights/SKILL.md`'s Step 0 first-period exception, same
    corpus, same logic) ~ there is no trend to have used, so mark this
    check `PASS` (or `N/A`) instead of flagging an impossible requirement.
-   Confirm it's genuinely period one (no prior insight-log entry exists at
-   all) before applying this exception; a second period with a still-empty
+   Confirm it's genuinely period one the same way `amplifi-insights` does
+   ~ check `delivery-log.md` for any prior `delivered`/`revising`/
+   `accepted` row, not just whether `insight-log.md` is empty (an empty
+   log alone doesn't distinguish real period one from a broken capture
+   loop) ~ before applying this exception; a second period with a still-empty
    log is a real gap, not a bootstrap state, and gets flagged normally.
 
 ## Step 2 ~ Report format (fixed)

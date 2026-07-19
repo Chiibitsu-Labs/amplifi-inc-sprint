@@ -23,6 +23,13 @@ From `amplifi-knowledge/`, read in this order:
 If any of these are missing or empty, say so before generating ~ name the
 file, ask for it or flag the gap. Do not silently default to generic.
 
+**One targeted extra read, only when checking the insight-log exception
+below:** `clients/{client}/delivery-log.md`, scanned only for whether any
+prior row exists with `Status = delivered`/`revising`/`accepted` ~ not a
+full read, just an existence check, and only needed to distinguish "this
+is genuinely period one" from "the capture loop broke" (see the exception
+below).
+
 **A freshly-copied `_template-client` folder is not a filled corpus, even
 though every file technically exists and has bytes in it.** Treat these as
 equivalent to "missing" and flag them the same way: unresolved template
@@ -41,14 +48,23 @@ be filled before generating ~ they're what the client actually asked for,
 never optional. But files 6–7 legitimately stay templated for different
 reasons and on different timelines, so they get two DIFFERENT exceptions,
 not one shared cutoff:
-- **`insight-log.md` (file 7): first period ONLY.** It's empty by
-  definition until a first report has ever shipped, and by definition
-  filled from then on (every ship writes an entry ~ Deliverable 1's
-  capture loop). Treat it as "no history yet" ONLY when no entry exists at
-  all anywhere in the file; once period one ships and writes its entry,
-  the normal missing/templated check applies to it like any other corpus
-  file ~ a still-empty log in period two is a real gap (the capture loop
-  broke), not a bootstrap state.
+- **`insight-log.md` (file 7): first period ONLY ~ and verify it, don't
+  infer it from the log alone.** An empty `insight-log.md` is ambiguous by
+  itself: it's consistent with a genuine first period, but it's ALSO
+  consistent with period one's capture-loop write having been skipped,
+  which would make period two (or later) look like a bootstrap state when
+  it's actually a real gap. Before applying this exception, check
+  `clients/{client}/delivery-log.md` for any prior row with `Status =
+  delivered`/`revising`/`accepted` (a cycle that has actually shipped
+  before). None found → genuinely period one, exception applies, note "no
+  prior context/trend to draw on, first period for this client" and
+  generate. One or more found, but `insight-log.md` is STILL empty → NOT a
+  bootstrap state, this is the capture loop having broken ~ flag it
+  explicitly ("prior cycle(s) shipped per delivery-log.md but no
+  insight-log entry exists ~ capture gap, not a first period") instead of
+  silently treating it as day one. Once `insight-log.md` holds its first
+  real entry, the normal missing/templated check applies to it like any
+  other corpus file.
 - **`context.md` (file 6): no fixed cutoff, exception lasts until it has
   real content.** It's populated by the weekly promotion pass writing
   actual `CLIENT-FACT` learnings into it (Deliverable 1 §5, `learnings/
@@ -81,6 +97,18 @@ platform pulls). Rules:
   4.2% in Mar 2026"), never presented as this period's number. Current
   numbers come from the export; past numbers come from the log, wearing
   their date.
+- **The insight-log entry itself is a terse 5–10 line headline, not a full
+  metrics snapshot** ~ by design (`insight-log.md`'s own format: "keep it
+  tight... link the full report, don't paste it"). A metric that matters
+  THIS period but wasn't one of the 1–3 headline figures selected in an
+  earlier entry is still real, traceable history ~ it's just not sitting
+  in the terse log line. When that happens, follow that period's entry to
+  its **`Full report: {Drive link}`** and pull the figure from there
+  instead of treating it as unavailable. Same labeling rule applies
+  regardless of source: wear the period, never presented as current. Don't
+  let trend analysis be limited to whichever figures happened to get
+  selected as headlines in a prior period when the fuller source is one
+  link away.
 - Stamp the draft: client, period, data window dates.
 
 ## Step 2 ~ Generate to the bar
