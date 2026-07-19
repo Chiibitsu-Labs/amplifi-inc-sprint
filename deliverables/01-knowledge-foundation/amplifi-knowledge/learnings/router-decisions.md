@@ -37,11 +37,21 @@ on its own; the numbers that fired them have to be dated too.
   - Cycle-time baseline (REDESIGN early-warning): {per-client baseline
     span, §7}
   - On-cadence threshold: {N%} · evaluation cohort: {trailing 90 days,
-    per §3}
+    row-level, `Due`-anchored ~ per §3 / §5a's Fixed evaluation cohort
+    paragraph}
   - Rework (FIX_CORPUS), BOTH gates always, never either/or ~ they're
     sequential, not alternatives: {(a) N rounds/accepted-report frequency
     threshold} AND {(b) N% round-tag-share threshold} · evaluation cohort:
-    {trailing 90 days, same as on-cadence}. Record both values even if (a)
+    {trailing 90 days, but NOT the same mechanism as on-cadence above,
+    don't record it as such ~ gate (a)'s DENOMINATOR is the row-level,
+    `Due`-anchored cohort (every `accepted` row with `Due` in the trailing
+    90 days, including zero-round rows, same set on-cadence uses); gate
+    (a)'s NUMERATOR and all of gate (b) are ROUND-level instead: every
+    individually-dated `Rework tag` entry, across every `accepted` row
+    regardless of THAT row's own `Due`, whose own date falls in the
+    trailing 90 days ~ see §5a's "FIX_CORPUS's cohort works differently"
+    block for why these two cohort mechanisms are deliberately different}.
+    Record both values even if (a)
     didn't clear and (b) was never reached ~ a later audit needs the full
     pair to know WHY FIX_CORPUS read absent, not just that it did.
   - WIP baseline, FULL formula, not just the frozen value (every part of

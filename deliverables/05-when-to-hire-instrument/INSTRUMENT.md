@@ -146,7 +146,13 @@ threshold crossed →
                  bias: `revising` rows aren't counted yet by design, but a
                  backlog of long-open, high-round `revising` rows during
                  an active problem means the accepted-only rate reads as a
-                 lower bound, not the truth ~ see §5.)
+                 lower bound, not the truth ~ see §5.) A majority
+                 `not-followed` instead ~ frequent, corpus-tagged rework
+                 against an ALREADY-correct standard ~ never edits the
+                 corpus either, but still counts as real execution/
+                 coaching evidence feeding HIRE's narrow-vs-portfolio-wide
+                 gate below, the same way a clustered REDESIGN signal does
+                 (see §5 for the full clustering test).
  4. HIRE.        Only when 1–3 are **portfolio-wide** ruled out ~ not just
                  "some AUTOMATE/REDESIGN/FIX_CORPUS signal exists
                  somewhere." A narrow signal on ONE client or theme,
@@ -374,34 +380,76 @@ exceptions, and no marker bookkeeping:
 
 **Read every individual dated `Rework tag` entry, across every `accepted`
 row (regardless of that row's own `Due`, `Delivered`, or `Last Sent`),
-whose OWN date falls in the trailing 90 days.** That's the entire cohort
-test ~ it's a filter on rounds, not rows. A row's `Due` sitting outside
-the 90-day window doesn't exclude its recent rounds, and a row's `Due`
-sitting inside the window doesn't pull in its old ones ~ each round is
-judged solely on its own date, which is exactly what the row-level
-approximation could never guarantee.
+whose OWN date falls in the trailing 90 days.** That's the cohort test for
+COUNTING ROUNDS ~ a filter on rounds, not rows, and it's what gate (a)'s
+numerator and all of gate (b) read. A row's `Due` sitting outside the
+90-day window doesn't exclude its recent rounds, and a row's `Due` sitting
+inside the window doesn't pull in its old ones ~ each round is judged
+solely on its own date, which is exactly what the row-level approximation
+could never guarantee. (Gate (a) also needs a row-level, `Due`-anchored
+DENOMINATOR on top of this round filter, so it's counting rounds per
+REPORT and not just rounds per reworked report ~ see gate (a) below for
+why that's a second, deliberately separate test, not a contradiction of
+"filter on rounds, not rows.")
 
 - **Rounds-per-report (gate a):** numerator = count of in-window dated
-  rounds; denominator = count of DISTINCT accepted rows that contributed
-  at least one in-window round (a row with 9 old rounds and 1 fresh one
-  contributes 1 to the numerator and 1 to the row-count, not 10 and not 0
-  ~ this is precisely the case the old episode-overlap test got wrong).
-- **Tag-share (gate b):** of that same in-window round set, what fraction
-  are tagged `brief-misalign`/`brand`/`quality-bar`. Same set both gates
-  read, no separate collection step.
+  rounds (the round-level filter above, unchanged). **Denominator = count
+  of ALL `accepted` rows whose OWN `Due` falls in the trailing 90 days**
+  ~ the SAME row-level, `Due`-anchored cohort REDESIGN's on-cadence check
+  uses above, including rows with ZERO rework rounds. This has to be a
+  genuine per-REPORT average, not per-REWORKED-report ~ a clean row has no
+  dated `Rework tag` entry to filter by at all, so counting only rows that
+  contributed an in-window round would silently drop every clean accepted
+  report out of the denominator: one two-round report among nine clean
+  ones must read 0.2 rounds/report, not 2.0. Dropping the nine clean rows
+  would make gate (a) fire on noise, the exact opposite of what "rework
+  has to be meaningfully frequent, not just present" (this section's own
+  noise guard, above) exists to enforce (Codex catch, 2026-07-19).
+  Numerator and denominator can draw from slightly different row
+  populations at the edges, and that's intentional, not an inconsistency
+  to fix: a row whose `Due` sits outside the window but which reopened
+  with a fresh in-window round still contributes that round to the
+  numerator without itself adding to the denominator (its `Due` doesn't
+  qualify it as "this period's report"), and conversely a `Due`-in-window
+  row with no in-window rounds still adds 1 to the denominator with zero
+  numerator contribution (a genuinely clean report this period). The
+  denominator answers "how many reports were nominally in scope this
+  period"; the numerator answers "how much rework activity actually
+  happened this period" ~ a reopen straddling the window boundary is
+  exactly the case where those two legitimately diverge by one, not a bug.
+- **Tag-share (gate b):** of the SAME in-window ROUND set gate (a)'s
+  numerator uses (not gate (a)'s row-level denominator), what fraction
+  are tagged `brief-misalign`/`brand`/`quality-bar`. Zero-round rows
+  contribute nothing to this ratio either way (they have no round-level
+  entries to weigh in), so gate (b) doesn't need the row-level cohort
+  gate (a) does ~ it stays a pure round-level ratio, no denominator
+  distinction to make.
 - The qualifier-majority read (`missing` vs `not-followed`, step 3's
   cause-qualifier gate below) also reads only the in-window, corpus-tagged
   subset of this same round set ~ one consistent population feeds every
   downstream FIX_CORPUS question.
 
-Worked example: a row reopens 200 days ago (2 old rounds, dated 200 and
-190 days back), then reopens again 10 days ago (1 fresh round, dated 10
-days back). New rule: read the three dated entries directly ~ two are
-outside the 90-day window (200, 190 days back), one is inside it (10 days
-back). This row contributes 1 round to the numerator and 1 to the
-row-count, full stop, regardless of how many total episodes or reopens it
-has ever had, and regardless of where its `Due`/`Last Sent` happen to
-fall.
+Worked example (numerator, round-level): a row reopens 200 days ago (2 old
+rounds, dated 200 and 190 days back), then reopens again 10 days ago (1
+fresh round, dated 10 days back). Read the three dated entries directly ~
+two are outside the 90-day window (200, 190 days back), one is inside it
+(10 days back). This row contributes 1 round to gate (a)'s numerator and
+1 to gate (b)'s round set, full stop, regardless of how many total
+episodes or reopens it has ever had. Whether it ALSO adds 1 to gate (a)'s
+DENOMINATOR is a separate, row-level question, answered by its own `Due`
+date exactly like any other row in the on-cadence cohort ~ round-level
+dating and row-level `Due` are two independent tests here, not one
+derived from the other.
+
+Worked example (denominator, row-level): a client has ten `accepted` rows
+with `Due` in the trailing 90 days ~ nine shipped clean (`Rounds = 0`,
+`Rework tag = none`, no dated entries at all) and one had two rounds
+(both dated inside the window). Denominator = 10 (every `Due`-in-window
+accepted row, clean ones included). Numerator = 2 (the two in-window
+dated rounds on the one reworked row). Gate (a) reads 0.2 rounds/report ~
+correctly quiet. Reading the denominator as "only rows that contributed a
+round" instead would score this 2 ÷ 1 = 2.0 rounds/report off the exact
+same data, firing gate (a) on what is genuinely a below-threshold month.
 
 This also removes the need for the old `Last Sent` exception (REDESIGN's
 on-cadence/cycle-time reads stay exactly as described above ~ strictly
@@ -543,10 +591,16 @@ dated entries get counted this month).
    PROCESS entries are written from real session friction, so "long queue
    for data pulling, ClientA/C/D" in the tally is frequently the
    clustering answer, not just corroboration of it.
-3. **FIX_CORPUS check:** same logs, same 90-day cohort from above, but two
+3. **FIX_CORPUS check:** same logs, same trailing-90-day PRINCIPLE as
+   above but a DIFFERENT cohort mechanism (see the "FIX_CORPUS's cohort
+   works differently" block earlier in this section ~ the denominator
+   below is `Due`-anchored and row-level, same as on-cadence, but the
+   numerator and gate (b) are round-level, reading each dated `Rework tag`
+   entry on its own regardless of its row's `Due`), two
    gates in order, not one, and ONE metric throughout, not two ~ **average
-   rounds per accepted report** (total rework rounds across qualifying
-   rows ÷ number of qualifying rows), never "share of rows with any
+   rounds per accepted report** (total in-window rework rounds ÷ number of
+   `Due`-in-window accepted rows, INCLUDING zero-round ones ~ see the
+   worked examples above), never "share of rows with any
    rework" ~ the two aren't
    interchangeable (one 5-round report among ten clean ones is 0.5
    rounds/report but only 10% of rows touched; picking whichever makes
@@ -576,6 +630,34 @@ dated entries get counted this month).
    editing it fixes nothing ~ the real cause is execution or process, not
    the corpus (see `delivery-log.md`'s Rework tag bullet for the full
    reasoning).
+   **A majority-`not-followed` reading isn't just "the corpus-edit action
+   doesn't fire" ~ it's still real evidence for step 4's portfolio-wide-
+   vs-narrow gate below, not a silent nothing.** REDESIGN's own
+   `(not-followed)` reclassification (step 2 above) only reads rework tags
+   on rows that ALREADY missed `Due` or are ALREADY trending slow ~ a
+   client that ships on time but burns rounds re-doing work against an
+   already-correct standard has no cadence signal to trigger that
+   reclassification, so without this note it falls through BOTH REDESIGN
+   (no cadence miss to scope it) and FIX_CORPUS (the qualifier correctly
+   refuses a corpus edit), leaving nothing on record to explain the
+   elevated round count if HIRE later asks why load/WIP are up (Codex
+   catch, 2026-07-19). So: whenever gates (a) and (b) both clear and the
+   qualifier majority reads `not-followed`, name it explicitly in this
+   month's evidence ~ *"rework frequent and corpus-tagged, but the
+   standard was already right: execution/coaching gap, not a corpus
+   edit"* ~ and clustering-test it exactly like REDESIGN does (step 2's
+   clustering-first note): **CLUSTERED** to one client or one analyst →
+   this counts as a narrow FIX_CORPUS-family signal for step 4's gate,
+   blocking HIRE for that scope, same as a narrow REDESIGN signal would
+   (that specific person/account needs coaching, not company-wide
+   headcount). **BROAD**, spread across most clients/analysts, especially
+   alongside elevated team-wide WIP/load → treat it the same as REDESIGN's
+   own broad case (step 2): don't let it block HIRE ~ people cutting
+   corners on standards they already know because they're stretched thin
+   is a symptom of the capacity problem, not a competing explanation for
+   it. A COMPLETE tie in the qualifier (below) stays non-blocking either
+   way ~ this test applies only once a clear `not-followed` MAJORITY is
+   actually established.
    **Watch for survivorship bias before trusting a low reading:** clean
    reports auto-resolve to `accepted` within 5 business days (the silent-
    acceptance rule), but a report stuck in `revising` for weeks ~ the
@@ -613,7 +695,11 @@ dated entries get counted this month).
    the `missing`/`not-followed` counts landing exactly equal ~ is NOT
    provisional (see step 3): it's a resolved "no clear corpus-cause
    majority" finding with no missing data left to wait for, so it does not
-   block HIRE. Genuinely-absent
+   block HIRE. A clear `not-followed` MAJORITY (not a tie) is different ~
+   per step 3's dedicated note above, it's real FIX_CORPUS-family evidence
+   read into this same narrow-vs-portfolio-wide gate below, clustering-
+   tested exactly like a REDESIGN signal, not something that silently
+   vanishes just because no corpus file gets edited. Genuinely-absent
    evidence lets HIRE through; can't-be-evaluated-yet doesn't, from either
    source. A
    narrow AUTOMATE/REDESIGN/FIX_CORPUS signal on ONE client while WIP/load
@@ -652,9 +738,25 @@ dated entries get counted this month).
    is ruled out, DATA is clear, AND WIP coverage clears: cross-reference
    capchecker's sustained-load signal against WIP
    per analyst (capchecker Q3, read manually until §5b's automation
-   exists) ~ both maxed ACROSS THE TEAM (not concentrated in the one
+   exists) ~ both maxed ACROSS THE TEAM, **defined exactly here too, not
+   left to eyeballing the dashboard: ≥4 of the full, fixed 6-person roster
+   individually reading WIP-elevated (§2's frozen-baseline-+2 threshold),
+   the SAME fixed-roster count §5b codes as HIRE's unconditional base
+   predicate.** Never settle for "looks maxed" or "most people seem
+   loaded," and never let this count shrink to whoever happens to have
+   sufficient WIP data this cohort ~ that's a different, already-cleared
+   gate above (the ≥70%-roster-coverage floor), not this one. Three
+   elevated analysts out of six, even with clean coverage and DATA, does
+   NOT clear this bar by itself, no matter how loaded the load signal
+   reads ~ that's a genuinely narrow WIP pattern REDESIGN or a
+   redistribution should absorb, not a portfolio-wide hire (leaving "maxed
+   across the team" unquantified here, while §5b codes an explicit
+   fixed-roster count for the identical predicate, let a manual walkthrough
+   read the same evidence more permissively than the automated router
+   would ~ Codex catch, 2026-07-19). Not concentrated in the one
    person REBALANCE would have caught, and not an artifact of who
-   happened to respond), no automate/redesign/corpus/rebalance
+   happened to respond ~ this fixed-count test is exactly what confirms
+   that. No automate/redesign/corpus/rebalance
    explanation → HIRE, and the ruled-out checks above are the evidence
    trail, already written down.
 
@@ -685,18 +787,26 @@ above by hand:
 2. **Add the two missing branches:** `REDESIGN` and `FIX_CORPUS` actions in
    the router (`lib/analytics.ts`), fed by rework tags + cadence data,
    **each windowed to a trailing 90 days, same principle §5a uses, but NOT
-   the same cohort mechanism ~ don't implement one shared filter for both.**
-   REDESIGN's on-cadence/cycle-time reads stay row-level and `Due`-anchored
-   (a row is in or out based on its own `Due` date). FIX_CORPUS's
-   rounds-per-report/tag-share reads are round-level: filter individual
+   the same cohort mechanism ~ don't implement one shared filter for all
+   of it.** REDESIGN's on-cadence/cycle-time reads stay row-level and
+   `Due`-anchored (a row is in or out based on its own `Due` date).
+   FIX_CORPUS's tag-share (gate b) AND rounds-per-report's NUMERATOR
+   (gate a) are round-level instead: filter individual
    dated `Rework tag` entries (each stamped `[YYYY-MM-DD]` at the moment
    it's logged, per `delivery-log.md`) to those whose OWN date falls in
    the trailing 90 days, across every `accepted` row regardless of that
-   row's `Due` ~ see §5a's "FIX_CORPUS's cohort works differently" block
-   for the full reasoning and worked example. Coding this as one shared
-   row-filter (in or out by `Due`) reproduces the exact bug class §5a's
-   history describes: a row spanning old and fresh rounds gets all-or-
-   nothing counted instead of counted per round. **REDESIGN and HIRE
+   row's `Due`. Rounds-per-report's DENOMINATOR is a THIRD mechanism,
+   row-level like REDESIGN's: count of `accepted` rows with `Due` in the
+   trailing 90 days, INCLUDING zero-round rows ~ omitting clean rows from
+   this denominator turns "rounds per report" into "rounds per reworked
+   report," inflating gate (a) and firing it on noise (Codex catch,
+   2026-07-19; see §5a's worked example). See §5a's "FIX_CORPUS's cohort
+   works differently" block for the full reasoning and worked examples for
+   all three mechanisms. Coding the numerator as one shared
+   row-filter (in or out by `Due`, same as the denominator) reproduces the
+   exact bug class §5a's history describes: a row spanning old and fresh
+   rounds gets all-or-nothing counted instead of counted per round.
+   **REDESIGN and HIRE
    are built on deliberately non-overlapping evidence** ~ this matters,
    see the note below:
    - rework rounds/report above threshold FIRST (rework has to be
@@ -734,7 +844,19 @@ above by hand:
        qualifier check, would have the coded router repeatedly prescribe
        edits to an already-correct corpus file ~ exactly what the manual
        rule (§3, and this section's own rounds-per-report rule above)
-       exists to prevent. **Missing qualifiers and genuinely-tied
+       exists to prevent. **This surfaced finding still has to feed HIRE's
+       portfolio-wide gate, not just a UI label.** A majority-`not-followed`
+       reading doesn't fire the corpus-edit action, but it's still real
+       evidence for the SAME narrow-vs-portfolio-wide test the REDESIGN
+       branch below already runs (§5a step 2's clustering-first note):
+       CLUSTERED to one client/analyst, code it as a narrow FIX_CORPUS-
+       family signal that blocks HIRE for that scope; BROAD across most
+       clients/analysts alongside elevated team-wide WIP/load, code it the
+       same as REDESIGN's own broad case ~ don't let it block HIRE.
+       Dropping this into a plain surfaced-but-inert warning would let the
+       coded router fire HIRE off a coaching/execution problem exactly
+       where §5a's manual walkthrough is required not to (Codex catch,
+       2026-07-19). **Missing qualifiers and genuinely-tied
        qualifiers are DIFFERENT states ~ only one of them is provisional:**
        - **Missing (require ONE recognized qualifier ~ `missing` or
          `not-followed` ~ attached to each corpus-tagged qualifying
