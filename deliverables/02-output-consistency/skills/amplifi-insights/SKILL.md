@@ -101,14 +101,26 @@ platform pulls). Rules:
   metrics snapshot** ~ by design (`insight-log.md`'s own format: "keep it
   tight... link the full report, don't paste it"). A metric that matters
   THIS period but wasn't one of the 1–3 headline figures selected in an
-  earlier entry is still real, traceable history ~ it's just not sitting
-  in the terse log line. When that happens, follow that period's entry to
-  its **`Full report: {Drive link}`** and pull the figure from there
-  instead of treating it as unavailable. Same labeling rule applies
-  regardless of source: wear the period, never presented as current. Don't
-  let trend analysis be limited to whichever figures happened to get
-  selected as headlines in a prior period when the fuller source is one
-  link away.
+  earlier entry is real history that just isn't sitting in the terse log
+  line ~ **but don't assume the linked `Full report: {Drive link}` is
+  actually reachable this session.** Neither documented deployment path
+  guarantees it: the no-connector fallback (`DRIVE-HANDOFF.md` step 4)
+  attaches only the relevant corpus files per session, never an external
+  report link, and even the primary Drive-for-Desktop path only syncs
+  `amplifi-knowledge/` ~ finished report exports commonly live elsewhere
+  in Drive. So: **if this session has live, already-CONFIRMED Drive
+  access reaching that specific file** (not assumed, actually verified
+  ~ e.g. the connector already proved it can read that folder earlier in
+  the session), follow the link and pull the figure, same labeling rule
+  as any historical figure. **Otherwise, don't stall waiting on a fetch
+  that may not resolve** ~ flag the metric as unavailable this period
+  ("{metric} would strengthen this trend read but isn't captured in
+  insight-log.md's headline and the linked report isn't reachable this
+  session") and generate without it. If the SAME metric keeps being
+  needed period after period, that's a signal worth a `PROCESS` note to
+  the improve skill ~ promote it into `context.md` so it's reliably
+  available next time, instead of re-fetching an external report on every
+  future run.
 - Stamp the draft: client, period, data window dates.
 
 ## Step 2 ~ Generate to the bar

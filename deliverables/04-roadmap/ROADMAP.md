@@ -78,6 +78,7 @@ living numbers, and the instrument evolves as Amplifi does.
 | **Supplier/vendor fixes** (dependency, late delivery, thin pool, cascade system) | real pain, but process/procurement ~ not AI; bolting it on dilutes the build | Michele owns as a process track; instrument's reason-themes will show if it's eating analyst capacity |
 | **Canva replacement** | crashes/access pains are real, but a deck-tool swap is its own decision; markdown-first already de-risks outages | if Canva pain still dominates reason-themes after Phase 2 |
 | **New platforms** (Obsidian, NotebookLM, …) | brief says maximize existing tools; no genuine gap identified that the stack + corpus doesn't cover | only if a real, non-overlapping gap appears |
+| **Structured feed / database for delivery-log + insight-log** (replacing plain markdown for concurrent-write safety) | Drive's shared-folder model doesn't merge simultaneous edits within one file ~ a real fix needs a database or a merge-capable structured store, which is a bigger build than Core Build scope (Blueprint §8); the ~20–30s touch design + a documented conflict-recovery rule mitigate it in the meantime | collisions start happening in practice, not just in theory (watch via Rica noting near-misses per Blueprint §8) |
 
 ## The brief's own Definition of Success (checked at the 90-day review)
 

@@ -332,6 +332,33 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   compare to `Rounds`; anything less is missing data and gets the same
   exclude-and-block treatment as an untagged row.
 
+  **A `brief-misalign`/`brand`/`quality-bar` tag names WHAT kind of defect
+  it was, not WHY it happened ~ and those are different questions with
+  different fixes.** Two very different situations both earn the same
+  tag: (a) the governing corpus entry was genuinely missing or wrong (the
+  brief never asked for X, the brand standard didn't say what logo to
+  use, `what-good-looks-like.md` doesn't cover this case) ~ a real corpus
+  gap, exactly what FIX_CORPUS exists to catch; (b) the corpus entry was
+  already correct and complete, but the report shipped wrong anyway (the
+  brand standard already specifies the right logo, Canva assembly just
+  used the wrong one; the brief already lists an ask, someone skimmed
+  past it) ~ an execution or workflow miss, not a corpus gap at all.
+  Counting (b) toward FIX_CORPUS's share doesn't just add noise ~ acted
+  on, it sends Rica to "fix" a file that was never broken, over and over,
+  while masking whatever's actually causing the misses (individual
+  attention, or a process gap REDESIGN should be looking at instead).
+  **When logging one of these three tags, add ONE WORD in Notes:**
+  `missing` (the corpus genuinely didn't cover this, or was stale) or
+  `not-followed` (the corpus was already right, it just wasn't applied).
+  This doesn't change the tag, the round-level math, or the ≥half
+  threshold ~ FIX_CORPUS's first-pass share still counts both together,
+  same as before. But before actually routing to "go edit the corpus
+  file," check the qualifying rounds' Notes: majority `missing` → real
+  FIX_CORPUS work; majority `not-followed` → a different problem, don't
+  edit an already-correct file, look at coaching or process instead. Read
+  the tag share as WHERE to look, this qualifier as WHETHER editing the
+  corpus is actually the fix.
+
 ## The log
 
 | Period | Analyst | Start | Due | Delivered | Last Sent | Status | Rounds | Effort (h) | Rework tag | Notes |

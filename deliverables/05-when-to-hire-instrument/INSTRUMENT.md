@@ -128,9 +128,19 @@ threshold crossed →
                  reading to route on (or rule out) at all ~ flag the gap
                  and fix the logging before trusting the number
                  (`delivery-log.md`'s own hard-block rule, same reasoning,
-                 covers both forms).
+                 covers both forms). **Before actually editing a corpus
+                 file, check the Notes qualifier on the qualifying rounds**
+                 (`missing` vs `not-followed` ~ delivery-log.md's own
+                 convention): the tag says WHAT kind of defect, the
+                 qualifier says WHY. Majority `not-followed` means the
+                 corpus was already correct and this isn't a real corpus
+                 gap at all ~ routing there anyway means repeatedly
+                 "fixing" a file that was never broken while the actual
+                 cause (an execution/attention miss, or a process gap
+                 REDESIGN should examine) goes unaddressed.
                  → route: Deliverable 1+2 ~ align the brief, encode the
-                 standard. NEVER route this to hire. (Watch survivorship
+                 standard, ONLY when the qualifier majority reads
+                 `missing`. NEVER route this to hire. (Watch survivorship
                  bias: `revising` rows aren't counted yet by design, but a
                  backlog of long-open, high-round `revising` rows during
                  an active problem means the accepted-only rate reads as a
@@ -328,7 +338,25 @@ never reach the router. `Last Sent` already updates on every touch-3
 resend AND every reopen (see `delivery-log.md`), so this reuses existing
 structured data rather than adding a new one: cohort membership = `Due`
 in the last 90 days **OR** `Last Sent` in the last 90 days, whichever
-catches the row. 90 days
+catches the row.
+
+**But being IN the cohort this way doesn't mean the row's WHOLE history
+counts ~ only the round that actually triggered inclusion.** `Rounds` and
+`Rework tag` are cumulative with no per-round timestamps, so a row pulled
+in ONLY by the `Last Sent` exception (its `Due` is outside the window, its
+`Last Sent` is inside it) would otherwise dump its ENTIRE historical round
+count into this month's FIX_CORPUS tally ~ a report from 8 months ago with
+5 old, already-accounted-for rounds plus 1 genuinely new late-reopen round
+would count as 6 fresh rounds this month, not 1, and could falsely trip
+the rounds/tag-share thresholds on stale history. The fix doesn't need
+per-round timestamps: touch 4's late-reopen mechanics guarantee the reopen
+adds EXACTLY ONE new round, appended as the LAST entry in the `Rework tag`
+list. So, for a row in the cohort ONLY via `Last Sent` (not via `Due`):
+count just that one newest round (the last tag entry) toward this month's
+rounds-per-report and tag-share math, not the row's full cumulative
+`Rounds`. A row in the cohort via `Due` (the normal case) still counts in
+full ~ its rounds genuinely happened within, or close to, this window
+already. 90 days
 re-windows fresh at each monthly walkthrough (not a cumulative rolling
 average like WIP's baseline ~ there's no self-referential creep risk here,
 it's just which raw rows get counted this month). Apply this SAME
@@ -429,7 +457,14 @@ over different windows or different anchor dates.
    that exist across qualifying rows, is half or more tagged
    `brief-misalign`/`brand`/`quality-bar`? If both gates clear, FIX_CORPUS
    fires, and the tag itself tells you which corpus file is stale (the
-   brief, the brand standard, or `what-good-looks-like.md`).
+   brief, the brand standard, or `what-good-looks-like.md`) ~ **but check
+   the qualifying rounds' Notes (`missing` vs `not-followed`) before
+   actually opening that file to edit it.** The tag says what kind of
+   defect; the qualifier says whether the corpus was really at fault. A
+   majority `not-followed` reading means the file was already right and
+   editing it fixes nothing ~ the real cause is execution or process, not
+   the corpus (see `delivery-log.md`'s Rework tag bullet for the full
+   reasoning).
    **Watch for survivorship bias before trusting a low reading:** clean
    reports auto-resolve to `accepted` within 5 business days (the silent-
    acceptance rule), but a report stuck in `revising` for weeks ~ the
@@ -589,12 +624,25 @@ above by hand:
      Use the analyst on the client's MOST RECENT row within the trailing
      90-day cohort (same cohort the rest of this section reads from) ~
      that's who actually owns the problem the narrow signal names right
-     now. is WIP/load ALSO elevated only for that same small
-     set of analysts, or for most of the team? **Confined to the narrow
+     now. Is WIP/load ALSO elevated only for that same small
+     set of analysts, or for most of the team? **"MOST," defined exactly,
+     not left to operator judgment:** more than half of the analysts who
+     have SUFFICIENT WIP data this cohort (the ≥7-of-10-valid-observations
+     bar from §2's WIP row) ~ for today's 6-person function, that's ≥4 of
+     6. An analyst without sufficient data this cohort is excluded from
+     BOTH sides of the count (not counted as elevated, not counted as
+     not-elevated, not counted in the denominator either) ~ their absence
+     is a data gap, not evidence either way. Record the exact headcount
+     used (how many had sufficient data, how many of those read elevated)
+     in `router-decisions.md`'s threshold snapshot alongside the other
+     signals, so a borderline month (e.g. 3-of-5-with-data elevated, one
+     analyst excluded for thin data) is reproducible, not re-litigated.
+     **Confined to the narrow
      signal's own analyst(s) DOES block HIRE** ~ their already-named
      problem plausibly explains all the observed strain, so that gets
-     fixed first, not hired around. **Elevation reaching MOST of the
-     roster, well beyond just the analyst(s) the narrow signal names, does
+     fixed first, not hired around. **Elevation reaching ≥4 of 6 (or
+     whatever the current sufficient-data headcount implies), well beyond
+     just the analyst(s) the narrow signal names, does
      NOT block HIRE** ~ a client-scoped fix can't explain strain in
      analysts who were never part of that narrow signal at all, so letting
      it rule out HIRE there would wrongly suppress a genuine portfolio-wide

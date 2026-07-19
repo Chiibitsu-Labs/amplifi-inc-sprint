@@ -145,7 +145,7 @@ isn't attached to work the team already does.
 | Folder taxonomy matches how the team thinks about clients | **Confirm with Rica** on first real client seeding |
 | Improve-skill write format + promotion path | Defined ~ see `learnings/README.md` in the scaffold |
 | Drive → git move | Documented above, §6 |
-| Shared access for all 6 without collisions | Drive folder edit-share; one file per concern keeps merge pain near zero |
+| Shared access for all 6 without collisions | Drive folder edit-share, one file per concern ~ **reduces collision surface, doesn't eliminate it.** A shared Drive folder doesn't merge simultaneous edits WITHIN one markdown file: if two analysts save `delivery-log.md` for the same client at overlapping moments, Drive can produce a "conflicted copy" duplicate or a silent last-writer-wins overwrite, either of which can lose one analyst's row and leave the router reading an incomplete log. Mitigated, not solved, by three things already true of this design: (1) each touch is ~20–30 seconds ~ the actual collision WINDOW per edit is small, not the whole session; (2) most rows belong to one analyst's own client work, so same-file same-moment edits are the exception, not the norm; (3) an explicit recovery rule: if a `(conflicted copy...)` file ever appears next to a client's log, don't silently pick one ~ open both, manually merge the missing row(s) into the canonical file, delete the conflicted copy, and note the near-miss to Rica. Revisit if collisions start happening in practice (a real database/structured feed would solve this properly ~ parked as a `Deliberately NOT yet` item until then, see `ROADMAP.md`) |
 
 *Feeds: Output Consistency (reads the standard) · the When-to-Hire
 Instrument (delivery-log + the fix-corpus branch).*

@@ -47,6 +47,11 @@ on its own; the numbers that fired them have to be dated too.
     history, e.g. ≥10 days}
   - REBALANCE headroom threshold: {relative-gap trigger, e.g. ≥2pt · rest-
     of-team absolute-headroom ceiling, e.g. ≤5}
+  - HIRE portfolio-wide headcount (only when a narrow AUTOMATE/REDESIGN/
+    FIX_CORPUS signal coexists with elevated WIP/load): {N analysts had
+    sufficient WIP data this cohort / N elevated / MOST = more than half
+    of the sufficient-data count ~ e.g. "5 had data, 4 elevated, 4 > half
+    of 5 → MOST, doesn't block HIRE"}
 - Routes fired: {one or more of AUTOMATE | REDESIGN | FIX_CORPUS |
   REBALANCE | HIRE | none crossed ~ list every one that actually fired,
   not just the "final" one}

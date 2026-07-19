@@ -67,9 +67,24 @@ later.
 1. Read only files matching the dated session-file pattern,
    `learnings/YYYY-MM-DD-HHMMSS-*.md`, that are NOT already prefixed
    `archived-`. **Explicitly exclude `learnings/patterns.md` and
-   `learnings/README.md`** ~ `patterns.md` is the permanent output of this
-   step, not an input to it; reading it back in would re-promote its own
-   tally into itself and double-count every theme on every future run.
+   `learnings/README.md` as PROMOTION INPUTS** ~ `patterns.md` is the
+   permanent output of this step, not an input to it; reading its COUNTS
+   back in would re-promote its own tally into itself and double-count
+   every theme on every future run. **But DO skim `patterns.md`'s
+   existing theme NAMES first, as a naming reference only, never as
+   data:** each promotion pass groups this week's free-form `REWORK`/
+   `PROCESS` text in isolation, with no visibility into how the SAME
+   recurring problem got named in prior weeks ~ without a shared
+   vocabulary, one real issue can fragment across several distinct theme
+   bullets ("data pulling" one week, "long data-pull queue" the next,
+   "waiting for exports" the week after), and the cross-week occurrence
+   count that AUTOMATE/REDESIGN actually read never crosses its
+   threshold because no single name ever accumulates enough hits. Before
+   naming a new week's theme, check whether an existing `patterns.md`
+   bullet already describes the same underlying problem and reuse ITS
+   exact name if so ~ this is purely a naming lookup (read-only, no
+   counts touched, no tally re-entered), never a substitute for actually
+   tallying this week's fresh occurrences.
 2. Group by tag and propose the promotion, showing each item with its
    destination:
    - `CLIENT-FACT` → `clients/{x}/context.md` (or `brief.md` FAQ table if it

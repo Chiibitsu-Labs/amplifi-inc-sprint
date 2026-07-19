@@ -22,7 +22,21 @@ Required inputs, all of them:
      slide, or a PDF exported so charts, logos, and positioned text are
      actually rendered (not a raw text-extraction of a PDF, which drops
      exactly the visual layer this checkpoint exists to check). Run all
-     five checks. This is the ONLY tier that counts as clearance to ship.
+     five checks. This is the ONLY tier that counts as clearance to ship
+     ~ **but "visually rendered" isn't the same as "every plotted value is
+     verifiable."** A chart image proves logos/layout/brand and any
+     figure that's actually LABELED in it (a data callout, an axis value
+     with a printed number, a legend'd total), but an unlabeled bar,
+     point, or series can't be reverse-engineered from pixels and
+     compared against the export ~ seeing the chart isn't the same as
+     confirming what it plots. Check 4 on this tier still only earns a
+     plain `✔` for the figures actually readable in the render (labeled
+     values, and anything also stated in surrounding prose); any plotted
+     value with no visible label gets named in the output as **unverified
+     from this render** (not silently passed, not a blocking flag either
+     ~ a distinct third state: "plotted but unlabeled, source data would
+     be needed to confirm"). Don't let "I can see the chart" quietly
+     stand in for "I checked what the chart says."
    - **Second pass, TEXT-ONLY (a lesser tier, not clearance):** a bare
      text export/extraction with no visual rendering. Run check 4, SCOPED
      to whatever figures the extraction actually captured ~ text can
@@ -77,11 +91,15 @@ If a standards file is an unfilled frame, run anyway but say so at the top:
    re-derive and show ~ that's a pass, not a flag; figures explicitly
    labeled with a past period (the insight-log trend reads the insights
    skill is required to include) must exist in `insight-log.md`'s entry
-   for that period, OR in the full report that entry links to (`Full
-   report: {Drive link}`) ~ the log entry itself is a terse headline, not
-   every figure from that period, so a historical number sourced from the
-   linked report is still a pass, not a flag, as long as it's traceable
-   and period-labeled the same as any other historical figure.
+   for that period, OR ~ only if this session has live, already-confirmed
+   Drive access reaching it, never assumed ~ in the full report that entry
+   links to (`Full report: {Drive link}`); the log entry itself is a terse
+   headline, not every figure from that period, so a historical number
+   genuinely sourced from a reachable linked report is still a pass, not a
+   flag. If the insights skill flagged a figure as unavailable this period
+   (linked report not reachable this session, per its own Step 1 rule),
+   don't re-flag that same gap here as a data-integrity failure ~ it's
+   already surfaced honestly, not hidden.
    List any number that fails its OWN check ~ isn't in the export, can't
    be re-derived from it, and isn't a labeled historical figure ~ these go
    to the human verify step first. Also flag: any CURRENT-labeled figure
