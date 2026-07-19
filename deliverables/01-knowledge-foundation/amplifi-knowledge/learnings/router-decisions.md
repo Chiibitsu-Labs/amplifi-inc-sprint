@@ -38,26 +38,45 @@ on its own; the numbers that fired them have to be dated too.
     span, §7}
   - On-cadence threshold: {N%} · evaluation cohort: {trailing 90 days,
     per §3}
-  - Rework (FIX_CORPUS): {N rounds/accepted-report threshold, AND/OR N%
-    round-tag-share threshold ~ whichever actually fired or was checked}
-    · evaluation cohort: {trailing 90 days, same as on-cadence}
-  - WIP baseline: {N per analyst, frozen {date}}
+  - Rework (FIX_CORPUS), BOTH gates always, never either/or ~ they're
+    sequential, not alternatives: {(a) N rounds/accepted-report frequency
+    threshold} AND {(b) N% round-tag-share threshold} · evaluation cohort:
+    {trailing 90 days, same as on-cadence}. Record both values even if (a)
+    didn't clear and (b) was never reached ~ a later audit needs the full
+    pair to know WHY FIX_CORPUS read absent, not just that it did.
+  - WIP baseline, FULL formula, not just the frozen value (every part of
+    this can change at quarterly calibration, §7): {N per analyst, frozen
+    {date}} · margin: {+2} · sustain window: {≥5 of last 10 working days}
+    · min valid-observation coverage: {≥7 of 10 working days per analyst}
   - Load structural line: {N ~ capchecker default unless Michele changed it}
   - DATA completeness gate: {response-rate floor, e.g. ≥70%/7d · min
     history, e.g. ≥10 days}
   - REBALANCE headroom threshold: {relative-gap trigger, e.g. ≥2pt · rest-
     of-team absolute-headroom ceiling, e.g. ≤5}
   - HIRE portfolio-wide headcount (only when a narrow AUTOMATE/REDESIGN/
-    FIX_CORPUS signal coexists with elevated WIP/load): {N analysts had
-    sufficient WIP data this cohort / N elevated / MOST = more than half
-    of the sufficient-data count ~ e.g. "5 had data, 4 elevated, 4 > half
-    of 5 → MOST, doesn't block HIRE"}
+    FIX_CORPUS signal coexists with elevated WIP/load): {full roster size
+    ~ fixed, e.g. 6} / {N analysts had sufficient WIP data this cohort} /
+    {N of those read elevated} / MOST = more than half of the FULL ROSTER,
+    not the sufficient-data subset ~ e.g. "roster 6, 5 had data, 3
+    elevated → 3 is not > half of 6 (needs ≥4) → NOT most, narrow signal
+    still blocks HIRE" (this denominator does NOT shrink to whoever
+    reported ~ Instrument §5b)
 - Routes fired: {one or more of AUTOMATE | REDESIGN | FIX_CORPUS |
   REBALANCE | HIRE | none crossed ~ list every one that actually fired,
   not just the "final" one}
   (REBALANCE = capchecker's live signal, one analyst overloaded while the
   team has headroom, WITH genuine absolute headroom confirmed behind it ~
   see Instrument §3/§5a; a narrow signal here does not by itself block HIRE)
+- **Provisional/blocked routes, recorded SEPARATELY from "fired" and
+  "none crossed":** {list any of REDESIGN or FIX_CORPUS marked PROVISIONAL
+  this walkthrough (too few late/trending rows accepted yet; missing
+  missing/not-followed qualifiers; or a swing-capable revising backlog ~
+  Instrument §3 step 4), and note that this PROVISIONAL state blocks HIRE
+  the same as a fired route would, until resolved}. Don't fold this into
+  "none crossed" ~ a route marked provisional was never evaluated to
+  absence, and collapsing the two would make a deliberately-deferred HIRE
+  read, later, as if every earlier route had been checked and genuinely
+  ruled out.
 - Per route, one line each:
   - {ROUTE}: {evidence} → {scope: portfolio-wide, or narrow (name the
     client/theme)} → {action taken, or "insufficient to explain the

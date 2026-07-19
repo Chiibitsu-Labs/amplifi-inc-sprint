@@ -383,47 +383,57 @@ already-accounted-for rounds plus 2 genuinely new late-reopen rounds
 would count as 7 fresh rounds this month, not 2. A reopen isn't always
 exactly one round either (touch 3 can repeat for multiple additional
 client revisions after the reopen), so "just count the last tag entry"
-isn't enough. Instead: touch 4 stamps a structured marker in Notes the
-moment a row reopens ~ `late-reopen {date}: pre-reopen Rounds={N}` (see
-`delivery-log.md`). **A row can accumulate MORE THAN ONE such marker over
-its life** (accepted → late-reopened → re-accepted → late-reopened again,
-months later) ~ each marker starts a "reopen episode" that runs until
-either the row re-reaches `accepted` (closed by the NEXT marker, if one
-exists) or, for the most recent marker, right up to now.
+isn't enough.
 
-**Count every episode that overlaps the 90-day window, not just one
-marker ~ this needs summing across episodes, not picking a single cutoff:**
-1. Sort all `late-reopen` markers on the row oldest → newest: `M1, M2, …,
-   Mn`.
-2. For each marker `Mi` EXCEPT the last: it closes at `M(i+1)`'s date
-   (that's when the row re-reached `accepted` and got reopened again).
-   Include episode `i` if `Mi`'s OWN date falls within the trailing 90
-   days ~ if it does, add `M(i+1).preRounds − Mi.preRounds` to this
-   month's tally. If `Mi`'s date is older than 90 days, that whole episode
-   already fully resolved before this window began ~ exclude it.
-3. For the LAST marker `Mn` (the current/most recent episode, running from
-   `Mn` to now): include it if EITHER `Mn`'s own date falls within the
-   trailing 90 days, OR `Last Sent` does (covers a reopen that started
-   just before the cutoff but whose resolution rounds landed inside it ~
-   the marker predates the window even though the real work doesn't). If
-   included, add `current Rounds − Mn.preRounds`.
-4. Sum every included episode's contribution. That sum, not any single
-   marker's delta, is what counts toward this month's tally.
+**This needs EXACT episode boundaries, not a date-of-the-start-marker
+heuristic ~ an episode's start date says nothing about when its rounds
+actually happened, only when it BEGAN; a heuristic gating on the start
+marker alone under- or over-counts depending which way the episode leans
+relative to the cutoff.** So `delivery-log.md`'s touch 4 stamps BOTH ends
+of each reopen episode: `late-reopen {start-date}: pre-reopen Rounds={N}`
+when the row reopens, UPDATED to `… → resolved {end-date}, Rounds={M}`
+when that same episode closes back to `accepted`. The current/most-recent
+episode, if still unresolved, simply has no end date yet (open-ended,
+running to now).
 
-Worked example matching the failure mode this corrects: a row reopens 60
-days ago (`M1`, 2 rounds added before re-accepting), then reopens again 10
-days ago (`M2`, 1 round added so far). Both `M1` and `M2` fall inside the
-90-day window, so BOTH episodes are included: `2 + 1 = 3` rounds count
-this month, not just `M2`'s single round. Contrast with a row reopened
-200 days ago (fully resolved) and again 40 days ago: `M1` (200d) is
-outside the window, excluded; `M2` (40d) is inside, included ~ only its
-delta counts. And a row reopened once, 95 days ago (marker just outside
-the window), still resolving with `Last Sent` at 75 days ago (inside it):
-no marker's own date is in-window, but rule 3's `Last Sent` clause still
-includes that episode. Reading the actual tag entries for whatever total
-count this produces: they're always the LAST that-many entries in the
-`Rework tag` list (entries append in order, oldest to newest, so the
-freshest ones are always the tail).
+**Count every episode whose span genuinely OVERLAPS the 90-day window,
+using its real start and end dates ~ an exact interval test, not an
+approximation:**
+1. Collect every `late-reopen` episode on the row: each has a start date,
+   and either a resolved end date (if closed) or no end date (if it's the
+   current, still-open episode).
+2. For a CLOSED episode (has both dates): it overlaps the window if
+   `start ≤ today` (always true) AND `end ≥ (today − 90 days)` ~ i.e., its
+   resolution happened within the last 90 days. If it overlaps, add
+   `resolvedRounds − preReopenRounds` to this month's tally. An episode
+   whose END date is older than 90 days is fully outside the window
+   REGARDLESS of how old its start was ~ exclude it. An episode whose
+   start is old but whose END lands inside the window (a reopen that took
+   a long time, or simply started a little before the cutoff) still
+   overlaps and still counts.
+3. For the OPEN (current, unresolved) episode, if one exists: it overlaps
+   if `start ≤ today` AND `now ≥ (today − 90 days)` ~ the second half is
+   always true (now is always inside the window), so an open episode is
+   ALWAYS included as long as it exists at all; add `current Rounds −
+   preReopenRounds`.
+4. Sum every overlapping episode's contribution.
+
+Worked examples: (a) a row reopens 60 days ago (2 rounds, resolved 55
+days ago), then reopens again 10 days ago (1 round so far, still open).
+Episode 1: end = 55d, inside 90d window → included, contributes 2.
+Episode 2 (open): always included → contributes 1. Total = 3, not just
+the second episode's 1. (b) A row reopens 200 days ago, resolves 195 days
+ago, reopens again 40 days ago (still open). Episode 1: end = 195d,
+OUTSIDE the 90-day window (195 > 90) → excluded, correctly, even though
+its START is irrelevant to that call. Episode 2 (open) → included. (c) A
+row reopens once, 100 days ago, and its rounds resolve at 80 days ago
+(inside the window) before going back to `accepted`, with no further
+reopen. Episode 1: end = 80d, inside the window → included, contributes
+its full delta, even though its START (100d) was outside it ~ this is
+exactly the case a start-date-only heuristic got wrong. Reading the
+actual tag entries for whatever total count this produces: they're always
+the LAST that-many entries in the `Rework tag` list (entries append in
+order, oldest to newest, so the freshest ones are always the tail).
 
 **A row CAN enter the cohort via `Last Sent` with NO `late-reopen` marker
 at all ~ don't assume that case is impossible.** A reopen marker only
@@ -781,11 +791,19 @@ above by hand:
          tied `missing`/`not-followed` ~ worth a look at both the corpus
          file and execution/process, no single fix indicated") rather than
          silently picking one interpretation.
-     Also surface a separate warning (not a
-     blocking gate, just visibility) when `revising` rows with elevated
-     `Rounds` have been open unusually long ~ the accepted-only
-     calculation above is a lower bound while those exist, per §5a's
-     survivorship-bias note.
+     **This is NOT just a visibility warning here either ~ code the same
+     conditional block §5a's manual version requires.** When `revising`
+     rows with elevated `Rounds` have been open unusually long, the
+     accepted-only calculation above is a lower bound (survivorship bias,
+     §5a's note) ~ if that backlog is large or corpus-tagged enough to
+     plausibly flip the reading (below-threshold to above, or
+     `not-followed`-majority to `missing`-majority), mark FIX_CORPUS
+     PROVISIONAL and gate HIRE on it, exactly like the missing-qualifier
+     case above. Implementing this as a surfaced-but-non-blocking warning
+     would let the coded router emit HIRE during an active quality
+     incident (many rows still unresolved, tags still provisional) in
+     precisely the scenario the manual router is required to wait on ~ the
+     automated and manual paths would disagree on the same data.
    - on-cadence rate below threshold, OR cycle time trending up against
      baseline while on-cadence still narrowly holds (the early-warning
      path ~ §2), where the rework on those specific cycles (if any),

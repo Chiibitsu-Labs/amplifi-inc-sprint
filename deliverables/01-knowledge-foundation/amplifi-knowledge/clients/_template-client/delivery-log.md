@@ -147,15 +147,23 @@
    reopen's first bump). Then bump `Rounds` and add the cause per touch 3
    above (which also re-stamps `Last Sent`), repeating touch 3 for as many
    additional rounds as this late feedback actually takes to resolve ~ a
-   reopen isn't always exactly one round. This stamp is what lets a later
-   walkthrough know how many of the row's now-cumulative `Rounds` are
-   freshly relevant (`current Rounds − stamped pre-reopen Rounds`) versus
-   already-accounted-for history, without needing a timestamp on every
-   individual round (see Instrument §3's cohort rule). Late feedback is
+   reopen isn't always exactly one round. Late feedback is
    still real rework on this
    report; a fresh row with no period/due/delivered of its own would just
-   delete the evidence, not relocate it. Only re-finalize to `accepted`
-   once the late round is actually resolved. First version accepted with
+   delete the evidence, not relocate it. **Only re-finalize to `accepted`
+   once the late round is actually resolved ~ and when you do, UPDATE the
+   SAME `late-reopen` marker (don't add a new one) with the resolution:**
+   `late-reopen {start-date}: pre-reopen Rounds={N} → resolved
+   {resolve-date}, Rounds={M}` (M = `Rounds` at the moment this episode
+   closes back to `accepted`). This gives the episode an exact START and
+   END date instead of just a start ~ what lets a later walkthrough test
+   whether the WHOLE episode's span overlaps its 90-day window, rather
+   than guessing from the start date alone (a reopen that started just
+   before a cutoff, with its actual rework rounds landing well inside the
+   window, needs exactly this end date to be counted correctly ~ see
+   Instrument §3's cohort rule). If the row reopens AGAIN later, that's a
+   NEW marker, own start date, initially unresolved until IT closes too.
+   First version accepted with
    no revisions, explicit or by silence = go straight from `delivered` to
    `accepted`, numbers stay at 0/none.
 
