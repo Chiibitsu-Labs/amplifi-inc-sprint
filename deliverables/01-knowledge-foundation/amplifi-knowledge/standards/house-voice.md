@@ -11,6 +11,12 @@
    *theirs* ~ report sections, a strong email, deck copy.
 2. Gather 2–3 examples of AI output the team rejected as "slop" or "tells."
 3. Run the extraction prompt with both sets, then edit the draft.
+4. Delete this instruction block AND change line 3's `Status: FRAME` to
+   `Status: LIVE` (or delete the whole blockquote). Both edits matter ~
+   `amplifi-insights`' Step 0 corpus-readiness check treats a file still
+   carrying `Status: FRAME` as unfilled regardless of what's below it, so
+   removing the instructions alone doesn't actually make the file "live"
+   as far as the skill can tell. The file is live once BOTH are gone.
 
 **Extraction prompt:**
 > "Set A is writing in Amplifi's real voice. Set B is AI output the team

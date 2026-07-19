@@ -58,9 +58,10 @@
    cycles where nothing needed fixing before send ~ most of them,
    hopefully.
 2. **At ship:** fill `Delivered`, top up `Effort (h)`. `Status = delivered`.
-   `Rounds`/`Rework tag` carry forward whatever touch 1.5 already logged
-   (default `0`/`none` if internal review caught nothing) ~ never reset to
-   zero out pre-delivery catches.
+   Stamp `Last Sent = Delivered` too (same date ~ the first version sent is
+   so far also the last). `Rounds`/`Rework tag` carry forward whatever
+   touch 1.5 already logged (default `0`/`none` if internal review caught
+   nothing) ~ never reset to zero out pre-delivery catches.
 3. **If the client asks for a revision:** bump `Rounds` by 1, top up
    `Effort (h)`, set `Rework tag`. **One tag entry per round, always ~
    if a single round has more than one cause** (e.g. a brand correction
@@ -86,22 +87,49 @@
    corpus-caused, not just whether any round ever was) ~ a row with one
    `brand` fix among four `client-new-ask` fixes is 20% corpus-driven,
    not 100%, and the entry count must equal `Rounds` for that math to
-   mean anything. `Status = revising` ~ **not** `accepted`. Repeat this
+   mean anything. `Status = revising` ~ **not** `accepted`. Once the
+   corrected version actually goes back to the client, stamp `Last Sent`
+   with THAT date ~ this is what touch 4's silence window counts from
+   next, never the original `Delivered` date. `Delivered` itself never
+   changes after the first ship (on-cadence stays anchored to when the
+   client ORIGINALLY received a version, not to any later resend) ~
+   `Last Sent` is the only field that moves on a revision. Repeat this
    touch for every additional round.
 4. **At actual client acceptance ~ or after 5 business days of silence
-   post-delivery with no revision request:** `Status = accepted`. Explicit
-   sign-off and "no news" are both real acceptance signals ~ most reports
-   ship clean and nobody writes back to say so, and treating silence as
-   permanently unresolved would starve the rework baseline of exactly the
-   clean deliveries it needs to mean anything. **If a revision request
-   arrives after the 5-day auto-accept, re-open the SAME row** ~ `Status`
-   back to `revising`, bump `Rounds`, add the cause per touch 3 above.
-   Late feedback is still real rework on this report; a fresh row with no
-   period/due/delivered of its own would just delete the evidence, not
-   relocate it. Only re-finalize to `accepted` once the late round is
-   actually resolved. First version accepted with no revisions, explicit
-   or by silence = go straight from `delivered` to `accepted`, numbers
-   stay at 0/none.
+   following the row's current `Last Sent` date, with no revision
+   request:** `Status = accepted`. **Count the 5 days from `Last Sent`,
+   never from the original `Delivered`** ~ this is what actually makes the
+   rule work once a row has been revised: using the original `Delivered`
+   date would auto-accept a row the moment a late-cycle revision goes back
+   out (if enough days already elapsed since the first ship), while
+   ignoring the resend date entirely and never re-arming the silence clock
+   would leave every revised row stuck at `revising` forever, waiting on
+   an explicit sign-off that may never come. `Last Sent` (touch 2's first
+   stamp, or touch 3's latest resend stamp) gives the rule a fresh, correct
+   anchor after every round, first ship or fifth. Explicit sign-off and "no
+   news" are both real acceptance signals ~ most reports ship clean and
+   nobody writes back to say so, and treating silence as permanently
+   unresolved would starve the rework baseline of exactly the clean
+   deliveries it needs to mean anything. **If a revision request arrives
+   after a silent auto-accept, re-open the SAME row** ~ `Status` back to
+   `revising`, bump `Rounds`, add the cause per touch 3 above (which also
+   re-stamps `Last Sent`). Late feedback is still real rework on this
+   report; a fresh row with no period/due/delivered of its own would just
+   delete the evidence, not relocate it. Only re-finalize to `accepted`
+   once the late round is actually resolved. First version accepted with
+   no revisions, explicit or by silence = go straight from `delivered` to
+   `accepted`, numbers stay at 0/none.
+
+**If a client pauses reporting, cancels a period, or changes cadence after
+a row is already open:** set `Status = cancelled` and note the reason in
+**Notes** (`client paused, wk3` / `cadence changed to monthly, see brief`).
+This can happen from ANY prior status, not just `open`. A `cancelled` row
+is excluded entirely from on-cadence's numerator AND denominator ~ it was
+never delivered late, it was never going to be delivered at all, and
+counting it as a miss would permanently and unfairly depress the rate for
+something no analyst failed at. Don't delete the row ~ the cancellation
+itself is real history, and a pattern of client-cancelled cycles is worth
+noticing in its own right.
 
 **Why `Status` exists:** without it, a report still mid-revision or still
 awaiting sign-off looks identical to one that shipped clean ~ all read
@@ -128,22 +156,37 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   wait, including any queue-backup delay, instead of hiding it behind a
   late actual start.
 - **Due** ~ the date this client's cadence says it ships.
-- **Delivered** ~ when the client actually received it. Blank while `open`.
+- **Delivered** ~ when the client actually received the FIRST version.
+  Blank while `open`. **Never overwritten by a later revision resend** ~
+  on-cadence measures against this original date only, so a slow
+  revision round can't retroactively turn an on-time first ship into a
+  late one, or vice versa.
+- **Last Sent** ~ the date the most recently sent version (first ship, or
+  the latest revision) actually went to the client. Equals `Delivered` at
+  first ship (touch 2); updated at every touch-3 resend. This is what the
+  5-business-day silent-acceptance rule (touch 4) counts from ~ using
+  `Delivered` there instead would auto-accept a row the instant a late
+  revision ships, if enough days had already passed since the first send;
+  never updating anything would leave a revised row `revising` forever
+  with no way to reach a silent accept. `Last Sent` gives the silence rule
+  a correct, fresh anchor after every round.
 - **Status** ~ `open` → `delivered` → (`revising` × as many rounds as
   needed) → `accepted`, always in that order. `accepted` is set once for
-  the normal case (explicit sign-off, or 5 business days of post-delivery
-  silence ~ see above) ~ **with one documented exception:** a revision
-  request arriving AFTER a silent auto-accept re-opens the same row,
-  `accepted → revising`, then back to `accepted` once that late round
-  resolves (see touch 4). That's the only case a row leaves `accepted`
-  once reached; it's not a violation of "exactly once" so much as "once
-  per actual finalization," and it's the documented way late feedback
-  stays counted instead of vanishing. On-cadence is computed as
-  `Delivered ≤ Due` for any row that has
-  shipped (`delivered`/`revising`/`accepted`), and as an automatic miss for
-  any `open` row where `Due` has already passed (an `open` row not yet
-  past `Due` is neither ~ it's future work, exclude it from the rate
-  entirely until it resolves one way or the other).
+  the normal case (explicit sign-off, or 5 business days of silence
+  following `Last Sent` ~ see above) ~ **with two documented exceptions:**
+  (1) a revision request arriving AFTER a silent auto-accept re-opens the
+  same row, `accepted → revising`, then back to `accepted` once that late
+  round resolves (see touch 4) ~ not a violation of "exactly once" so much
+  as "once per actual finalization," and the documented way late feedback
+  stays counted instead of vanishing; (2) a row can exit to `cancelled`
+  from ANY prior status if the client pauses, cancels, or changes cadence
+  for that cycle (see above) ~ a terminal state outside the normal chain,
+  never followed by `accepted`. On-cadence is computed as `Delivered ≤ Due`
+  for any row that has shipped (`delivered`/`revising`/`accepted`), an
+  automatic miss for any `open` row where `Due` has already passed, and
+  **excluded entirely from both numerator and denominator** for any
+  `cancelled` row and for any `open` row not yet past `Due` (future work,
+  not yet resolved either way).
 - **Rounds** ~ running count of revision rounds, from EITHER source:
   pre-delivery catches (QA gate, internal alignment, OR pass 2 ~ touch
   1.5, any point before the ship write) or client-requested revisions
@@ -177,10 +220,18 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   instrument computes FIX_CORPUS's tag share PER ROUND ~ count of
   `brief-misalign`/`brand` entries ÷ total entries, which equals `Rounds`
   ~ not per row, so a row like `brand, client-new-ask, client-new-ask`
-  counts as 1-in-3 corpus-tagged, not "corpus-tagged: yes/no.")
+  counts as 1-in-3 corpus-tagged, not "corpus-tagged: yes/no.") **The same
+  hard-block gate applies to any PARTIAL mismatch, not just a bare
+  `none`:** if `Rounds = 3` but only two tag entries are recorded (say
+  `brand, data`), that row is just as incomplete as a bare `none` ~ the
+  entry count must equal `Rounds` exactly, or the row's tag share is
+  unknown, not "whatever the recorded entries happen to divide out to."
+  Before trusting any row's tag-share contribution, count its entries and
+  compare to `Rounds`; anything less is missing data and gets the same
+  exclude-and-block treatment as an untagged row.
 
 ## The log
 
-| Period | Analyst | Start | Due | Delivered | Status | Rounds | Effort (h) | Rework tag | Notes |
-|---|---|---|---|---|---|---|---|---|---|
-| {2026-07 / wk 29} | {Dale} | {YYYY-MM-DD} | {YYYY-MM-DD} | {YYYY-MM-DD or blank} | {open / delivered / revising / accepted} | {0} | {6} | {none} | {—} |
+| Period | Analyst | Start | Due | Delivered | Last Sent | Status | Rounds | Effort (h) | Rework tag | Notes |
+|---|---|---|---|---|---|---|---|---|---|---|
+| {2026-07 / wk 29} | {Dale} | {YYYY-MM-DD} | {YYYY-MM-DD} | {YYYY-MM-DD or blank} | {YYYY-MM-DD or blank} | {open / delivered / revising / accepted / cancelled} | {0} | {6} | {none} | {—} |

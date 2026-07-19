@@ -53,7 +53,7 @@ a second job. Capture as byproduct, both times.
 
 | Signal | Definition | Feed | Why it predicts strain |
 |---|---|---|---|
-| **WIP per analyst** | active clients/tasks in flight per person, from capchecker's `client_count` field (Q3, parsed to a number) | capchecker (daily Q3) | the "full hands" ceiling. **v1 threshold, same pattern as capchecker's other signals:** WIP baseline = per-analyst average `client_count` over a **FROZEN** reference window ~ the first 10 working days once `client_count` data starts (mirrors `SCALE_EPOCH`'s frozen-reference pattern, not `minHistoryDays`'s rolling one). **The healthy-window guard applies to THIS initial freeze too, not just quarterly recalibration** ~ there's no prior baseline to compare the first window against, so the check instead cross-reads capchecker's perceived-load signal (Q1, already live daily) over that same first-10-days window: if load is ALSO reading structurally elevated during it (not just a rough day or two), that's a sign tracking started mid-overload, and the initial window normalizes strain instead of measuring a genuine baseline ~ the exact failure mode the quarterly guard exists to prevent, just hit on day one instead of at a quarterly boundary. In that case, don't freeze from this window: flag it to Michele and either extend the window until load reads normal, or seed the baseline manually from her judgment of what a normal WIP count looks like, noting it as a judgment call to revisit once a genuinely calm window is observed. **Deliberately not a continuously-rolling trailing average** ~ a rolling baseline absorbs the same sustained increase the threshold is supposed to catch (10 days at 3, then a genuine step up to 5: a rolling baseline creeps from 3.0 toward 3.2 on day one of the increase, chasing the threshold it's compared against, so a real sustained rise can mathematically never clear "baseline + 2" ~ Codex catch, 2026-07-18). WIP threshold = `client_count` ≥ frozen baseline + 2, sustained on ≥5 of the last 10 working days (a lower bar than load's `structuralDays: 7` since WIP moves more slowly, day to day, than a self-rated feeling). The frozen baseline recalculates only at quarterly calibration (§7) ~ **and only from a window confirmed to be healthy, never blindly from "whatever the last N days looked like."** A blind quarterly reset reproduces the exact bug the freeze exists to prevent: if WIP rose from a genuine baseline of 3 to a sustained breach at 5 shortly before a quarterly boundary, recalculating from the most recent days would set the new baseline to 5 and the new threshold to 7 ~ silently clearing an overload that was never resolved, just relabeled as normal. Rule: if the WIP threshold is CURRENTLY firing (or fired at any point in the window under consideration) when quarterly calibration comes around, carry the OLD baseline forward unchanged rather than recalculating from an active-breach window; only recalculate from a period that was itself below threshold, confirming it reflects genuinely healthy load, not a new-normal that's actually still the problem (Codex catch, 2026-07-18). Gut-seed like every other v1 number here ~ Michele adjusts the FORMULA (window length, +2 margin) at quarterly review, and the baseline VALUE only from confirmed-healthy data ~ **at the initial freeze as well as every quarterly recalibration after it** ~ never mid-cycle and never from an unresolved breach. Without a stated number, "WIP sustainedly elevated" isn't checkable and two people could read the same dashboard and disagree ~ this is that number, however roughly. |
+| **WIP per analyst** | active clients/tasks in flight per person, from capchecker's `client_count` field (Q3, parsed to a number) | capchecker (daily Q3) | the "full hands" ceiling. **v1 threshold, same pattern as capchecker's other signals:** WIP baseline = per-analyst average `client_count` over a **FROZEN** reference window ~ the first 10 working days once `client_count` data starts (mirrors `SCALE_EPOCH`'s frozen-reference pattern, not `minHistoryDays`'s rolling one). **The healthy-window guard applies to THIS initial freeze too, not just quarterly recalibration** ~ there's no prior baseline to compare the first window against, so the check instead cross-reads capchecker's perceived-load signal (Q1, already live daily) over that same first-10-days window: if load is ALSO reading structurally elevated during it (not just a rough day or two), that's a sign tracking started mid-overload, and the initial window normalizes strain instead of measuring a genuine baseline ~ the exact failure mode the quarterly guard exists to prevent, just hit on day one instead of at a quarterly boundary. In that case, don't freeze from this window: flag it to Michele and either extend the window until load reads normal, or seed the baseline manually from her judgment of what a normal WIP count looks like, noting it as a judgment call to revisit once a genuinely calm window is observed. **A second, independent gate on the same window: per-analyst observation completeness.** The healthy-window check above validates that the window isn't a hidden overload; it says nothing about whether a given analyst actually ANSWERED enough of it to average meaningfully ~ Q3 is one of three daily taps and can go unanswered like any of them, and an analyst who logs a parseable `client_count` on only 2 of the 10 window days can have their personal baseline set almost entirely by whichever 2 days happened to be light, making every ordinary day afterward misread as `baseline + 2` sooner than it honestly should. Require, per analyst, **at least 7 of the 10 window days with a valid parsed `client_count`** before freezing THAT analyst's baseline (mirrors DATA's own ≥70%/7d response-rate bar, same reasoning, applied to WIP instead of daily-checkin-as-a-whole) ~ an analyst who falls short gets their window quietly extended a few more working days rather than frozen on a thin sample, flagged to Michele as running on a manual/unseeded baseline meanwhile. This is a per-analyst gate, not a per-team one ~ one analyst's sparse week shouldn't hold up freezing everyone else's baseline on schedule. **Deliberately not a continuously-rolling trailing average** ~ a rolling baseline absorbs the same sustained increase the threshold is supposed to catch (10 days at 3, then a genuine step up to 5: a rolling baseline creeps from 3.0 toward 3.2 on day one of the increase, chasing the threshold it's compared against, so a real sustained rise can mathematically never clear "baseline + 2" ~ Codex catch, 2026-07-18). WIP threshold = `client_count` ≥ frozen baseline + 2, sustained on ≥5 of the last 10 working days (a lower bar than load's `structuralDays: 7` since WIP moves more slowly, day to day, than a self-rated feeling). The frozen baseline recalculates only at quarterly calibration (§7) ~ **and only from a window confirmed to be healthy, never blindly from "whatever the last N days looked like."** A blind quarterly reset reproduces the exact bug the freeze exists to prevent: if WIP rose from a genuine baseline of 3 to a sustained breach at 5 shortly before a quarterly boundary, recalculating from the most recent days would set the new baseline to 5 and the new threshold to 7 ~ silently clearing an overload that was never resolved, just relabeled as normal. Rule: if the WIP threshold is CURRENTLY firing (or fired at any point in the window under consideration) when quarterly calibration comes around, carry the OLD baseline forward unchanged rather than recalculating from an active-breach window; only recalculate from a period that was itself below threshold, confirming it reflects genuinely healthy load, not a new-normal that's actually still the problem (Codex catch, 2026-07-18). Gut-seed like every other v1 number here ~ Michele adjusts the FORMULA (window length, +2 margin) at quarterly review, and the baseline VALUE only from confirmed-healthy data ~ **at the initial freeze as well as every quarterly recalibration after it** ~ never mid-cycle and never from an unresolved breach. Without a stated number, "WIP sustainedly elevated" isn't checkable and two people could read the same dashboard and disagree ~ this is that number, however roughly. |
 | **Perceived load** | daily 1–10 self-rating + reason | capchecker (Q1+Q2) | earliest warning ~ people feel strain before metrics show it |
 | **Cycle time per report** | period start → delivered | delivery log | rising = falling behind cadence; the early-warning half of REDESIGN's evidence (see §3) ~ cycle time can trend up for weeks before it actually breaches the due date and shows up in on-cadence rate |
 | **On-cadence rate** | % reports delivered by their due date | delivery log | mixed weekly/bi-weekly/monthly clients; CLUSTERED misses (one client, one handoff) point at a workflow problem (routes to REDESIGN ~ see §3); BROAD misses across most clients/analysts, with WIP/load also elevated, point at capacity instead |
@@ -288,16 +288,29 @@ cycles, not elapsed time):
      `Due` hasn't arrived yet (that's future work, not yet a hit or a
      miss; counting it dilutes the rate and can mask a real problem).
      Below threshold, with `Rework tag` mostly `client-new-ask`/`data`/
-     `none` rather than `brief-misalign`/`brand` → REDESIGN.
+     `none` rather than `brief-misalign`/`brand` → REDESIGN. **This tag
+     read only counts `accepted` rows** ~ a `delivered` or `revising`
+     row's tag is still provisional (more rounds, and a corpus-tagged one
+     among them, could still land before it finalizes); pulling REDESIGN
+     evidence from an unresolved row risks reading it as clean days before
+     a `brief-misalign`/`brand` revision arrives and it should have
+     pointed at FIX_CORPUS instead. `open`/`delivered`/`revising` rows
+     still count in the on-cadence rate itself (that's a delivery-date
+     fact, settled at ship, not a tag) ~ only the REWORK-TAG qualifier on
+     top of it waits for `accepted`. If too few rows are `accepted` yet to
+     read this qualifier meaningfully, say so and treat the call as
+     provisional, not confirmed (same caution as the survivorship-bias
+     note in step 3).
    - **Early warning (cycle time):** compare recent `Delivered − Start`
      spans against the baseline (§7), **on cycles whose rework (if any)
      stays low or isn't corpus-tagged** ~ the same qualifier the
-     on-cadence read above already uses, applied here too so this bullet
-     is self-contained and doesn't need to borrow step 3's answer to
-     resolve itself. Trending up under that condition, even while still
-     narrowly hitting `Due` → REDESIGN, flagged as "before it becomes a
-     miss" ~ this is the row that keeps a slow slide from going unnoticed
-     until on-cadence formally breaches. (A cycle that's slow BECAUSE its
+     on-cadence read above already uses (accepted rows only, for the same
+     provisional-tag reason), applied here too so this bullet is
+     self-contained and doesn't need to borrow step 3's answer to resolve
+     itself. Trending up under that condition, even while still narrowly
+     hitting `Due` → REDESIGN, flagged as "before it becomes a miss" ~
+     this is the row that keeps a slow slide from going unnoticed until
+     on-cadence formally breaches. (A cycle that's slow BECAUSE its
      rework is heavily corpus-tagged was never REDESIGN evidence to begin
      with ~ that's what step 3 is for. Declared order stays intact:
      AUTOMATE, then REDESIGN, then FIX_CORPUS, then HIRE, each with
@@ -457,12 +470,29 @@ above by hand:
      "team-wide maxed" is only a real claim when the responding sample
      actually represents the team) AND automate + redesign + fix-corpus
      not firing **portfolio-wide** ~ a narrow signal scoped to one client
-     or theme, isolated from the broad WIP/load elevation, shouldn't count
-     as an explanation (v1 code check: is the automate/redesign/fix-corpus
-     signal's scope ~ client(s)/theme it names ~ a small fraction of the
-     clients showing elevated WIP/load, or most of them? Small fraction
-     doesn't block HIRE; most of them does) ~ the chain enforced in code,
-     not just in prose. **HIRE never reads
+     or theme, isolated from broad WIP/load elevation, shouldn't count as
+     an explanation. **v1 code check, defined at the ANALYST level, not
+     the client level:** WIP and perceived load are both analyst-level
+     signals with no client attribution ~ capchecker's `client_count` is a
+     headcount, not a per-client breakdown, and Q1/Q2's load rating has
+     none either ~ so a test phrased as "fraction of CLIENTS showing
+     elevated WIP/load" has no data behind it to actually run. What's
+     knowable instead: which ANALYST(S) own the narrow signal's named
+     client(s) (the delivery log's `Analyst` field is exactly this join
+     key, already collected for its own reasons) and whether WIP/load
+     elevation is confined to THOSE analyst(s) or spans most of the
+     roster. So: map the narrow signal's client(s) to their analyst(s) via
+     delivery-log rows; is WIP/load ALSO elevated only for that same small
+     set of analysts, or for most of the team? Confined to the narrow
+     signal's own analyst(s) doesn't block HIRE (their own named problem
+     could plausibly explain their own strain); elevation reaching MOST of
+     the team, beyond just the analyst(s) the narrow signal already names,
+     does ~ that broader reach is what a client-scoped fix can't explain
+     away. (A future capacity feed with real per-client task attribution,
+     not just a per-analyst count, would let this run at the finer client
+     grain the original draft assumed ~ noted as a possible roadmap-level
+     capchecker enhancement, never a v1 blocker; see `ROADMAP.md`.) ~ the
+     chain enforced in code, not just in prose. **HIRE never reads
      on-cadence or cycle time.** A cadence problem is, by construction, a
      REDESIGN or FIX_CORPUS matter first; if HIRE also required cadence
      degraded as corroboration, any miss severe enough to justify a hire

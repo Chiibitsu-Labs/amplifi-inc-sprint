@@ -19,7 +19,12 @@ since that's where the real structure and branding rules live.
    Claude, attaching those exports.
 3. **Edit what it drafts** ~ Rica confirms the real structure, the AI just
    organizes it into this file's shape.
-4. Delete this instruction block. The file is then live.
+4. Delete this instruction block AND change line 3's `Status: FRAME` to
+   `Status: LIVE` (or delete the whole blockquote). Both edits matter ~
+   `amplifi-insights`' Step 0 corpus-readiness check treats a file still
+   carrying `Status: FRAME` as unfilled regardless of what's below it, so
+   removing the instructions alone doesn't actually make the file "live"
+   as far as the skill can tell. The file is live once BOTH are gone.
 
 **Extraction prompt** (paste with the Canva template exports attached):
 > "This is Amplifi's current intelligence report template and brand kit.

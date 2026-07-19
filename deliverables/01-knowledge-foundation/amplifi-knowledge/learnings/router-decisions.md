@@ -18,8 +18,23 @@ broad, team-wide capacity strain ~ both can be real findings from the
 same walkthrough, and the log needs to hold both without implying the
 narrow one was wrong or dismissed.
 
+**Snapshot the thresholds too, not just which routes fired.** Michele's
+numbers start as gut-seeded guesses and get recalibrated at quarterly
+review (Instrument §7) ~ without a dated record of what was ACTIVE at
+walkthrough time, a later audit (or whoever eventually wires §5b's
+automation) can't tell whether an old decision used since-changed numbers,
+or which threshold version to actually code up. Routes fired isn't enough
+on its own; the numbers that fired them have to be dated too.
+
 ```markdown
 ## {YYYY-MM-DD} ~ monthly walkthrough
+- Thresholds snapshot (every signal evaluated this walkthrough, as of
+  today ~ note any value changed since the LAST entry, and when):
+  - WIP baseline: {N per analyst, frozen {date}}
+  - On-cadence threshold: {N%}
+  - Rework: {N rounds/accepted-report threshold, AND/OR N% round-tag-share
+    threshold ~ whichever actually fired or was checked}
+  - Load structural line: {N ~ capchecker default unless Michele changed it}
 - Routes fired: {one or more of AUTOMATE | REDESIGN | FIX_CORPUS |
   REBALANCE | HIRE | none crossed ~ list every one that actually fired,
   not just the "final" one}

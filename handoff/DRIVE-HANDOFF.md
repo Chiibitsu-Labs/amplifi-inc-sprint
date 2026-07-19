@@ -56,18 +56,30 @@ grows under their roof. Chii's repo remains the reference/spec copy.
    **But neither Claude Enterprise nor Claude Code re-reads Drive
    automatically** ~ both run whatever was last installed into THEM, not
    whatever's currently in the Drive source of truth. Every time a skill
-   changes in Drive, redeploy to every client it's installed in:
-   - `amplifi-insights` / `amplifi-qa`: re-upload to Claude Enterprise
-     (step 4), re-verify (fresh session, confirm the new behavior).
-   - `amplifi-improve` specifically: re-upload to Claude Enterprise AND
-     re-copy into the Claude Code / write-capable client's local skills
-     location (step 6b) ~ it's installed in two places for two different
-     reasons (read access vs. write access) and both copies go stale
-     independently. Updating only the Enterprise copy leaves the
-     write-capable session ~ the one that actually runs captures ~ on the
-     old behavior.
-   Don't tell anyone an update is live until every installed copy is
-   confirmed, not just the first one you remembered.
+   changes in Drive, redeploy to EVERY location it's actually installed in
+   ~ which locations that is depends on which deployment tier (step 6) is
+   active, so check that first, don't assume the same split always
+   applies:
+   - **Running tier (a), one client (the deployment to aim for):** all
+     three skills ~ `amplifi-insights`, `amplifi-qa`, AND `amplifi-improve`
+     ~ live ONLY in the write-capable client's local skills location
+     (step 6a). Re-copy whichever skill changed there and re-verify (fresh
+     session, confirm the new behavior). Re-uploading to Claude Enterprise
+     does nothing here if Enterprise isn't the session actually doing the
+     work ~ that copy, if one still exists from an earlier setup, is
+     already dead weight.
+   - **Running tier (b), the fallback:** `amplifi-insights` / `amplifi-qa`
+     live in Claude Enterprise ~ re-upload there (step 4), re-verify
+     (fresh session, confirm the new behavior). `amplifi-improve` lives
+     separately, in the write-capable client's local skills location
+     (step 6b) ~ re-copy it there too, independently. It's installed in
+     two places for two different reasons (drafting/QA access vs. write
+     access) and both copies go stale independently; updating only the
+     Enterprise copy leaves the write-capable session ~ the one that
+     actually runs captures ~ on the old behavior.
+   Don't tell anyone an update is live until every installed copy FOR THE
+   TIER ACTUALLY IN USE is confirmed, not just the first one you
+   remembered.
 6. **Give the improve skill an actual write path ~ and don't let the fix
    for "can't write" accidentally create "can't see what happened."**
    Read access (step 4) is not enough for `amplifi-improve`: the

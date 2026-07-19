@@ -12,7 +12,12 @@
 2. Open them next to this file and run the extraction prompt below with
    Claude, then **edit what it drafts** ~ the human authors the bar, the AI
    just does the first pass.
-3. Delete this instruction block. The file is then live.
+3. Delete this instruction block AND change line 3's `Status: FRAME` to
+   `Status: LIVE` (or delete the whole blockquote). Both edits matter ~
+   `amplifi-insights`' Step 0 corpus-readiness check treats a file still
+   carrying `Status: FRAME` as unfilled regardless of what's below it, so
+   removing the instructions alone doesn't actually make the file "live"
+   as far as the skill can tell. The file is live once BOTH are gone.
 
 **Extraction prompt** (paste with the reports attached):
 > "These are Amplifi's best intelligence reports. From them, extract: (1)
