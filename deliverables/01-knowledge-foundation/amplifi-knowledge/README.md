@@ -49,16 +49,29 @@ comparing a requested name against this cell, same as any other
 Markdown-escaped value.
 
 **Check for a slug COLLISION before creating the folder, and never
-silently reuse an existing one.** Slugging is lossy ~ different real
+silently reuse an existing one ~ and never treat matching NAMES alone as
+proof of matching ACCOUNTS.** Slugging is lossy ~ different real
 names can normalize to the same string (`ACME/EMEA`, `ACME:EMEA`, and a
 client literally named `ACME-EMEA` all slug to `clients/ACME-EMEA/`), so
 the folder name alone can't be trusted to be unique without an explicit
 check. Before finishing the copy, list `clients/*`: if the target slug
 does NOT already exist, use it as-is. If it DOES already exist, read that
-existing folder's `brief.md` Snapshot table ~ if its stored real name
-matches the NEW client's real name, this is the same client (not a
-collision, don't create a second folder). If the stored real name is
-DIFFERENT, this is a genuine collision: append a numeric suffix,
+existing folder's `brief.md` Snapshot table and **STOP for a human
+decision, don't auto-resolve either way:** "`clients/{slug}/` already
+exists for a client named '{existing name}' ~ is this the SAME account
+(reuse the existing folder, don't create a second one) or a DIFFERENT
+account that just happens to share the name (needs its own folder)?"
+**Two unrelated clients can genuinely share an identical display name**
+(a churned "Acme Corp" engagement years ago, an unrelated new "Acme Corp"
+signing up now) ~ this corpus has no stable account identifier beyond the
+name itself, so name equality is a HINT, never proof, and auto-merging
+two different accounts because their names match would silently point
+every skill's Snapshot-based resolver at one shared brief/context/
+delivery history for what are actually two separate clients (Codex
+catch, 2026-07-19). Only once a human confirms "yes, same account" does
+this become a non-collision; a confirmed DIFFERENT account (whether the
+name differs OR merely happens to match) is a genuine collision: append a
+numeric suffix,
 DETERMINISTIC and creation-order based ~ `-2` if the base slug is taken,
 `-3` if `-2` is also taken, and so on, first available number wins, same
 "first suffix that doesn't already exist" rule `amplifi-improve` already

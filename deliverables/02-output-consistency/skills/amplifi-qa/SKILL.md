@@ -288,10 +288,19 @@ router treats a corpus-tagged entry with no qualifier as incomplete data,
 same as a missing tag entirely. IF THE TAG IS BRAND SPECIFICALLY: the
 qualifier needs a SECOND part too, since check 2 covers two different
 corpus files ~ SLASH-separated, never comma-separated (a comma here would
-parse as a second round entry and break the round-count check):
-`brand (missing/house-voice)` if the violation was
-against the shared standards/house-voice.md, `brand (not-followed/
-brand-standard)` if it was against THIS client's own brand-standard.md.
+parse as a second round entry and break the round-count check).
+**The two parts are chosen INDEPENDENTLY, never a fixed pairing:** pick
+`missing` or `not-followed` based on WHY (the standard didn't cover this,
+vs it did and just wasn't applied), and SEPARATELY pick `house-voice` or
+`brand-standard` based on WHICH file the violation was actually against
+~ all four combinations are real (`brand (missing/house-voice)`, `brand
+(not-followed/house-voice)`, `brand (missing/brand-standard)`, `brand
+(not-followed/brand-standard)`). Don't default to `missing` just because
+the file is `house-voice`, or to `not-followed` just because it's
+`brand-standard` ~ an already-encoded house-voice rule someone simply
+didn't apply is `not-followed/house-voice`, not `missing/house-voice`;
+logging it as `missing` sends FIX_CORPUS to edit a file that was never
+broken and hides the real execution gap.
 Never log a bare `brand (missing)` or `brand (not-followed)` with no file
 named ~ that's incomplete the same way a missing qualifier is, because it
 points FIX_CORPUS at "the brand standard" without saying which one.

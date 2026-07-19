@@ -667,7 +667,11 @@ dated entries get counted this month).
    brief, `what-good-looks-like.md`, or ~ for `brand` specifically, read
    the qualifier's SECOND component, `house-voice` or `brand-standard`,
    since check 2 covers two different files and the bare tag alone can't
-   tell them apart ~ see `delivery-log.md`'s Rework tag bullet) ~ **but check
+   tell them apart ~ this second component is picked INDEPENDENTLY of the
+   missing/not-followed cause, never a fixed pairing (a `not-followed/
+   house-voice` finding is just as real as `missing/brand-standard` ~ see
+   `delivery-log.md`'s Rework tag bullet for the full four-combination
+   reasoning) ~ **but check
    the qualifier on each qualifying round's TAG ENTRY (`missing` vs
    `not-followed`, e.g. `brand (not-followed/brand-standard)` ~ slash, not
    comma, since a comma there would parse as a second round entry ~ NOT
@@ -1002,7 +1006,11 @@ above by hand:
        `brand` specifically, ALSO read the qualifier's second component
        (`house-voice` or `brand-standard`) to resolve which of the two
        files check 2 actually failed against before prescribing an edit ~
-       see `delivery-
+       chosen INDEPENDENTLY of the missing/not-followed cause component,
+       never inferred from it (a `not-followed/house-voice` reading is
+       just as real as `missing/brand-standard` ~ don't default `missing`
+       to one file or `not-followed` to the other; see
+       `delivery-
        log.md`) before prescribing a corpus edit: majority `not-followed`
        means the corpus was already correct and this isn't a real gap ~
        surface it

@@ -443,10 +443,26 @@ pipe in any cell (`Dale \| Janelle`), never a bare `|`.
 
   **`brand` specifically covers TWO different corpus files, and the tag
   alone can't say which ~ its qualifier carries a second component to
-  disambiguate, SLASH-separated, never comma-separated:** `brand
-  (missing/house-voice)` or `brand
-  (not-followed/brand-standard)`, never a bare `brand (missing)` on its
-  own. **Slash, not comma, on purpose:** the comma is already load-bearing
+  disambiguate, SLASH-separated, never comma-separated.** **The two
+  components are INDEPENDENT axes, never a fixed pairing ~ cause
+  (`missing`/`not-followed`) says WHY, source (`house-voice`/
+  `brand-standard`) says WHICH FILE, and all four combinations are real,
+  distinct findings:** `brand (missing/house-voice)` (the shared standard
+  genuinely didn't cover this), `brand (not-followed/house-voice)` (the
+  shared standard already covered it, just wasn't applied), `brand
+  (missing/brand-standard)` (this client's own standard genuinely didn't
+  cover this), `brand (not-followed/brand-standard)` (this client's own
+  standard already covered it, just wasn't applied). Never assume
+  `missing` implies `house-voice` or `not-followed` implies
+  `brand-standard` ~ an already-encoded house-voice rule that was simply
+  ignored is `not-followed/house-voice`, not `missing/house-voice`, and
+  logging it as `missing` would incorrectly send FIX_CORPUS to edit a
+  file that was never broken while masking the real execution gap; a
+  genuinely absent client-specific rule is `missing/brand-standard`, and
+  logging it as `not-followed` would incorrectly suppress a real corpus
+  edit the client's own standard actually needs (Codex catch,
+  2026-07-19). Never log a bare `brand (missing)` on its
+  own, either qualifier component missing. **Slash, not comma, on purpose:** the comma is already load-bearing
   as the TOP-LEVEL separator between round entries in this cell (`entry1,
   entry2, entry3`) ~ a comma inside one entry's own parenthetical would
   make a single one-round value like `brand (missing, house-voice)` parse
