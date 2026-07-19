@@ -65,7 +65,7 @@ AI starts. Here, every handoff is a decision, not a default.
 | 2 | Baseline | AI drafts from brief + data · **H** shapes unique asks | **V** reads `brief.md`; unique asks written back |
 | 3 | Internal alignment | **H** judgment call | **V** misalignments → learnings |
 | 4 | Present | **H** ~ the room is human | — |
-| 5 | Revisions | **H** decides · AI applies | **V** every correction → `brand-standard.md` / FAQs ~ *the same note never twice* |
+| 5 | Revisions | **H** decides · AI applies | **V** every correction → `brand-standard.md` / FAQs ~ *the same note never twice*. **If the revision changes a NUMBER, insight, or recommendation** (not just voice/format), that's a THIRD write: `insight-log.md`'s conditional third touch updates the matching entry too, since future insight generation and QA both trust that entry as historical fact ~ correcting only `brand-standard.md`/FAQs leaves the superseded claim standing where later reports actually read it (Codex catch, 2026-07-19) |
 | 6 | Implement | **H** manages suppliers/vendors (process, not AI ~ see risks) | — |
 | 7 | Monthly analysis | AI synthesizes Sentimo/MCP pulls · **H** spot-checks | **V** reads `context.md` for what matters to this client |
 | 8 | Insights | **AI drafts** (insight skill) · **H** verifies ~ "VERIFICATION OF AI RESULTS" stays | **V** reads standards + full `insight-log.md` |

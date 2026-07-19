@@ -657,17 +657,40 @@ baseline ~ there's no self-referential creep risk here, it's just which
 dated entries get counted this month).
 2. **REDESIGN check:** open each client's `delivery-log.md`, two reads ~
    either fires REDESIGN:
-   - **Confirmed (on-cadence):** **validate `Delivered` FIRST, before
-     computing anything:** any row whose `Status` is
-     `delivered`/`revising`/`revising (reopened)`/`accepted` but whose
-     `Delivered` cell is blank or not a parseable date is a data-entry
-     gap, not a cadence outcome ~ pull it out of BOTH the numerator and
+   - **Confirmed (on-cadence):** **validate EVERY date this calculation
+     touches FIRST, before computing anything, not just `Delivered`:**
+     - Any row entering this calculation AT ALL (every status this rule
+       reads) needs a blank/not-parseable `Due` treated the same way ~
+       `Due` is what every other date in this formula gets compared
+       against (`Delivered ≤ Due`, `open`... already past `Due`, `Last
+       Sent` `>`/`=` `Due`), so a bad `Due` corrupts every one of those
+       tests at once, not just one.
+     - Any row whose `Status` is
+       `delivered`/`revising`/`revising (reopened)`/`accepted` but whose
+       `Delivered` cell is blank or not a parseable date is a data-entry
+       gap, not a cadence outcome.
+     - Any `cancelled` row whose `Last Sent` (the cancellation-date stamp
+       this formula reads to place it before/after `Due`) is blank or not
+       parseable can't be tested against `Due` at all ~ silently treating
+       it as NOT past `Due` (the same effect a missing value produces
+       against a `>` comparison) would drop a genuine overdue-then-
+       cancelled miss from the denominator without ever flagging the gap
+       (Codex catch, 2026-07-19: the original wording validated
+       `Delivered` only, leaving `Due` and cancelled-row `Last Sent`
+       exactly as exposed to the same blank/malformed-field failure mode
+       ~ `§5b`'s ingestion filter doesn't close this either, since it only
+       rejects unresolved `{...}` template markers, not a real-looking but
+       invalid date a human typo produced).
+     Any row failing ONE of these checks: pull it out of BOTH the
+     numerator and
      the denominator, and flag it separately as unevaluable data to fix
      in the log, rather than letting it silently fail `Delivered ≤ Due`
-     by default and count as an automatic miss (Codex catch, 2026-07-19:
-     admitting a blank/malformed `Delivered` straight into this
-     calculation turns a missing field into a spurious cadence breach,
-     which can depress the rate enough to fire REDESIGN off incomplete
+     by default and count as an automatic miss, or silently drop out of
+     the denominator as if it never existed (admitting a bad date straight
+     into this
+     calculation turns a missing field into a spurious cadence breach or a
+     spurious cadence hit, which can shift the rate enough to fire
+     REDESIGN off incomplete
      data instead of a real pattern). Once validated: compute the rate by
      hand: numerator =
      rows with `Delivered ≤ Due`; denominator = rows that have shipped
@@ -1780,13 +1803,19 @@ above by hand:
      this bullet on its own and let HIRE fire off a genuinely narrow
      capacity problem, which is exactly the "one client, one handoff"
      pattern REDESIGN (or a redistribution) should absorb instead, not a
-     portfolio-wide hire. Use the identical fixed-roster counting rule
-     defined below (count elevated analysts against ≥4-of-6 directly; an
+     portfolio-wide hire. Use the identical dynamically-derived counting rule
+     defined below (count elevated analysts against MORE THAN HALF of the
+     roster's ACTUAL CURRENT headcount directly, never a hard-coded `4-of-6`;
+     an
      analyst without sufficient WIP data can't be counted as elevated,
      never shrink the denominator to "analysts with data this cohort") ~
-     one ≥4-of-6 rule, read twice: once here as the unconditional base
+     one dynamic more-than-half-of-roster rule, read twice: once here as the unconditional base
      gate, once below as the scope test that additionally maps a NAMED
-     narrow signal's analysts against it. AND WIP DATA COVERAGE ≥70% of the full roster (≥5 of 6 today,
+     narrow signal's analysts against it (Codex catch, 2026-07-19: this
+     restatement reverted to the hard-coded `≥4-of-6` phrasing two
+     sentences after the base predicate above was fixed to derive it
+     dynamically, a third location carrying the same stale number after
+     two others had already been fixed). AND WIP DATA COVERAGE ≥70% of the full roster (≥5 of 6 today,
      each individually clearing the ≥7-of-10-valid-observations bar ~ its
      own gate, separate from DATA below, since Q3 can go unanswered
      independently of Q1/Q2; below this floor WIP is insufficient-coverage

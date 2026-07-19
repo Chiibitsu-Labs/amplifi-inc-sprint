@@ -191,9 +191,18 @@
    This transition needs someone to
    actually check** ~ plain markdown doesn't revisit a row on its own once
    5 days pass, so relying on "whoever happens to notice" leaves silently-
-   clean reports sitting at `delivered`/`revising` indefinitely, excluded
-   from the accepted-only rework calculation the whole time (skewing
-   rounds-per-report upward, since the clean majority never counts).
+   clean reports sitting at bare `delivered`/`revising` indefinitely,
+   excluded
+   from gate (a)/(b)'s trusted `accepted`-OR-`revising (reopened)`
+   rework calculation the whole time (skewing
+   rounds-per-report upward, since the clean majority never counts) ~ a
+   first-ever, never-yet-accepted pass genuinely isn't trusted evidence
+   yet, unlike a `revising (reopened)` row, which already carries an
+   established `accepted` baseline and IS trusted (Codex catch,
+   2026-07-19: an earlier draft called this "accepted-only," a stale term
+   for the actual `accepted`/`revising (reopened)` scope, even though the
+   `delivered`/`revising` rows this specific sentence describes are
+   correctly excluded either way).
    `ROADMAP.md`'s Phase 3 rhythm covers this: a weekly scan (piggybacked on
    the Friday promotion-pass sitting, no new habit needed) finalizes every
    row whose silence window has quietly closed ~ **and updates that same
@@ -292,9 +301,19 @@ construction, a pre-send catch (touches 3/4 only ever fire on a row
 that's already shipped, which this one never did), so nothing about
 cancellation invalidates them as real corpus-vs-process evidence. Leave
 `Rounds`/`Rework tag` exactly as touch 1.5 left them ~ don't clear them
-on cancellation, and see `INSTRUMENT.md` §5a's round-level cohort for how
-these dated entries stay counted even though the row itself is excluded
-from FIX_CORPUS's row-level denominator (Codex catch, 2026-07-19). Any
+on cancellation. **These dated entries never enter FIX_CORPUS's gate (a)
+or gate (b) directly** ~ a cancelled row never becomes a report, so it
+can never earn a place in gate (a)'s row-level denominator, and reading
+its rounds straight into either gate would reproduce the exact
+numerator-without-a-denominator-place bug `INSTRUMENT.md` §5a's own
+history already worked through and fixed. Instead, they feed a
+SEPARATE, corroborating-only tally computed alongside FIX_CORPUS
+(see `INSTRUMENT.md` §5a/§5b) ~ real, dated evidence, just never
+blended into either gate's core math (Codex catch, 2026-07-19: an
+earlier draft of this note said these entries "stay counted" toward
+FIX_CORPUS while the row was denominator-excluded, the same
+numerator-without-denominator framing the coded spec's own two failed
+drafts already ruled out). Any
 hours already logged toward it are still real
 and still belong in `Effort (h)`. **But "still `open`"
 splits into two different cases, distinguished by comparing `Last Sent`

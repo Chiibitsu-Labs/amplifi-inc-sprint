@@ -61,13 +61,25 @@ on its own; the numbers that fired them have to be dated too.
     row sets, never just the `Due`-anchored one alone: (i) every row with
     STATUS `accepted` OR `revising (reopened)` SPECIFICALLY (never bare
     `revising`, never `delivered`) with `Due` in the trailing 90 days,
-    including zero-round rows, same set on-cadence uses; PLUS (ii) any
+    including zero-round rows, same set on-cadence uses, PLUS its own
+    `Start ≥ Sep 4` rollout-epoch floor (see below) ~ PLUS (ii) any
     `accepted`/`revising (reopened)` row that contributed at least one
     in-window round even though its OWN
     `Due` falls outside the window (a late reopen on an old report) ~
     omitting set (ii) undercounts the denominator for exactly the reopened
     case and can divide by zero in a month with live reopen activity but
-    no row `Due`-in-window at all. Gate
+    no row `Due`-in-window at all. **Record the rollout-epoch clamp
+    explicitly, every walkthrough until 90 post-epoch days exist, not just
+    the first one:** this whole cohort (numerator AND denominator) is
+    windowed to `max(trailing 90 days, Sep 4)`, NOT the unconditional
+    trailing 90 days alone, AND every row's dated rounds only count if
+    that row's OWN `Start` is ALSO `≥ Sep 4` (an independent, permanent
+    floor, never folded into the rolling window itself ~ see `INSTRUMENT.md`
+    §5a/§5b for the full two-condition rule and why they're separate).
+    Leaving this off the snapshot risks a later audit or implementation
+    mixing under-instrumented August rows (before touch 1.5's QA gate went
+    live) into the calculation, diluting or changing the route (Codex
+    catch, 2026-07-19). Gate
     (a)'s NUMERATOR and all of gate (b) are ROUND-level instead: every
     individually-dated `Rework tag` entry, across every `accepted` OR
     `revising (reopened)` row
@@ -97,20 +109,38 @@ on its own; the numbers that fired them have to be dated too.
   - HIRE portfolio-wide headcount, **record this snapshot whenever HIRE
     is evaluated at all, not only when a narrow AUTOMATE/REDESIGN/
     FIX_CORPUS signal coexists with elevated WIP/load:** {full roster size
-    ~ fixed, e.g. 6} / {N analysts had sufficient WIP data this cohort} /
-    {N of those read elevated} / MOST = more than half of the FULL ROSTER,
+    ~ the ACTUAL CURRENT headcount as of this walkthrough, never a
+    hard-coded number ~ e.g. 6 today, but re-derive it fresh each time}
+    / {N analysts had sufficient WIP data this cohort} /
+    {N of those read elevated} / MOST = more than half of the FULL,
+    CURRENT ROSTER,
     not the sufficient-data subset ~ e.g. "roster 6, 5 had data, 3
-    elevated → 3 is not > half of 6 (needs ≥4) → NOT most, narrow signal
+    elevated → 3 is not > half of 6 (needs more than half, i.e. ≥4 AT
+    TODAY'S HEADCOUNT) → NOT most, narrow signal
     still blocks HIRE" (this denominator does NOT shrink to whoever
-    reported ~ Instrument §5b). **This same ≥4-of-6 count is ALSO the
+    reported ~ Instrument §5b). **This same dynamically-derived
+    more-than-half-of-roster count is ALSO the
     unconditional BASE predicate for HIRE** (Instrument §5b: WIP must read
-    elevated at this fixed-roster bar even with NO narrow signal to
+    elevated at this bar, re-derived from the roster's real size at every
+    evaluation, even with NO narrow signal to
     scope-map against at all) ~ a clean HIRE month with every earlier
     route genuinely absent still needs this headcount recorded, or the
     actual evidence that justified HIRE (how many of the roster, how many
     had data, how many read elevated) is unreproducible from this audit
     trail later (Codex catch, 2026-07-19). Narrow-signal coexistence is
     ONE reason this count matters, not the only one this line applies to.
+    **When a narrow AUTOMATE/REDESIGN/FIX_CORPUS signal DOES coexist,
+    record a SECOND, separate line: the narrow signal's own named
+    analyst(s), and the post-exclusion elevated count/bar** (`INSTRUMENT.md`
+    §3's narrow-signal override recomputes the numerator EXCLUDING those
+    named analysts before testing it against the same more-than-half bar)
+    ~ the total-elevated count above answers the unconditional base
+    predicate, but it does NOT by itself answer whether elevation survives
+    independently of the narrow signal, and owner mappings (`brief.md`'s
+    lead-analyst field) can change after the walkthrough ~ without logging
+    the excluded set and the adjusted count/bar separately, a later
+    reviewer can't tell whether the override actually cleared, only that
+    the unconditional total did (Codex catch, 2026-07-19).
 - Routes fired: {one or more of AUTOMATE | REDESIGN | FIX_CORPUS |
   REBALANCE | HIRE | none crossed ~ list every one that actually fired,
   not just the "final" one}
