@@ -123,7 +123,20 @@ later.
      which clients) to `learnings/patterns.md` ~ the durable, append-only
      running tally the when-to-hire instrument's automate/redesign branches
      read. Summarizing into chat and archiving the sources would lose the
-     cross-week counts; the tally file is the memory.
+     cross-week counts; the tally file is the memory. **If a Friday pass
+     was skipped and this run is reading a backlog spanning more than one
+     capture week, group the input files by their OWN filename date
+     (`YYYY-MM-DD` in `learnings/YYYY-MM-DD-HHMMSS-*.md`) before tallying
+     ~ never lump a multi-week backlog into a single "this week" entry.**
+     `patterns.md`'s schema is one week-block per calendar week specifically
+     because AUTOMATE/REDESIGN read RECURRENCE ACROSS weeks; collapsing
+     three weeks of backlog into one block either manufactures a
+     same-week spike that never happened or buries a real 3+-week
+     recurrence inside a single inflated count, either way corrupting
+     exactly the signal this file exists to preserve. Write one dated
+     week-block per distinct week actually represented in the backlog,
+     each with its own real date, even if that means writing several
+     historical blocks in one catch-up promotion pass.
 3. On Rica's confirmation, apply the edits to the corpus files. Same write-
    path requirement as Mode 1: if you can't write to `amplifi-knowledge/`
    directly, output every edit as a fenced block per destination file and

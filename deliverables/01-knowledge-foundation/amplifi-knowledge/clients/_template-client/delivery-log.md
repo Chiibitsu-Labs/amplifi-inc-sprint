@@ -357,17 +357,36 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   on, it sends Rica to "fix" a file that was never broken, over and over,
   while masking whatever's actually causing the misses (individual
   attention, or a process gap REDESIGN should be looking at instead).
-  **When logging one of these three tags, add ONE WORD in Notes:**
-  `missing` (the corpus genuinely didn't cover this, or was stale) or
-  `not-followed` (the corpus was already right, it just wasn't applied).
-  This doesn't change the tag, the round-level math, or the ≥half
-  threshold ~ FIX_CORPUS's first-pass share still counts both together,
-  same as before. But before actually routing to "go edit the corpus
-  file," check the qualifying rounds' Notes: majority `missing` → real
-  FIX_CORPUS work; majority `not-followed` → a different problem, don't
-  edit an already-correct file, look at coaching or process instead. Read
-  the tag share as WHERE to look, this qualifier as WHETHER editing the
-  corpus is actually the fix.
+  **When logging one of these three tags, attach the qualifier directly
+  to THAT entry, not as separate free text in Notes:** `brief-misalign
+  (missing)` or `brief-misalign (not-followed)`, same pattern for `brand`
+  and `quality-bar` ~ `missing` = the corpus genuinely didn't cover this,
+  or was stale; `not-followed` = the corpus was already right, it just
+  wasn't applied. A multi-round cell then reads like
+  `brief-misalign (missing), brand (not-followed), client-new-ask` ~ three
+  entries for three rounds, matching `Rounds = 3`, each qualifier
+  unambiguously bound to its own entry by position, same list, same
+  ordering rule as the tags themselves (entries append in order, never
+  reordered, never deduplicated). **Why in the tag cell and not Notes:**
+  Notes is free text where an unrelated sentence could accidentally
+  contain the words "missing" or "not-followed," and a multi-round cell
+  in Notes has no positional link back to which round a given word
+  belongs to ~ the router can't reliably parse that. A parenthetical
+  suffix on the tag entry itself has no such ambiguity: one qualifier,
+  one position, one round. `client-new-ask` and `data` entries never take
+  a qualifier ~ only the three corpus-cause tags do (a `client-new-ask`
+  round was never a corpus question to begin with). This doesn't change
+  the tag, the round-level math, or the ≥half threshold ~ FIX_CORPUS's
+  first-pass share still counts corpus-tagged entries together, same as
+  before, reading past the parenthetical. But before actually routing to
+  "go edit the corpus file," check the qualifying rounds' qualifiers:
+  majority `missing` → real FIX_CORPUS work; majority `not-followed` → a
+  different problem, don't edit an already-correct file, look at coaching
+  or process instead; a genuine tie → a resolved "no clear majority"
+  finding, not provisional, don't edit the corpus off a tie either (see
+  Instrument §3 for the full three-way handling). Read the tag share as
+  WHERE to look, this qualifier as WHETHER editing the corpus is actually
+  the fix.
 
 ## The log
 

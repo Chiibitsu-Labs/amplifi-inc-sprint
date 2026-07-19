@@ -129,9 +129,11 @@ threshold crossed →
                  and fix the logging before trusting the number
                  (`delivery-log.md`'s own hard-block rule, same reasoning,
                  covers both forms). **Before actually editing a corpus
-                 file, check the Notes qualifier on the qualifying rounds**
-                 (`missing` vs `not-followed` ~ delivery-log.md's own
-                 convention): the tag says WHAT kind of defect, the
+                 file, check the qualifier attached to each qualifying
+                 round's tag entry** (`missing` vs `not-followed`, a
+                 parenthetical on the tag itself, e.g. `brief-misalign
+                 (missing)` ~ delivery-log.md's own convention, not a
+                 separate Notes field): the tag says WHAT kind of defect, the
                  qualifier says WHY. Majority `not-followed` means the
                  corpus was already correct and this isn't a real corpus
                  gap at all ~ routing there anyway means repeatedly
@@ -385,26 +387,45 @@ isn't enough. Instead: touch 4 stamps a structured marker in Notes the
 moment a row reopens ~ `late-reopen {date}: pre-reopen Rounds={N}` (see
 `delivery-log.md`). **A row can accumulate MORE THAN ONE such marker over
 its life** (accepted → late-reopened → re-accepted → late-reopened again,
-months later) ~ don't just grab "the" marker as if only one exists. For a
-`Last Sent`-only row: collect every `late-reopen` marker in Notes and take
-the MOST RECENT one (latest date, regardless of whether that date itself
-falls inside or outside the 90-day window) ~ call its stamped value
-`N_cutoff`. Count exactly `current Rounds − N_cutoff` rounds toward this
-month's tally, reading the LAST that-many entries in the `Rework tag` list
-(entries append in order, so the newest ones are always the tail of the
-list). **Latest marker overall, NOT "earliest marker that happens to fall
-in-window"** ~ a row can genuinely reopen just before the 90-day cutoff
-(the marker itself a few days outside it) and still take several more
-rounds to resolve, with those later rounds' `Last Sent` stamps landing
-well inside the window; gating on the MARKER's own date would wrongly
-exclude that row's real, freshly-in-window rework. The latest-marker rule
-handles both shapes correctly: a row reopened twice (old reopen fully
-resolved back to `accepted`, then reopened again recently) correctly
-starts counting from the SECOND, more recent marker, since it's the
-latest one regardless of window; a row reopened once, just before the
-cutoff, with resolution activity continuing past it, correctly starts
-counting from that same (only) marker, since it's still the latest one
-even though its own date sits just outside the window. If a row genuinely
+months later) ~ each marker starts a "reopen episode" that runs until
+either the row re-reaches `accepted` (closed by the NEXT marker, if one
+exists) or, for the most recent marker, right up to now.
+
+**Count every episode that overlaps the 90-day window, not just one
+marker ~ this needs summing across episodes, not picking a single cutoff:**
+1. Sort all `late-reopen` markers on the row oldest → newest: `M1, M2, …,
+   Mn`.
+2. For each marker `Mi` EXCEPT the last: it closes at `M(i+1)`'s date
+   (that's when the row re-reached `accepted` and got reopened again).
+   Include episode `i` if `Mi`'s OWN date falls within the trailing 90
+   days ~ if it does, add `M(i+1).preRounds − Mi.preRounds` to this
+   month's tally. If `Mi`'s date is older than 90 days, that whole episode
+   already fully resolved before this window began ~ exclude it.
+3. For the LAST marker `Mn` (the current/most recent episode, running from
+   `Mn` to now): include it if EITHER `Mn`'s own date falls within the
+   trailing 90 days, OR `Last Sent` does (covers a reopen that started
+   just before the cutoff but whose resolution rounds landed inside it ~
+   the marker predates the window even though the real work doesn't). If
+   included, add `current Rounds − Mn.preRounds`.
+4. Sum every included episode's contribution. That sum, not any single
+   marker's delta, is what counts toward this month's tally.
+
+Worked example matching the failure mode this corrects: a row reopens 60
+days ago (`M1`, 2 rounds added before re-accepting), then reopens again 10
+days ago (`M2`, 1 round added so far). Both `M1` and `M2` fall inside the
+90-day window, so BOTH episodes are included: `2 + 1 = 3` rounds count
+this month, not just `M2`'s single round. Contrast with a row reopened
+200 days ago (fully resolved) and again 40 days ago: `M1` (200d) is
+outside the window, excluded; `M2` (40d) is inside, included ~ only its
+delta counts. And a row reopened once, 95 days ago (marker just outside
+the window), still resolving with `Last Sent` at 75 days ago (inside it):
+no marker's own date is in-window, but rule 3's `Last Sent` clause still
+includes that episode. Reading the actual tag entries for whatever total
+count this produces: they're always the LAST that-many entries in the
+`Rework tag` list (entries append in order, oldest to newest, so the
+freshest ones are always the tail).
+
+If a row genuinely
 has NO `late-reopen` marker at all, it can't be in the cohort via `Last
 Sent` in the first place ~ `Last Sent` only moves after a row has already
 reached `accepted` once via a reopen (see `delivery-log.md`); an
@@ -549,8 +570,12 @@ over different windows or different anchor dates.
    resolved: step 2's REDESIGN read, when too few late/trending cycles
    have reached `accepted` to evaluate the rework qualifier; and step 3's
    FIX_CORPUS read, when qualifying rounds are missing their `missing`/
-   `not-followed` Notes qualifier or the qualifier count genuinely ties.
-   Genuinely-absent
+   `not-followed` tag-entry qualifier entirely (genuinely missing data,
+   waitable). A COMPLETE tie in that same qualifier ~ every round tagged,
+   the `missing`/`not-followed` counts landing exactly equal ~ is NOT
+   provisional (see step 3): it's a resolved "no clear corpus-cause
+   majority" finding with no missing data left to wait for, so it does not
+   block HIRE. Genuinely-absent
    evidence lets HIRE through; can't-be-evaluated-yet doesn't, from either
    source. A
    narrow AUTOMATE/REDESIGN/FIX_CORPUS signal on ONE client while WIP/load
@@ -647,10 +672,12 @@ above by hand:
        (`delivery-log.md`'s own gate, same reasoning, same code needs to
        enforce it here that a human enforces by hand in §5a).
      - **Cause-qualifier gate:** ≥half tagged corpus-cause is necessary but
-       not sufficient to fire an EDIT-THE-CORPUS action. Read the Notes
-       qualifier (`missing` vs `not-followed`) on the qualifying rounds
-       before prescribing a corpus edit: majority `not-followed` means the
-       corpus was already correct and this isn't a real gap ~ surface it
+       not sufficient to fire an EDIT-THE-CORPUS action. Read the
+       qualifier attached to each qualifying round's tag entry (`missing`
+       vs `not-followed`, e.g. `brand (not-followed)` ~ see `delivery-
+       log.md`) before prescribing a corpus edit: majority `not-followed`
+       means the corpus was already correct and this isn't a real gap ~
+       surface it
        as "high rework, but not corpus-caused per qualifier, check
        execution/process instead" rather than pointing at a file to edit.
        Only a majority-`missing` reading actually fires the corpus-edit
@@ -658,27 +685,40 @@ above by hand:
        qualifier check, would have the coded router repeatedly prescribe
        edits to an already-correct corpus file ~ exactly what the manual
        rule (§3, and this section's own rounds-per-report rule above)
-       exists to prevent. **A missing or tied qualifier reading is its own
-       hard-block, not a silent default to "FIX_CORPUS absent":** require
-       ONE recognized qualifier (`missing` or `not-followed`) per
-       corpus-tagged qualifying round before this gate can resolve at all.
-       `Notes` is free text, defaulting to `—` on a fresh row ~ a
-       qualifying round can clear BOTH the tag-count completeness gate
-       above (entries == `Rounds`) AND still carry no qualifier, or the
-       qualifier count can genuinely tie (`missing` = `not-followed`),
-       and neither case has a defined majority. Don't let that silently
-       resolve to "no majority found, treat as not-fired" ~ that reads as
-       "FIX_CORPUS checked, ruled out" when the honest state is "FIX_CORPUS
-       can't be evaluated, qualifier data is incomplete," which is exactly
-       the false-absence failure mode the tag-count completeness gate
-       above already exists to prevent, just one layer deeper. Missing or
-       tied qualifiers on enough rounds to plausibly swing the
-       missing-vs-not-followed read: mark this client's FIX_CORPUS-vs-
-       execution question **PROVISIONAL** (same status, same consequence,
-       as REDESIGN's provisional state in step 2 above) ~ it blocks
-       downstream HIRE conclusions until enough qualifiers are actually
-       filled in to read a real majority, rather than letting an
-       unresolved question quietly clear the way for HIRE.
+       exists to prevent. **Missing qualifiers and genuinely-tied
+       qualifiers are DIFFERENT states ~ only one of them is provisional:**
+       - **Missing (require ONE recognized qualifier ~ `missing` or
+         `not-followed` ~ attached to each corpus-tagged qualifying
+         round's tag entry before this gate can resolve at all):** a
+         qualifying round can clear BOTH the tag-count completeness gate
+         above (entries == `Rounds`) AND still carry no qualifier
+         suffix on its tag. Don't let that silently resolve to "no
+         majority found, treat as not-fired" ~ that reads as "FIX_CORPUS
+         checked, ruled out" when the honest state is "FIX_CORPUS can't be
+         evaluated, qualifier data is incomplete," the same false-absence
+         failure mode the tag-count completeness gate exists to prevent,
+         one layer deeper. Genuinely missing qualifiers on enough rounds
+         to plausibly swing the read: mark this client's FIX_CORPUS-vs-
+         execution question **PROVISIONAL** (same status, same
+         consequence, as REDESIGN's provisional state in step 2 above) ~
+         it blocks downstream HIRE conclusions until the missing
+         qualifiers actually get filled in, since there's real missing
+         data to wait for.
+       - **Genuinely tied (every qualifying round HAS a recognized
+         qualifier, and the `missing`/`not-followed` counts land exactly
+         equal):** this is NOT provisional ~ there's no missing data left
+         to fill in, and no future accepted row is guaranteed to ever
+         break the tie, so treating it as "blocked until resolved" could
+         block indefinitely. A complete tie is a fully-evaluated,
+         DEFINITE outcome: it simply fails to clear the majority-`missing`
+         bar the corpus-edit action requires (same as a majority-
+         `not-followed` reading would), so FIX_CORPUS's corpus-edit action
+         does NOT fire ~ but this is a resolved "checked, no clear
+         corpus-cause majority" finding, not an open question, and it does
+         NOT block HIRE. Surface it plainly either way ("mixed cause,
+         tied `missing`/`not-followed` ~ worth a look at both the corpus
+         file and execution/process, no single fix indicated") rather than
+         silently picking one interpretation.
      Also surface a separate warning (not a
      blocking gate, just visibility) when `revising` rows with elevated
      `Rounds` have been open unusually long ~ the accepted-only
