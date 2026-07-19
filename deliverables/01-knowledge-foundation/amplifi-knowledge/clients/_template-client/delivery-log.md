@@ -57,7 +57,8 @@
    separate material issues in the same review, that's ONE bump to
    `Rounds` (that pass), with all three causes bundled into that single
    round's tag entry by touch 3's priority order (`brief-misalign` >
-   `brand` > `data` > `client-new-ask`, rest noted in **Notes**) ~ the
+   `brand` > `quality-bar` > `data` > `client-new-ask`, rest noted in
+   **Notes**) ~ the
    same bundling rule touch 3 already uses for a client revision with
    multiple causes in one message. A pass that runs twice (fix, re-check,
    fix again) before it clears is two rounds, one per re-check, not one
@@ -140,26 +141,36 @@
    `accepted`, numbers stay at 0/none.
 
 **If a client pauses reporting or cancels a period BEFORE it ships ~ the
-row is still `open`:** set `Status = cancelled` and note the reason in
-**Notes** (`client paused, wk3` / `cadence cancelled, see brief`). This
-transition is ONLY valid from `open` ~ a cycle that never shipped has no
-completed-work evidence to lose. **But "still `open`" splits into two
-different cases, and only ONE of them is a clean exclusion:**
-- **Cancelled BEFORE `Due` passes:** the cycle was never late and was
-  never going to exist ~ fully excluded from on-cadence's numerator AND
-  denominator. It was never a miss, so there's nothing to preserve.
-- **Cancelled AFTER `Due` has already passed, while still `open`:** this
-  row was ALREADY counted as an automatic overdue-in-progress miss the
-  moment `Due` passed (see "How to fill a row" → Status, below) ~ that
-  miss is a fact that already happened, not a future obligation the
-  client can retroactively un-create by cancelling now. Setting `Status =
-  cancelled` here still stops the row from generating any FURTHER
-  tracking (no phantom future delivery expected), but **the miss it
-  already accrued stays counted** ~ don't let cancellation silently
-  subtract an overdue cycle from the denominator and inflate on-cadence
-  after the fact. Note both facts in **Notes** (`overdue since {Due
-  date}, then cancelled {date}, see brief`) so a human reading the row
-  sees why it still counts against the rate.
+row is still `open`:** set `Status = cancelled` and **stamp `Last Sent`
+with today's date ~ the cancellation date, structured, not buried in free
+text.** (`Last Sent` is otherwise only used for shipped rows; a `cancelled`
+row repurposes it as "the date this row was finalized as cancelled,"
+which is exactly the one piece of structured data §5b's automated
+ingestion needs to reconstruct the before/after-`Due` distinction below
+without parsing **Notes**.) Also note the reason in **Notes**
+(`client paused, wk3` / `cadence cancelled, see brief`) for the human
+reading the row. This transition is ONLY valid from `open` ~ a cycle that
+never shipped has no completed-work evidence to lose. **But "still `open`"
+splits into two different cases, distinguished by comparing `Last Sent`
+(the cancellation date) against `Due` ~ and only ONE of them is a clean
+exclusion:**
+- **Cancelled BEFORE `Due` passes** (`Last Sent < Due`)**:** the cycle was
+  never late and was never going to exist ~ fully excluded from
+  on-cadence's numerator AND denominator. It was never a miss, so there's
+  nothing to preserve.
+- **Cancelled AFTER `Due` has already passed** (`Last Sent ≥ Due`)**,
+  while still `open`:** this row was ALREADY counted as an automatic
+  overdue-in-progress miss the moment `Due` passed (see "How to fill a
+  row" → Status, below) ~ that miss is a fact that already happened, not a
+  future obligation the client can retroactively un-create by cancelling
+  now. Setting `Status = cancelled` here still stops the row from
+  generating any FURTHER tracking (no phantom future delivery expected),
+  but **the miss it already accrued stays counted** ~ don't let
+  cancellation silently subtract an overdue cycle from the denominator and
+  inflate on-cadence after the fact. Note both facts in **Notes**
+  (`overdue since {Due date}, then cancelled {date}, see brief`) too, for
+  the human reading the row, but the ROUTING decision reads `Last Sent` vs
+  `Due`, never the free text.
 Either way, don't delete the row ~ the cancellation itself is real
 history, and a pattern of client-cancelled cycles is worth noticing in its
 own right.
@@ -218,15 +229,21 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   on-cadence measures against this original date only, so a slow
   revision round can't retroactively turn an on-time first ship into a
   late one, or vice versa.
-- **Last Sent** ~ the date the most recently sent version (first ship, or
-  the latest revision) actually went to the client. Equals `Delivered` at
-  first ship (touch 2); updated at every touch-3 resend. This is what the
-  5-business-day silent-acceptance rule (touch 4) counts from ~ using
-  `Delivered` there instead would auto-accept a row the instant a late
-  revision ships, if enough days had already passed since the first send;
-  never updating anything would leave a revised row `revising` forever
-  with no way to reach a silent accept. `Last Sent` gives the silence rule
-  a correct, fresh anchor after every round.
+- **Last Sent** ~ for a shipped row: the date the most recently sent
+  version (first ship, or the latest revision) actually went to the
+  client. Equals `Delivered` at first ship (touch 2); updated at every
+  touch-3 resend. This is what the 5-business-day silent-acceptance rule
+  (touch 4) counts from ~ using `Delivered` there instead would
+  auto-accept a row the instant a late revision ships, if enough days had
+  already passed since the first send; never updating anything would
+  leave a revised row `revising` forever with no way to reach a silent
+  accept. `Last Sent` gives the silence rule a correct, fresh anchor after
+  every round. **For a `cancelled` row instead: the cancellation date** ~
+  a different meaning for a row that never shipped, but the same field,
+  reused rather than adding a second date column. This is the structured
+  value on-cadence compares against `Due` to tell a before-`Due`
+  cancellation (excluded) from an after-`Due` one (miss stays counted) ~
+  see above and the `Status` bullet below.
 - **Status** ~ `open` → `delivered` → (`revising` × as many rounds as
   needed) → `accepted`, always in that order. `accepted` is set once for
   the normal case (explicit sign-off, or 5 business days of silence
@@ -246,11 +263,16 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   any `open` row where `Due` has already passed, and excluded entirely
   from both numerator and denominator for any `open` row not yet past
   `Due` (future work, not yet resolved either way). **`cancelled` rows are
-  NOT uniformly excluded** ~ cancelled BEFORE `Due` passed, exclude fully
-  (never a miss); cancelled AFTER `Due` had already passed while still
-  `open`, the automatic miss it already accrued STAYS in the numerator
+  NOT uniformly excluded** ~ compare `Last Sent` (the cancellation date,
+  stamped when `Status` was set to `cancelled`) against `Due`: cancelled
+  BEFORE `Due` passed (`Last Sent < Due`), exclude fully (never a miss);
+  cancelled AFTER `Due` had already passed while still `open` (`Last Sent
+  ≥ Due`), the automatic miss it already accrued STAYS in the numerator
   shortfall and denominator (see above) ~ cancelling only stops further
   tracking, it doesn't retroactively erase a miss that already happened.
+  This comparison reads the structured `Last Sent` field, never the free
+  text in **Notes** ~ what makes it reconstructable later, by a human or
+  by §5b's automated ingestion, without parsing prose.
 - **Rounds** ~ running count of revision rounds, from EITHER source:
   pre-delivery catches (QA gate, internal alignment, OR pass 2 ~ touch
   1.5, any point before the ship write) or client-requested revisions

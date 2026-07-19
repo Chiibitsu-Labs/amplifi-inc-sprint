@@ -24,17 +24,28 @@ Required inputs, all of them:
      exactly the visual layer this checkpoint exists to check). Run all
      five checks. This is the ONLY tier that counts as clearance to ship.
    - **Second pass, TEXT-ONLY (a lesser tier, not clearance):** a bare
-     text export/extraction with no visual rendering. Run check 4 only ~
-     text can confirm numbers but tells you nothing about a stale chart
-     image, wrong logo, or off-brand layout, which is most of what this
-     checkpoint is FOR. Mark checks 1, 2, 3, 5 as `NOT EVALUATED (no
-     visual render provided)`.
-   - **Screenshots of just the key numbers:** same tier as text-only ~
-     check 4 only, same `NOT EVALUATED` marks on the rest.
-   Never emit a PASS, and never imply clearance, for checks you couldn't
-   actually see the content for. If what you're given doesn't visually
-   render the deck, say so explicitly in the output header before running
-   anything.
+     text export/extraction with no visual rendering. Run check 4, SCOPED
+     to whatever figures the extraction actually captured ~ text can
+     confirm numbers, but a number that lives only inside a chart image
+     (a label, an axis value never restated in prose) doesn't survive text
+     extraction either, so this is coverage of the VISIBLE-AS-TEXT figures,
+     not a guarantee every figure in the deck got checked. Mark checks 1,
+     2, 3, 5 as `NOT EVALUATED (no visual render provided)`.
+   - **Screenshots of just the key numbers:** same tier as text-only, same
+     scoping caveat, tighter still ~ check 4 covers ONLY the figures
+     actually visible in the screenshots handed over, nothing else in the
+     report. Same `NOT EVALUATED` marks on the rest.
+   **Neither lesser tier earns a plain `✔` on check 4** ~ mark it `◐
+   PARTIAL (scoped to N figures actually shown; the rest of the report's
+   numbers were not checked)` instead, and name what wasn't covered. A
+   bare `✔` there would read as "data integrity confirmed for this
+   report," when the honest claim is narrower: "confirmed for the figures
+   I could see." Only a visually-rendered full-deck pass (the tier above)
+   can see every figure in the report and earn an unqualified `✔`/`✘` on
+   check 4. Never emit a PASS, and never imply clearance, for checks you
+   couldn't actually see the content for. If what you're given doesn't
+   visually render the deck, say so explicitly in the output header before
+   running anything.
 2. The **current period's source data** (the same Sentimo/MCP exports the
    draft was generated from). Without it, check 4 cannot trace a single
    figure ~ so if it's not provided, STOP and ask for it. Never run
@@ -94,7 +105,10 @@ QA GATE ~ {client} {period} ~ {input: full draft | visually-rendered deck (clear
 ✔/✘/— Brief alignment       (— = not evaluated, screenshots-only input)
 ✔/✘/— Voice & brand         (— = not evaluated, screenshots-only input)
 ✔/✘/— Actionability         (— = not evaluated, screenshots-only input)
-✔/✘   Data integrity        (always evaluated when any data is provided)
+✔/✘/◐ Data integrity        (◐ = PARTIAL, scoped to N figures actually
+                              shown ~ text-only/screenshots tier only;
+                              visually-rendered/full-draft tiers get a
+                              plain ✔/✘, never ◐)
 ✔/✘/— Compounding           (— = not evaluated, screenshots-only input)
 
 FLAGS (each: location → issue → suggested fix, one line each)

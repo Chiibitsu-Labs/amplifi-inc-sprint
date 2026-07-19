@@ -110,18 +110,25 @@ threshold crossed →
                  present) AND, of the individual revision ROUNDS behind
                  that rework (not the rows ~ a 5-round report with one
                  brand fix and four client-new-ask fixes is 20% corpus,
-                 not 100%), half or more are tagged brief-misalign or
-                 brand ~ their exact loudest pain, and the two-gate order
-                 that keeps one stray tag from firing this on its own
-                 (see §5). **Data-quality gate:** an accepted row with
-                 `Rounds ≥ 1` but `Rework tag = none` is untagged, not
-                 zero-corpus ~ exclude it from this share until the tag is
-                 filled in, and if enough rows are sitting untagged to
-                 plausibly swing the half-or-more threshold either way,
-                 that's not a clean FIX_CORPUS reading to route on (or
-                 rule out) at all ~ flag the gap and fix the logging
-                 before trusting the number (`delivery-log.md`'s own
-                 hard-block rule, same reasoning).
+                 not 100%), half or more are tagged brief-misalign,
+                 brand, or quality-bar ~ their exact loudest pain, and
+                 the two-gate order that keeps one stray tag from firing
+                 this on its own (see §5). **Data-quality gate, TWO forms,
+                 both hard-block:** (a) an accepted row with `Rounds ≥ 1`
+                 but `Rework tag = none` is untagged, not zero-corpus; (b)
+                 an accepted row where the tag entry count doesn't equal
+                 `Rounds` (e.g. `Rounds = 3`, only two comma-separated
+                 entries recorded) is PARTIALLY untagged and just as
+                 unusable ~ the missing round(s) could swing the
+                 half-or-more threshold either way, same as a bare `none`
+                 would. Either form: exclude the row from this share until
+                 fixed, and if enough rows are sitting untagged or
+                 partially-tagged to plausibly swing the half-or-more
+                 threshold either way, that's not a clean FIX_CORPUS
+                 reading to route on (or rule out) at all ~ flag the gap
+                 and fix the logging before trusting the number
+                 (`delivery-log.md`'s own hard-block rule, same reasoning,
+                 covers both forms).
                  → route: Deliverable 1+2 ~ align the brief, encode the
                  standard. NEVER route this to hire. (Watch survivorship
                  bias: `revising` rows aren't counted yet by design, but a
@@ -289,27 +296,46 @@ old, mostly-clean rows dilute a recent cadence collapse into invisibility
 days, and only one of those is the read this month's walkthrough needs.
 It also removes an operator degree of freedom: without a fixed window,
 two people picking different ranges from the same log could reach
-different routes off identical data. 90 days re-windows fresh at each
-monthly walkthrough (not a cumulative rolling average like WIP's baseline
-~ there's no self-referential creep risk here, it's just which raw rows
-get counted this month). Apply this SAME 90-day cohort to FIX_CORPUS's
-rounds-per-report average in step 3 too, so the two metrics never drift
-out of sync by being computed over different windows.
+different routes off identical data. **Anchored to `Due` specifically, not
+`Start`, `Delivered`, `Last Sent`, or acceptance date** ~ a row is IN the
+cohort if its `Due` falls in the trailing 90 days, full stop, regardless
+of when it actually started, shipped, finalized, or (if cancelled) was
+cancelled. Those other dates can land on the opposite side of the 90-day
+line from `Due` for a cycle straddling the boundary, which is exactly the
+operator-freedom problem this paragraph exists to remove; picking one date
+consistently closes it. `Due` is the right anchor because it's the one
+date every row has from the moment it's created (touch 1, a calendar
+fact, not an execution outcome) and it's the obligation both on-cadence
+and rounds-per-report are ultimately measuring performance against ~
+anchoring to a resolution date instead would let a slow cycle's actual
+finish date drag it into or out of a window keyed to when it was
+originally due. Unresolved rows (`open`, `Due` not yet passed) still get
+tested for cohort membership the same way (by `Due`), but stay separately
+excluded from the on-cadence rate itself per step 2's existing rule
+(future work, not yet a hit or a miss) ~ cohort membership and hit/miss
+resolution are different questions, don't conflate them. 90 days
+re-windows fresh at each monthly walkthrough (not a cumulative rolling
+average like WIP's baseline ~ there's no self-referential creep risk here,
+it's just which raw rows get counted this month). Apply this SAME
+`Due`-anchored 90-day cohort to FIX_CORPUS's rounds-per-report average in
+step 3 too, so the two metrics never drift out of sync by being computed
+over different windows or different anchor dates.
 2. **REDESIGN check:** open each client's `delivery-log.md`, two reads ~
    either fires REDESIGN:
    - **Confirmed (on-cadence):** compute the rate by hand: numerator =
      rows with `Delivered ≤ Due`; denominator = rows that have shipped
      (`delivered`/`revising`/`accepted`) **plus** `open` rows already past
-     `Due` (overdue-in-progress misses) **plus** `cancelled` rows that were
-     cancelled AFTER `Due` had already passed while still `open` (an
-     overdue miss that had already accrued before cancellation ~ per
-     `delivery-log.md`'s cancellation rules, that miss stays counted; it
-     doesn't have a `Delivered` date so it never lands in the numerator,
-     only drags the denominator, same as an overdue-open row would) ~
-     **excluding** `open` rows whose `Due` hasn't arrived yet (that's
-     future work, not yet a hit or a miss; counting it dilutes the rate
-     and can mask a real problem) and excluding `cancelled` rows that were
-     cancelled BEFORE `Due` passed (never became a miss, fully out of both
+     `Due` (overdue-in-progress misses) **plus** `cancelled` rows where
+     `Last Sent` (the structured cancellation-date stamp, `delivery-
+     log.md`'s cancellation touch) is `≥ Due` ~ cancelled AFTER `Due` had
+     already passed while still `open` (an overdue miss that had already
+     accrued before cancellation, so it stays counted; it doesn't have a
+     `Delivered` date so it never lands in the numerator, only drags the
+     denominator, same as an overdue-open row would) ~ **excluding** `open`
+     rows whose `Due` hasn't arrived yet (that's future work, not yet a hit
+     or a miss; counting it dilutes the rate and can mask a real problem)
+     and excluding `cancelled` rows where `Last Sent < Due` (cancelled
+     BEFORE `Due` passed, never became a miss, fully out of both
      numerator and denominator). Below threshold, with `Rework tag` mostly
      `client-new-ask`/`data`/`none` rather than
      `brief-misalign`/`brand`/`quality-bar` → REDESIGN. **This tag
