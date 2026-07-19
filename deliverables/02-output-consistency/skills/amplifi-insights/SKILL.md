@@ -81,24 +81,37 @@ cycle's row on its scheduled `Start` regardless of whether the PRIOR
 cycle has shipped yet (deliberately, so an overdue report stays visible
 as backlog instead of vanishing), so a client can legitimately have MORE
 THAN ONE `open` row at once** (an overdue report still `open` while the
-next scheduled cycle has already opened its own row too). Picking "the"
-open row without matching it to the actual period requested can silently
+next scheduled cycle has already opened its own row too). **Nor is the
+right status always `open` at all ~ a run handling a client-requested
+SUBSTANTIVE revision to an already-shipped report targets a row that has
+already moved to `revising` or `revising (reopened)` (touch 3/4), never
+`open` again** (`insight-log.md`'s own "conditional third touch" requires
+updating THAT cycle's existing entry when the revision changes
+substantive content, and resolving against `open` rows alone makes that
+row invisible to this same resolution step, since it left `open` the
+moment the fix/reopen was logged). Picking "the"
+open row without matching it to the actual period requested ~ or without
+even looking at the right status for what this run is actually doing ~
+can silently
 copy the WRONG row's `Period` into the trailer ~ every downstream
 lookup keyed on that heading (silent-acceptance scan, the
 substantive-revision procedure) would then target the wrong cycle's
 entry (Codex catch, 2026-07-19: this read assumed exactly one open row
-exists, which `delivery-log.md`'s own scheduled-open rule doesn't
-guarantee). **Resolve to the SPECIFIC open row whose own `Period` matches
-the period actually being drafted** (known from the request's own
-context ~ which cycle's data this session is generating insights from);
-if more than one `open` row exists for this client and the request
+exists, and assumed the row was always `open`, neither of which
+`delivery-log.md`'s own state machine guarantees). **Resolve to the
+SPECIFIC row ~ `open` for an ordinary draft, `revising`/`revising
+(reopened)` for a revision-handling run ~ whose own `Period` matches
+the cycle actually being worked on** (known from the request's own
+context: which cycle's data this session is generating or revising
+insights for); if more than one candidate row exists for this client at
+the relevant status(es) and the request
 doesn't carry enough to identify which one uniquely, STOP and ask which
 period, never silently pick the most recent or any other default.
 `insight-log.md`'s intro section requires this exact match
 for the silent-acceptance scan and the substantive-revision procedure to
 find "the matching entry" by period; a heading that merely LOOKS like the
 right period but isn't the identical string breaks both lookups. If no
-`open` row exists yet for this client at all (drafting ahead of the
+matching row exists yet for this client at all (drafting ahead of the
 delivery-log touch that opens one), flag this and hold the trailer's
 heading as unresolved rather than inventing or guessing one (Codex catch,
 2026-07-19: this read was scoped to a first-period bootstrap existence

@@ -414,8 +414,8 @@ progress; `delivered` and bare `revising` are both "not final yet."
 ## How to fill a row
 
 **This is a Markdown table ~ escape any literal `|` in ANY free-text
-cell, not just a client's real name.** `Analyst`, `Notes`, and any other
-field an analyst types by hand can end up holding a pasted client phrase
+cell, not just a client's real name.** `Notes`, and any other
+field an analyst types by hand, can end up holding a pasted client phrase
 or a shorthand like `Dale | Janelle` for a handoff; an unescaped `|`
 inside a cell reads as a NEW column boundary to any Markdown parser,
 shifting every field after it in that row out of alignment with this
@@ -425,7 +425,21 @@ Notes`). A shifted row either loses or misassigns its own data to §5b's
 future automated ingestion (Codex catch, 2026-07-19), the same corruption
 `README.md`'s Snapshot-table pipe-escaping rule exists to prevent, just
 here on every cell instead of one specific one. Write `\|` for a literal
-pipe in any cell (`Dale \| Janelle`), never a bare `|`.
+pipe in any cell (`Dale \| Janelle`), never a bare `|`. **`Analyst`
+specifically is NOT one of the cells this composite-handoff example
+applies to, escaped or not** ~ its own field definition below requires
+EXACTLY ONE capchecker identity, the literal join key capchecker's
+per-person data and the HIRE scope check both match on, and directs
+handoff details to **Notes** instead. An escaped `Dale \| Janelle` in
+`Analyst` preserves the table's structure but still leaves an unmatchable
+composite value sitting in a field every downstream join expects to
+resolve to one person, silently losing or misattributing that cycle's
+capacity/HIRE evidence (Codex catch, 2026-07-19: this pipe-escaping
+example named `Analyst` as a field that can legitimately hold this
+shorthand, contradicting the single-identity rule its own field
+definition states a few paragraphs below). Escaping matters for `Notes`
+and any other genuinely free-text cell; for `Analyst`, the fix is never
+writing the composite there in the first place, escaped or not.
 
 - **Period** ~ a short, human-readable label for this cycle (e.g. `2026-07
   / wk 29` for a weekly client, `2026-07` for a monthly one). **Written
@@ -756,7 +770,27 @@ pipe in any cell (`Dale \| Janelle`), never a bare `|`.
   [2026-06-20]`. Stamp it with TODAY's date at the moment that specific
   round is actually logged (touch 1.5 for a pre-delivery catch, touch 3
   for a client revision, including every round of a late reopen) ~ never
-  backdated to `Period start` or `Due`, and never left off. **A missing
+  backdated to `Period start` or `Due`, and never left off. **This "stamp
+  with TODAY" rule is for LIVE logging only ~ a DIFFERENT rule applies
+  when a completeness scan (or any later audit) discovers a round that
+  happened weeks or months ago and was never logged at the time:**
+  stamp a REPAIRED entry with the date the round ACTUALLY occurred (from
+  Notes, the analyst's own memory of the session, or whatever record
+  fixes the real date), never today's date, the day of the repair itself.
+  Instrument §3/§5 filters every entry's date into FIX_CORPUS's
+  trailing-90-day window ~ backdating a genuinely old round to today
+  makes historical rework that may sit well outside the current window
+  suddenly read as freshly incurred, capable of spuriously swinging
+  TODAY's routing decision on rework that has nothing to do with the
+  current evaluation period (Codex catch, 2026-07-19: applying the
+  live-logging "stamp with today" instruction literally to a backfilled
+  repair produces exactly the falsified-recency this whole dating
+  discipline exists to prevent, one step removed). If the real occurrence
+  date genuinely can't be reconstructed, don't guess today's date as a
+  stand-in either ~ treat the entry the same way an undated entry already
+  gets treated below: unevaluable, hard-blocking this row's contribution
+  to FIX_CORPUS's math until a real date is confirmed, not silently
+  admitted under a wrong one. **A missing
   date is the SAME class of incomplete data as a missing or partial tag,
   and gets the SAME hard-block treatment** ~ an otherwise-correct entry
   (right tag, right qualifier, right position) with no `[YYYY-MM-DD]`

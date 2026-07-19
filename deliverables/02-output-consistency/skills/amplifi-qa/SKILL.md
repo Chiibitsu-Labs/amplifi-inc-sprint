@@ -405,14 +405,29 @@ End every output with this reminder, verbatim:
 If you fix any flag above before this report ships, log it now ~
 delivery-log.md touch 1.5: bump Rounds by ONE (this whole pass, not once
 per flag fixed) and append ONE cause tag, chosen by priority if more than
-one check flagged something (brief-misalign > brand > quality-bar > data),
-right on this row, before you move on. Checks 1/2/4 map to
+one check flagged something, right on this row, before you move on.
+QUALIFIER FIRST, THEN CATEGORY: if more than one of the flagged causes is
+brief-misalign/brand/quality-bar (a corpus cause) carrying its own
+missing/not-followed qualifier (see below), pick whichever is qualified
+`(missing)` over any qualified `(not-followed)` REGARDLESS of category
+rank ~ the qualifier, not the category, is what actually decides whether
+FIX_CORPUS fires, so a `brief-misalign (not-followed)` catch does NOT
+automatically outrank a `brand (missing)` catch in the same pass just
+because brief-misalign ranks higher below (delivery-log.md's own
+priority rule, same reasoning, read from here too ~ Codex catch,
+2026-07-19: this reminder still picked by category alone, which can bury
+a real corpus gap in Notes where the router's qualifier math never reads
+it). Only once that qualifier check is settled (same qualifier on both,
+or a non-corpus cause like `data` is the only alternative) does category
+order decide: brief-misalign > brand > quality-bar > data. Checks 1/2/4 map to
 brief-misalign/brand/data respectively; checks 3 (actionability) and 5
 (compounding) map to quality-bar ~ they're failures against
 what-good-looks-like.md's bar, not the brief, brand standard, or a data
 problem specifically. Fixing BOTH a brief-alignment flag and a data flag
-in this one pass is still ONE round, ONE tag (brief-misalign wins the
-priority, data goes in Notes) ~ never one bump per flag, never more than
+in this one pass is still ONE round, ONE tag (brief-misalign wins ~ `data`
+never carries a missing/not-followed qualifier, so category order alone
+settles this specific pairing, data goes in Notes) ~ never one bump per
+flag, never more than
 one tag entry for this pass. IF the tag is brief-misalign, brand, or
 quality-bar: attach its qualifier too, right on the same entry ~
 `brief-misalign (missing)` if the brief/standard genuinely didn't cover

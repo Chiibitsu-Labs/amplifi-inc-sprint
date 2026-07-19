@@ -1367,7 +1367,31 @@ above by hand:
    so scanning only those, never the free-form `Notes` column, is both
    the more precise defense and the safer one. Flag a skipped placeholder row
    once per client (not once per weekly run) as a reminder to clean it up,
-   rather than silently ignoring it forever. Plus `patterns.md`'s theme tally as
+   rather than silently ignoring it forever. **The brace-scan filter above
+   catches an UNFILLED row, but says nothing about a FILLED-WRONG one ~
+   add a separate required-field/enum validation on top of it, before any
+   row reaches the upsert:** a genuinely typed row can still carry a blank
+   `Period` (the field the upsert key at "keying the upsert" below
+   depends on) or a misspelled `Status` (`acceptd`, a stray space, wrong
+   casing if the parser is case-sensitive) that contains no brace at all
+   and so sails straight through the filter above. Neither failure is
+   cosmetic: a blank `Period` breaks the composite `(client, Period)`
+   upsert key this ingestion relies on to update the same row instead of
+   duplicating it, and a `Status` value that matches none of the six
+   defined values (`open`/`delivered`/`revising`/`revising (reopened)`/
+   `accepted`/`cancelled`) matches none of the router's status cohorts
+   either ~ that row simply vanishes from every calculation that reads
+   `Status`, with nothing anywhere flagging it as bad data rather than a
+   genuinely absent signal (Codex catch, 2026-07-19: the brace-scan filter
+   was the row's only defense, and it was never designed to catch a value
+   that's present, non-placeholder, and still wrong). Validate every
+   ingested row's `Period` (non-blank, parses to the expected format) and
+   `Status` (exact match against the six defined values, nothing else)
+   before it's eligible for the upsert; a row failing either check is
+   excluded the same way an unfilled placeholder row is, flagged once per
+   client as a data-hygiene gap to fix in the log, never silently upserted
+   with a broken key or dropped from every status-scoped read with no
+   trace. Plus `patterns.md`'s theme tally as
    corroborating signal strength for AUTOMATE/REDESIGN (a theme recurring
    there across multiple weeks raises confidence on a borderline
    14-day-window call) ~ without this second ingest, `patterns.md` keeps
