@@ -41,26 +41,34 @@ on its own; the numbers that fired them have to be dated too.
     row-level, `Due`-anchored ~ per §3 / §5a's Fixed evaluation cohort
     paragraph}
   - Rework (FIX_CORPUS), BOTH gates always, never either/or ~ they're
-    sequential, not alternatives: {(a) N rounds/accepted-report frequency
+    sequential, not alternatives: {(a) N rounds/report frequency
     threshold} AND {(b) N% round-tag-share threshold} · evaluation cohort:
     {trailing 90 days, but NOT the same mechanism as on-cadence above,
     don't record it as such ~ gate (a)'s DENOMINATOR is the UNION of two
-    row sets, never just the `Due`-anchored one alone: (i) every
-    `accepted` row with `Due` in the trailing 90 days, including
-    zero-round rows, same set on-cadence uses; PLUS (ii) any `accepted`
-    row that contributed at least one in-window round even though its OWN
+    row sets, never just the `Due`-anchored one alone: (i) every row with
+    STATUS `accepted` OR `revising (reopened)` SPECIFICALLY (never bare
+    `revising`, never `delivered`) with `Due` in the trailing 90 days,
+    including zero-round rows, same set on-cadence uses; PLUS (ii) any
+    `accepted`/`revising (reopened)` row that contributed at least one
+    in-window round even though its OWN
     `Due` falls outside the window (a late reopen on an old report) ~
     omitting set (ii) undercounts the denominator for exactly the reopened
     case and can divide by zero in a month with live reopen activity but
     no row `Due`-in-window at all. Gate
     (a)'s NUMERATOR and all of gate (b) are ROUND-level instead: every
-    individually-dated `Rework tag` entry, across every `accepted` row
+    individually-dated `Rework tag` entry, across every `accepted` OR
+    `revising (reopened)` row
     regardless of THAT row's own `Due`, whose own date falls in the
     trailing 90 days ~ see §5a's "FIX_CORPUS's cohort works differently"
-    block for why these mechanisms are deliberately different (Codex
+    block for why these mechanisms are deliberately different, and its
+    "Why `accepted` OR `revising (reopened)` specifically" block for why
+    this status scope (not `accepted`-only, not the broader
+    `delivered`/`revising`/`accepted`) is the one that survived (Codex
     catch, 2026-07-19: an earlier draft of this snapshot line recorded
     only set (i), which silently reproduces the exact bug §5a's own
-    history already worked through and fixed)}.
+    history already worked through and fixed; a later draft recorded the
+    since-superseded `accepted`-only and `delivered`/`revising`/`accepted`
+    scopes in turn, both since replaced)}.
     Record both values even if (a)
     didn't clear and (b) was never reached ~ a later audit needs the full
     pair to know WHY FIX_CORPUS read absent, not just that it did.

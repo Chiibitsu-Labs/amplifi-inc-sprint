@@ -166,9 +166,12 @@ threshold crossed →
                  standard, ONLY when the qualifier majority reads
                  `missing` AND that missing count is ≥half of ALL rework
                  rounds. NEVER route this to hire. (Watch survivorship
-                 bias: `revising` rows aren't counted yet by design, but a
-                 backlog of long-open, high-round `revising` rows during
-                 an active problem means the accepted-only rate reads as a
+                 bias: bare `revising` rows (first-ever, never-yet-accepted
+                 pass) aren't counted yet by design ~ `revising (reopened)`
+                 rows ARE, since they already reached `accepted` once ~ but a
+                 backlog of long-open, high-round bare-`revising` rows during
+                 an active problem means the `accepted`/`revising
+                 (reopened)` rate reads as a
                  lower bound, not the truth ~ see §5.) A majority
                  `not-followed` instead ~ frequent, corpus-tagged rework
                  against an ALREADY-correct standard ~ never edits the
@@ -402,9 +405,12 @@ the cohort rule for FIX_CORPUS is direct, with no row-level anchoring, no
 exceptions, and no marker bookkeeping:
 
 **Validate BEFORE filtering, never after ~ the completeness/date gate
-(below) has to run across EVERY `accepted` row with `Rounds ≥ 1` first,
-independent of `Due` and independent of whether any entry's date would
-otherwise land it in-window.** Reading dated entries directly (the next
+(below) has to run across EVERY `accepted` OR `revising (reopened)` row
+with `Rounds ≥ 1` first, independent of `Due` and independent of whether
+any entry's date would otherwise land it in-window.** (Bare `revising` and
+bare `delivered` rows stay outside this gate entirely ~ they contribute
+nothing to gate (a) or (b) until they finalize, per the status-scope
+reasoning below.) Reading dated entries directly (the next
 paragraph) is a filter that can only test a row it's actually given ~ a
 row whose `Due` is outside the 90-day window AND whose only recent round
 is UNDATED never gets a valid date to test in the first place, so a
@@ -414,14 +420,15 @@ out-of-window, not flagged as broken data either. That row was never
 going to enter the round-level filter's view long enough for the
 completeness gate to catch it if the gate only ran on rows the filter
 already surfaced (Codex catch, 2026-07-19). Running validation first,
-against the FULL set of accepted `Rounds ≥ 1` rows regardless of `Due`,
-closes this ~ an undated entry gets caught and hard-blocks its row
-whether or not that row's `Due` would ever have made it "interesting" to
-the window filter on its own.
+against the FULL set of `accepted`/`revising (reopened)` `Rounds ≥ 1`
+rows regardless of `Due`, closes this ~ an undated entry gets caught and
+hard-blocks its row whether or not that row's `Due` would ever have made
+it "interesting" to the window filter on its own.
 
 **Read every individual dated `Rework tag` entry, across every `accepted`
-row (regardless of that row's own `Due`, `Delivered`, or `Last Sent`),
-whose OWN date falls in the trailing 90 days.** That's the cohort test for
+OR `revising (reopened)` row (regardless of that row's own `Due`,
+`Delivered`, or `Last Sent`), whose OWN date falls in the trailing 90
+days.** That's the cohort test for
 COUNTING ROUNDS ~ a filter on rounds, not rows, and it's what gate (a)'s
 numerator and all of gate (b) read. A row's `Due` sitting outside the
 90-day window doesn't exclude its recent rounds, and a row's `Due` sitting
@@ -434,23 +441,20 @@ why that's a second, deliberately separate test, not a contradiction of
 "filter on rounds, not rows.")
 
 - **Rounds-per-report (gate a):** numerator = count of in-window dated
-  rounds, read from `accepted` rows only (unchanged ~ a still-`revising`
-  row's round data isn't final yet, same reasoning REDESIGN's rework-tag
-  qualifier reads already use). **Denominator = count
-  of DISTINCT rows with STATUS `delivered`, `revising`, OR `accepted` (NOT
-  `accepted`-only) in the UNION of two sets, never just one:**
-  **(i)** every such row whose OWN `Due` falls in the trailing 90 days ~ the
-  SAME row-level, `Due`-anchored cohort REDESIGN's on-cadence check uses
-  above (matching its `delivered`/`revising`/`accepted` status scope
-  exactly, not a narrower one), including rows with ZERO rework rounds
+  rounds, read from `accepted` OR `revising (reopened)` rows (see below
+  for why the reopened variant counts here too). **Denominator = count
+  of DISTINCT rows with STATUS `accepted` OR `revising (reopened)`
+  SPECIFICALLY (never bare `revising`, never `delivered`) in the UNION of
+  two sets, never just one:**
+  **(i)** every such row whose OWN `Due` falls in the trailing 90 days,
+  including rows with ZERO rework rounds
   (this is what keeps gate
   (a) a genuine per-REPORT average, not per-REWORKED-report: a clean row
   has no dated `Rework tag` entry to filter by at all, so relying on set
   (ii) alone would silently drop every clean accepted report and let one
   two-round report among nine clean ones read 2.0 instead of 0.2,
   firing the gate on noise); **(ii)** every row that contributed AT LEAST
-  ONE in-window dated round to the numerator (so, `accepted` specifically,
-  per the numerator's own scope), even if that row's OWN `Due`
+  ONE in-window dated round to the numerator, even if that row's OWN `Due`
   falls OUTSIDE the trailing 90 days ~ the late-reopen-on-an-old-report
   case (touch 4: a report due and accepted months ago reopens with a
   fresh revision dated inside the window). Count a row that qualifies
@@ -458,31 +462,49 @@ why that's a second, deliberately separate test, not a contradiction of
   polish: without it, a row whose `Due` sits outside the window but whose
   reopen just added an in-window round would contribute to the numerator
   with NO matching place in the denominator, inflating the ratio for
-  every other row's benefit, and in the extreme case (every accepted row
+  every other row's benefit, and in the extreme case (every qualifying row
   with recent activity has an old `Due`, none currently `Due`-in-window)
   the denominator could hit ZERO while the numerator is nonzero ~ a
   division-by-zero that set (i) alone can never prevent (Codex catch,
   2026-07-19: an earlier draft of this gate called that divergence
   "intentional," which was wrong ~ every row that feeds the numerator
-  needs a place in the denominator, full stop). **Set (i)'s
-  `accepted`-ONLY status scope from an earlier draft had its own bug,
-  a different one:** `delivery-log.md` touch 4 flips a row's `Status`
-  straight back to `revising` the instant late feedback reopens it, with
-  no retained record that it was ever `accepted` before ~ an
-  `accepted`-only denominator would silently DROP every reopened row from
-  the count the moment it reopens, shrinking the denominator with NO
-  matching change to the numerator (the row's PAST clean rounds already
-  weren't in the numerator to begin with, and its fresh reopen round
-  isn't either, since the numerator is still `accepted`-only). Reopening
-  8 previously-clean rows out of 10 while 2 unrelated rows sit at
-  2 total rounds combined would move that reading from `2 ÷ 10 = 0.2` to
-  `2 ÷ 2 = 1.0`, purely from a temporary status flip, with the actual
-  rework picture completely unchanged (Codex catch, 2026-07-19). Widening
-  set (i) to `delivered`/`revising`/`accepted` ~ exactly on-cadence's own
-  status scope, not a narrower one invented for this gate specifically ~
-  fixes this at the root: a row's REPORT-LEVEL existence for the
-  denominator no longer depends on its live rework-finality status, which
-  is exactly the numerator's concern, not the denominator's.
+  needs a place in the denominator, full stop).
+
+  **Why `accepted` OR `revising (reopened)` specifically ~ not
+  `accepted`-only, and NOT the broader `delivered`/`revising`/`accepted`
+  either:** this status scope went through two wrong drafts before
+  landing here, each fixing one bug while introducing the other. Draft 1
+  (`accepted`-only): `delivery-log.md` touch 4 flips a reopened row
+  straight back to plain `revising`, so an `accepted`-only denominator
+  silently DROPS every reopened row from the count the instant it
+  reopens, shrinking the denominator with no offsetting numerator change
+  ~ 8 previously-clean rows reopening while 2 unrelated rows hold 2 total
+  rounds moves the reading from `2÷10=0.2` to `2÷2=1.0` off a temporary
+  status flip alone (Codex catch, 2026-07-19). Draft 2 (widen to
+  `delivered`/`revising`/`accepted`, matching on-cadence's own status
+  scope): this fixed the reopen case but broke a DIFFERENT one ~ a report
+  in its FIRST-EVER, never-yet-accepted pass through revision (bare
+  `revising`, no established acceptance yet) would now count as "+1
+  report" in the denominator while the numerator (still `accepted`-only)
+  reads ZERO rounds from it, since its in-progress rounds aren't final
+  yet and were never meant to count until resolved ~ this artificially
+  DEFLATES the ratio, treating a report that's actively accumulating real
+  rework as if it were a clean, finalized zero-round report (Codex catch,
+  2026-07-19, on the round-40 fix itself). **The actual fix:**
+  `delivery-log.md` now stamps a reopened row `revising (reopened)`, a
+  DISTINCT status value from bare `revising`, specifically so this gate
+  can tell "already reached `accepted` once, temporarily back for late
+  feedback" (count it ~ it has an established baseline) from "never yet
+  resolved, still in its first pass" (exclude it ~ genuinely no baseline
+  yet, same reasoning REDESIGN's rework-tag qualifier reads already use
+  for provisional rows). This scope applies to the numerator too, not
+  just the denominator ~ a `revising (reopened)` row's PRIOR, already-
+  dated rounds are exactly as real as an `accepted` row's, and excluding
+  them while the late round resolves would reproduce Draft 1's
+  undercounting for the numerator specifically. Bare `delivered` and bare
+  `revising` rows stay excluded from BOTH numerator and denominator,
+  full stop ~ genuinely unresolved, first-pass reports contribute nothing
+  to this gate's math until they finalize.
 - **Tag-share (gate b):** of the SAME in-window ROUND set gate (a)'s
   numerator uses (not gate (a)'s row-level denominator), what fraction
   are tagged `brief-misalign`/`brand`/`quality-bar`. Zero-round rows
@@ -540,7 +562,8 @@ dated entries get counted this month).
    either fires REDESIGN:
    - **Confirmed (on-cadence):** compute the rate by hand: numerator =
      rows with `Delivered ≤ Due`; denominator = rows that have shipped
-     (`delivered`/`revising`/`accepted`) **plus** `open` rows already past
+     (`delivered`/`revising`/`revising (reopened)`/`accepted`) **plus**
+     `open` rows already past
      `Due` (overdue-in-progress misses) **plus** `cancelled` rows where
      `Last Sent` (the structured cancellation-date stamp, `delivery-
      log.md`'s cancellation touch) is `> Due`, STRICTLY ~ cancelled AFTER
@@ -778,11 +801,18 @@ dated entries get counted this month).
    reports auto-resolve to `accepted` within 5 business days (the silent-
    acceptance rule), but a report stuck in `revising` for weeks ~ the
    worst-performing ones, almost by definition ~ never enters this
-   calculation until it finally finalizes. During an active quality
-   problem, that means the accepted-only rate can read artificially LOW
-   precisely because the highest-rework cycles haven't resolved yet. If
-   any `revising` rows are sitting with elevated `Rounds` and no
-   resolution in sight, treat the accepted-only number as a **lower
+   calculation until it finally finalizes (a row reopens into `revising
+   (reopened)`, not bare `revising`, so it stays counted once it's
+   reached `accepted` at least once ~ this bias is specifically about a
+   row on its FIRST-EVER, never-yet-accepted pass, still bare `revising`,
+   with no baseline yet). During an active quality
+   problem, that means the `accepted`/`revising (reopened)` rate can read
+   artificially LOW
+   precisely because the highest-rework FIRST-PASS cycles haven't resolved
+   yet. If
+   any bare-`revising` rows are sitting with elevated `Rounds` and no
+   resolution in sight, treat the `accepted`/`revising (reopened)` number
+   as a **lower
    bound, not the real rate** ~ note the open backlog explicitly rather
    than reporting a clean FIX_CORPUS read that a few weeks of hindsight
    would contradict. **This is a THIRD source of PROVISIONAL, same
@@ -929,7 +959,8 @@ above by hand:
    **This has to be an idempotent UPSERT, never a blind append.** A
    delivery-log row is mutable for its entire life ~ `Status` advances,
    `Rounds`/`Rework tag` accumulate, `Last Sent` updates on every resend,
-   and a row can even reopen from `accepted` back to `revising` months
+   and a row can even reopen from `accepted` to `revising (reopened)`
+   months
    after its first ingest (touch 4) ~ so re-running this weekly pass on
    the SAME row has to UPDATE the existing Supabase record, not insert a
    second copy of it (Codex catch, 2026-07-19). Key the upsert on
@@ -982,6 +1013,63 @@ above by hand:
    the destination is ALSO genuinely empty (a true first-ever run) ~
    there, "ingest everything" needs no rebuild because there's nothing to
    collide with yet.
+
+   **Not everything between the cursor and EOF is real data, either.**
+   `patterns.md`'s own "How a promotion pass writes here" and
+   "late-arriving capture" sections embed TWO fenced ` ```markdown `
+   example blocks (illustrating the week-block and LATE ADDITION formats)
+   and the file ships with a literal placeholder final header, `##
+   {YYYY-MM-DD} (week of) ~ first entry lands here`, sitting after the
+   cursor's start position until a real week actually gets promoted. A
+   naive "read every `## ... (week of)` header past the cursor" pass
+   would match all of these ~ the fenced examples' own literal
+   `{YYYY-MM-DD}` headers, and the trailing placeholder ~ and try to
+   ingest them as real recurrence data: a literal `{YYYY-MM-DD}` string
+   fails date parsing outright (the same completeness-gate failure mode
+   `delivery-log.md`'s own placeholder rows trigger, per item 1 above),
+   or worse, some parsers would silently coerce it into today's date and
+   record a fabricated week entry that never happened (Codex catch,
+   2026-07-19). **Filter BEFORE reading week-blocks, not after:** strip
+   any content inside triple-backtick fences (the two illustrative blocks
+   live nowhere else in this file, so this is a safe, general rule, not a
+   special case) and skip any header line whose date field is the
+   literal, unresolved string `{YYYY-MM-DD}` rather than an actual date,
+   before treating a `## ... (week of)` match as a real week-block to
+   ingest. This is the same class of defense item 1's row-level `{...}`
+   placeholder filter provides for `delivery-log.md` ~ `patterns.md`
+   needs its own version because its scaffold takes a different shape
+   (fenced docs + a trailing placeholder header, not a templated data
+   row).
+
+   **The write and the cursor-advance have to be atomic, or replay-safe
+   some other way ~ a crash between them is a real failure mode, not a
+   hypothetical.** If the ingestion job writes derived theme-tally
+   records to the destination and THEN advances the cursor as two
+   separate steps, a crash (or any interruption) after the write
+   succeeds but before the cursor commits leaves the cursor pointing at
+   its OLD position while the destination already holds THIS run's
+   records. The next run re-reads the exact same now-already-ingested
+   content and derives the same records again ~ but unlike a
+   delivery-log upsert keyed on `(client, Period)`, a blind
+   re-application of a theme-tally increment DOUBLE-COUNTS it, inflating
+   AUTOMATE/REDESIGN confidence off a retry, not a real recurrence (the
+   identical failure class the reset-handling paragraph above already
+   solves for the wipe-and-rebuild path, just untreated here for the far
+   more common incremental path). Fix: **derive a stable per-block key
+   for each ingested bullet** ~ `{week-of date}#{tag: REWORK or
+   PROCESS}#{theme, normalized}` is naturally unique and stable, since
+   `patterns.md`'s own writing rule already requires one bullet per
+   distinct theme per week (see "How a promotion pass writes here"
+   above), and use it to UPSERT-replace that bullet's contribution
+   (set-to, not add-to) rather than blindly incrementing a running total.
+   With that key in place, re-processing the same bullet after a crash is
+   a no-op regardless of whether the cursor actually advanced ~ the
+   destination's per-key state is idempotent to replay, so the job
+   doesn't need a strict cross-store transaction between two different
+   systems (the patterns-derived records table and wherever the cursor
+   itself lives) to stay correct; commit the cursor last, same ordering
+   the reset-handling paragraph already uses, and a duplicate replay
+   simply re-writes the identical value instead of compounding it.
 2. **Add the two missing branches:** `REDESIGN` and `FIX_CORPUS` actions in
    the router (`lib/analytics.ts`), fed by rework tags + cadence data,
    **each windowed to a trailing 90 days, same principle §5a uses, but NOT
@@ -992,23 +1080,16 @@ above by hand:
    (gate a) are round-level instead: filter individual
    dated `Rework tag` entries (each stamped `[YYYY-MM-DD]` at the moment
    it's logged, per `delivery-log.md`) to those whose OWN date falls in
-   the trailing 90 days, across every `accepted` row regardless of that
-   row's `Due`. Rounds-per-report's DENOMINATOR is a THIRD mechanism ~ the
-   UNION of two row sets, not one: (i) rows with STATUS `delivered`,
-   `revising`, OR `accepted` (NOT `accepted`-only ~ matching on-cadence's
-   own status scope exactly) with `Due` in the
-   trailing 90 days, INCLUDING zero-round rows (omitting clean rows here
-   turns "rounds per report" into "rounds per reworked report," inflating
-   gate (a) and firing it on noise; restricting set (i) to `accepted`-only
-   ALSO breaks it a different way ~ `delivery-log.md` touch 4 flips a
-   reopened row straight back to `revising` with no retained record it
-   was ever accepted, so an `accepted`-only denominator would silently
-   drop every currently-reopened row out of the count the instant it
-   reopens, shrinking the denominator with no offsetting numerator change
-   and inflating the ratio: 8 previously-clean rows reopening while 2
-   unrelated rows hold 2 total rounds moves the reading from `2÷10=0.2` to
-   `2÷2=1.0` off a temporary status flip alone, not any real change in
-   rework ~ Codex catch, 2026-07-19); PLUS (ii) any `accepted` row (the
+   the trailing 90 days, across every row with STATUS `accepted` OR
+   `revising (reopened)` regardless of that row's `Due` (NOT bare
+   `revising`, NOT `delivered` ~ see below for why). Rounds-per-report's
+   DENOMINATOR is a THIRD mechanism ~ the UNION of two row sets, not one:
+   (i) rows with STATUS `accepted` OR `revising (reopened)` SPECIFICALLY
+   (the SAME scope the numerator above reads, never bare `revising`,
+   never `delivered`) with `Due` in the trailing 90 days, INCLUDING
+   zero-round rows (omitting clean rows here turns "rounds per report"
+   into "rounds per reworked report," inflating gate (a) and firing it on
+   noise); PLUS (ii) any `accepted`/`revising (reopened)` row (the
    numerator's own scope, unchanged) that
    contributed at least one round to the numerator above even though its
    OWN `Due` falls outside the window (the late-reopen-on-an-old-report
@@ -1016,9 +1097,22 @@ above by hand:
    denominator, or the ratio inflates at the edges and can divide by zero
    in a month where no row's `Due` lands in-window at all despite live
    reopen activity (Codex catch, 2026-07-19: first the zero-round-row
-   omission, then this numerator/denominator population mismatch, now
-   the accepted-only status restriction; see
-   §5a's worked examples for all three). See §5a's "FIX_CORPUS's cohort
+   omission, then the numerator/denominator population mismatch, then
+   an accepted-only status restriction that dropped reopened rows, then
+   a `delivered`/`revising`/`accepted` widening that over-corrected and
+   let never-yet-accepted first-pass rows deflate the ratio; see §5a's
+   worked examples and its "Why `accepted` OR `revising (reopened)`
+   specifically" block for the full four-draft history). **Why this
+   status scope, not `accepted`-only and not the broader
+   `delivered`/`revising`/`accepted`:** `delivery-log.md` touch 4 now
+   stamps a reopened row `revising (reopened)`, a status DISTINCT from
+   bare `revising`, precisely so this gate can count a row that already
+   reached `accepted` once (an established baseline, temporarily back for
+   late feedback) without also pulling in a row still on its FIRST-EVER,
+   never-yet-accepted pass (bare `revising`, no baseline yet) ~ that
+   distinction is what makes both the numerator and the denominator use
+   the identical `accepted`/`revising (reopened)` scope rather than two
+   different ones. See §5a's "FIX_CORPUS's cohort
    works differently" block for the full reasoning. Coding the numerator
    as one shared
    row-filter (in or out by `Due`, same as denominator set (i) alone)
@@ -1042,7 +1136,8 @@ above by hand:
      fires, both already mandatory in §5a's manual version and equally
      mandatory here, not optional extras for the coded path:**
      - **Completeness gate, run FIRST, before any cohort/window filtering
-       ~ against every `accepted` row with `Rounds ≥ 1`, regardless of
+       ~ against every `accepted` OR `revising (reopened)` row with
+       `Rounds ≥ 1`, regardless of
        `Due`:** don't gate this on rows the round-level date filter
        already surfaced ~ a row whose only recent activity is an UNDATED
        round never gets a valid date to test against the 90-day window in
@@ -1158,9 +1253,12 @@ above by hand:
          file and execution/process, no single fix indicated") rather than
          silently picking one interpretation.
      **This is NOT just a visibility warning here either ~ code the same
-     conditional block §5a's manual version requires.** When `revising`
-     rows with elevated `Rounds` have been open unusually long, the
-     accepted-only calculation above is a lower bound (survivorship bias,
+     conditional block §5a's manual version requires.** When bare
+     `revising` rows (first-ever, never-yet-accepted pass ~ a
+     `revising (reopened)` row is already counted, so it's not part of this
+     backlog) with elevated `Rounds` have been open unusually long, the
+     `accepted`/`revising (reopened)` calculation above is a lower bound
+     (survivorship bias,
      §5a's note) ~ if that backlog is large or corpus-tagged enough to
      plausibly flip the reading (below-threshold to above, or
      `not-followed`-majority to `missing`-majority), mark FIX_CORPUS

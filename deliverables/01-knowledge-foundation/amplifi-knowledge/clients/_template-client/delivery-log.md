@@ -161,15 +161,26 @@
    nobody writes back to say so, and treating silence as permanently
    unresolved would starve the rework baseline of exactly the clean
    deliveries it needs to mean anything. **If a revision request arrives
-   after a silent auto-accept, re-open the SAME row** ~ `Status` back to
-   `revising`, then bump `Rounds` and add the dated cause per touch 3
+   after a silent auto-accept, re-open the SAME row** ~ `Status` to
+   **`revising (reopened)`, NOT bare `revising`** (a new, distinct value,
+   not a first-pass revision relabeled), then bump `Rounds` and add the dated cause per touch 3
    above (which also re-stamps `Last Sent`), repeating touch 3 for as many
    additional rounds as this late feedback actually takes to resolve ~ a
    reopen isn't always exactly one round. Late feedback is
    still real rework on this
    report; a fresh row with no period/due/delivered of its own would just
-   delete the evidence, not relocate it. **No separate marker or episode
-   bookkeeping is needed here** ~ each round's own date, stamped per touch
+   delete the evidence, not relocate it. **Why `revising (reopened)`
+   specifically, not just `revising`:** this row already reached
+   `accepted` once ~ that's an established fact worth keeping visible in
+   the one field every downstream read already checks, distinct from a
+   row still working through its FIRST-EVER, never-yet-resolved pass
+   (bare `revising`), which has no such established baseline yet.
+   Instrument §3's rounds-per-report denominator reads exactly this
+   distinction: a reopened row (once-accepted, temporarily back for late
+   feedback) still counts as a real, existing report; a still-unresolved
+   first-pass row does not, yet (Codex catch, 2026-07-19). No separate
+   marker or episode
+   bookkeeping is needed beyond this one status value ~ each round's own date, stamped per touch
    3/1.5 same as any other round, is what a later 90-day cohort read
    filters on directly (see Instrument §3), so there's nothing extra to
    track at reopen time beyond the normal per-round entry every round
@@ -230,7 +241,8 @@ history, and a pattern of client-cancelled cycles is worth noticing in its
 own right.
 
 **If a client pauses FUTURE reporting or changes cadence AFTER a cycle has
-already shipped** (`delivered`/`revising`/`accepted`)**: leave that row
+already shipped** (`delivered`/`revising`/`revising (reopened)`/`accepted`)**:
+leave that row
 exactly as it is.** Never retarget an already-shipped row to `cancelled`
 ~ it represents a report that was genuinely produced, with real
 `Delivered`/`Effort (h)`/`Rounds` evidence behind it, and overwriting its
@@ -331,17 +343,26 @@ pipe in any cell (`Dale \| Janelle`), never a bare `|`.
   the normal case (explicit sign-off, or 5 business days of silence
   following `Last Sent` ~ see above) ~ **with two documented exceptions:**
   (1) a revision request arriving AFTER a silent auto-accept re-opens the
-  same row, `accepted → revising`, then back to `accepted` once that late
-  round resolves (see touch 4) ~ not a violation of "exactly once" so much
+  same row, `accepted → revising (reopened)` ~ a DISTINCT status value
+  from bare `revising`, not the same label reused (see touch 4) ~ then
+  back to `accepted` once that late
+  round resolves. `revising (reopened)` exists specifically to keep
+  visible, in the one field every downstream read already checks, that
+  THIS row already reached `accepted` once before, unlike a row still
+  working through its first-ever, never-yet-resolved pass (bare
+  `revising`) ~ Instrument §3's rounds-per-report denominator reads this
+  distinction directly: a reopened row still counts as an existing,
+  established report; a still-unresolved first-pass row doesn't yet
+  (Codex catch, 2026-07-19). Not a violation of "exactly once" so much
   as "once per actual finalization," and the documented way late feedback
   stays counted instead of vanishing; (2) a row can exit to `cancelled`
   ONLY from `open`, if the client pauses or cancels that cycle before it
   ships (see above) ~ a terminal state outside the normal chain, never
   followed by `accepted`, and never applied to a row that's already
-  `delivered`/`revising`/`accepted` (a shipped cycle's evidence stays
+  `delivered`/`revising`/`revising (reopened)`/`accepted` (a shipped cycle's evidence stays
   exactly as recorded, even if the client pauses future reporting
   afterward). On-cadence is computed as `Delivered ≤ Due` for any row that
-  has shipped (`delivered`/`revising`/`accepted`), an automatic miss for
+  has shipped (`delivered`/`revising`/`revising (reopened)`/`accepted` ~ on-cadence reads the shipped-or-not fact, unaffected by which revising variant applies), an automatic miss for
   any `open` row where `Due` has already passed, and excluded entirely
   from both numerator and denominator for any `open` row not yet past
   `Due` (future work, not yet resolved either way). **`cancelled` rows are
@@ -539,4 +560,4 @@ pipe in any cell (`Dale \| Janelle`), never a bare `|`.
 
 | Period | Analyst | Start | Due | Delivered | Last Sent | Status | Rounds | Effort (h) | Rework tag | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|
-| {2026-07 / wk 29} | {Dale} | {YYYY-MM-DD} | {YYYY-MM-DD} | {YYYY-MM-DD or blank} | {YYYY-MM-DD or blank} | {open / delivered / revising / accepted / cancelled} | {0} | {6} | {none, or e.g. brief-misalign (missing) [YYYY-MM-DD]} | {—} |
+| {2026-07 / wk 29} | {Dale} | {YYYY-MM-DD} | {YYYY-MM-DD} | {YYYY-MM-DD or blank} | {YYYY-MM-DD or blank} | {open / delivered / revising / revising (reopened) / accepted / cancelled} | {0} | {6} | {none, or e.g. brief-misalign (missing) [YYYY-MM-DD]} | {—} |

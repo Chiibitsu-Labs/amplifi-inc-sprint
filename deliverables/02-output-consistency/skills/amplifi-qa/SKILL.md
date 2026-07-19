@@ -120,6 +120,31 @@ Required inputs, all of them:
 If a standards file is an unfilled frame, run anyway but say so at the top:
 "Bar not yet encoded for: {file} ~ checks in that area are generic."
 
+**Exception: at the ship-clearance checkpoint specifically (second pass,
+visually-rendered, the ONLY tier that counts as clearance to ship, per
+Step 0), an unfilled `what-good-looks-like.md`, `house-voice.md`, or
+`report-template-rules.md` blocks clearance the same way an unfilled
+`brief.md`/`brand-standard.md` already does below ~ it does NOT get the
+"run anyway, generic bar" treatment at this checkpoint.** A plain `PASS`
+header at the ship-clearance tier tells the human "ship-ready," and a
+generic-bar pass on voice/quality/template checks would issue that verdict
+off a bar that was never actually encoded for this client ~ exactly the
+false-pass risk the brief.md/brand-standard.md hard-stop already exists to
+prevent, and there's no principled reason the shared standards files should
+get a softer rule than the per-client ones at the one checkpoint whose
+whole job is granting or withholding clearance (Codex catch, 2026-07-19).
+So: if any of those three files is still a frame when running the
+ship-clearance checkpoint, don't emit `PASS`/`N flags`/`partial` in the
+header at all ~ emit `{blocked ~ standards not yet encoded}`, name exactly
+which file(s) are still frames, and say plainly that this deck cannot
+clear until they're filled. Still run every check that doesn't depend on
+the frame'd file(s) and report those results normally underneath ~ it's
+the overall clearance verdict that's blocked, not the whole pass. The
+first pass (pre-Canva) and the two lesser second-pass tiers (text-only,
+screenshots) keep the original "run anyway, generic bar" behavior
+unchanged ~ neither of those grants ship clearance in the first place, so
+a generic-bar reading there is advisory, not a false "ship-ready" signal.
+
 **`brief.md` and `brand-standard.md` don't get this same "run anyway,
 generic bar" treatment ~ they're required, not a frame.** A
 freshly-copied `_template-client` folder has both still full of
@@ -245,7 +270,8 @@ never as part of this whole-file STOP condition.
    check `PASS` (or `N/A`) instead of flagging an impossible requirement.
    Confirm it's genuinely period one the same way `amplifi-insights` does
    ~ check `delivery-log.md` for any prior `delivered`/`revising`/
-   `accepted` row, not just whether `insight-log.md` is empty (an empty
+   `revising (reopened)`/`accepted` row, not just whether `insight-log.md`
+   is empty (an empty
    log alone doesn't distinguish real period one from a broken capture
    loop) ~ before applying this exception; a second period with a still-empty
    log is a real gap, not a bootstrap state, and gets flagged normally.
@@ -253,7 +279,7 @@ never as part of this whole-file STOP condition.
 ## Step 2 ~ Report format (fixed)
 
 ```
-QA GATE ~ {client} {period} ~ {input: full draft | visually-rendered deck (clears) | text-only/screenshots (does NOT clear)} ~ {PASS | N flags | partial}
+QA GATE ~ {client} {period} ~ {input: full draft | visually-rendered deck (clears) | text-only/screenshots (does NOT clear)} ~ {PASS | N flags | partial | blocked ~ standards not yet encoded}
 
 ✔/✘/— Brief alignment       (— = not evaluated, screenshots-only input)
 ✔/✘/— Voice & brand         (— = not evaluated, screenshots-only input)

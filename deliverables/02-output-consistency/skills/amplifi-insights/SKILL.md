@@ -59,7 +59,8 @@ file, ask for it or flag the gap. Do not silently default to generic.
 
 **One targeted extra read, only when checking the insight-log exception
 below:** `clients/{client}/delivery-log.md`, scanned only for whether any
-prior row exists with `Status = delivered`/`revising`/`accepted` ~ not a
+prior row exists with `Status = delivered`/`revising`/`revising
+(reopened)`/`accepted` ~ not a
 full read, just an existence check, and only needed to distinguish "this
 is genuinely period one" from "the capture loop broke" (see the exception
 below).
@@ -167,7 +168,8 @@ not one shared cutoff:
   which would make period two (or later) look like a bootstrap state when
   it's actually a real gap. Before applying this exception, check
   `clients/{client}/delivery-log.md` for any prior row with `Status =
-  delivered`/`revising`/`accepted` (a cycle that has actually shipped
+  delivered`/`revising`/`revising (reopened)`/`accepted` (a cycle that has
+  actually shipped
   before). None found → genuinely period one, exception applies, note "no
   prior context/trend to draw on, first period for this client" and
   generate. One or more found, but `insight-log.md` is STILL empty → NOT a
