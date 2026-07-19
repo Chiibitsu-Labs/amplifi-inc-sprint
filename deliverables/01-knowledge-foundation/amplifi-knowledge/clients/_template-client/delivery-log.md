@@ -96,8 +96,16 @@
    write lets `brief.md` go stale and quietly point that scope test at the
    former lead's WIP/load instead of the actual current owner's (Codex
    catch, 2026-07-19).
-3. **If the client asks for a revision:** bump `Rounds` by 1, top up
-   `Effort (h)`, set `Rework tag`. **One tag entry per round, always ~
+3. **If the client asks for a revision:** bump `Rounds` by 1, set
+   `Rework tag`. **Do NOT top up `Effort (h)` here** ~ at the moment a
+   revision request arrives, no revision work has actually happened yet,
+   so there are no real hours to add; top it up later, at the SAME moment
+   the corrected version actually goes back out (see below), when the
+   analyst actually knows how long the fix took. Topping up here instead
+   would record effort before the work exists, and since a resend can be
+   the LAST write this round gets before the next request arrives, the
+   hours actually spent implementing the fix could go unrecorded entirely
+   (Codex catch, 2026-07-19). **One tag entry per round, always ~
    if a single round has more than one cause** (e.g. a brand correction
    bundled with a genuinely new client ask in the same message), pick ONE
    per this priority order and note the rest in **Notes**:
@@ -144,11 +152,15 @@
    the row otherwise looks ~ it waits until the next step re-stamps a real
    date. Once the
    corrected version actually goes back to the client, stamp `Last Sent`
-   with THAT date ~ this is what touch 4's silence window counts from
+   with THAT date, AND top up `Effort (h)` NOW ~ this is the moment the
+   revision work is actually done and the analyst actually knows how many
+   hours it took, unlike the request-arrival moment above. `Last Sent`
+   is what touch 4's silence window counts from
    next, never the original `Delivered` date. `Delivered` itself never
    changes after the first ship (on-cadence stays anchored to when the
    client ORIGINALLY received a version, not to any later resend) ~
-   `Last Sent` is the only field that moves on a revision. Repeat this
+   `Last Sent` is the only date field that moves on a revision, but
+   `Effort (h)` moves here too, every round. Repeat this
    touch for every additional round.
 4. **At actual client acceptance ~ or after 5 business days of silence
    following the row's current `Last Sent` date, with no revision

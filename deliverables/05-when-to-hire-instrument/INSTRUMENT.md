@@ -76,6 +76,19 @@ threshold crossed →
  2. REDESIGN?    Is the workflow itself the bottleneck ~ not capacity, not
                  quality?
                  Evidence, EITHER of: (a) on-cadence rate below threshold
+                 **~ v1 seed: <80%, Michele's number to override, not
+                 invent-per-walkthrough** (unlike WIP/cycle-time above,
+                 this signal has no frozen-baseline derivation mechanism
+                 of its own to compute a number FROM ~ without a stated
+                 starting value, two operators reading the identical
+                 delivery-log data could route it differently purely
+                 because each picked a different unstated threshold in
+                 their head, and the eventual §5b automation would have
+                 nothing to hard-code either; §7's "Michele sets
+                 first-pass thresholds" already covers WHO sets it, this
+                 is WHAT the seed actually is until she says otherwise,
+                 same pattern as REBALANCE's `≤5`/`≥2pt` v1 seeds below,
+                 Codex catch, 2026-07-19)**
                  WHILE rework stays low or isn't corpus-tagged (the work is
                  fine, the SCHEDULE isn't) ~ the confirmed version, once a
                  due date has actually been missed; OR (b) cycle time
@@ -107,7 +120,17 @@ threshold crossed →
                  on-cadence.
  3. FIX CORPUS?  Is quality inconsistent because the standard lives in heads?
                  Evidence: rework is meaningfully frequent (not just
-                 present) AND, of the individual revision ROUNDS behind
+                 present) **~ v1 seed: ≥2 rounds/report average (gate a),
+                 Michele's number to override, not invent-per-walkthrough**
+                 (most reports carry 0–1 rounds normally; unlike WIP/
+                 cycle-time above, this signal has no frozen-baseline
+                 derivation of its own to compute a starting number FROM,
+                 so without a stated seed the same rework data could route
+                 differently depending on which unstated number an
+                 operator had in mind, and §5b's eventual automation would
+                 have nothing to hard-code either ~ same reasoning as
+                 on-cadence's v1 seed above, Codex catch, 2026-07-19)
+                 AND, of the individual revision ROUNDS behind
                  that rework (not the rows ~ a 5-round report with one
                  brand fix and four client-new-ask fixes is 20% corpus,
                  not 100%), half or more are tagged brief-misalign,
@@ -1014,9 +1037,25 @@ above by hand:
    ingestion the exact same way the template folder itself would (Codex
    catch, 2026-07-19). **Add a ROW-level filter on top of the folder-level
    one: skip any row containing an unresolved `{...}` template marker in
-   ANY column, regardless of which client folder it's in** ~ this is the
-   actual defense, since it doesn't depend on every analyst remembering to
-   delete the example row during setup. Flag a skipped placeholder row
+   its STRUCTURED/TYPED columns (`Period`, `Analyst`, `Start`, `Due`,
+   `Delivered`, `Last Sent`, `Status`, `Rounds`, `Effort (h)`, `Rework
+   tag`), regardless of which client folder it's in ~ but NEVER scan
+   `Notes` for this.** `Notes` is free text, and a genuine, fully-filled
+   row can legitimately describe a real correction by quoting a literal
+   template token verbatim (e.g. "replaced stale `{Month YYYY}` text
+   left over from last period's Canva file") ~ a whole-row brace-scan
+   that includes `Notes` would skip that entirely legitimate row as if it
+   were the unfilled example, and the later reconciliation pass (above)
+   would then delete its already-ingested copy from the destination on
+   top of that, discarding real cadence/rework evidence over a mention
+   inside a description, not an actual unfilled field (Codex catch,
+   2026-07-19). The unfilled template row's actual signature is that
+   EVERY structured column reads its own literal placeholder
+   SIMULTANEOUSLY (`{2026-07 / wk 29}`, `{Dale}`, `{YYYY-MM-DD}`, etc.,
+   all at once, per the template's own example row in `delivery-log.md`)
+   ~ a real row's structured columns should never contain a brace at all,
+   so scanning only those, never the free-form `Notes` column, is both
+   the more precise defense and the safer one. Flag a skipped placeholder row
    once per client (not once per weekly run) as a reminder to clean it up,
    rather than silently ignoring it forever. Plus `patterns.md`'s theme tally as
    corroborating signal strength for AUTOMATE/REDESIGN (a theme recurring
@@ -1078,7 +1117,27 @@ above by hand:
    every run (per the completeness-gate validation above, which is
    already whole-file, not incremental) ~ no separate tombstone marker or
    manual delete step needed, the source of truth's own current contents
-   are the reconciliation target.
+   are the reconciliation target. **The diff is only safe to run once the
+   read is confirmed COMPLETE, though ~ a partial read must never be
+   treated as "these clients' rows are gone."** If the weekly pass fails
+   to read even one client's `delivery-log.md` (a transient Drive/API
+   error, a timeout mid-scan), that client's keys are simply MISSING from
+   this run's source set, exactly indistinguishable from a genuine
+   deletion unless the job separately tracks which clients it actually
+   read successfully. Running the delete-diff against an incomplete read
+   would wipe that unreachable client's already-ingested, still-valid
+   cadence/rework evidence out of the destination on nothing more than a
+   network hiccup, and the router would lose real data until some LATER
+   successful run happens to restore it, potentially changing a month's
+   route in between (Codex catch, 2026-07-19). Fix: track the expected
+   client list (every non-`_template-client` folder under `clients/*`)
+   against the list actually read without error THIS run; only proceed to
+   the delete-diff when they match exactly. On any short read, still
+   upsert whatever WAS read successfully (that part is safe, upsert never
+   deletes), but skip the delete-diff entirely for this run and retry the
+   reconciliation on the next scheduled pass rather than failing the
+   whole sync ~ a delayed reconciliation is a stale-but-harmless read; a
+   reconciliation run on incomplete data is actively destructive.
    **`patterns.md`'s ingestion needs its OWN idempotency strategy, not the
    `(client, Period)` key above ~ that key is specific to delivery-log
    rows and doesn't apply here.** `patterns.md` is genuinely append-only
@@ -1504,9 +1563,25 @@ above by hand:
      live rule) AND WIP per analyst sustainedly elevated vs baseline (the
      capacity-ceiling signal ~ independent of cadence, threshold defined
      in §2), **read at the SAME fixed roster-wide bar this section defines
-     below for the narrow-signal scope test ~ ≥4 of the full, fixed 6-person
+     below for the narrow-signal scope test ~ MORE THAN HALF of the full
      roster individually clearing WIP's elevation threshold, never "at
-     least one analyst" or "elevated in aggregate."** This is the BASE
+     least one analyst" or "elevated in aggregate."** `6`-person roster
+     and `≥4` elevated are TODAY's concrete numbers, not hard-coded
+     constants ~ **code this as "more than half of the CURRENT active
+     roster count," re-derived from the roster's actual size at each
+     evaluation, never a literal `6`/`4` baked into the router.** A
+     roster that grows to 8 without this recomputing would still compare
+     against the stale `≥4`, and 4-of-8 is no longer a majority ~ the
+     coded router would keep clearing a base predicate that no longer
+     means what it's supposed to mean the moment headcount changes,
+     which is exactly the outcome this instrument exists to inform, not
+     silently misjudge (Codex catch, 2026-07-19). Track roster size as
+     its own maintained value (updated whenever someone joins or leaves,
+     the same maintenance discipline `brief.md`'s lead-analyst field
+     already gets), and derive `≥4` (or whatever "more than half" of the
+     current count works out to) from it at evaluation time ~ never a
+     separately-maintained, easy-to-forget second number that can drift
+     out of sync with the actual roster. This is the BASE
      predicate, evaluated even when no narrow AUTOMATE/REDESIGN/FIX_CORPUS
      signal exists to scope-map against at all ~ without stating the
      breadth requirement here too, a reading of "WIP sustainedly elevated"

@@ -37,12 +37,16 @@ on its own; the numbers that fired them have to be dated too.
   - Cycle-time baseline (REDESIGN early-warning): {per-client baseline
     span, §7} · margin: {≥20% OR ≥1 working day, whichever is larger ~
     the absolute floor matters at a zero/near-zero baseline, §2}
-  - On-cadence threshold: {N%} · evaluation cohort: {trailing 90 days,
+  - On-cadence threshold: {N%, v1 seed <80% per §3 ~ record here whatever
+    Michele's actual current number is, even if still the unadjusted
+    seed} · evaluation cohort: {trailing 90 days,
     row-level, `Due`-anchored ~ per §3 / §5a's Fixed evaluation cohort
     paragraph}
   - Rework (FIX_CORPUS), BOTH gates always, never either/or ~ they're
     sequential, not alternatives: {(a) N rounds/report frequency
-    threshold} AND {(b) N% round-tag-share threshold} · evaluation cohort:
+    threshold, v1 seed ≥2 per §3 ~ record Michele's actual current number}
+    AND {(b) N% round-tag-share threshold, always ≥half per §3/§5}
+    · evaluation cohort:
     {trailing 90 days, but NOT the same mechanism as on-cadence above,
     don't record it as such ~ gate (a)'s DENOMINATOR is the UNION of two
     row sets, never just the `Due`-anchored one alone: (i) every row with
