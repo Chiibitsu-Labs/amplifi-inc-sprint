@@ -1,7 +1,22 @@
 # Router Decisions ~ The When-to-Hire Instrument's Audit Trail
 
 > **Append-only.** One entry per monthly router walkthrough (`INSTRUMENT.md`
-> §5a), written by whoever ran it (Michele or Chii). This is a DIFFERENT
+> §5a), written by whoever ran it (Michele or Chii). **A SECOND, separate
+> entry type also belongs here: a same-day threshold/baseline-change note
+> from `ROADMAP.md`'s quarterly calibration session, whenever that session
+> actually changes a number ~ never held until the next monthly
+> walkthrough gets around to restating it.** `INSTRUMENT.md` §5b's
+> automated ingestion treats whatever's the most recently POPULATED value
+> in THIS file as the currently-approved one, signal by signal; if a
+> quarterly change's only record is "will show up in next month's
+> walkthrough entry," the router keeps reading the superseded number for
+> the whole gap in between, an unforced staleness this file exists
+> specifically to prevent (Codex catch, 2026-07-19: this file's own header
+> framed itself as monthly-walkthrough-only, leaving no home for a
+> quarterly-only change to land immediately). This calibration-change
+> entry doesn't need a full walkthrough writeup ~ just the changed
+> value(s), dated, in the same snapshot format below, so it reads
+> correctly regardless of which rhythm produced it. This is a DIFFERENT
 > file from `patterns.md` on purpose ~ `patterns.md` has a strict weekly
 > REWORK/PROCESS tally schema written only by the promotion pass; a
 > free-form routing decision doesn't fit that schema and would corrupt the

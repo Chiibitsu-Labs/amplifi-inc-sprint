@@ -436,12 +436,36 @@ re-read the report.
 End every output with this reminder, verbatim:
 
 ```
-If you fix any flag above before this report ships, log it now ~
-delivery-log.md touch 1.5: bump Rounds by ONE (this whole pass, not once
-per flag fixed) and append ONE cause tag, chosen by priority if more than
-one check flagged something, right on the row Step 0 resolved for THIS
-report's period (never guess which row if Step 0 flagged it ambiguous ~
-resolve that first), before you move on.
+If you fix any flag above before this report ships, log it now ~ right on
+the row Step 0 resolved for THIS report's period (never guess which row if
+Step 0 flagged it ambiguous ~ resolve that first). WHICH delivery-log.md
+step to use depends on that row's resolved status:
+- Row status is OPEN (this is a pre-ship pass, 1 or 2, whether or not
+  touch 1.5 already logged an earlier catch on this same row): use touch
+  1.5 ~ bump Rounds by ONE (this whole pass, not once per flag fixed) and
+  append ONE cause tag, chosen by priority if more than one check flagged
+  something, before you move on. Follow the rest of this reminder below
+  for how to pick and format that tag.
+- Row status is REVISING or REVISING (REOPENED) (this QA run is checking
+  a client-requested revision's fix before it resends, a post-delivery
+  re-QA): do NOT bump Rounds and do NOT append a new tag entry here.
+  Touch 3 already bumped Rounds and logged a tag entry for this round the
+  moment the client's revision request arrived; this pass is validating
+  that SAME in-progress round's fix before it goes back out, not a second,
+  separate round, and a second Rounds bump or tag entry here would
+  double-count one client-facing round as two, inflating FIX_CORPUS's
+  rounds-per-report reading (Codex catch, 2026-07-19: this reminder
+  applied touch 1.5 unconditionally, even though touch 1.5 is defined only
+  for the pre-delivery/`open` case; a post-delivery revision has already
+  gone through touch 3's own round-counting by the time this pass runs).
+  If what THIS pass catches names a genuinely different cause than
+  whatever touch 3 already tagged the round with, don't create a second
+  entry for it ~ note it in **Notes** instead (`"QA also caught {cause}
+  before resend"`), the same one-round/multiple-causes bundling touch 3
+  itself already uses for a single message naming more than one cause.
+  Stop here for this branch ~ the tag-selection/qualifier steps below only
+  apply when an actual NEW entry is being written, which the OPEN branch
+  above is the only case that does.
 QUALIFIER FIRST, THEN CATEGORY: if more than one of the flagged causes is
 brief-misalign/brand/quality-bar (a corpus cause) carrying its own
 missing/not-followed qualifier (see below), pick whichever is qualified
@@ -506,12 +530,16 @@ sees it, and the corpus-tag share or rounds-per-report reading FIX_CORPUS
 (and HIRE, downstream of it) acts on comes out artificially clean.
 ```
 
-This QA gate is one of the three pre-send checkpoints touch 1.5 exists to
-catch (the other two are internal alignment and the post-Canva pass ~ see
-`delivery-log.md` and `ARCHITECTURE-MAP.md` step 9). Without this
-reminder, an analyst can clear every flag here, ship a clean-looking
+On an `open` row, this QA gate is one of the three pre-send checkpoints
+touch 1.5 exists to catch (the other two are internal alignment and the
+post-Canva pass ~ see `delivery-log.md` and `ARCHITECTURE-MAP.md` step 9).
+On a `revising`/`revising (reopened)` row, it's the pre-resend check on a
+round touch 3 already opened, not a fourth checkpoint of its own. Without
+this reminder, an analyst can clear every flag here, ship a clean-looking
 report, and never touch the delivery-log row ~ the correction happened,
-but the instrument's `Rounds` and `Rework tag` stay at their defaults,
-silently understating both rounds-per-report and the corpus-tag share
-FIX_CORPUS routes on. A `PASS` with nothing to fix needs no entry ~ only
-an actual correction does.
+but the instrument's `Rounds` and `Rework tag` stay at their defaults (on
+the OPEN branch) or a second, phantom round gets logged on top of touch
+3's real one (on the REVISING branch, absent this reminder's branch
+above), either way silently distorting rounds-per-report and the
+corpus-tag share FIX_CORPUS routes on. A `PASS` with nothing to fix needs
+no entry ~ only an actual correction does, on either branch.

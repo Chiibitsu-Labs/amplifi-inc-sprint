@@ -1491,9 +1491,24 @@ above by hand:
    that's present, non-placeholder, and still wrong). Validate every
    ingested row's `Period` (non-blank, parses to the expected format),
    `Status` (exact match against the six defined values, nothing else),
-   AND `Cadence` (non-blank, parses to `delivery-log.md`'s versioned
-   `{cadence}, v{n}` format) before it's eligible for the upsert ~
-   **`Cadence` needs the identical treatment as `Period`/`Status`, not a
+   AND `Cadence` (non-blank, parses to EITHER `delivery-log.md`'s versioned
+   `{cadence}, v{n}` format OR its documented unversioned backfill form,
+   `{cadence} (pre-tracking)` ~ `ROADMAP.md` task 1.5a's own carve-out for
+   a cycle whose real `Cadence` predates `brief.md`'s v1 seed, with no
+   version number to honestly stamp it with) before it's eligible for the
+   upsert. **Rejecting the `(pre-tracking)` form here would be validating
+   AGAINST the exact backfill format task 1.5a instructs analysts to use,
+   dropping every one of those genuinely real, on-cadence-countable rows
+   out of BOTH gates entirely, not just out of cycle-time's baseline
+   seeding, which is the ONLY thing task 1.5a actually excludes them from**
+   (Codex catch, 2026-07-19: requiring the versioned format unconditionally
+   treated the documented pre-tracking value as malformed, silently
+   discarding an already-overdue miss or real rework round the backfill
+   exists specifically to preserve). A row carrying a valid `(pre-tracking)`
+   value passes THIS check same as a versioned one; §2's own exact-`Cadence`
+   match already keeps it out of every version's cycle-time cohort without
+   this gate's help, task 1.5a's own point in specifying the format this
+   precisely. **`Cadence` needs the identical treatment as `Period`/`Status`, not a
    pass:** cycle time's trailing-90-day cohort filters strictly on an
    EXACT `Cadence` match (this same §5b spec, above, "match on the FULL
    `Cadence` value, `v{n}` tag included"), so a blank or malformed
@@ -2110,8 +2125,27 @@ above by hand:
        the first place, so running this check only on rows that already
        cleared the window filter would let exactly that row skip
        validation entirely (Codex catch, 2026-07-19). Tag entry count MUST equal `Rounds` exactly, AND every
-       entry MUST carry a valid, parseable `[YYYY-MM-DD]` date ~ a bare
-       `none` on a `Rounds ≥ 1` row, any partial mismatch (fewer
+       entry MUST carry a valid, parseable `[YYYY-MM-DD]` date **that is
+       NOT LATER than the evaluation date this walkthrough/run is actually
+       reading as of** ~ "parseable" alone isn't sufficient, since a
+       plausible year typo (`[2027-09-10]` entered during a 2026
+       evaluation) parses cleanly as a real calendar date and would
+       otherwise sail through this check. A future-dated entry doesn't
+       fail validation under a parseable-only rule; it passes, then the
+       trailing-90-day window filter (elsewhere in this section) reads it
+       as simply outside the window and quietly drops it the same way a
+       genuinely stale entry would, instead of flagging it as the
+       data-entry error it actually is ~ a real round silently vanishes
+       from both gate (a)'s numerator and gate (b)'s tag-share as
+       "not in scope" rather than "broken data," understating both and
+       potentially clearing the way for HIRE on evidence that was never
+       actually complete (Codex catch, 2026-07-19: parseable-date
+       validation catches malformed dates but not plausible-but-impossible
+       ones, and the window filter downstream has no way to tell the two
+       apart once a bad date has already passed this gate). Treat a
+       future-dated entry exactly like a malformed one: excluded from BOTH
+       gates and flagged as a data-hygiene fix, never silently reclassified
+       as merely out-of-window. A bare `none` on a `Rounds ≥ 1` row, any partial mismatch (fewer
        entries than `Rounds`), or any entry missing/malformed on its date
        suffix, excludes that row from BOTH gates, not
        just the tag-share calculation (gate b) ~ **gate (a)'s numerator
@@ -2620,6 +2654,38 @@ above by hand:
      precisely because it's independent of the cadence-based branches.
      Load alone, with WIP not corroborating, still never fires HIRE ~ it
      routes to WATCH instead.
+     **The chain-order enforcement above is only as honest as its two feeds'
+     relative freshness, though, and they don't update on the same
+     schedule:** WIP/load (feed 1, capchecker) refresh LIVE, daily; the
+     delivery-log feed (feed 2, item 1 above) syncs on a WEEKLY pull, so at
+     any given moment feed 2 can be reading up to 7 days stale relative to
+     feed 1. A report that goes overdue, or picks up a corpus-caused
+     revision round, in the days right after a weekly pull has already run
+     is real REDESIGN/FIX_CORPUS evidence that the dashboard simply hasn't
+     seen yet ~ but "hasn't seen yet" and "isn't happening" render
+     identically to a router that just checks whether those branches are
+     CURRENTLY firing on whatever data it has: if WIP/load's live daily
+     read already shows portfolio-wide elevation while feed 2 is a few days
+     stale, the router can conclude REDESIGN/FIX_CORPUS are clear and let
+     HIRE fire, when a same-week resync would have surfaced the exact
+     cadence/rework evidence the chain-order rule exists to force it to
+     rule out FIRST (Codex catch, 2026-07-19: every other REDESIGN/
+     FIX_CORPUS/HIRE gate above assumes both feeds describe the SAME
+     moment, an assumption the two feeds' different sync cadences don't
+     actually guarantee). Fix: track feed 2's last-successful-sync
+     timestamp per client (already a natural byproduct of the weekly
+     ingestion pass, item 1 above) and gate any HIRE-direction routing
+     decision on it being CURRENT as of THIS evaluation ~ specifically, if
+     ANY active client's feed-2 data is more than one weekly-pull cycle
+     stale (the sync that should have run since the last successful one
+     hasn't), don't let the router conclude REDESIGN/FIX_CORPUS are absent
+     for that client; either trigger an immediate resync before evaluating,
+     or surface the routing decision as "incomplete, pending feed 2 sync"
+     rather than silently proceeding to HIRE on a comparison between a
+     live signal and a stale one. This is a freshness gate on the
+     COMPARISON, not a delay on ingestion itself ~ a client whose feed 2 IS
+     current syncs and routes normally the same week; only a client
+     actually behind its own sync schedule gets held.
 3. **Panel order = chain order.** Signals display automate → redesign →
    fix-corpus → hire (severity shown, but position tells the story: hire
    sits last visually, always).
