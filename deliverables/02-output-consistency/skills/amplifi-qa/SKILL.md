@@ -170,8 +170,18 @@ no other checkpoint that would ever catch it (Codex catch, 2026-07-19).
 So: for each of the three files, run BOTH checks Step 0's opening
 paragraph already requires (marker AND brace-scan) before treating it as
 genuinely ready ~ `house-voice.md`/`what-good-looks-like.md` get a
-whole-file brace-scan (any `{...}` still standing after `Status: LIVE` is
-a real unfilled placeholder); `report-template-rules.md` gets the same
+whole-file brace-scan (per `amplifi-insights/SKILL.md`'s Step 0
+definition of that term ~ matching against the template's own known
+placeholder text for each cell/section, NEVER a blind scan for any
+literal `{` character; a completed standard can legitimately encode a
+real mail-merge token like `{{first_name}}`, a JSON fragment, or a regex
+as part of an actual voice/quality rule, and a blind brace-pattern scan
+would misclassify that real content as an unfilled placeholder and
+permanently block ship clearance on every report, Codex catch,
+2026-07-19: an earlier draft of this paragraph restated the old
+blind-scan language here instead of deferring to the corrected
+definition, reintroducing the exact bug that definition exists to
+prevent); `report-template-rules.md` gets the same
 scan minus its one named exemption (the three permanent runtime tokens
 under its own Fresh-data rules section, `{Month YYYY}`/`{start}`/`{end}`),
 never a blanket pass on marker alone. A file that reads `Status: LIVE`

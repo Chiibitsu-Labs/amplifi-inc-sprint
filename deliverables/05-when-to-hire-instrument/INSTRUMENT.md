@@ -802,8 +802,11 @@ dated entries get counted this month).
    numerator and gate (b) are round-level, reading each dated `Rework tag`
    entry on its own regardless of its row's `Due`), two
    gates in order, not one, and ONE metric throughout, not two ~ **average
-   rounds per accepted report** (total in-window rework rounds ÷ number of
-   accepted rows in the UNION of `Due`-in-window rows (INCLUDING zero-round
+   rounds per report** (total in-window rework rounds ÷ number of
+   `accepted`/`revising (reopened)` rows ~ NOT `accepted`-only, same
+   trusted scope as the numerator, or a reopened row's in-window round
+   counts above while the row itself has nowhere to land below, Codex
+   catch, 2026-07-19 ~ in the UNION of `Due`-in-window rows (INCLUDING zero-round
    ones) AND rows that contributed an in-window round despite a `Due`
    outside the window ~ **never `Due`-in-window rows alone**, that
    under-counts the denominator for exactly the reopened-old-report case
