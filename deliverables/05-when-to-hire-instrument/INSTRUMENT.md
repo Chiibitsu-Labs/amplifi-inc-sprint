@@ -425,6 +425,25 @@ excluded from the on-cadence rate itself per step 2's existing rule
 (future work, not yet a hit or a miss) ~ cohort membership and hit/miss
 resolution are different questions, don't conflate them.
 
+**One exception to the strict `Due`-anchored cohort test above: a row
+that's STILL `open` PAST its `Due` (an active, unresolved miss) stays in
+the cohort regardless of how far in the past that `Due` now sits, until
+it's actually `delivered` or `cancelled`.** Applying the plain 90-day
+`Due` window to this case would let the single worst kind of miss ~ a
+report that's been sitting overdue and unresolved for months ~ silently
+AGE OUT of every future month's cohort the moment its fixed `Due` date
+turns 90+ days old, even though nothing about the row actually changed
+and the miss is still live. §5a's on-cadence denominator already counts
+an overdue-open row as a miss specifically because it's still
+unresolved; letting that same row vanish from cohort membership purely
+by elapsed time would make a persistent backlog improve the router's
+cadence signals just by aging, exactly backwards from what those signals
+exist to catch (Codex catch, 2026-07-19). The moment a long-overdue row
+finally resolves (`delivered` or `cancelled`), it reverts to the
+ordinary `Due`-anchored test like any other row ~ this exception only
+protects a row for as long as it's genuinely still open and unresolved,
+never permanently.
+
 **FIX_CORPUS's cohort works differently, at the round level, not the row
 level.** Earlier drafts of this section tried to fit FIX_CORPUS into the
 same row-level, `Due`-anchored cohort as on-cadence, patched with a `Last
@@ -623,9 +642,11 @@ round" instead would score this 2 ÷ 1 = 2.0 rounds/report off the exact
 same data, firing gate (a) on what is genuinely a below-threshold month.
 
 This also removes the need for the old `Last Sent` exception (REDESIGN's
-on-cadence/cycle-time reads stay exactly as described above ~ strictly
-`Due`-anchored, no exception, never touched by any of this) and the "row
-CAN enter cohort via `Last Sent` with no `late-reopen` marker" special
+on-cadence/cycle-time reads stay exactly as described above ~
+`Due`-anchored per the cohort rule stated there, including its one
+still-open-past-`Due` carve-out, but untouched by THIS round-dating
+change specifically) and the "row CAN enter cohort via `Last Sent` with
+no `late-reopen` marker" special
 case: neither concept is needed once individual rounds carry their own
 dates ~ a row's FIRST-ever pass through revision is read exactly the same
 way as its tenth reopen, because both are just dated entries in the same
@@ -1330,29 +1351,43 @@ above by hand:
    DENOMINATOR is a THIRD mechanism ~ the UNION of two row sets, not one:
    (i) rows with STATUS `accepted` OR `revising (reopened)` SPECIFICALLY
    (the SAME scope the numerator above reads, never bare `revising`,
-   never `delivered`) with BOTH `Start` AND `Due` in the SAME
-   epoch-clamped window the numerator uses (`max(trailing 90 days, Sep
-   4)`, above ~ NOT the unconditional trailing-90-days alone, and NOT
-   `Due` alone either), INCLUDING
+   never `delivered`) with `Due` in the SAME epoch-clamped window the
+   numerator uses (`max(trailing 90 days, Sep 4)`, above ~ NOT the
+   unconditional trailing-90-days alone), INCLUDING
    zero-round rows (omitting clean rows here turns "rounds per report"
    into "rounds per reworked report," inflating gate (a) and firing it on
-   noise). **`Due` alone isn't enough to gate the epoch:** a monthly
-   cycle that STARTED before Sep 4 but happens to be DUE after it (Aug 10
-   start, Sep 10 due, say) would pass a `Due`-only clamp and enter the
-   denominator as an apparently clean, zero-round report even though most
-   or all of its pre-send correction window (touch 1.5) fell before touch
-   1.5 began recording rounds at all ~ any rounds that cycle genuinely had
-   during that pre-epoch stretch are invisible to the numerator, so
-   counting the row as clean in the denominator dilutes rounds-per-report
-   and can mask FIX_CORPUS's true signal during the epoch's first
-   calibration window (Codex catch, 2026-07-19). Requiring `Start` in the
-   SAME window too excludes a row like that from set (i) entirely (not
-   counted as clean, not counted at all) rather than letting a
-   partially-instrumented cycle masquerade as a fully-clean one ~ it
-   becomes eligible once enough time passes that a LATER trailing-90-day
-   window's start floor moves past its own `Start` date, same "not yet
-   evaluable" treatment used elsewhere in this doc rather than a silent
-   undercount; PLUS (ii) any `accepted`/`revising (reopened)` row (the
+   noise). **PLUS a SEPARATE, ONE-TIME floor: `Start` must ALSO be ≥ Sep
+   4, but as an INDEPENDENT condition, never folded into the same rolling
+   window `Due` uses above.** Without this floor, a monthly cycle that
+   STARTED before Sep 4 but happens to be DUE after it (Aug 10 start, Sep
+   10 due, say) would pass the `Due`-only rolling-window clamp and enter
+   the denominator as an apparently clean, zero-round report even though
+   most or all of its pre-send correction window (touch 1.5) fell before
+   touch 1.5 began recording rounds at all ~ any rounds that cycle
+   genuinely had during that pre-epoch stretch are invisible to the
+   numerator, so counting the row as clean dilutes rounds-per-report and
+   can mask FIX_CORPUS's true signal during the epoch's first calibration
+   window (Codex catch, 2026-07-19). **Don't fold this `Start` floor into
+   the rolling window itself, though ~ requiring `Start` to fall inside
+   the CURRENT trailing-90-day window too (not just past the fixed Sep 4
+   line) overcorrects into a second bug:** it wrongly excludes an
+   entirely ordinary boundary-straddling report whose `Start` sits just
+   outside the rolling window's own moving edge while its `Due` still
+   falls inside it (a monthly cycle Start Sep 1, Due Sep 5, evaluated
+   right as the rolling floor happens to sit at Sep 4) ~ that's exactly
+   the report §5a's `Due`-only test was always meant to include, dropped
+   here in favor of a stricter rule the epoch problem never actually
+   required; rows that DO carry an in-window round get restored through
+   set (ii) below regardless, so this specifically strips out zero-round
+   boundary reports, inflating rounds-per-report the same way the
+   original gap did, just approached from the opposite direction (Codex
+   catch, 2026-07-19: an earlier draft of this fix combined `Start` and
+   `Due` into one shared window and reintroduced exactly this bug). The
+   rule, stated as two independent conditions: `Start ≥ Sep 4` (fixed,
+   permanent, never rolls forward) AND `Due` in `max(trailing 90 days,
+   Sep 4)` (the ordinary rolling test above, unchanged) ~ satisfy both to
+   count in set (i), never one combined window covering both fields;
+   PLUS (ii) any `accepted`/`revising (reopened)` row (the
    numerator's own scope, unchanged) that
    contributed at least one round to the numerator above even though its
    OWN `Due` falls outside the window (the late-reopen-on-an-old-report

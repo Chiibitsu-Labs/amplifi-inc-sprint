@@ -30,27 +30,29 @@
 
 > **"Client history" ~ "New"** means this system's own delivery-log/
 > insight-log ARE this client's whole history, genuinely period one when
-> both are empty. **"Established since {approx. date/engagement length}"**
+> both are empty. **"Established since" (an approximate date or
+> engagement length, exactly as filled into the Snapshot row above)**
 > means real prior reports exist, they just predate this corpus and
 > aren't captured here. Set ONCE at onboarding (`ROADMAP.md` task 1.3b),
 > never inferred from whether the logs happen to be empty.
 
-> **"Reporting cadence"'s `v{n}` INCREMENTS on every change, seeded at
-> `v1` at onboarding, and never reused or reset** ~ even a change that
-> returns to a PRIOR cadence value gets the NEXT version number, not the
-> old one back (weekly `v1` → monthly `v2` → weekly `v3`, never weekly
-> `v1` again). Instrument §2's cycle-time baseline is versioned by this
-> full value (cadence word + version number together), not the bare
-> cadence word alone, specifically because two eras can share the same
-> word ~ a client who goes weekly → monthly → weekly has two DIFFERENT
-> weekly baselines (pre- and post-monthly-detour), and filtering
-> `delivery-log.md`'s `Cadence` column by "weekly" alone would silently
-> pool both eras' cycles into one trailing-window average even though
-> `v1`'s and `v3`'s normal pace may differ (Codex catch, 2026-07-19).
-> Update this field, bumping `v{n}` and stamping today's date, the moment
-> a cadence change actually happens (same "update it here, right when it
-> happens" discipline as "Amplifi lead analyst" above) ~ `delivery-log.md`
-> touch 1 copies this field's CURRENT full value into that cycle's row.
+> **"Reporting cadence"'s version number INCREMENTS on every change,
+> seeded at `v1` at onboarding, and never reused or reset** ~ even a
+> change that returns to a PRIOR cadence value gets the NEXT version
+> number, not the old one back (weekly `v1` → monthly `v2` → weekly `v3`,
+> never weekly `v1` again). Instrument §2's cycle-time baseline is
+> versioned by this full value (cadence word + version number together),
+> not the bare cadence word alone, specifically because two eras can
+> share the same word ~ a client who goes weekly → monthly → weekly has
+> two DIFFERENT weekly baselines (pre- and post-monthly-detour), and
+> filtering `delivery-log.md`'s `Cadence` column by "weekly" alone would
+> silently pool both eras' cycles into one trailing-window average even
+> though `v1`'s and `v3`'s normal pace may differ (Codex catch,
+> 2026-07-19). Update this field, bumping the version number and stamping
+> today's date, the moment a cadence change actually happens (same
+> "update it here, right when it happens" discipline as "Amplifi lead
+> analyst" above) ~ `delivery-log.md` touch 1 copies this field's CURRENT
+> full value into that cycle's row.
 
 ## The brief (what they actually asked for)
 
