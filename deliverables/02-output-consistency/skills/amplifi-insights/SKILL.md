@@ -23,6 +23,18 @@ From `amplifi-knowledge/`, read in this order:
 If any of these are missing or empty, say so before generating ~ name the
 file, ask for it or flag the gap. Do not silently default to generic.
 
+**A freshly-copied `_template-client` folder is not a filled corpus, even
+though every file technically exists and has bytes in it.** Treat these as
+equivalent to "missing" and flag them the same way: unresolved template
+markers (literal `{...}` placeholder text ~ `{Client Name}`, `{YYYY-MM-DD}`,
+and the like), any file whose content is still the template's own
+instructional/example prose rather than this client's real content, and
+any standards file still carrying a `status: FRAME` header (`README.md`
+of `learnings/`, or the standards files themselves, before Rica's
+extraction pass fills them). File-not-empty is not the same test as
+file-actually-filled-in ~ check for these before treating a read as
+successful.
+
 ## Step 1 ~ Ground in the period's data
 
 Work ONLY from the data provided for this period (Sentimo/MCP exports,

@@ -8,12 +8,25 @@
 
 ## The write moments
 
-1. **At period start** (brief/data-pull for this cycle begins): create the
-   row. `Period`, `Analyst`, `Start`, `Due` filled; `Status = open`;
-   everything else blank. **This is the row that makes an overdue,
-   still-undelivered report visible** ~ if `Due` passes while `Status` is
-   still `open`, that cycle is already a cadence miss even though nothing
-   has shipped yet. Don't wait for delivery to log the cycle.
+1. **At the cycle's SCHEDULED start** ~ the date this client's cadence says
+   the cycle begins (every Monday for a weekly client, the 1st for a
+   monthly one), **known in advance, a calendar fact ~ NOT whenever an
+   analyst actually gets around to the work:** create the row. `Period`,
+   `Analyst`, `Start`, `Due` filled; `Status = open`; everything else
+   blank. Whoever owns this client's queue (the lead analyst, or Rica)
+   creates the row on schedule, independent of who ends up delivering it.
+   **Create it even if nobody has started the actual work yet.** If
+   capacity strain delays the real start, that's not a reason to skip or
+   defer this write ~ it's the exact thing two of the five signals exist
+   to catch: (a) a still-`open` row whose `Due` has passed is already a
+   cadence miss, visible from day one, and (b) `Start` staying anchored
+   to the SCHEDULED date (not sliding to match a late actual start) is
+   what lets cycle time (`Delivered − Start`) show a growing backlog
+   instead of hiding it. If row creation waited for real work to begin,
+   a cycle delayed by queue backup could pass its due date while never
+   having existed in the log at all ~ invisible to on-cadence tracking,
+   and cycle time would only ever measure from whenever things finally
+   started, silently erasing the wait.
 1.5. **Any time between period start and the actual ship write ~ the QA
    gate (pass 1), internal alignment, OR the post-Canva pass 2 (steps
    9–11) ~ catches and corrects ANY material issue BEFORE the client ever
@@ -32,8 +45,18 @@
    skipping the four makes that a single 100%-corpus round instead of
    five rounds at a real 20% share). The tag vocabulary doesn't change ~
    `client-new-ask` still can't apply here, there's no client yet ~ only
-   which catches get recorded does. Skip this touch entirely for cycles
-   where nothing needed fixing before send ~ most of them, hopefully.
+   which catches get recorded does. **One round per PASS, not one round
+   per issue found within a pass:** if QA gate pass 1 catches three
+   separate material issues in the same review, that's ONE bump to
+   `Rounds` (that pass), with all three causes bundled into that single
+   round's tag entry by touch 3's priority order (`brief-misalign` >
+   `brand` > `data` > `client-new-ask`, rest noted in **Notes**) ~ the
+   same bundling rule touch 3 already uses for a client revision with
+   multiple causes in one message. A pass that runs twice (fix, re-check,
+   fix again) before it clears is two rounds, one per re-check, not one
+   round for the whole back-and-forth. Skip this touch entirely for
+   cycles where nothing needed fixing before send ~ most of them,
+   hopefully.
 2. **At ship:** fill `Delivered`, top up `Effort (h)`. `Status = delivered`.
    `Rounds`/`Rework tag` carry forward whatever touch 1.5 already logged
    (default `0`/`none` if internal review caught nothing) ~ never reset to
@@ -97,7 +120,13 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   Janelle shipped it), put `Janelle` here (whoever delivered it) and note
   the handback in **Notes** (`handed off from Dale, wk2`) for the human
   reading the row. The instrument only ever joins on the single name.
-- **Period start** ~ when this cycle's work began (data pull / brief).
+- **Period start** ~ the cycle's SCHEDULED cadence boundary (a calendar
+  fact, known in advance ~ every Monday for a weekly client, the 1st for a
+  monthly one), **not when the analyst actually began the work.** This
+  field is what row creation (touch 1) is timed to, and it's what keeps
+  `Start` anchored so cycle time (`Delivered − Start`) reflects the real
+  wait, including any queue-backup delay, instead of hiding it behind a
+  late actual start.
 - **Due** ~ the date this client's cadence says it ships.
 - **Delivered** ~ when the client actually received it. Blank while `open`.
 - **Status** ~ `open` → `delivered` → (`revising` × as many rounds as
@@ -133,9 +162,17 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   APPENDS its own entry, one per round, repeats allowed, never
   deduplicated: `brief-misalign` · `brand` · `data` · `client-new-ask`.
   `none` is valid ONLY while `Rounds = 0`; a row with `Rounds ≥ 1` and tag
-  `none` is an incomplete row, not a real zero-rework report ~ the router
-  can't act on untagged rework, so it goes unrouted instead of pointing at
-  automate/redesign/fix-corpus. (`brief-misalign` and `brand` are corpus
+  `none` is an incomplete row, not a real zero-rework report ~ **this is a
+  data-quality gate, not a soft "leave it unrouted": until the tag is
+  filled in, this row must be excluded from FIX_CORPUS's tag-share
+  denominator AND must HARD-BLOCK any REDESIGN/FIX_CORPUS/HIRE conclusion
+  that depends on it, not silently pass through as "corpus-caused: no."**
+  An untagged round is unknown-caused, not zero-corpus-caused ~ letting it
+  fall out of the math as if it were a clean `none` round would understate
+  the real corpus-tag share and let HIRE proceed on a false "FIX_CORPUS
+  checked, ruled out" when the honest state is "FIX_CORPUS can't be
+  evaluated, data is incomplete." Fix the tag before trusting any router
+  conclusion this row feeds. (`brief-misalign` and `brand` are corpus
   gaps ~ they route to a corpus fix in the instrument, not to a hire. The
   instrument computes FIX_CORPUS's tag share PER ROUND ~ count of
   `brief-misalign`/`brand` entries ÷ total entries, which equals `Rounds`
