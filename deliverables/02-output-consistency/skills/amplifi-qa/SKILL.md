@@ -1,0 +1,605 @@
+---
+name: amplifi-qa
+description: Pre-finalization QA gate for Amplifi report drafts. Checks a draft against the encoded standards in the knowledge base (voice, branding, actionability, data freshness, hallucination risk) and returns a pass/flag checklist. Use before a report goes to internal alignment or the client.
+---
+
+# Amplifi Report QA Gate
+
+You check a report draft against Amplifi's encoded standard **before** the
+human verify step. You make that verification faster and sharper ~ you never
+replace it. Flags are suggestions to a human who decides.
+
+## Step 0 ~ Load the bar (rules live in the corpus, never in this skill)
+
+**Resolve the live `amplifi-knowledge/` root before any corpus read below,
+every run** ~ `DRIVE-HANDOFF.md`'s installation steps put this skill's own
+file in the invoking client's skills location (`.claude/skills/amplifi-qa/
+SKILL.md`, project- or user-level), a different filesystem location from
+the Drive-synced corpus itself, and the two aren't guaranteed to share a
+working directory. Every `standards/...` and `clients/...` path in
+required input 3 below (and the `delivery-log.md` read it requires) is
+relative to the ACTUAL live `amplifi-knowledge/` folder (`README.md`'s
+"the one home"), never to wherever this skill happens to be invoked from.
+Confirm the real, synced filesystem path to that root before touching any
+path below (Codex catch, 2026-07-19: `amplifi-improve` states this exact
+requirement for its own corpus access; this skill's mandatory standards
+reads, just as dependent on the same root, assumed it silently ~ invoked
+from any other project directory, every required input below fails or
+resolves against the wrong location, and this gate can't actually check
+anything against the encoded standard it exists to enforce).
+
+Required inputs, all of them:
+1. The report content, one of three tiers depending on which checkpoint
+   AND what you're actually shown ~ these are not interchangeable:
+   - **First pass (pre-Canva):** the full markdown draft. Run all five
+     checks.
+   - **Second pass, FULL CLEARANCE (post-Canva, see
+     `standards/report-template-rules.md` §"Two checkpoints, not one"):**
+     a **visually-rendered export** ~ page images/screenshots of every
+     slide, or a PDF exported so charts, logos, and positioned text are
+     actually rendered (not a raw text-extraction of a PDF, which drops
+     exactly the visual layer this checkpoint exists to check). Run all
+     five checks. This is the ONLY tier that counts as clearance to ship
+     ~ **but "visually rendered" isn't the same as "every plotted value is
+     verifiable," and this checkpoint doesn't get to wave that away.** A
+     chart image proves logos/layout/brand and any figure that's actually
+     LABELED in it (a data callout, an axis value with a printed number, a
+     legend'd total), but an unlabeled bar, point, or series can't be
+     reverse-engineered from pixels and compared against the export ~
+     seeing the chart isn't the same as confirming what it plots, and this
+     is precisely the mandatory ship-gate whose whole job is catching a
+     stale or wrong Canva chart. So: any plotted value with no visible
+     label is a **BLOCKING flag on check 4**, not a silent pass and not a
+     soft "unverified" note that still lets the deck clear ~ list it in
+     FLAGS ("{chart, section} → plotted value has no visible label,
+     can't be confirmed against source data → export the chart's
+     underlying numbers or add data labels, then re-run"). The only way
+     this tier still earns a plain `✔` on check 4 with unlabeled chart
+     elements present is by tying the RENDERED chart's actual values to a
+     source ~ either a labeled figure (a data callout, an axis value with
+     a printed number, a legend'd total, as above), or the chart's OWN
+     underlying/embedded data as Canva actually built it (e.g. an export
+     of that specific chart object's live data table from inside Canva,
+     not a description of what it should contain). **This evidence has to
+     cover EACH plotted element being cleared, not the chart as a
+     whole** ~ a legend'd TOTAL or an axis scale establishes the
+     AGGREGATE, never each individual bar/point/series inside it. A
+     multi-bar chart with five unlabeled bars and one legend'd total of
+     450 could have that same 450 split completely differently between
+     bars than what actually shipped last period (100/100/100/100/50 one
+     month, silently 90/90/90/90/90 the next, same total, every individual
+     value wrong) ~ letting the total alone earn a `✔` for all five bars
+     would clear exactly the stale-distribution case this checkpoint
+     exists to catch (Codex catch, 2026-07-19). Only a plotted element
+     with its OWN value label (or its own entry in the chart's underlying
+     data export) earns a `✔`; a chart-level aggregate label clears the
+     aggregate claim only, if the report separately states one, and every
+     individual element still unlabeled underneath it stays a BLOCKING
+     flag same as if no label existed at all. **A separately-supplied
+     source table the analyst says the chart "was built from" does NOT
+     qualify, and does not earn a `✔` here** ~ it proves the INTENDED
+     number is correct, not what's actually rendered. The chart could
+     still be built from stale or misconfigured data (a link never
+     refreshed, an old chart object copy-pasted from last month's deck),
+     and this pass would never catch it if a matching source table alone
+     were enough ~ that's precisely the failure this post-Canva checkpoint
+     exists to catch (Codex catch, 2026-07-19). If you can't obtain the
+     chart's own as-built underlying data, an unlabeled plotted value
+     stays a BLOCKING flag on check 4, full stop. Don't let "I can see the
+     chart" quietly stand in
+     for "I checked what the chart says," don't let "here's the data it
+     should show" stand in for "here's proof of what it actually shows,"
+     and don't let a checkpoint whose
+     entire purpose is catching stale Canva charts clear one it couldn't
+     actually verify.
+   - **Second pass, TEXT-ONLY (a lesser tier, not clearance):** a bare
+     text export/extraction with no visual rendering. Run check 4, SCOPED
+     to whatever figures the extraction actually captured ~ text can
+     confirm numbers, but a number that lives only inside a chart image
+     (a label, an axis value never restated in prose) doesn't survive text
+     extraction either, so this is coverage of the VISIBLE-AS-TEXT figures,
+     not a guarantee every figure in the deck got checked. Mark checks 1,
+     2, 3, 5 as `NOT EVALUATED (no visual render provided)`.
+   - **Screenshots of just the key numbers:** same tier as text-only, same
+     scoping caveat, tighter still ~ check 4 covers ONLY the figures
+     actually visible in the screenshots handed over, nothing else in the
+     report. Same `NOT EVALUATED` marks on the rest.
+   **Neither lesser tier earns a plain `✔` on check 4** ~ mark it `◐
+   PARTIAL (scoped to N figures actually shown; the rest of the report's
+   numbers were not checked)` instead, and name what wasn't covered. A
+   bare `✔` there would read as "data integrity confirmed for this
+   report," when the honest claim is narrower: "confirmed for the figures
+   I could see." Only a visually-rendered full-deck pass (the tier above)
+   can see every figure in the report and earn an unqualified `✔`/`✘` on
+   check 4. Never emit a PASS, and never imply clearance, for checks you
+   couldn't actually see the content for. If what you're given doesn't
+   visually render the deck, say so explicitly in the output header before
+   running anything.
+2. The **current period's source data** (the same Sentimo/MCP exports the
+   draft was generated from). Without it, check 4 cannot trace a single
+   figure ~ so if it's not provided, STOP and ask for it. Never run
+   data-integrity blind and flag everything as untraceable. **Before
+   trusting it for anything below, verify this file's OWN date range
+   actually covers the report's claimed period (the `Period` being QA'd,
+   or the exec summary's `{Month YYYY} · data window {start}–{end}`
+   stamp per `report-template-rules.md`'s Fresh-data rules) ~ don't just
+   confirm a file was provided, confirm it's the RIGHT one.** Every
+   figure in a report can trace perfectly to a Sentimo/MCP export that is
+   itself the WRONG period's pull (an analyst attaching last month's
+   export by mistake) and this data-integrity check would still pass
+   every one of them, because tracing a number to its source file says
+   nothing about whether that source file is honestly this period's data
+   (Codex catch, 2026-07-19: `report-template-rules.md`'s own Fresh-data
+   rules promise this exact cross-check ~ "the QA skill cross-checks the
+   deck's period stamp against the data window" ~ but check 4 below never
+   actually implemented it, only tracing individual figures against
+   whatever export happened to be provided). Parse the export's own
+   period/date-range metadata (Sentimo/MCP pulls carry this, the same
+   place source (d) below reads a labeled comparison-period value from)
+   and compare it against the report's period. **On a mismatch, this is a
+   BLOCKING flag, not a data-integrity note buried in check 4's output**
+   ~ the entire ship-clearance pass is unreliable off a wrong-period
+   export, not just the figures that happen to differ, so surface it at
+   the top the same way a missing export gets surfaced, before running
+   anything else against that file.
+3. From `amplifi-knowledge/`:
+   - `standards/what-good-looks-like.md` (use its checklist section)
+   - `standards/house-voice.md`
+   - `standards/report-template-rules.md`
+   - `clients/{client}/brand-standard.md`, `brief.md`, `context.md`,
+     `insight-log.md`, **`delivery-log.md`** ~ **resolve THIS run's
+     specific row before Step 3 can produce a usable reminder, not just
+     the client folder.** Step 3's reminder tells the analyst to log any
+     fix on "this row," but this skill has no idea which row that is
+     without reading `delivery-log.md` and matching it to the report
+     being QA'd: a client can have MORE THAN ONE `open` row at once (an
+     overdue cycle stays open while the next scheduled cycle's row also
+     opens, `delivery-log.md`'s own scheduled-open rule), and a QA run
+     against a manually-assembled draft may have no session context
+     pointing at a row at all. Match by the report's own `Period` (the
+     same period-stamp this Step already needs for the export-window
+     check above) against `delivery-log.md`'s `Period` column. **`open` is the
+     right status for EVERY pre-ship QA run, including a rerun after
+     touch 1.5 already logged a flagged correction ~ not just "a first
+     pass":** touch 1.5 records a pre-delivery catch (either QA pass,
+     internal alignment, or pass 2) WITHOUT advancing `Status` away from
+     `open`, and the row only moves to `delivered` once pass 2 clears and
+     the client actually receives it. Only resolve to `revising`/`revising
+     (reopened)` for a genuinely POST-DELIVERY re-QA ~ the row has already
+     shipped once (`Delivered` is filled) and this run is checking a
+     client-requested revision before it goes back out, a materially
+     different situation from an ordinary pre-ship pass-1/pass-2 rerun
+     (Codex catch, 2026-07-19: this resolution treated "a re-QA after a
+     flagged correction" as automatically `revising`, but an ordinary
+     pre-ship rerun after a touch-1.5 catch is still squarely `open` per
+     `delivery-log.md`'s own state machine ~ matching it to `revising`
+     instead would resolve to the wrong row, or to no row at all, for the
+     single most common QA-rerun case). If
+     more than one row could plausibly match and the report doesn't carry
+     enough to disambiguate, STOP and ask which cycle this QA run is for
+     ~ never guess, and never let Step 3 emit "log it on this row" against
+     an unresolved or ambiguous row (Codex catch, 2026-07-19: this skill
+     never loaded `delivery-log.md` at all, so its own logging reminder
+     referenced a row it had no way to actually identify). **resolve
+     `{client}` to its ACTUAL folder name
+     under `clients/` first, never assume the display name IS the folder
+     name ~ even when that name has no reserved characters and a folder
+     matching it literally exists.** A client name with a `/` or other
+     filesystem-reserved
+     character is slugged per `README.md`'s rule (`ACME/EMEA` → folder
+     `clients/ACME-EMEA/`); reading `clients/{client}/...` straight from
+     the raw display name breaks on exactly this case (an unintended
+     nested path, or an outright failure), silently missing the corpus
+     this whole gate exists to check against. **A direct match existing is
+     NOT proof it's the right folder** ~ `README.md`'s collision rule can
+     push a later, unreserved-character client name into a suffixed
+     folder (a client literally named `ACME-EMEA` lands at
+     `clients/ACME-EMEA-2/` if `ACME/EMEA` already took the base slug), so
+     confirming a path exists without checking WHOSE folder it actually is
+     can silently run this gate against the wrong client's brand/brief/
+     context entirely (Codex catch, 2026-07-19).
+     List `clients/*` and match against each folder's `brief.md` Snapshot
+     table (which keeps the REAL, unslugged name for this lookup) to find
+     the right folder ~ always, not only when the name looks like it needs
+     slugging. **If MORE THAN ONE folder's `Client` plausibly matches**
+     (two different accounts sharing a display name, per `README.md`'s
+     duplicate-name handling) **~ check whether the request carries enough
+     distinguishing detail to match exactly one folder's `Account label`
+     instead** (README.md's internal-only disambiguation row ~ never the
+     display name itself)**; if it still doesn't, STOP and ask which
+     account, never
+     silently pick one.**
+
+If a standards file is an unfilled frame, run anyway but say so at the top:
+"Bar not yet encoded for: {file} ~ checks in that area are generic."
+
+**Exception: at the ship-clearance checkpoint specifically (second pass,
+visually-rendered, the ONLY tier that counts as clearance to ship, per
+Step 0), an unfilled `what-good-looks-like.md`, `house-voice.md`, or
+`report-template-rules.md` blocks clearance the same way an unfilled
+`brief.md`/`brand-standard.md` already does below ~ it does NOT get the
+"run anyway, generic bar" treatment at this checkpoint.** A plain `PASS`
+header at the ship-clearance tier tells the human "ship-ready," and a
+generic-bar pass on voice/quality/template checks would issue that verdict
+off a bar that was never actually encoded for this client ~ exactly the
+false-pass risk the brief.md/brand-standard.md hard-stop already exists to
+prevent, and there's no principled reason the shared standards files should
+get a softer rule than the per-client ones at the one checkpoint whose
+whole job is granting or withholding clearance (Codex catch, 2026-07-19).
+So: if any of those three files is still a frame when running the
+ship-clearance checkpoint, don't emit `PASS`/`N flags`/`partial` in the
+header at all ~ emit `{blocked ~ standards not yet encoded}`, name exactly
+which file(s) are still frames, and say plainly that this deck cannot
+clear until they're filled.
+
+**"Still a frame" here means the SAME marker-AND-brace-scan test
+`amplifi-insights/SKILL.md`'s Step 0 uses, not the `Status: FRAME` marker
+alone.** Trusting the marker alone would let clearance through the moment
+someone flips a file to `Status: LIVE`, even if they did that before
+actually replacing its fill-once placeholders ~ this gate would then
+grant ship clearance believing the standard was encoded when it wasn't,
+the exact false-pass this whole exception exists to prevent, and
+manually-assembled reports that bypass the insights skill entirely have
+no other checkpoint that would ever catch it (Codex catch, 2026-07-19).
+So: for each of the three files, run BOTH checks Step 0's opening
+paragraph already requires (marker AND brace-scan) before treating it as
+genuinely ready ~ `house-voice.md`/`what-good-looks-like.md` get a
+whole-file brace-scan (per `amplifi-insights/SKILL.md`'s Step 0
+definition of that term ~ matching against the template's own known
+placeholder text for each cell/section, NEVER a blind scan for any
+literal `{` character; a completed standard can legitimately encode a
+real mail-merge token like `{{first_name}}`, a JSON fragment, or a regex
+as part of an actual voice/quality rule, and a blind brace-pattern scan
+would misclassify that real content as an unfilled placeholder and
+permanently block ship clearance on every report, Codex catch,
+2026-07-19: an earlier draft of this paragraph restated the old
+blind-scan language here instead of deferring to the corrected
+definition, reintroducing the exact bug that definition exists to
+prevent); `report-template-rules.md` gets the same
+scan minus its one named exemption (the three permanent runtime tokens
+under its own Fresh-data rules section, `{Month YYYY}`/`{start}`/`{end}`),
+never a blanket pass on marker alone. A file that reads `Status: LIVE`
+but still fails its brace-scan is treated exactly like a frame for this
+gate ~ blocked, not cleared.
+
+Still run every check that doesn't depend on
+the frame'd file(s) and report those results normally underneath ~ it's
+the overall clearance verdict that's blocked, not the whole pass. The
+first pass (pre-Canva) and the two lesser second-pass tiers (text-only,
+screenshots) keep the original "run anyway, generic bar" behavior
+unchanged ~ neither of those grants ship clearance in the first place, so
+a generic-bar reading there is advisory, not a false "ship-ready" signal.
+
+**`brief.md` and `brand-standard.md` don't get this same "run anyway,
+generic bar" treatment ~ they're required, not a frame.** A
+freshly-copied `_template-client` folder has both still full of
+unresolved `{...}` placeholders and the template's own instructional
+prose, same detection `amplifi-insights/SKILL.md`'s Step 0 already uses.
+If either is still templated, **STOP before running checks 1 or 2** and
+say so plainly ("brief.md / brand-standard.md not filled for this client
+~ checks 1/2 would be run against no real bar, refusing rather than
+issuing a false pass"). A manually-assembled or externally-sourced report
+run through this gate against a template-only client folder would
+otherwise clear brief-alignment and voice/brand checks against nothing,
+exactly the gap `amplifi-insights` already closes on the generation side
+~ QA needs the same floor on the verification side, or a report can
+route around the insights skill's check and still get a clean QA pass.
+`context.md`/`insight-log.md` keep their existing first-period/no-context
+exceptions (see check 5 below) ~ this stricter rule is brief.md/
+brand-standard.md only. **Within those two files, the SAME "same
+detection" cross-reference also carries over `amplifi-insights`' two
+accumulating-section carve-outs** ~ `brief.md`'s FAQ table and
+`brand-standard.md`'s revision-history list stay template-example rows by
+design even once the rest of the file is genuinely filled, so check those
+two sections entry-by-entry (per `amplifi-insights/SKILL.md`'s Step 0),
+never as part of this whole-file STOP condition.
+
+## Step 1 ~ Run the five checks
+
+1. **Brief alignment** ~ does the draft answer what `brief.md` (incl. FAQs
+   and unique asks) actually asked? Their #1 rework cause; check hardest.
+2. **Voice & brand** ~ house-voice violations, "AI tells" from the banned
+   list (against the shared `standards/house-voice.md`), brand-standard
+   misses (terminology, formatting, structure vs `report-template-rules.md`
+   AND `clients/{client}/brand-standard.md`). **These are two different
+   corpus files ~ note which one an actual violation traces to** (Step 3's
+   logging reminder needs this distinction; a bare "check 2 flagged
+   something" loses it).
+3. **Actionability** ~ every recommendation passes the actionable-when
+   tests; "just continue" alone = automatic flag; recos the client already
+   rejected (per `context.md`) = flag.
+4. **Data integrity** ~ check each figure against its claimed source, not
+   one blanket source: figures presented as CURRENT must either appear
+   directly in the provided period data OR be a deterministic calculation
+   from it (total, average, rate, period-over-period change) that you can
+   re-derive and show ~ that's a pass, not a flag; figures explicitly
+   labeled with a past period (the insight-log trend reads the insights
+   skill is required to include) must exist in ONE of FOUR accepted
+   historical sources, all still needing the same period label: (a)
+   `insight-log.md`'s entry for that period; (b) ~ only if this session has
+   live, already-confirmed Drive access reaching it, never assumed ~ the
+   full report that entry links to (`Full report: {Drive link}`); (c) a
+   dated `CLIENT-FACT` entry in `context.md` that recorded the value at
+   promotion time (the weekly promotion pass writes these with an origin
+   date, per `learnings/README.md` ~ a metric promoted here because it
+   recurs is exactly as valid a historical source as the terse log line,
+   as long as its date travels with it); (d) **the CURRENT-period export
+   itself, when it directly supplies a labeled comparison-period value**
+   (Sentimo/MCP pulls commonly include a period-over-period column or a
+   prior-period reference alongside the current numbers) ~ this is
+   different from the deterministic-calculation allowance above (which
+   derives a NEW figure from current data), source (d) is a value the
+   export ALREADY states outright, explicitly labeled with its own past
+   period, sitting in the same file Step 0 already loaded. Rejecting it
+   unless it's ALSO duplicated in one of (a)/(b)/(c) would flag a directly
+   traceable, already-loaded figure as unsupported for no real reason
+   (Codex catch, 2026-07-19). The log entry itself is a terse
+   headline, not every figure from that period, so a historical number
+   genuinely sourced from (b), (c), or (d) is still a pass, not a flag, same
+   labeling rule as any other historical figure. **Before passing a
+   historical figure off ANY single source, cross-check the OTHER
+   reachable sources for the SAME metric and period ~ don't stop looking
+   the moment one source agrees with the draft.** The four sources are
+   supposed to describe the same historical fact, but a correction can
+   reach one without reaching the others (`insight-log.md`'s own
+   "conditional third touch" is explicitly required to update a matching
+   `context.md` fact when one exists, but that's a human step and can be
+   missed ~ see `insight-log.md`). If `insight-log.md` and `context.md`
+   (or either against a reachable linked report) disagree on the SAME
+   period's SAME metric, that's a **data-integrity FLAG, not a pass**,
+   regardless of which value the draft happens to use ~ list it
+   explicitly ("{metric} for {period}: insight-log.md says {X}, context.md
+   says {Y}, sources disagree, resolve before trusting either") rather
+   than silently accepting whichever source matches (Codex catch,
+   2026-07-19: without this check, a draft could reuse a stale `context.md`
+   value and still clear check 4 because SOME accepted source technically
+   agreed with it). If the insights skill
+   flagged a figure as unavailable this period (none of the three sources
+   reachable or dated, per its own Step 1 rule), don't re-flag that same
+   gap here as a data-integrity failure ~ it's already surfaced honestly,
+   not hidden.
+
+   **A KPI target, contractual baseline, or campaign budget figure is a
+   DIFFERENT kind of number from either CURRENT or HISTORICAL above, and
+   gets its own accepted source: `brief.md`, loaded in Step 0.**
+   `report-template-rules.md`'s canonical "Performance vs baseline"
+   section means a report explicitly comparing against a target isn't an
+   edge case, it's the normal shape ~ but a target/baseline was never
+   measured this period (it's not a CURRENT actual) and was never logged
+   as a past ACTUAL either (it's not HISTORICAL in the insight-log/
+   context.md sense), so running it through either check above would fail
+   it as untraceable even though its real, authoritative source was
+   already loaded and available (Codex catch, 2026-07-19). Treat a
+   clearly-labeled target/baseline/budget figure that traces to `brief.md`
+   the same as a pass, not a flag ~ same labeling discipline as any other
+   figure (it has to actually be IN `brief.md`, and has to be presented as
+   what it is ~ a target, not silently as this period's current
+   performance). A number that claims to be a brief-sourced target but
+   ISN'T actually in `brief.md` still fails its own check, same as any
+   other unsupported figure.
+   **A labeled PROPOSED/ASSUMPTION figure in section 6 (Recommendations)
+   is a FOURTH kind of number, and needs no source at all, not even
+   `brief.md`** ~ `report-template-rules.md`'s Fresh-data rules carve this
+   out explicitly: a recommendation's own parameter ("test three posts per
+   week for two weeks," "raise the daily budget to $150 for the trial
+   window") states what the analyst is PROPOSING going forward, not a
+   current result, a historical figure, or a brief-sourced target, so none
+   of the three source checks above can ever pass it, and none of them are
+   supposed to (Codex catch, 2026-07-19: this check's number-sourcing
+   requirements, all three of them factual/historical in nature, ran
+   unmodified through section 6, where well-formed recommendations are
+   REQUIRED to state numeric experiment settings by design). Pass a number
+   in section 6 clearly labeled as the recommendation's own proposed
+   parameter without requiring a source ~ it only has to read
+   unambiguously as a proposal, not a reported fact. A number in section 6
+   that instead claims something already happened (past performance cited
+   to justify the recommendation) is NOT covered by this exception and
+   still needs the normal CURRENT/HISTORICAL/brief-sourced tracing above ~
+   this pass is for the forward-looking parameter itself only, never a
+   route to smuggle an untraced factual claim through under a
+   "recommendation" label.
+   List any number that fails its OWN check ~ isn't in the export, can't
+   be re-derived from it, and isn't a labeled historical figure ~ these go
+   to the human verify step first. Also flag: any CURRENT-labeled figure
+   that matches a past insight-log entry AND cannot independently be
+   confirmed in the current-period export ~ that combination is the
+   stale-template ghost. A figure that matches a past value BUT is also
+   genuinely present in this period's export is a real flat metric, not a
+   ghost ~ flat is expected and explicitly allowed elsewhere in this
+   deliverable (the "boring months" trend-read case); don't flag it.
+5. **Compounding** ~ does the draft use the insight-log trend where it
+   should? A quiet month with no trend read = flag. **Exception 1: a
+   client's genuinely first-ever period**, where `insight-log.md` is
+   still correctly empty because no report has shipped yet (see
+   `amplifi-insights/SKILL.md`'s Step 0 first-period exception, same
+   corpus, same logic) ~ there is no trend to have used, so mark this
+   check `PASS` (or `N/A`) instead of flagging an impossible requirement.
+   Confirm it's genuinely period one the same way `amplifi-insights` does
+   ~ check `brief.md`'s Snapshot `Client history` field FIRST: for a
+   "New" client, then check `delivery-log.md` for any prior `delivered`/
+   `revising`/`revising (reopened)`/`accepted` row, not just whether
+   `insight-log.md` is empty (an empty log alone doesn't distinguish real
+   period one from a broken capture loop) ~ before applying this
+   exception; a second period with a still-empty log is a real gap, not a
+   bootstrap state, and gets flagged normally.
+   **Exception 2: an "Established since {…}" client's FIRST report under
+   THIS corpus.** `Client history` says "Established" precisely because
+   real prior reports exist that predate this corpus, so Exception 1
+   above doesn't apply ~ but `ROADMAP.md`'s rollout only backfills
+   in-flight cycles, never the client's actual historical archive, so
+   `insight-log.md` is empty for this client for a REAL reason that
+   waiting doesn't fix: there is no trend captured in this corpus to have
+   used, and none will retroactively appear. Apply the same "no trend
+   exists" logic Exception 1 uses, scoped to THIS corpus rather than the
+   client's real history: if `delivery-log.md` shows no prior `delivered`/
+   `revising`/`revising (reopened)`/`accepted` row for this client either
+   (i.e. this is their first report since onboarding onto this system),
+   mark `PASS` (or `N/A`); their second report onward has a real
+   in-corpus baseline and gets flagged normally. Without this second
+   exception, `ROADMAP.md` task 1.3b's requirement that every actively-
+   engaged client be marked "Established" (never "New") at rollout means
+   EVERY rollout client's first report hits Exception 1's carve-out but
+   not its relief, earning a Compounding flag with no trend that could
+   ever clear it ~ permanently blocking ship clearance on an otherwise-
+   correct report (Codex catch, 2026-07-19).
+
+## Step 2 ~ Report format (fixed)
+
+```
+QA GATE ~ {client} {period} ~ {input: full draft | visually-rendered deck (clears) | text-only/screenshots (does NOT clear)} ~ {PASS | N flags | partial | blocked ~ standards not yet encoded}
+
+✔/✘/— Brief alignment       (— = not evaluated, screenshots-only input)
+✔/✘/— Voice & brand         (— = not evaluated, screenshots-only input)
+✔/✘/— Actionability         (— = not evaluated, screenshots-only input)
+✔/✘/◐ Data integrity        (◐ = PARTIAL, scoped to N figures actually
+                              shown ~ text-only/screenshots tier only;
+                              visually-rendered/full-draft tiers get a
+                              plain ✔/✘, never ◐)
+✔/✘/— Compounding           (— = not evaluated, screenshots-only input)
+
+FLAGS (each: location → issue → suggested fix, one line each)
+1. {Exec summary ¶2} → {"maintain momentum" is a sole reco} → {add watch-threshold + experiment}
+…
+
+VERIFY-FIRST LIST (numbers the human must check before anything else)
+- {figure} in {section} ~ {couldn't trace to period data}
+```
+
+Order flags by severity: data integrity first, then brief alignment, then
+the rest. Be terse ~ the analyst should clear this list in minutes, not
+re-read the report.
+
+## Step 3 ~ If a flag gets corrected, log it
+
+End every output with this reminder, verbatim:
+
+```
+If you fix any flag above before this report ships, log it now ~ right on
+the row Step 0 resolved for THIS report's period (never guess which row if
+Step 0 flagged it ambiguous ~ resolve that first). WHICH delivery-log.md
+step to use depends on that row's resolved status:
+- Row status is OPEN (this is a pre-ship pass, 1 or 2, whether or not
+  touch 1.5 already logged an earlier catch on this same row): use touch
+  1.5 ~ bump Rounds by ONE (this whole pass, not once per flag fixed) and
+  append ONE cause tag, chosen by priority if more than one check flagged
+  something, before you move on. Follow the rest of this reminder below
+  for how to pick and format that tag.
+- Row status is REVISING or REVISING (REOPENED) (this QA run is checking
+  a client-requested revision's fix before it resends, a post-delivery
+  re-QA): do NOT bump Rounds and do NOT append a new tag entry here.
+  Touch 3 already bumped Rounds and logged a tag entry for this round the
+  moment the client's revision request arrived; this pass is validating
+  that SAME in-progress round's fix before it goes back out, not a second,
+  separate round, and a second Rounds bump or tag entry here would
+  double-count one client-facing round as two, inflating FIX_CORPUS's
+  rounds-per-report reading (Codex catch, 2026-07-19: this reminder
+  applied touch 1.5 unconditionally, even though touch 1.5 is defined only
+  for the pre-delivery/`open` case; a post-delivery revision has already
+  gone through touch 3's own round-counting by the time this pass runs).
+  If what THIS pass catches names a genuinely different cause than
+  whatever touch 3 already tagged the round with, do NOT just note it in
+  Notes and leave the existing tag as-is ~ RE-APPLY the qualifier-first,
+  then-category priority pick (below) across BOTH the round's existing tag
+  AND this newly-caught cause together, exactly as if both had been known
+  at once, and REPLACE the round's single entry with whichever one wins
+  that pick (keep the entry's existing date ~ this is still the same
+  round touch 3 opened, not a new one). Note whichever cause LOSES the
+  priority pick in **Notes** instead (`"QA also caught {cause} before
+  resend"`), same as the OPEN branch already does for a single pass
+  catching more than one cause (Codex catch, 2026-07-19: an earlier
+  version of this branch always deferred to touch 3's original tag and
+  only ever noted the new cause in Notes, which can leave a round that's
+  ACTUALLY corpus-caused tagged as non-corpus just because the client's
+  own stated reason wasn't the corpus one ~ `delivery-log.md`'s touch 3
+  itself requires re-applying this exact priority pick across every cause
+  a still-open round has accumulated, not freezing the tag at whichever
+  cause happened to be recorded first). This REPLACE-if-it-wins step is
+  the ONLY way the REVISING branch touches the tag entry ~ still one
+  entry, one round, per report, never a second one for this pass, the
+  same one-round/multiple-causes-bundling discipline touch 3 itself uses
+  for a single message naming more than one cause. Use the SAME
+  qualifier-first-then-category rule below to make this pick ~ it doesn't
+  change between branches, only whether the OUTCOME is a brand-new entry
+  (OPEN) or a replacement of the round's existing one (REVISING).
+  Stop here for this branch once the replace-or-note decision is made ~
+  the "FINALLY, append TODAY's date" step below does NOT apply to a
+  REVISING-branch replacement (the entry keeps its original date, per
+  above); it only applies when an actual NEW entry is being written, which the OPEN branch
+  above is the only case that does.
+QUALIFIER FIRST, THEN CATEGORY: if more than one of the flagged causes is
+brief-misalign/brand/quality-bar (a corpus cause) carrying its own
+missing/not-followed qualifier (see below), pick whichever is qualified
+`(missing)` over any qualified `(not-followed)` REGARDLESS of category
+rank ~ the qualifier, not the category, is what actually decides whether
+FIX_CORPUS fires, so a `brief-misalign (not-followed)` catch does NOT
+automatically outrank a `brand (missing)` catch in the same pass just
+because brief-misalign ranks higher below (delivery-log.md's own
+priority rule, same reasoning, read from here too ~ Codex catch,
+2026-07-19: this reminder still picked by category alone, which can bury
+a real corpus gap in Notes where the router's qualifier math never reads
+it). Only once that qualifier check is settled (same qualifier on both,
+or a non-corpus cause like `data` is the only alternative) does category
+order decide: brief-misalign > brand > quality-bar > data. Checks 1/2/4 map to
+brief-misalign/brand/data respectively; checks 3 (actionability) and 5
+(compounding) map to quality-bar ~ they're failures against
+what-good-looks-like.md's bar, not the brief, brand standard, or a data
+problem specifically. Fixing BOTH a brief-alignment flag and a data flag
+in this one pass is still ONE round, ONE tag (brief-misalign wins ~ `data`
+never carries a missing/not-followed qualifier, so category order alone
+settles this specific pairing, data goes in Notes) ~ never one bump per
+flag, never more than
+one tag entry for this pass. IF the tag is brief-misalign, brand, or
+quality-bar: attach its qualifier too, right on the same entry ~
+`brief-misalign (missing)` if the brief/standard genuinely didn't cover
+this, `brief-misalign (not-followed)` if it already did and this pass
+just caught it not being applied. This isn't optional: delivery-log.md's
+router treats a corpus-tagged entry with no qualifier as incomplete data,
+same as a missing tag entirely. IF THE TAG IS BRAND SPECIFICALLY: the
+qualifier needs a SECOND part too, since check 2 covers THREE different
+corpus files ~ SLASH-separated, never comma-separated (a comma here would
+parse as a second round entry and break the round-count check).
+**The two parts are chosen INDEPENDENTLY, never a fixed pairing:** pick
+`missing` or `not-followed` based on WHY (the standard didn't cover this,
+vs it did and just wasn't applied), and SEPARATELY pick `house-voice`,
+`brand-standard`, or `report-template-rules` based on WHICH file the
+violation was actually against
+~ all six combinations are real (`brand (missing/house-voice)`, `brand
+(not-followed/house-voice)`, `brand (missing/brand-standard)`, `brand
+(not-followed/brand-standard)`, `brand (missing/report-template-rules)`,
+`brand (not-followed/report-template-rules)`). Check 2's own scope
+(above) covers terminology/formatting/structure against
+`report-template-rules.md` AND `clients/{client}/brand-standard.md` as
+two SEPARATE files, so a catch against the template rules needs
+`report-template-rules` here, never folded into `brand-standard` just
+because both are formatting-adjacent. Don't default to `missing` just because
+the file is `house-voice`, or to `not-followed` just because it's
+`brand-standard` ~ an already-encoded house-voice rule someone simply
+didn't apply is `not-followed/house-voice`, not `missing/house-voice`;
+logging it as `missing` sends FIX_CORPUS to edit a file that was never
+broken and hides the real execution gap.
+Never log a bare `brand (missing)` or `brand (not-followed)` with no file
+named ~ that's incomplete the same way a missing qualifier is, because it
+points FIX_CORPUS at "the brand standard" without saying which one.
+FINALLY, append TODAY's date to the entry as `[YYYY-MM-DD]`, e.g.
+`brief-misalign (missing) [2026-06-01]` ~ every entry needs this, not just
+corpus-tagged ones. This is NOT optional either: the instrument only
+counts rework rounds whose OWN date falls in its trailing 90-day window,
+so an otherwise-correct but undated entry silently drops out of that
+count entirely ~ the correction genuinely happened, but the router never
+sees it, and the corpus-tag share or rounds-per-report reading FIX_CORPUS
+(and HIRE, downstream of it) acts on comes out artificially clean.
+```
+
+On an `open` row, this QA gate is one of the three pre-send checkpoints
+touch 1.5 exists to catch (the other two are internal alignment and the
+post-Canva pass ~ see `delivery-log.md` and `ARCHITECTURE-MAP.md` step 9).
+On a `revising`/`revising (reopened)` row, it's the pre-resend check on a
+round touch 3 already opened, not a fourth checkpoint of its own. Without
+this reminder, an analyst can clear every flag here, ship a clean-looking
+report, and never touch the delivery-log row ~ the correction happened,
+but the instrument's `Rounds` and `Rework tag` stay at their defaults (on
+the OPEN branch) or a second, phantom round gets logged on top of touch
+3's real one (on the REVISING branch, absent this reminder's branch
+above), either way silently distorting rounds-per-report and the
+corpus-tag share FIX_CORPUS routes on. A `PASS` with nothing to fix needs
+no entry ~ only an actual correction does, on either branch.
