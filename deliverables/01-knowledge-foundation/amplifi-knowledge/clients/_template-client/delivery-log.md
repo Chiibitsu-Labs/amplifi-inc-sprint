@@ -230,6 +230,20 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
 
 ## How to fill a row
 
+- **Period** ~ a short, human-readable label for this cycle (e.g. `2026-07
+  / wk 29` for a weekly client, `2026-07` for a monthly one). **Written
+  ONCE at row creation (touch 1) and NEVER edited afterward** ~ together
+  with the client (this file's own folder), `Period` is the stable
+  composite key any external ingestion (capchecker's weekly pull,
+  Instrument §5b) upserts against, so a label that drifts mid-life would
+  silently orphan the row it used to match instead of updating the same
+  one, creating a duplicate under the new label. **Use the SAME format
+  for every row on THIS client's log, matching that client's cadence
+  exactly** (a weekly client always writes `{YYYY-MM} / wk {N}`, a
+  monthly client always writes `{YYYY-MM}`, etc.) ~ format drift within
+  one client's own log (`2026-07 / wk 29` one row, `Jul wk29` the next)
+  breaks the same automated matching the `Analyst` field's exact-spelling
+  rule protects, just one column over.
 - **Analyst** ~ **one name**: whoever is the ship-of-record for this cycle
   (usually the lead). This field is the join key to capchecker's per-person
   capacity data, so it must resolve to exactly one person ~ never a
@@ -373,7 +387,8 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   and `quality-bar` ~ `missing` = the corpus genuinely didn't cover this,
   or was stale; `not-followed` = the corpus was already right, it just
   wasn't applied. A multi-round cell then reads like
-  `brief-misalign (missing), brand (not-followed), client-new-ask` ~ three
+  `brief-misalign (missing), brand (not-followed, brand-standard),
+  client-new-ask` ~ three
   entries for three rounds, matching `Rounds = 3`, each qualifier
   unambiguously bound to its own entry by position, same list, same
   ordering rule as the tags themselves (entries append in order, never
@@ -398,6 +413,27 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   WHERE to look, this qualifier as WHETHER editing the corpus is actually
   the fix.
 
+  **`brand` specifically covers TWO different corpus files, and the tag
+  alone can't say which ~ its qualifier carries a second, comma-separated
+  component to disambiguate:** `brand (missing, house-voice)` or `brand
+  (not-followed, brand-standard)`, never a bare `brand (missing)` on its
+  own. `brief-misalign` always points at `brief.md` and `quality-bar`
+  always points at `what-good-looks-like.md` ~ each maps to exactly one
+  file, no ambiguity. `brand` is different: `amplifi-qa`'s check 2 ("Voice
+  & brand") covers BOTH `standards/house-voice.md` (Amplifi-wide, shared
+  across every client) AND THIS client's own `brand-standard.md`, and a
+  bare `brand` tag can't tell a later reader which one actually failed ~
+  reading it as "the brand standard" by default would send FIX_CORPUS to
+  edit `brand-standard.md` for what might really be a shared `house-voice.md`
+  gap, leaving the real corpus problem untouched (Codex catch,
+  2026-07-19). Write `house-voice` when the violation was a voice/tone/
+  banned-phrase miss against the shared standard, `brand-standard` when it
+  was a terminology/formatting/structure miss against this client's own
+  standard ~ if check 2 caught both in the same round, pick by the SAME
+  corpus-gap-first logic the tag priority order already uses (the shared
+  file first, since a `house-voice.md` gap affects every client, not just
+  this one) and note the other in **Notes**.
+
   **Every entry also carries its own date, appended last as `[YYYY-MM-DD]`
   ~ EVERY tag, not just the three corpus-cause ones:** `brief-misalign
   (missing) [2026-06-01]`, `data [2026-06-14]`, `client-new-ask
@@ -406,7 +442,8 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   for a client revision, including every round of a late reopen) ~ never
   backdated to `Period start` or `Due`, and never left off. A multi-round
   cell then reads `brief-misalign (missing) [2026-06-01], brand
-  (not-followed) [2026-06-14], client-new-ask [2026-07-02]` ~ still one
+  (not-followed, house-voice) [2026-06-14], client-new-ask [2026-07-02]`
+  ~ still one
   entry per round, matching `Rounds`, now with an unambiguous date bound
   to each entry by the same position-based rule the qualifier already
   uses. **Why this exists:** a row's `Due`/`Delivered`/`Last Sent` dates

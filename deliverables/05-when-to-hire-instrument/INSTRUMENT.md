@@ -394,29 +394,30 @@ why that's a second, deliberately separate test, not a contradiction of
 
 - **Rounds-per-report (gate a):** numerator = count of in-window dated
   rounds (the round-level filter above, unchanged). **Denominator = count
-  of ALL `accepted` rows whose OWN `Due` falls in the trailing 90 days**
-  ~ the SAME row-level, `Due`-anchored cohort REDESIGN's on-cadence check
-  uses above, including rows with ZERO rework rounds. This has to be a
-  genuine per-REPORT average, not per-REWORKED-report ~ a clean row has no
-  dated `Rework tag` entry to filter by at all, so counting only rows that
-  contributed an in-window round would silently drop every clean accepted
-  report out of the denominator: one two-round report among nine clean
-  ones must read 0.2 rounds/report, not 2.0. Dropping the nine clean rows
-  would make gate (a) fire on noise, the exact opposite of what "rework
-  has to be meaningfully frequent, not just present" (this section's own
-  noise guard, above) exists to enforce (Codex catch, 2026-07-19).
-  Numerator and denominator can draw from slightly different row
-  populations at the edges, and that's intentional, not an inconsistency
-  to fix: a row whose `Due` sits outside the window but which reopened
-  with a fresh in-window round still contributes that round to the
-  numerator without itself adding to the denominator (its `Due` doesn't
-  qualify it as "this period's report"), and conversely a `Due`-in-window
-  row with no in-window rounds still adds 1 to the denominator with zero
-  numerator contribution (a genuinely clean report this period). The
-  denominator answers "how many reports were nominally in scope this
-  period"; the numerator answers "how much rework activity actually
-  happened this period" ~ a reopen straddling the window boundary is
-  exactly the case where those two legitimately diverge by one, not a bug.
+  of DISTINCT `accepted` rows in the UNION of two sets, never just one:**
+  **(i)** every row whose OWN `Due` falls in the trailing 90 days ~ the
+  SAME row-level, `Due`-anchored cohort REDESIGN's on-cadence check uses
+  above, including rows with ZERO rework rounds (this is what keeps gate
+  (a) a genuine per-REPORT average, not per-REWORKED-report: a clean row
+  has no dated `Rework tag` entry to filter by at all, so relying on set
+  (ii) alone would silently drop every clean accepted report and let one
+  two-round report among nine clean ones read 2.0 instead of 0.2,
+  firing the gate on noise); **(ii)** every row that contributed AT LEAST
+  ONE in-window dated round to the numerator, even if that row's OWN `Due`
+  falls OUTSIDE the trailing 90 days ~ the late-reopen-on-an-old-report
+  case (touch 4: a report due and accepted months ago reopens with a
+  fresh revision dated inside the window). Count a row that qualifies
+  through BOTH sets only ONCE. Set (ii) is required, not optional
+  polish: without it, a row whose `Due` sits outside the window but whose
+  reopen just added an in-window round would contribute to the numerator
+  with NO matching place in the denominator, inflating the ratio for
+  every other row's benefit, and in the extreme case (every accepted row
+  with recent activity has an old `Due`, none currently `Due`-in-window)
+  the denominator could hit ZERO while the numerator is nonzero ~ a
+  division-by-zero that set (i) alone can never prevent (Codex catch,
+  2026-07-19: an earlier draft of this gate called that divergence
+  "intentional," which was wrong ~ every row that feeds the numerator
+  needs a place in the denominator, full stop).
 - **Tag-share (gate b):** of the SAME in-window ROUND set gate (a)'s
   numerator uses (not gate (a)'s row-level denominator), what fraction
   are tagged `brief-misalign`/`brand`/`quality-bar`. Zero-round rows
@@ -429,17 +430,24 @@ why that's a second, deliberately separate test, not a contradiction of
   subset of this same round set ~ one consistent population feeds every
   downstream FIX_CORPUS question.
 
-Worked example (numerator, round-level): a row reopens 200 days ago (2 old
-rounds, dated 200 and 190 days back), then reopens again 10 days ago (1
-fresh round, dated 10 days back). Read the three dated entries directly ~
-two are outside the 90-day window (200, 190 days back), one is inside it
-(10 days back). This row contributes 1 round to gate (a)'s numerator and
-1 to gate (b)'s round set, full stop, regardless of how many total
-episodes or reopens it has ever had. Whether it ALSO adds 1 to gate (a)'s
-DENOMINATOR is a separate, row-level question, answered by its own `Due`
-date exactly like any other row in the on-cadence cohort ~ round-level
-dating and row-level `Due` are two independent tests here, not one
-derived from the other.
+Worked example (numerator, round-level, and denominator via set (ii)): a
+row's `Due` was 150 days ago (well outside the 90-day window) and it was
+`accepted` shortly after ~ two old rounds dated 200 and 190 days back,
+both from that first pass. It then reopens 10 days ago on a late client
+revision (1 fresh round, dated 10 days back). Read the three dated
+entries directly ~ two are outside the 90-day window (200, 190 days back),
+one is inside it (10 days back). This row contributes 1 round to gate
+(a)'s numerator and 1 to gate (b)'s round set, full stop, regardless of
+how many total episodes or reopens it has ever had. Its `Due` (150 days
+back) does NOT qualify it for denominator set (i) ~ but the fresh in-window
+round DOES qualify it for set (ii), so it still adds exactly 1 to the
+denominator (never 0, and never double-counted if it happened to also
+clear set (i)). Contribution: 1 round ÷ 1 report = 1.0 for this row alone.
+Reading the denominator as set (i) only would either drop this row
+entirely (inflating every OTHER row's average by leaving this round
+uncounted in the "reports" total) or, in a month where no row's `Due`
+lands in the window at all, divide by zero despite a nonzero numerator ~
+exactly what set (ii) exists to prevent.
 
 Worked example (denominator, row-level): a client has ten `accepted` rows
 with `Due` in the trailing 90 days ~ nine shipped clean (`Rounds = 0`,
@@ -617,10 +625,14 @@ dated entries get counted this month).
    that exist across qualifying rows, is half or more tagged
    `brief-misalign`/`brand`/`quality-bar`? If both gates clear, FIX_CORPUS
    fires, and the tag itself tells you which corpus file is stale (the
-   brief, the brand standard, or `what-good-looks-like.md`) ~ **but check
+   brief, `what-good-looks-like.md`, or ~ for `brand` specifically, read
+   the qualifier's SECOND component, `house-voice` or `brand-standard`,
+   since check 2 covers two different files and the bare tag alone can't
+   tell them apart ~ see `delivery-log.md`'s Rework tag bullet) ~ **but check
    the qualifier on each qualifying round's TAG ENTRY (`missing` vs
-   `not-followed`, e.g. `brand (not-followed)` ~ NOT free text in Notes,
-   see `delivery-log.md`) before actually opening that file to edit it.**
+   `not-followed`, e.g. `brand (not-followed, brand-standard)` ~ NOT free
+   text in Notes, see `delivery-log.md`) before actually opening that file
+   to edit it.**
    A correctly-filled row will normally have no qualifier sitting in
    Notes at all ~ Notes can't reliably bind a qualifier to a specific
    round on a multi-round row, which is exactly why the qualifier lives on
@@ -784,6 +796,22 @@ above by hand:
    14-day-window call) ~ without this second ingest, `patterns.md` keeps
    accumulating and never actually influences a routing decision, which
    defeats the point of promoting REWORK/PROCESS themes there at all.
+   **This has to be an idempotent UPSERT, never a blind append.** A
+   delivery-log row is mutable for its entire life ~ `Status` advances,
+   `Rounds`/`Rework tag` accumulate, `Last Sent` updates on every resend,
+   and a row can even reopen from `accepted` back to `revising` months
+   after its first ingest (touch 4) ~ so re-running this weekly pass on
+   the SAME row has to UPDATE the existing Supabase record, not insert a
+   second copy of it (Codex catch, 2026-07-19). Key the upsert on
+   **(client folder, `Period`)** ~ the composite key `delivery-log.md`'s
+   "How to fill a row" section defines as stable and format-locked per
+   client, precisely so this ingestion can rely on it; matching on
+   `Period` alone, or on any free-form text that could drift week to
+   week, risks leaving a stale orphaned Supabase copy behind under the old
+   label instead of updating the same row. Flag, don't silently resolve,
+   any `(client, Period)` collision the ingest finds (two rows claiming
+   the same composite key) ~ that's a data-entry error in the corpus, not
+   something the ingestion pass should guess its way through.
 2. **Add the two missing branches:** `REDESIGN` and `FIX_CORPUS` actions in
    the router (`lib/analytics.ts`), fed by rework tags + cadence data,
    **each windowed to a trailing 90 days, same principle §5a uses, but NOT
@@ -795,15 +823,23 @@ above by hand:
    dated `Rework tag` entries (each stamped `[YYYY-MM-DD]` at the moment
    it's logged, per `delivery-log.md`) to those whose OWN date falls in
    the trailing 90 days, across every `accepted` row regardless of that
-   row's `Due`. Rounds-per-report's DENOMINATOR is a THIRD mechanism,
-   row-level like REDESIGN's: count of `accepted` rows with `Due` in the
-   trailing 90 days, INCLUDING zero-round rows ~ omitting clean rows from
-   this denominator turns "rounds per report" into "rounds per reworked
-   report," inflating gate (a) and firing it on noise (Codex catch,
-   2026-07-19; see §5a's worked example). See §5a's "FIX_CORPUS's cohort
-   works differently" block for the full reasoning and worked examples for
-   all three mechanisms. Coding the numerator as one shared
-   row-filter (in or out by `Due`, same as the denominator) reproduces the
+   row's `Due`. Rounds-per-report's DENOMINATOR is a THIRD mechanism ~ the
+   UNION of two row sets, not one: (i) `accepted` rows with `Due` in the
+   trailing 90 days, INCLUDING zero-round rows (omitting clean rows here
+   turns "rounds per report" into "rounds per reworked report," inflating
+   gate (a) and firing it on noise); PLUS (ii) any `accepted` row that
+   contributed at least one round to the numerator above even though its
+   OWN `Due` falls outside the window (the late-reopen-on-an-old-report
+   case) ~ every row counted in the numerator MUST have a place in this
+   denominator, or the ratio inflates at the edges and can divide by zero
+   in a month where no row's `Due` lands in-window at all despite live
+   reopen activity (Codex catch, 2026-07-19 ×2: first the zero-round-row
+   omission, then this numerator/denominator population mismatch; see
+   §5a's worked examples for both). See §5a's "FIX_CORPUS's cohort
+   works differently" block for the full reasoning. Coding the numerator
+   as one shared
+   row-filter (in or out by `Due`, same as denominator set (i) alone)
+   reproduces the
    exact bug class §5a's history describes: a row spanning old and fresh
    rounds gets all-or-nothing counted instead of counted per round.
    **REDESIGN and HIRE
@@ -833,7 +869,11 @@ above by hand:
      - **Cause-qualifier gate:** ≥half tagged corpus-cause is necessary but
        not sufficient to fire an EDIT-THE-CORPUS action. Read the
        qualifier attached to each qualifying round's tag entry (`missing`
-       vs `not-followed`, e.g. `brand (not-followed)` ~ see `delivery-
+       vs `not-followed`, e.g. `brand (not-followed, brand-standard)` ~ for
+       `brand` specifically, ALSO read the qualifier's second component
+       (`house-voice` or `brand-standard`) to resolve which of the two
+       files check 2 actually failed against before prescribing an edit ~
+       see `delivery-
        log.md`) before prescribing a corpus edit: majority `not-followed`
        means the corpus was already correct and this isn't a real gap ~
        surface it

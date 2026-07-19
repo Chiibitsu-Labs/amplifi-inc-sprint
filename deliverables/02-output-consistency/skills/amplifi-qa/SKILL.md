@@ -38,11 +38,26 @@ Required inputs, all of them:
      can't be confirmed against source data → export the chart's
      underlying numbers or add data labels, then re-run"). The only way
      this tier still earns a plain `✔` on check 4 with unlabeled chart
-     elements present is if the analyst ALSO supplies the chart's
-     underlying source data separately (a data table, the export the
-     chart was built from) ~ check the plotted values against THAT, same
-     as any other figure. Don't let "I can see the chart" quietly stand in
-     for "I checked what the chart says," and don't let a checkpoint whose
+     elements present is by tying the RENDERED chart's actual values to a
+     source ~ either a labeled figure (a data callout, an axis value with
+     a printed number, a legend'd total, as above), or the chart's OWN
+     underlying/embedded data as Canva actually built it (e.g. an export
+     of that specific chart object's live data table from inside Canva,
+     not a description of what it should contain). **A separately-supplied
+     source table the analyst says the chart "was built from" does NOT
+     qualify, and does not earn a `✔` here** ~ it proves the INTENDED
+     number is correct, not what's actually rendered. The chart could
+     still be built from stale or misconfigured data (a link never
+     refreshed, an old chart object copy-pasted from last month's deck),
+     and this pass would never catch it if a matching source table alone
+     were enough ~ that's precisely the failure this post-Canva checkpoint
+     exists to catch (Codex catch, 2026-07-19). If you can't obtain the
+     chart's own as-built underlying data, an unlabeled plotted value
+     stays a BLOCKING flag on check 4, full stop. Don't let "I can see the
+     chart" quietly stand in
+     for "I checked what the chart says," don't let "here's the data it
+     should show" stand in for "here's proof of what it actually shows,"
+     and don't let a checkpoint whose
      entire purpose is catching stale Canva charts clear one it couldn't
      actually verify.
    - **Second pass, TEXT-ONLY (a lesser tier, not clearance):** a bare
@@ -105,8 +120,12 @@ brand-standard.md only.
 1. **Brief alignment** ~ does the draft answer what `brief.md` (incl. FAQs
    and unique asks) actually asked? Their #1 rework cause; check hardest.
 2. **Voice & brand** ~ house-voice violations, "AI tells" from the banned
-   list, brand-standard misses (terminology, formatting, structure vs
-   `report-template-rules.md`).
+   list (against the shared `standards/house-voice.md`), brand-standard
+   misses (terminology, formatting, structure vs `report-template-rules.md`
+   AND `clients/{client}/brand-standard.md`). **These are two different
+   corpus files ~ note which one an actual violation traces to** (Step 3's
+   logging reminder needs this distinction; a bare "check 2 flagged
+   something" loses it).
 3. **Actionability** ~ every recommendation passes the actionable-when
    tests; "just continue" alone = automatic flag; recos the client already
    rejected (per `context.md`) = flag.
@@ -204,7 +223,14 @@ quality-bar: attach its qualifier too, right on the same entry ~
 this, `brief-misalign (not-followed)` if it already did and this pass
 just caught it not being applied. This isn't optional: delivery-log.md's
 router treats a corpus-tagged entry with no qualifier as incomplete data,
-same as a missing tag entirely.
+same as a missing tag entirely. IF THE TAG IS BRAND SPECIFICALLY: the
+qualifier needs a SECOND part too, since check 2 covers two different
+corpus files ~ `brand (missing, house-voice)` if the violation was
+against the shared standards/house-voice.md, `brand (not-followed,
+brand-standard)` if it was against THIS client's own brand-standard.md.
+Never log a bare `brand (missing)` or `brand (not-followed)` with no file
+named ~ that's incomplete the same way a missing qualifier is, because it
+points FIX_CORPUS at "the brand standard" without saying which one.
 ```
 
 This QA gate is one of the three pre-send checkpoints touch 1.5 exists to
