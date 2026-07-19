@@ -58,13 +58,27 @@ the skill's output and the Canva deck.}
 
 ## Fresh-data rules (the "old data retained in templates" fix)
 
-- Every number in sections 2–6 must come from THIS period's data pull or the
-  insight-log trend ~ never typed over last period's deck. **Exception: a
+- Every number in sections 2–6 must come from THIS period's data pull
+  (including a deterministic figure derived from it ~ total, average,
+  rate, period-over-period change) or a historical figure explicitly
+  labeled with its past period and traceable to one of the FOUR sources
+  `skills/amplifi-qa/SKILL.md` check 4 accepts: (a) `insight-log.md`'s
+  entry for that period, (b) a reachable linked full report (only when
+  this session has live, already-confirmed Drive access to it), (c) a
+  dated `CLIENT-FACT` entry in `context.md`, or (d) the current-period
+  export's own labeled comparison-period value ~ never typed over last
+  period's deck untraced. **This rule and check 4 have to name the SAME
+  four sources** ~ a figure `amplifi-insights` correctly sourced from (b),
+  (c), or (d) and check 4 correctly passes would otherwise violate a
+  narrower "insight-log trend only" reading of this rule, producing a
+  report the generation skill and the QA skill disagree on (Codex catch,
+  2026-07-19). **Exception: a
   clearly-labeled KPI target, contractual baseline, or campaign budget
   figure in section 3 ("Performance vs baseline") is a DIFFERENT kind of
   number from either of those and is sourced from `brief.md` instead** ~
   it was never measured this period (not a current pull) and was never
-  logged as a past actual either (not an insight-log trend), so this rule
+  logged as a past actual either (not any of the four accepted historical
+  sources above), so this rule
   as written would wrongly forbid the exact figure section 3's own name
   describes as normal. `skills/amplifi-qa/SKILL.md` check 4 already
   accepts a brief-sourced target/baseline/budget as a pass, not a flag ~

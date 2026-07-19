@@ -35,18 +35,24 @@
    having existed in the log at all ~ invisible to on-cadence tracking,
    and cycle time would only ever measure from whenever things finally
    started, silently erasing the wait. **`Cadence`: copy `brief.md`'s
-   Snapshot `Reporting cadence` value AS OF right now, at row creation ~
-   never leave it blank, and never treat it as inferable later.**
-   `brief.md`'s Snapshot field is overwritten in place whenever a client's
-   cadence actually changes, so it only ever answers "what's the cadence
-   TODAY," not "what was it when THIS row opened" ~ without a per-row
-   copy, Instrument §2's cadence-change baseline-versioning rule (cycle
-   time) has no structured way to tell which rows belong to the old
-   baseline and which to the new one once a change happens, and a
-   trailing-90-day window would silently pool pre-change and post-change
-   cycles into one reading (Codex catch, 2026-07-19). Once written, this
-   value is historical fact for that row and never gets edited
-   retroactively, even after a later cadence change.
+   Snapshot `Reporting cadence` value AS OF right now, FULL VALUE
+   including its `v{n}` version tag (`weekly (v2, since 2026-09-01)`,
+   never just the bare word `weekly`) ~ at row creation, never leave it
+   blank, and never treat it as inferable later.** `brief.md`'s Snapshot
+   field is overwritten in place whenever a client's cadence actually
+   changes, so it only ever answers "what's the cadence TODAY," not "what
+   was it when THIS row opened" ~ without a per-row copy, Instrument §2's
+   cadence-change baseline-versioning rule (cycle time) has no structured
+   way to tell which rows belong to the old baseline and which to the new
+   one once a change happens, and a trailing-90-day window would silently
+   pool pre-change and post-change cycles into one reading (Codex catch,
+   2026-07-19). **Copying the bare cadence WORD alone isn't enough,
+   either ~ a client who goes weekly → monthly → weekly has two DIFFERENT
+   weekly baselines, and a row-filter keyed on "weekly" would wrongly
+   pool both eras together** (Codex catch, 2026-07-19); the `v{n}` tag is
+   what actually distinguishes them, per `brief.md`'s own note on that
+   field. Once written, this value is historical fact for that row and
+   never gets edited retroactively, even after a later cadence change.
 1.5. **Any time between period start and the actual ship write ~ the QA
    gate (pass 1), internal alignment, OR the post-Canva pass 2 (steps
    9–11) ~ catches and corrects ANY material issue BEFORE the client ever
@@ -677,4 +683,4 @@ pipe in any cell (`Dale \| Janelle`), never a bare `|`.
 
 | Period | Cadence | Analyst | Start | Due | Delivered | Last Sent | Status | Rounds | Effort (h) | Rework tag | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| {2026-07 / wk 29} | {weekly} | {Dale} | {YYYY-MM-DD} | {YYYY-MM-DD} | {YYYY-MM-DD or blank} | {YYYY-MM-DD or blank} | {open / delivered / revising / revising (reopened) / accepted / cancelled} | {0} | {6} | {none, or e.g. brief-misalign (missing) [YYYY-MM-DD]} | {—} |
+| {2026-07 / wk 29} | {weekly (v1, since 2026-07-24)} | {Dale} | {YYYY-MM-DD} | {YYYY-MM-DD} | {YYYY-MM-DD or blank} | {YYYY-MM-DD or blank} | {open / delivered / revising / revising (reopened) / accepted / cancelled} | {0} | {6} | {none, or e.g. brief-misalign (missing) [YYYY-MM-DD]} | {—} |
