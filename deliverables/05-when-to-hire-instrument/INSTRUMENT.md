@@ -394,6 +394,24 @@ own date (`brief-misalign (missing) [YYYY-MM-DD]`, one per round, at touch
 the cohort rule for FIX_CORPUS is direct, with no row-level anchoring, no
 exceptions, and no marker bookkeeping:
 
+**Validate BEFORE filtering, never after ~ the completeness/date gate
+(below) has to run across EVERY `accepted` row with `Rounds ≥ 1` first,
+independent of `Due` and independent of whether any entry's date would
+otherwise land it in-window.** Reading dated entries directly (the next
+paragraph) is a filter that can only test a row it's actually given ~ a
+row whose `Due` is outside the 90-day window AND whose only recent round
+is UNDATED never gets a valid date to test in the first place, so a
+"read every dated entry whose date falls in-window" pass run BY ITSELF
+just silently skips it: not counted as in-window, not counted as
+out-of-window, not flagged as broken data either. That row was never
+going to enter the round-level filter's view long enough for the
+completeness gate to catch it if the gate only ran on rows the filter
+already surfaced (Codex catch, 2026-07-19). Running validation first,
+against the FULL set of accepted `Rounds ≥ 1` rows regardless of `Due`,
+closes this ~ an undated entry gets caught and hard-blocks its row
+whether or not that row's `Due` would ever have made it "interesting" to
+the window filter on its own.
+
 **Read every individual dated `Rework tag` entry, across every `accepted`
 row (regardless of that row's own `Due`, `Delivered`, or `Last Sent`),
 whose OWN date falls in the trailing 90 days.** That's the cohort test for
@@ -860,6 +878,30 @@ above by hand:
    any `(client, Period)` collision the ingest finds (two rows claiming
    the same composite key) ~ that's a data-entry error in the corpus, not
    something the ingestion pass should guess its way through.
+   **`patterns.md`'s ingestion needs its OWN idempotency strategy, not the
+   `(client, Period)` key above ~ that key is specific to delivery-log
+   rows and doesn't apply here.** `patterns.md` is genuinely append-only
+   (never edited in place, unlike a delivery-log row), so re-reading it
+   from the top on every weekly run would re-encounter every historical
+   week/theme bullet every single time, and without a stable identity per
+   bullet, that either re-inserts duplicates or re-counts the same
+   recurrence into an already-recorded total, inflating AUTOMATE/
+   REDESIGN's confidence off nothing new (Codex catch, 2026-07-19). Fix:
+   **track a read cursor (last-ingested line number or byte offset), not
+   a per-bullet key** ~ since the file only ever grows at the end (new
+   week-blocks, or a `LATE ADDITION to {week}` block per `patterns.md`'s
+   own late-capture rule), each run reads ONLY the content appended since
+   the last successful run and advances the cursor past it, never
+   re-reading what's already been ingested. A `LATE ADDITION to {week}`
+   block is still NEW CONTENT the cursor hasn't seen yet (it's appended
+   after the cursor's current position, even though it logically belongs
+   to an earlier week) ~ the cursor only tracks WHAT'S been read, not
+   WHERE a bullet's counts apply; the ingestion logic still folds a late
+   addition's counts into the week it names, exactly as the manual
+   walkthrough does. Store the cursor wherever the ingestion job's own
+   state lives (alongside the delivery-log sync watermark, if one
+   exists), and treat a cursor reset (or a first-ever run) as "ingest
+   everything," never partial re-reads mid-file.
 2. **Add the two missing branches:** `REDESIGN` and `FIX_CORPUS` actions in
    the router (`lib/analytics.ts`), fed by rework tags + cadence data,
    **each windowed to a trailing 90 days, same principle §5a uses, but NOT
@@ -906,8 +948,14 @@ above by hand:
      tag-share gate, always. **Two more required checks before this branch
      fires, both already mandatory in §5a's manual version and equally
      mandatory here, not optional extras for the coded path:**
-     - **Completeness gate:** for every accepted row entering this
-       calculation, tag entry count MUST equal `Rounds` exactly, AND every
+     - **Completeness gate, run FIRST, before any cohort/window filtering
+       ~ against every `accepted` row with `Rounds ≥ 1`, regardless of
+       `Due`:** don't gate this on rows the round-level date filter
+       already surfaced ~ a row whose only recent activity is an UNDATED
+       round never gets a valid date to test against the 90-day window in
+       the first place, so running this check only on rows that already
+       cleared the window filter would let exactly that row skip
+       validation entirely (Codex catch, 2026-07-19). Tag entry count MUST equal `Rounds` exactly, AND every
        entry MUST carry a valid, parseable `[YYYY-MM-DD]` date ~ a bare
        `none` on a `Rounds ≥ 1` row, any partial mismatch (fewer
        entries than `Rounds`), or any entry missing/malformed on its date

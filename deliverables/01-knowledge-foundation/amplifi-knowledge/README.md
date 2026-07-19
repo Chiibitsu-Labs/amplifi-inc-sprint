@@ -14,7 +14,25 @@ other filesystem-reserved character** (`\ : * ? " < > |`) ~ a client like
 "ACME/EMEA" becomes the folder `clients/ACME-EMEA/`, never a literal `/`
 in the path (that creates an unintended nested directory, or fails
 outright, and breaks every skill's `clients/{client}/...` read). Same
-slugging rule the improve skill uses for learning filenames. Keep the
+slugging rule the improve skill uses for learning filenames. **Two MORE
+Windows-specific cases need the same slugging pass, since the live corpus
+syncs through Drive for Desktop and that commonly means a Windows
+filesystem underneath, not just the reserved-character list above:**
+- **Trailing dots or spaces** ~ Windows silently strips or rejects a
+  folder name ending in `.` or a space (`"Acme Inc."` → Windows would try
+  to create `"Acme Inc"`, dropping the period without asking). Trim any
+  trailing `.`/space from the slug before using it, same as any other
+  normalization here.
+- **Reserved device names** ~ `CON`, `PRN`, `AUX`, `NUL`, `COM0`–`COM9`,
+  `LPT0`–`LPT9` (case-insensitive, and reserved even WITH a file
+  extension appended) cannot be created as a folder name on Windows at
+  all. A client whose name IS or reduces to one of these (rare, but "Con
+  Edison" abbreviated to "Con" is exactly the shape that would collide)
+  needs a disambiguating suffix the same way a slug collision does above
+  (e.g. `Con-client`), not just the ordinary character-substitution rule.
+Skipping either case doesn't fail loudly ~ it fails as a sync error or a
+silently-renamed folder days later, which is worse (Codex catch,
+2026-07-19). Keep the
 REAL, unslugged name inside `brief.md`'s Snapshot table ~ the slug is a
 filesystem-safety measure for the folder name only. **If the real name
 contains a literal `|`** (one of the same reserved characters that

@@ -56,22 +56,29 @@ extraction pass fills them). File-not-empty is not the same test as
 file-actually-filled-in ~ check for these before treating a read as
 successful.
 
-**For a file that carries a `Status: FRAME`/`Status: LIVE` marker
-specifically (`report-template-rules.md` is the one that ships with this
-mechanism today) ~ trust THAT marker alone, don't ALSO brace-scan the rest
-of the file.** `report-template-rules.md` is explicit about this itself
-("the file is live once BOTH [the instruction block and `Status: FRAME`]
-are gone," its own §"How to fill this file") precisely because it's
-designed to retain literal, PERMANENT `{...}` runtime tokens even once
-genuinely live ~ `"{Month YYYY} · data window {start}–{end}"` under
+**This ONE exception is scoped to `report-template-rules.md` BY NAME,
+never to "any file carrying a `Status: FRAME`/`Status: LIVE` marker" ~
+`house-voice.md` and `what-good-looks-like.md` carry that SAME marker
+mechanism too, but stay on the full brace-scan-AND-Status test, not this
+exception** (an earlier draft of this paragraph over-generalized the
+carve-out to every Status-marker file, which would let a `house-voice.md`
+or `what-good-looks-like.md` still holding real unfilled `{...}`
+placeholders pass as ready the moment Status merely flips to LIVE, with
+no independent check that the fill-once content behind it is actually
+real ~ Codex catch, 2026-07-19). Only `report-template-rules.md`
+gets the marker-alone trust, because it's the one file explicit about
+retaining literal, PERMANENT `{...}` runtime tokens even once genuinely
+live ~ `"{Month YYYY} · data window {start}–{end}"` under its own
 Fresh-data rules is a format instruction for every future report, not a
-one-time fill-in-the-blank. Running the generic brace-scan against this
-file ANYWAY would flag it as forever-unresolved the moment it's actually
-done, permanently blocking generation on a correctly-completed file
-(Codex catch, 2026-07-19). The brace-scan stays the right test for files
-that DON'T carry this marker (`brief.md`, `brand-standard.md`, and the
-other two standards frames, none of which have runtime tokens meant to
-survive completion) ~ this exception is `Status`-marker files only.
+one-time fill-in-the-blank, so a generic brace-scan against THIS file
+specifically would flag it as forever-unresolved the moment it's actually
+done. `house-voice.md` and `what-good-looks-like.md` have no such runtime
+tokens ~ any brace still standing there after `Status: LIVE` is a real,
+unfilled placeholder, and the brace-scan is a genuine independent defense
+against Status being flipped prematurely, exactly like it is for
+`brief.md`/`brand-standard.md`. Both checks (marker AND brace-scan) apply
+to every standards file except `report-template-rules.md`, which trusts
+the marker alone.
 
 **This is a WHOLE-FILE test for the one-shot required files (the
 standards files, `brief.md`, `brand-standard.md`) ~ they're written once,
