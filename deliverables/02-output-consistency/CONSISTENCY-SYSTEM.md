@@ -90,15 +90,31 @@ something, and the same mistake stops recurring.
 ## 3. Where each mechanism sits in the workflow
 
 ```
-Monthly analysis ──→ INSIGHT SKILL ──→ draft ──→ AI-QA GATE ──→ human verify
-     (reads corpus + period data)                (reads corpus)      │
-                                                                     ▼
-                                                            Canva deck → client
-                                                                     │
-      learnings/ ←── IMPROVE SKILL ←── end of session ←──────────────┘
+Monthly analysis ──→ INSIGHT SKILL ──→ draft ──→ AI-QA GATE, pass 1 ──→ human verify
+     (reads corpus + period data)                (pre-Canva, reads corpus)  │
+                                                                            ▼
+                                                                     Canva deck
+                                                                            │
+                                                                            ▼
+                                                     AI-QA GATE, pass 2 (post-Canva,
+                                                    visually-rendered deck ~ the ONLY
+                                                       clearance to ship, roadmap 2.1b)
+                                                                            │
+                                                              clear/re-run gate ▼
+                                                                          client
+                                                                            │
+      learnings/ ←── IMPROVE SKILL ←── end of session ←──────────────────────┘
           │                                    + delivery-log row (60s)
           └── weekly promotion → corpus (standards/, context.md, brief.md)
 ```
+
+Two passes, not one ~ pass 1 catches drift the insight skill introduced;
+pass 2 catches drift Canva assembly itself introduces (stale chart images,
+wrong logos, off-brand layout), which pass 1 can't see because it runs on
+the markdown draft, before Canva ever touches it. Only a visually-rendered
+pass 2 export counts as clearance to ship (`report-template-rules.md` §"Two
+checkpoints, not one"); a flagged deck gets corrected and pass 2 re-run,
+never presented as-is.
 
 ## 4. The "boring months" + "evolving insights" answer
 
@@ -137,7 +153,7 @@ it's the corpus.
    inline flags (see skill); tune with the team.
 
 *Depends on: Knowledge Foundation (Deliverable 1). Feeds: the When-to-Hire
-Instrument ~ high rework with `brief-misalign`/`brand` tags routes here and
-to the corpus, not to a hire.*
+Instrument ~ high rework with `brief-misalign`/`brand`/`quality-bar` tags
+routes here and to the corpus, not to a hire.*
 
 *Chiibitsu Labs ~ more human, by design.*

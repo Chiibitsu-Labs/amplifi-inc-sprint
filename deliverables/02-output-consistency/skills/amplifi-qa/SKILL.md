@@ -76,7 +76,15 @@ If a standards file is an unfilled frame, run anyway but say so at the top:
    ghost ~ flat is expected and explicitly allowed elsewhere in this
    deliverable (the "boring months" trend-read case); don't flag it.
 5. **Compounding** ~ does the draft use the insight-log trend where it
-   should? A quiet month with no trend read = flag.
+   should? A quiet month with no trend read = flag. **Exception: a
+   client's genuinely first-ever period**, where `insight-log.md` is
+   still correctly empty because no report has shipped yet (see
+   `amplifi-insights/SKILL.md`'s Step 0 first-period exception, same
+   corpus, same logic) ~ there is no trend to have used, so mark this
+   check `PASS` (or `N/A`) instead of flagging an impossible requirement.
+   Confirm it's genuinely period one (no prior insight-log entry exists at
+   all) before applying this exception; a second period with a still-empty
+   log is a real gap, not a bootstrap state, and gets flagged normally.
 
 ## Step 2 ~ Report format (fixed)
 
@@ -108,7 +116,11 @@ End every output with this reminder, verbatim:
 ```
 If you fix any flag above before this report ships, log it now ~
 delivery-log.md touch 1.5: bump Rounds, append the cause tag
-(brief-misalign / brand / data), right on this row, before you move on.
+(brief-misalign / brand / quality-bar / data), right on this row, before
+you move on. Checks 1/2/4 map to brief-misalign/brand/data respectively;
+checks 3 (actionability) and 5 (compounding) map to quality-bar ~ they're
+failures against what-good-looks-like.md's bar, not the brief, brand
+standard, or a data problem specifically.
 ```
 
 This QA gate is one of the three pre-send checkpoints touch 1.5 exists to

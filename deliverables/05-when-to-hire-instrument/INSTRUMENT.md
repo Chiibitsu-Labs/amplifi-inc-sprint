@@ -300,11 +300,19 @@ out of sync by being computed over different windows.
    - **Confirmed (on-cadence):** compute the rate by hand: numerator =
      rows with `Delivered ≤ Due`; denominator = rows that have shipped
      (`delivered`/`revising`/`accepted`) **plus** `open` rows already past
-     `Due` (overdue-in-progress misses) ~ **excluding** `open` rows whose
-     `Due` hasn't arrived yet (that's future work, not yet a hit or a
-     miss; counting it dilutes the rate and can mask a real problem).
-     Below threshold, with `Rework tag` mostly `client-new-ask`/`data`/
-     `none` rather than `brief-misalign`/`brand` → REDESIGN. **This tag
+     `Due` (overdue-in-progress misses) **plus** `cancelled` rows that were
+     cancelled AFTER `Due` had already passed while still `open` (an
+     overdue miss that had already accrued before cancellation ~ per
+     `delivery-log.md`'s cancellation rules, that miss stays counted; it
+     doesn't have a `Delivered` date so it never lands in the numerator,
+     only drags the denominator, same as an overdue-open row would) ~
+     **excluding** `open` rows whose `Due` hasn't arrived yet (that's
+     future work, not yet a hit or a miss; counting it dilutes the rate
+     and can mask a real problem) and excluding `cancelled` rows that were
+     cancelled BEFORE `Due` passed (never became a miss, fully out of both
+     numerator and denominator). Below threshold, with `Rework tag` mostly
+     `client-new-ask`/`data`/`none` rather than
+     `brief-misalign`/`brand`/`quality-bar` → REDESIGN. **This tag
      read is scoped to the LATE cycles specifically ~ the rows actually
      missing `Due` (`Delivered > Due`, plus overdue `open` rows) ~ not the
      full accepted-row population.** Averaging tags across every accepted
@@ -320,8 +328,8 @@ out of sync by being computed over different windows.
      provisional (more rounds, and a corpus-tagged one among them, could
      still land before it finalizes); pulling REDESIGN evidence from an
      unresolved late row risks reading it as clean days before a
-     `brief-misalign`/`brand` revision arrives and it should have pointed
-     at FIX_CORPUS instead. `open`/`delivered`/`revising` rows still count
+     `brief-misalign`/`brand`/`quality-bar` revision arrives and it should
+     have pointed at FIX_CORPUS instead. `open`/`delivered`/`revising` rows still count
      in the on-cadence rate itself (that's a delivery-date fact, settled
      at ship, not a tag) ~ only the REWORK-TAG qualifier on top of it waits
      for `accepted`. If too few late rows are `accepted` yet to read this
@@ -372,9 +380,9 @@ out of sync by being computed over different windows.
    not 100%; the delivery log keeps one tag entry per round specifically
    so this is countable (see `delivery-log.md`). Of all the rework rounds
    that exist across qualifying rows, is half or more tagged
-   `brief-misalign`/`brand`? If both gates clear, FIX_CORPUS fires, and
-   the tag itself tells you which corpus file is stale (the brief, or the
-   brand standard).
+   `brief-misalign`/`brand`/`quality-bar`? If both gates clear, FIX_CORPUS
+   fires, and the tag itself tells you which corpus file is stale (the
+   brief, the brand standard, or `what-good-looks-like.md`).
    **Watch for survivorship bias before trusting a low reading:** clean
    reports auto-resolve to `accepted` within 5 business days (the silent-
    acceptance rule), but a report stuck in `revising` for weeks ~ the
@@ -457,8 +465,9 @@ above by hand:
      ROUND level (not the row level ~ a row with one `brief-misalign`
      round and four `client-new-ask` rounds is 20% corpus, not 100%; the
      delivery log stores one tag per round so this is directly countable),
-     ≥half of qualifying rework rounds tagged `brief-misalign`/`brand` →
-     **FIX_CORPUS**, pointing at the exact corpus file to fix. Same
+     ≥half of qualifying rework rounds tagged
+     `brief-misalign`/`brand`/`quality-bar` → **FIX_CORPUS**, pointing at
+     the exact corpus file to fix. Same
      two-gate order as §5a's manual version ~ frequency gate before
      tag-share gate, always. Also surface a separate warning (not a
      blocking gate, just visibility) when `revising` rows with elevated

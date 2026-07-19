@@ -38,19 +38,32 @@ successful.
 **Exception, or every brand-new client permanently blocks their own first
 report:** `brief.md` and `brand-standard.md` (files 4–5 above) still MUST
 be filled before generating ~ they're what the client actually asked for,
-never optional. But `context.md` and `insight-log.md` (files 6–7)
-legitimately START templated for a client's very first period ~ the
-roadmap only requires 4–5 filled before work begins (1.3a/1.3b);
-`context.md` accumulates from real work over time, and `insight-log.md` is
-by definition empty until a first report has ever shipped. Applying the
-same "still-templated = missing = refuse to generate" rule to these two
-would deadlock every new client's bootstrap: no first report without a
-filled insight-log, no filled insight-log without a first report. For a
-client's genuinely first period ONLY, treat unresolved `context.md`/
-`insight-log.md` as "no history yet" ~ note it plainly ("no prior context/
-trend to draw on, first period for this client") and generate anyway.
-Once a real entry exists in either file, the normal missing/templated
-check applies again as usual.
+never optional. But files 6–7 legitimately stay templated for different
+reasons and on different timelines, so they get two DIFFERENT exceptions,
+not one shared cutoff:
+- **`insight-log.md` (file 7): first period ONLY.** It's empty by
+  definition until a first report has ever shipped, and by definition
+  filled from then on (every ship writes an entry ~ Deliverable 1's
+  capture loop). Treat it as "no history yet" ONLY when no entry exists at
+  all anywhere in the file; once period one ships and writes its entry,
+  the normal missing/templated check applies to it like any other corpus
+  file ~ a still-empty log in period two is a real gap (the capture loop
+  broke), not a bootstrap state.
+- **`context.md` (file 6): no fixed cutoff, exception lasts until it has
+  real content.** It's populated by the weekly promotion pass writing
+  actual `CLIENT-FACT` learnings into it (Deliverable 1 §5, `learnings/
+  README.md`), not by simply having shipped a report ~ a client can
+  genuinely go several periods before the team learns a distinct-enough
+  fact worth promoting there. Bounding this file's exception to "period
+  one only" would flag period two, three, however many as "missing" for
+  staying exactly as designed: legitimately unwritten because nothing
+  promotable has happened yet, not because anyone skipped a step. Treat
+  `context.md` as "no context yet" for as long as it's genuinely still
+  templated, regardless of period count, and stop treating it as an
+  exception the moment it holds its first real fact.
+Either way, note the gap plainly in the draft ("no prior context to draw
+on yet" / "first period for this client, no trend to draw on") rather than
+silently generating as if the history existed.
 
 ## Step 1 ~ Ground in the period's data
 

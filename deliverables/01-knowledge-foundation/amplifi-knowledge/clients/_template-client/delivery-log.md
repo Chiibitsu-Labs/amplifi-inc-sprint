@@ -12,8 +12,15 @@
    the cycle begins (every Monday for a weekly client, the 1st for a
    monthly one), **known in advance, a calendar fact ~ NOT whenever an
    analyst actually gets around to the work:** create the row. `Period`,
-   `Analyst`, `Start`, `Due` filled; `Status = open`; everything else
-   blank. Whoever owns this client's queue (the lead analyst, or Rica)
+   `Analyst`, `Start`, `Due` filled; `Status = open`; `Rounds = 0`,
+   `Rework tag = none` **explicitly initialized, not left implicit** ~
+   this is the defined starting state touch 1.5's "bump `Rounds`" and
+   "replaces the provisional `none`" operations are defined relative to;
+   leaving these two blank instead of set makes the first increment/
+   replace ambiguous and risks an accepted row with a missing tag that
+   hard-blocks the router for no real reason. `Delivered`, `Last Sent`,
+   `Effort (h)`, and `Notes` stay genuinely blank ~ nothing to default
+   them to yet. Whoever owns this client's queue (the lead analyst, or Rica)
    creates the row on schedule, independent of who ends up delivering it.
    **Create it even if nobody has started the actual work yet.** If
    capacity strain delays the real start, that's not a reason to skip or
@@ -30,22 +37,22 @@
 1.5. **Any time between period start and the actual ship write ~ the QA
    gate (pass 1), internal alignment, OR the post-Canva pass 2 (steps
    9–11) ~ catches and corrects ANY material issue BEFORE the client ever
-   sees the report: `brief-misalign`, `brand`, or `data`** (not just the
-   corpus-tagged two): bump `Rounds`, append the cause (same rules as
-   touch 3, below) ~ right then, while `Status` is still `open` (the ship
-   write, touch 2, hasn't happened yet). This is real rework regardless of
-   which tag it carries or which of the three pre-send checkpoints caught
-   it ~ pass 2 exists specifically to catch Canva-stage drift, and a
-   correction it finds is just as real as one steps 9–10 found; recording
-   only the earlier two would systematically miss exactly the failures
-   the LATER checkpoint exists to detect. Recording only
-   `brief-misalign`/`brand` catches while silently skipping `data`
-   corrections would ALSO inflate the corpus-tag SHARE artificially
-   (imagine four internal `data` fixes and one `brand` fix in one cycle:
-   skipping the four makes that a single 100%-corpus round instead of
-   five rounds at a real 20% share). The tag vocabulary doesn't change ~
-   `client-new-ask` still can't apply here, there's no client yet ~ only
-   which catches get recorded does. **One round per PASS, not one round
+   sees the report: `brief-misalign`, `brand`, `quality-bar`, or `data`**
+   (not just the corpus-tagged three): bump `Rounds`, append the cause
+   (same rules as touch 3, below) ~ right then, while `Status` is still
+   `open` (the ship write, touch 2, hasn't happened yet). This is real
+   rework regardless of which tag it carries or which of the three
+   pre-send checkpoints caught it ~ pass 2 exists specifically to catch
+   Canva-stage drift, and a correction it finds is just as real as one
+   steps 9–10 found; recording only some of the four categories would
+   systematically miss exactly the failures the skipped ones exist to
+   detect. Recording only `brief-misalign`/`brand`/`quality-bar` catches
+   while silently skipping `data` corrections would ALSO inflate the
+   corpus-tag SHARE artificially (imagine four internal `data` fixes and
+   one `brand` fix in one cycle: skipping the four makes that a single
+   100%-corpus round instead of five rounds at a real 20% share). The tag
+   vocabulary doesn't change ~ `client-new-ask` still can't apply here,
+   there's no client yet ~ only which catches get recorded does. **One round per PASS, not one round
    per issue found within a pass:** if QA gate pass 1 catches three
    separate material issues in the same review, that's ONE bump to
    `Rounds` (that pass), with all three causes bundled into that single
@@ -76,10 +83,13 @@
    if a single round has more than one cause** (e.g. a brand correction
    bundled with a genuinely new client ask in the same message), pick ONE
    per this priority order and note the rest in **Notes**:
-   `brief-misalign` > `brand` > `data` > `client-new-ask` (corpus causes
-   rank first ~ under-counting a real corpus gap is worse than
-   over-counting one, and FIX_CORPUS existing to catch it is the whole
-   point of this priority). One round, one entry, no exceptions ~ this
+   `brief-misalign` > `brand` > `quality-bar` > `data` > `client-new-ask`
+   (`quality-bar` = the report didn't clear `what-good-looks-like.md`'s
+   bar ~ a weak/generic recommendation, missing trend read, or other
+   actionability/compounding defect that isn't specifically a brief miss
+   or a brand miss; corpus causes rank first ~ under-counting a real
+   corpus gap is worse than over-counting one, and FIX_CORPUS existing to
+   catch it is the whole point of this priority). One round, one entry, no exceptions ~ this
    keeps the entry count always equal to `Rounds`, which is what makes
    the per-round share countable at all. **"Replaces the provisional
    `none`" applies ONLY if `Rounds` is still 0 when this touch fires** ~
@@ -180,9 +190,20 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
 - **Analyst** ~ **one name**: whoever is the ship-of-record for this cycle
   (usually the lead). This field is the join key to capchecker's per-person
   capacity data, so it must resolve to exactly one person ~ never a
-  composite. If ownership genuinely changed mid-cycle (Dale started it,
-  Janelle shipped it), put `Janelle` here (whoever delivered it) and note
-  the handback in **Notes** (`handed off from Dale, wk2`) for the human
+  composite. **Use the EXACT same spelling capchecker uses for that
+  person** (their Telegram display name / capchecker identity, not a
+  nickname, initial, or shorthand) ~ every time, across every client's log
+  ~ this is the literal string the automated per-analyst join (Instrument
+  §5b) and the manual analyst-level HIRE scope check (§3) match on; `Dale`
+  in one row and `Dale S.` in another silently splits one person into two
+  for that join. If a person's capchecker identity itself ever changes
+  (renamed Telegram handle, etc.), keep using their established
+  delivery-log spelling going forward and fix the mapping on the
+  capchecker side (a capchecker-side change, noted on the roadmap, never
+  edited here directly) rather than letting spellings drift mid-history.
+  If ownership genuinely changed mid-cycle (Dale started it, Janelle
+  shipped it), put `Janelle` here (whoever delivered it) and note the
+  handback in **Notes** (`handed off from Dale, wk2`) for the human
   reading the row. The instrument only ever joins on the single name.
 - **Period start** ~ the cycle's SCHEDULED cadence boundary (a calendar
   fact, known in advance ~ every Monday for a weekly client, the 1st for a
@@ -241,12 +262,13 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   every touch. Gut feel is fine; consistency beats precision.
 - **Rework tag** ~ **required, not optional, the moment `Rounds` goes above
   0** ~ exactly ONE entry per round (if a round has multiple causes, pick
-  by priority `brief-misalign` > `brand` > `data` > `client-new-ask` and
-  note the rest in Notes ~ see touch 3). The genuinely FIRST round
-  recorded on this row (whichever touch fires first ~ 1.5 or 3) REPLACES
-  the provisional `none`; every round after that, regardless of source,
-  APPENDS its own entry, one per round, repeats allowed, never
-  deduplicated: `brief-misalign` · `brand` · `data` · `client-new-ask`.
+  by priority `brief-misalign` > `brand` > `quality-bar` > `data` >
+  `client-new-ask` and note the rest in Notes ~ see touch 3). The genuinely
+  FIRST round recorded on this row (whichever touch fires first ~ 1.5 or
+  3) REPLACES the provisional `none`; every round after that, regardless
+  of source, APPENDS its own entry, one per round, repeats allowed, never
+  deduplicated: `brief-misalign` · `brand` · `quality-bar` · `data` ·
+  `client-new-ask`.
   `none` is valid ONLY while `Rounds = 0`; a row with `Rounds ≥ 1` and tag
   `none` is an incomplete row, not a real zero-rework report ~ **this is a
   data-quality gate, not a soft "leave it unrouted": until the tag is
@@ -258,12 +280,13 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   the real corpus-tag share and let HIRE proceed on a false "FIX_CORPUS
   checked, ruled out" when the honest state is "FIX_CORPUS can't be
   evaluated, data is incomplete." Fix the tag before trusting any router
-  conclusion this row feeds. (`brief-misalign` and `brand` are corpus
-  gaps ~ they route to a corpus fix in the instrument, not to a hire. The
-  instrument computes FIX_CORPUS's tag share PER ROUND ~ count of
-  `brief-misalign`/`brand` entries ÷ total entries, which equals `Rounds`
-  ~ not per row, so a row like `brand, client-new-ask, client-new-ask`
-  counts as 1-in-3 corpus-tagged, not "corpus-tagged: yes/no.") **The same
+  conclusion this row feeds. (`brief-misalign`, `brand`, and `quality-bar`
+  are corpus gaps ~ they route to a corpus fix in the instrument, not to a
+  hire. The instrument computes FIX_CORPUS's tag share PER ROUND ~ count
+  of `brief-misalign`/`brand`/`quality-bar` entries ÷ total entries, which
+  equals `Rounds` ~ not per row, so a row like `brand, client-new-ask,
+  client-new-ask` counts as 1-in-3 corpus-tagged, not "corpus-tagged:
+  yes/no.") **The same
   hard-block gate applies to any PARTIAL mismatch, not just a bare
   `none`:** if `Rounds = 3` but only two tag entries are recorded (say
   `brand, data`), that row is just as incomplete as a bare `none` ~ the
