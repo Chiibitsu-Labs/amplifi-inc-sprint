@@ -101,7 +101,21 @@ later.
 2. Group by tag and propose the promotion, showing each item with its
    destination:
    - `CLIENT-FACT` → `clients/{x}/context.md` (or `brief.md` FAQ table if it
-     answers a question)
+     answers a question). **If the fact IS or CONTAINS a metric** (a
+     number that describes some period's performance, not just a
+     qualitative observation), **the promoted entry must carry that
+     metric's own SOURCE PERIOD explicitly** ("engagement rate 4.2% as of
+     Mar 2026" ~ not just "engagement rate 4.2%"), and that source period
+     is the period the metric DESCRIBES, not the date this learning file
+     was captured or promoted ~ a session captured in July can easily be
+     writing up something observed about March's numbers. `amplifi-
+     insights` and `amplifi-qa` both only accept a `context.md` fact as a
+     valid historical source when it's dated this way (see amplifi-qa's
+     check 4) ~ promoting a metric without its source period produces an
+     entry neither skill can actually use later, silently defeating the
+     point of promoting it. Purely qualitative CLIENT-FACTs (a preference,
+     a rejected idea, "don't use humor in captions") don't need this ~
+     the date requirement is for metrics specifically.
    - `STANDARD` → the matching `standards/` file, drafted as an edit in that
      file's own format
    - `CONTRADICTS` → the correction, highlighted for Rica's explicit yes/no
