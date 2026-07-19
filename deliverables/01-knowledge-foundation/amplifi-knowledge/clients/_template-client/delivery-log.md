@@ -127,7 +127,24 @@
    (Codex catch, 2026-07-19). **One tag entry per round, always ~
    if a single round has more than one cause** (e.g. a brand correction
    bundled with a genuinely new client ask in the same message), pick ONE
-   per this priority order and note the rest in **Notes**:
+   per this priority order and note the rest in **Notes**. **Qualifier
+   comes first, before category:** if more than one of the round's causes
+   is a corpus cause (`brief-misalign`/`brand`/`quality-bar`) carrying its
+   own `(missing)`/`(not-followed)` qualifier (see the `Rework tag` bullet
+   below for the format), prefer whichever is qualified `(missing)` over
+   any qualified `(not-followed)`, REGARDLESS of which of the two ranks
+   higher in the category order below. The qualifier, not the category, is
+   what actually decides whether FIX_CORPUS fires (`missing` means the
+   corpus itself needs the edit; `not-followed` means it was already
+   correct and this is an execution/coaching question instead) ~ a round
+   that caught both a `brief-misalign (not-followed)` cause and a `brand
+   (missing)` cause and picked the `not-followed` one on category rank
+   alone would bury the real corpus gap in free-text **Notes**, which the
+   router's qualifier math never reads, silently understating how often
+   the corpus is actually the problem (Codex catch, 2026-07-19). **Only
+   once that qualifier check is settled** (both causes carry the SAME
+   qualifier, or neither is a corpus cause at all) does the category order
+   below decide:
    `brief-misalign` > `brand` > `quality-bar` > `data` > `client-new-ask`
    (`quality-bar` = the report didn't clear `what-good-looks-like.md`'s
    bar ~ a weak/generic recommendation, missing trend read, or other
@@ -155,7 +172,15 @@
    corpus-caused, not just whether any round ever was) ~ a row with one
    `brand` fix among four `client-new-ask` fixes is 20% corpus-driven,
    not 100%, and the entry count must equal `Rounds` for that math to
-   mean anything. `Status = revising` ~ **not** `accepted`. **Blank
+   mean anything. `Status = revising` ~ **not** `accepted`. **Before
+   blanking `Last Sent` (next), record the value being cleared in
+   **Notes** first: `"prior Last Sent: {date}"`, overwriting that same
+   note on every round that reaches this step rather than appending a
+   growing list ~ only the single most-recent prior value is ever needed
+   downstream (the abandoned-revision closure, exception 3 below, has no
+   other way to recover it once the field itself goes blank, and can't
+   complete its own prescribed restoration step without it, Codex catch,
+   2026-07-19).** Then **blank
    `Last Sent` too, at this same moment ~ don't leave the old date sitting
    there while the fix is still in progress.** A revision request logged
    this way but not yet resent is otherwise indistinguishable from a
@@ -498,11 +523,15 @@ pipe in any cell (`Dale \| Janelle`), never a bare `|`.
   sent version actually went to the client) and hands §5b's ingestion a
   false null on a row that, by this closure's own logic, DID ship a real,
   accepted version ~ the last one sent before the abandoned request.
-  Restore it to THAT version's send date: the row's `Last Sent` value as
-  it stood immediately before touch 3 blanked it this round (a prior
-  round's resend stamp), or `Delivered` itself if the abandoned request
-  was the row's very first-ever revision (no prior resend exists, so the
-  original ship date is the last real send) (Codex catch, 2026-07-19).
+  Restore it to THAT version's send date: read touch 3's `"prior Last
+  Sent: {date}"` note (above) ~ that's the only place the value survives
+  once the field itself went blank, so this closure can't complete
+  without it. Use `Delivered` instead only if the abandoned request was
+  the row's very first-ever revision (no prior resend exists yet, so no
+  `"prior Last Sent"` note was ever written, and the original ship date
+  is the last real send). Once restored, that `Notes` line has served its
+  purpose ~ leave it as part of the row's history, same as the closure
+  note beside it (Codex catch, 2026-07-19).
   The row's already-accrued `Rounds`/`Rework tag` entries stay exactly as
   recorded, same as any other finalization. On-cadence is computed as `Delivered ≤ Due` for any row that
   has shipped (`delivered`/`revising`/`revising (reopened)`/`accepted` ~ on-cadence reads the shipped-or-not fact, unaffected by which revising variant applies), an automatic miss for

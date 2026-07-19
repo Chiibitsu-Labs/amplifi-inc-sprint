@@ -729,7 +729,30 @@ dated entries get counted this month).
      calculation turns a missing field into a spurious cadence breach or a
      spurious cadence hit, which can shift the rate enough to fire
      REDESIGN off incomplete
-     data instead of a real pattern). Once validated: compute the rate by
+     data instead of a real pattern). **Pulling invalid rows out of both
+     sides doesn't, by itself, make the REMAINING rate trustworthy ~ this
+     needs the same completeness gate FIX_CORPUS's own qualifier-tag
+     validation already applies (§3 above): if the excluded rows could
+     have swung the result across REDESIGN's <80% threshold either way,
+     the reading isn't clean to route on (or rule out) at all, exclusion
+     or not.** Excluding one malformed LATE row can raise the rate enough
+     to clear 80% and wrongly rule out REDESIGN; excluding one malformed
+     ON-TIME row can just as easily push a clean rate below 80% and
+     spuriously fire it. Before trusting the computed rate, bracket it:
+     recompute the SAME formula twice more ~ once treating every excluded
+     row as a HIT and once as a MISS, denominator adjusted accordingly
+     each time. If 80% falls strictly BETWEEN the worst-case and
+     best-case rates (the excluded rows could plausibly move the reading
+     across the line either way), this on-cadence read is data-incomplete,
+     not clean: flag it and fix the logging gap first, rather than routing
+     on (or ruling out REDESIGN from) whatever the excluded-rows-dropped
+     rate happens to compute to (Codex catch, 2026-07-19: removing invalid
+     rows from both sides without checking whether they could have swung
+     the threshold lets a small number of bad dates silently decide a
+     REDESIGN/HIRE routing outcome the honest data doesn't actually
+     support either way, the same gap FIX_CORPUS's own completeness gate
+     already closed for its untagged/partially-tagged rows). Once
+     validated AND bracketed: compute the rate by
      hand: numerator =
      rows with `Delivered ≤ Due`; denominator = rows that have shipped
      (`delivered`/`revising`/`revising (reopened)`/`accepted`) **plus**
@@ -882,12 +905,22 @@ dated entries get counted this month).
      step's answer first ~ Codex catch, 2026-07-18.)
    **Before calling either read a REDESIGN, check it clusters** ~ one
    client, one handoff step, one specific process, not a broad slowdown
-   touching most clients/analysts at once. If it's broad AND WIP/load are
+   touching most clients/analysts at once. **"Broad" has the same numeric
+   line §5b's coded version uses for this same check (below): FEWER than
+   half of the currently-active client roster individually showing a
+   REDESIGN-triggering signal this cycle reads as clustered/narrow, half
+   or more reads as broad** ~ eyeball this against however many clients
+   this walkthrough is actually covering, so a manual and an automated
+   pass can't quietly disagree on where the line sits. If it's broad AND WIP/load are
    also elevated team-wide, that's capacity exhaustion, not a process
    defect ~ do NOT let REDESIGN claim it; let it flow through to the HIRE
-   check (step 4) instead. Only route to REDESIGN when you can name the
-   specific thing to fix; "everything's a little slow" isn't a redesign,
-   it's a capacity signal wearing a cadence costume. Step 0's
+   check (step 4) instead. **Client count clearing "narrow" is necessary
+   but not sufficient, though: only route to REDESIGN when you can ALSO
+   name the specific thing to fix** ~ a small client count failing for
+   several unrelated reasons isn't one process problem wearing a small
+   number, it's several smaller problems, and "everything's a little
+   slow" isn't a redesign either way, it's a capacity signal wearing a
+   cadence costume. Step 0's
    `patterns.md` skim often names the specific bottleneck already ~
    PROCESS entries are written from real session friction, so "long queue
    for data pulling, ClientA/C/D" in the tally is frequently the
@@ -1133,13 +1166,30 @@ dated entries get counted this month).
    ~70% of the full roster do (≥5 of 6 today, same bar DATA already uses),
    WIP is insufficient-coverage ~ don't route to HIRE off it, same as an
    unclear DATA flag, chase the Q3 response rate up first. Once REBALANCE
-   is ruled out, DATA is clear, AND WIP coverage clears: cross-reference
-   capchecker's sustained-load signal against WIP
-   per analyst (capchecker Q3, read manually until §5b's automation
-   exists) ~ both maxed ACROSS THE TEAM, **defined exactly here too, not
+   is ruled out, DATA is clear, AND WIP coverage clears: read BOTH WIP and
+   perceived load per analyst (capchecker Q3 and Q1, read manually until
+   §5b's automation exists) ~ **don't cross-reference WIP's per-analyst
+   read against capchecker's raw aggregate sustained-load signal (§4's
+   live `team avg > 6/10 on ≥7 of last 10 working days` reading) as a
+   stand-in for load's own per-analyst check: a minority of analysts
+   running hot can pull the team average past the line while fewer than
+   half the roster individually sustains elevated load, exactly the
+   narrow-not-broad pattern the breadth test below exists to catch, and
+   §5b's coded spec already requires MORE THAN HALF of the roster clear
+   EACH signal independently, never a team-average proxy standing in for
+   one of the two (Codex catch, 2026-07-19: this manual walkthrough
+   applied the roster-wide breadth test to WIP only and read load
+   straight off capchecker's aggregate flag instead, so a manual
+   walkthrough could clear HIRE's capacity condition on data the
+   automated §5b router, run on the identical cohort, would correctly
+   refuse).** Both maxed ACROSS THE TEAM, **defined exactly here too, not
    left to eyeballing the dashboard: MORE THAN HALF of the roster's
-   ACTUAL CURRENT headcount individually reading WIP-elevated (§2's
-   frozen-baseline-+2 threshold) ~ derived from today's real roster size
+   ACTUAL CURRENT headcount individually reading elevated on EACH signal
+   ~ WIP's frozen-baseline-+2 threshold (§2), and load's own per-analyst
+   "overloaded day" line (an analyst's own daily rating ≥6 on ≥7 of the
+   last 10 working days, same per-day line and window §5b's coded version
+   uses, evaluated per person instead of averaged into the team-wide
+   figure) ~ derived from today's real roster size
    at every walkthrough, never hard-coded to "4 of 6" as a fixed number
    that quietly goes stale the moment the team grows or shrinks, the SAME
    dynamic-derivation rule §3/§5b already use for the identical predicate
@@ -1306,13 +1356,29 @@ above by hand:
    successful run happens to restore it, potentially changing a month's
    route in between (Codex catch, 2026-07-19). Fix: track the expected
    client list (every non-`_template-client` folder under `clients/*`)
-   against the list actually read without error THIS run; only proceed to
-   the delete-diff when they match exactly. On any short read, still
-   upsert whatever WAS read successfully (that part is safe, upsert never
-   deletes), but skip the delete-diff entirely for this run and retry the
-   reconciliation on the next scheduled pass rather than failing the
-   whole sync ~ a delayed reconciliation is a stale-but-harmless read; a
-   reconciliation run on incomplete data is actively destructive.
+   against the list actually read without error THIS run. On any short
+   read, still upsert whatever WAS read successfully (that part is safe,
+   upsert never deletes). **Run the delete-diff PER CLIENT NAMESPACE, not
+   as one whole-corpus pass gated on ALL clients matching exactly:** for
+   every client that WAS read successfully this run, diff and delete its
+   own stale destination keys normally, regardless of whether some OTHER
+   client failed; for a client that failed to read, skip ONLY that
+   client's delete-diff and leave its destination rows untouched,
+   retrying its reconciliation on the next scheduled pass. Scoping the
+   skip to the failed client alone matters as much as the completeness
+   check itself: gating the delete-diff on the WHOLE run instead leaves
+   every OTHER, successfully-read client's own already-known deletions
+   unapplied too ~ a single unrelated Drive folder staying unreachable
+   for several runs in a row would leave a healthy client's stale,
+   already-deleted-in-the-source rows feeding cadence/rework evidence
+   into the router indefinitely, changing a routing decision on data the
+   corpus itself no longer even contains, the exact failure this
+   reconciliation exists to close, just gated behind an unrelated
+   client's outage instead of its own (Codex catch, 2026-07-19). A
+   delayed per-client reconciliation is a stale-but-harmless read; a
+   reconciliation run on that ONE client's incomplete data would still be
+   actively destructive, which is why the skip stays scoped to it and it
+   alone.
    **`patterns.md`'s ingestion needs its OWN idempotency strategy, not the
    `(client, Period)` key above ~ that key is specific to delivery-log
    rows and doesn't apply here.** `patterns.md` is genuinely append-only
@@ -1831,7 +1897,47 @@ above by hand:
      exhaustion, and REDESIGN claiming it would make HIRE structurally
      unreachable in exactly the scenario it exists to catch ~ the same
      class of bug as the on-cadence/HIRE overlap fixed earlier in this doc
-     (Codex catch, 2026-07-18). This condition is self-contained (doesn't
+     (Codex catch, 2026-07-18). **This condition splits into a computable
+     half and a genuinely human-judgment half, and code can only ever own
+     the first one:**
+     - **Computable (breadth): the number of currently-active clients
+       (onboarded, not `cancelled` entirely) individually showing a
+       REDESIGN-triggering signal THIS evaluation cycle (on-cadence
+       failing its bracketed <80% read, OR cycle-time trending up, per the
+       checks above) against the roster of active clients ~ dynamically
+       derived the same "more than half" style bar this doc already uses
+       for analyst-level breadth (§5b's HIRE predicate below, §3's
+       narrow-signal scope test), never a hard-coded count. FEWER than
+       half of active clients individually triggering clears the breadth
+       half of "clustered"; half or more is "broad," and code CAN safely
+       hard-block REDESIGN and let HIRE evaluate on that count alone, the
+       same class of predicate `more than half of roster` already is
+       everywhere else in this doc.
+     - **Not computable from this corpus's current schema (process
+       identity): "one handoff step, one identifiable process" asks
+       WHETHER the clustered client(s) share an actual, nameable root
+       cause, not just whether the client COUNT is small.** No structured
+       field carries this ~ `delivery-log.md`'s `Notes` and
+       `patterns.md`'s theme names are both free text, and a `Rework tag`
+       identifies WHAT kind of defect (`brief-misalign`/`brand`/etc.), not
+       WHICH workflow step caused it. Two clients failing on-cadence for
+       two entirely unrelated reasons would still clear the breadth count
+       above as "narrow," but that's not evidence of one fixable process ~
+       it's two separate, smaller problems wearing one clustering costume
+       (Codex catch, 2026-07-19: an earlier draft of this section claimed
+       the whole predicate was code-enforced and self-contained, with no
+       threshold or structured source for this half at all, meaning two
+       different implementations could read the identical data and reach
+       opposite REDESIGN conclusions). **§5b's code computes and surfaces
+       the breadth half only** (client count, which clients, their shared
+       tag categories if any); confirming those clients actually share a
+       nameable process stays a required human read of `Notes`/
+       `patterns.md` before the REDESIGN route is FINAL, same as the
+       healthy-seed and quiet-window judgment calls elsewhere in this doc
+       that this corpus already keeps honestly human instead of pretending
+       to automate. A narrow-but-unconfirmed breadth reading is
+       PROVISIONAL, not a firm REDESIGN, until that human read happens.
+     This breadth condition is self-contained (doesn't
      reference FIX_CORPUS's output) by design ~ both branches read the
      same rework-tag data independently, so which one evaluates "first" in
      code never changes the answer for a given cycle. This is the
