@@ -177,7 +177,29 @@ threshold crossed →
                  not just numerically lower than whoever's worst off) AND
                  capchecker's DATA signal is
                  CLEAR (response rate ≥70% over the last 7 days, ≥10 days
-                 of post-epoch history) AND the CAPACITY signals ~
+                 of post-epoch history) AND capchecker's WIP DATA COVERAGE
+                 is ALSO clear ~ **its own gate, separate from DATA above,
+                 because Q3 can go unanswered or unparsable independently
+                 of Q1/Q2 (§2's WIP row) ~ DATA reading clear says nothing
+                 about whether enough people actually have a usable WIP
+                 number.** Require ≥70% of the FULL roster (same bar DATA
+                 already uses, reused rather than inventing a second
+                 number) to individually clear the ≥7-of-10-valid-
+                 observations bar (§2) before WIP can corroborate HIRE at
+                 all ~ for today's 6-person function, ≥5 of 6 need
+                 sufficient WIP data. Below that floor, WIP reads as
+                 insufficient-coverage and does NOT corroborate HIRE,
+                 same effective outcome as DATA itself failing to clear.
+                 This is NOT the same check as the analyst-level "MOST of
+                 the roster" scope test elsewhere in this section (§5b) ~
+                 that one only asks whether an ALREADY-elevated reading is
+                 broad or narrow; THIS gate asks whether enough of the
+                 roster has a WIP reading AT ALL. Without it, a tiny
+                 sample (2 of 6 with data, both elevated) could satisfy a
+                 "more than half of those WITH data" test while WIP is
+                 genuinely unknown for the other two-thirds of the team ~
+                 not evidence of team-wide strain, evidence of a mostly-
+                 unread signal. AND the CAPACITY signals ~
                  specifically WIP per analyst and perceived load, NOT
                  on-cadence ~ are sustainedly maxed ACROSS THE TEAM, not
                  concentrated in one person. The DATA gate matters here
@@ -340,23 +362,34 @@ structured data rather than adding a new one: cohort membership = `Due`
 in the last 90 days **OR** `Last Sent` in the last 90 days, whichever
 catches the row.
 
-**But being IN the cohort this way doesn't mean the row's WHOLE history
-counts ~ only the round that actually triggered inclusion.** `Rounds` and
-`Rework tag` are cumulative with no per-round timestamps, so a row pulled
-in ONLY by the `Last Sent` exception (its `Due` is outside the window, its
-`Last Sent` is inside it) would otherwise dump its ENTIRE historical round
-count into this month's FIX_CORPUS tally ~ a report from 8 months ago with
-5 old, already-accounted-for rounds plus 1 genuinely new late-reopen round
-would count as 6 fresh rounds this month, not 1, and could falsely trip
-the rounds/tag-share thresholds on stale history. The fix doesn't need
-per-round timestamps: touch 4's late-reopen mechanics guarantee the reopen
-adds EXACTLY ONE new round, appended as the LAST entry in the `Rework tag`
-list. So, for a row in the cohort ONLY via `Last Sent` (not via `Due`):
-count just that one newest round (the last tag entry) toward this month's
-rounds-per-report and tag-share math, not the row's full cumulative
-`Rounds`. A row in the cohort via `Due` (the normal case) still counts in
-full ~ its rounds genuinely happened within, or close to, this window
-already. 90 days
+**The `Last Sent` exception is scoped to FIX_CORPUS's rework math ONLY ~
+it never pulls a row's on-cadence or cycle-time result into this month's
+REDESIGN evidence.** A row's `Delivered ≤ Due` outcome and `Delivered −
+Start` span are facts about when it originally shipped, months ago if
+`Due` is outside the window; a late reopen doesn't change either fact, so
+letting it drag the row back into on-cadence/cycle-time would manufacture
+a current REDESIGN read (a hit OR a miss) out of stale delivery
+performance that has nothing to do with this month. REDESIGN's two checks
+(§3 step 2) stay strictly `Due`-anchored, full stop, no exception. Only
+FIX_CORPUS's rounds-per-report/tag-share math (step 3) reads the `Last
+Sent` exception, and only for the NEWLY added evidence, not the row's
+WHOLE history: `Rounds` and `Rework tag` are cumulative, so a row pulled
+in ONLY by `Last Sent` (its `Due` is outside the window, `Last Sent` is
+inside it) would otherwise dump its ENTIRE historical round count into
+this month's tally ~ a report from 8 months ago with 5 old,
+already-accounted-for rounds plus 2 genuinely new late-reopen rounds
+would count as 7 fresh rounds this month, not 2. A reopen isn't always
+exactly one round either (touch 3 can repeat for multiple additional
+client revisions after the reopen), so "just count the last tag entry"
+isn't enough. Instead: touch 4 stamps a structured marker in Notes the
+moment a row reopens ~ `late-reopen {date}: pre-reopen Rounds={N}` (see
+`delivery-log.md`). For a `Last Sent`-only row, count exactly `current
+Rounds − stamped pre-reopen Rounds` rounds toward this month's tally,
+reading the LAST that-many entries in the `Rework tag` list (entries
+append in order, so the newest ones are always the tail of the list) ~
+not the full cumulative `Rounds`, not just one. A row in the cohort via
+`Due` (the normal case) still counts in full ~ its rounds genuinely
+happened within, or close to, this window already. 90 days
 re-windows fresh at each monthly walkthrough (not a cumulative rolling
 average like WIP's baseline ~ there's no self-referential creep risk here,
 it's just which raw rows get counted this month). Apply this SAME
@@ -551,7 +584,31 @@ above by hand:
      `brief-misalign`/`brand`/`quality-bar` → **FIX_CORPUS**, pointing at
      the exact corpus file to fix. Same
      two-gate order as §5a's manual version ~ frequency gate before
-     tag-share gate, always. Also surface a separate warning (not a
+     tag-share gate, always. **Two more required checks before this branch
+     fires, both already mandatory in §5a's manual version and equally
+     mandatory here, not optional extras for the coded path:**
+     - **Completeness gate:** for every accepted row entering this
+       calculation, tag entry count MUST equal `Rounds` exactly ~ a bare
+       `none` on a `Rounds ≥ 1` row, or any partial mismatch (fewer
+       entries than `Rounds`), excludes that row from the tag-share
+       calculation entirely and hard-blocks the conclusion if enough rows
+       are affected to plausibly swing the ≥half threshold either way
+       (`delivery-log.md`'s own gate, same reasoning, same code needs to
+       enforce it here that a human enforces by hand in §5a).
+     - **Cause-qualifier gate:** ≥half tagged corpus-cause is necessary but
+       not sufficient to fire an EDIT-THE-CORPUS action. Read the Notes
+       qualifier (`missing` vs `not-followed`) on the qualifying rounds
+       before prescribing a corpus edit: majority `not-followed` means the
+       corpus was already correct and this isn't a real gap ~ surface it
+       as "high rework, but not corpus-caused per qualifier, check
+       execution/process instead" rather than pointing at a file to edit.
+       Only a majority-`missing` reading actually fires the corpus-edit
+       action. Implementing the tag-share threshold alone, without this
+       qualifier check, would have the coded router repeatedly prescribe
+       edits to an already-correct corpus file ~ exactly what the manual
+       rule (§3, and this section's own rounds-per-report rule above)
+       exists to prevent.
+     Also surface a separate warning (not a
      blocking gate, just visibility) when `revising` rows with elevated
      `Rounds` have been open unusually long ~ the accepted-only
      calculation above is a lower bound while those exist, per §5a's
@@ -589,7 +646,12 @@ above by hand:
    - HIRE requires ALL of: sustained load over the structural line (the
      live rule) AND WIP per analyst sustainedly elevated vs baseline (the
      capacity-ceiling signal ~ independent of cadence, threshold defined
-     in §2) AND capchecker's REBALANCE not currently firing WITH GENUINE
+     in §2) AND WIP DATA COVERAGE ≥70% of the full roster (≥5 of 6 today,
+     each individually clearing the ≥7-of-10-valid-observations bar ~ its
+     own gate, separate from DATA below, since Q3 can go unanswered
+     independently of Q1/Q2; below this floor WIP is insufficient-coverage
+     and can't corroborate HIRE, same effective outcome as DATA failing to
+     clear ~ see §3's fuller reasoning) AND capchecker's REBALANCE not currently firing WITH GENUINE
      HEADROOM behind it (no single analyst absorbing the load while the
      REST of the team, excluding that outlier, sits comfortably below the
      structural line ~ ≤5, v1 seed. REBALANCE's raw relative-gap trigger

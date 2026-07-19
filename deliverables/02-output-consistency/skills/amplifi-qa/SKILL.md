@@ -24,19 +24,27 @@ Required inputs, all of them:
      exactly the visual layer this checkpoint exists to check). Run all
      five checks. This is the ONLY tier that counts as clearance to ship
      ~ **but "visually rendered" isn't the same as "every plotted value is
-     verifiable."** A chart image proves logos/layout/brand and any
-     figure that's actually LABELED in it (a data callout, an axis value
-     with a printed number, a legend'd total), but an unlabeled bar,
-     point, or series can't be reverse-engineered from pixels and
-     compared against the export ~ seeing the chart isn't the same as
-     confirming what it plots. Check 4 on this tier still only earns a
-     plain `✔` for the figures actually readable in the render (labeled
-     values, and anything also stated in surrounding prose); any plotted
-     value with no visible label gets named in the output as **unverified
-     from this render** (not silently passed, not a blocking flag either
-     ~ a distinct third state: "plotted but unlabeled, source data would
-     be needed to confirm"). Don't let "I can see the chart" quietly
-     stand in for "I checked what the chart says."
+     verifiable," and this checkpoint doesn't get to wave that away.** A
+     chart image proves logos/layout/brand and any figure that's actually
+     LABELED in it (a data callout, an axis value with a printed number, a
+     legend'd total), but an unlabeled bar, point, or series can't be
+     reverse-engineered from pixels and compared against the export ~
+     seeing the chart isn't the same as confirming what it plots, and this
+     is precisely the mandatory ship-gate whose whole job is catching a
+     stale or wrong Canva chart. So: any plotted value with no visible
+     label is a **BLOCKING flag on check 4**, not a silent pass and not a
+     soft "unverified" note that still lets the deck clear ~ list it in
+     FLAGS ("{chart, section} → plotted value has no visible label,
+     can't be confirmed against source data → export the chart's
+     underlying numbers or add data labels, then re-run"). The only way
+     this tier still earns a plain `✔` on check 4 with unlabeled chart
+     elements present is if the analyst ALSO supplies the chart's
+     underlying source data separately (a data table, the export the
+     chart was built from) ~ check the plotted values against THAT, same
+     as any other figure. Don't let "I can see the chart" quietly stand in
+     for "I checked what the chart says," and don't let a checkpoint whose
+     entire purpose is catching stale Canva charts clear one it couldn't
+     actually verify.
    - **Second pass, TEXT-ONLY (a lesser tier, not clearance):** a bare
      text export/extraction with no visual rendering. Run check 4, SCOPED
      to whatever figures the extraction actually captured ~ text can
@@ -74,6 +82,24 @@ Required inputs, all of them:
 If a standards file is an unfilled frame, run anyway but say so at the top:
 "Bar not yet encoded for: {file} ~ checks in that area are generic."
 
+**`brief.md` and `brand-standard.md` don't get this same "run anyway,
+generic bar" treatment ~ they're required, not a frame.** A
+freshly-copied `_template-client` folder has both still full of
+unresolved `{...}` placeholders and the template's own instructional
+prose, same detection `amplifi-insights/SKILL.md`'s Step 0 already uses.
+If either is still templated, **STOP before running checks 1 or 2** and
+say so plainly ("brief.md / brand-standard.md not filled for this client
+~ checks 1/2 would be run against no real bar, refusing rather than
+issuing a false pass"). A manually-assembled or externally-sourced report
+run through this gate against a template-only client folder would
+otherwise clear brief-alignment and voice/brand checks against nothing,
+exactly the gap `amplifi-insights` already closes on the generation side
+~ QA needs the same floor on the verification side, or a report can
+route around the insights skill's check and still get a clean QA pass.
+`context.md`/`insight-log.md` keep their existing first-period/no-context
+exceptions (see check 5 below) ~ this stricter rule is brief.md/
+brand-standard.md only.
+
 ## Step 1 ~ Run the five checks
 
 1. **Brief alignment** ~ does the draft answer what `brief.md` (incl. FAQs
@@ -90,16 +116,23 @@ If a standards file is an unfilled frame, run anyway but say so at the top:
    from it (total, average, rate, period-over-period change) that you can
    re-derive and show ~ that's a pass, not a flag; figures explicitly
    labeled with a past period (the insight-log trend reads the insights
-   skill is required to include) must exist in `insight-log.md`'s entry
-   for that period, OR ~ only if this session has live, already-confirmed
-   Drive access reaching it, never assumed ~ in the full report that entry
-   links to (`Full report: {Drive link}`); the log entry itself is a terse
+   skill is required to include) must exist in ONE of three accepted
+   historical sources, all still needing the same period label: (a)
+   `insight-log.md`'s entry for that period; (b) ~ only if this session has
+   live, already-confirmed Drive access reaching it, never assumed ~ the
+   full report that entry links to (`Full report: {Drive link}`); (c) a
+   dated `CLIENT-FACT` entry in `context.md` that recorded the value at
+   promotion time (the weekly promotion pass writes these with an origin
+   date, per `learnings/README.md` ~ a metric promoted here because it
+   recurs is exactly as valid a historical source as the terse log line,
+   as long as its date travels with it). The log entry itself is a terse
    headline, not every figure from that period, so a historical number
-   genuinely sourced from a reachable linked report is still a pass, not a
-   flag. If the insights skill flagged a figure as unavailable this period
-   (linked report not reachable this session, per its own Step 1 rule),
-   don't re-flag that same gap here as a data-integrity failure ~ it's
-   already surfaced honestly, not hidden.
+   genuinely sourced from (b) or (c) is still a pass, not a flag, same
+   labeling rule as any other historical figure. If the insights skill
+   flagged a figure as unavailable this period (none of the three sources
+   reachable or dated, per its own Step 1 rule), don't re-flag that same
+   gap here as a data-integrity failure ~ it's already surfaced honestly,
+   not hidden.
    List any number that fails its OWN check ~ isn't in the export, can't
    be re-derived from it, and isn't a labeled historical figure ~ these go
    to the human verify step first. Also flag: any CURRENT-labeled figure

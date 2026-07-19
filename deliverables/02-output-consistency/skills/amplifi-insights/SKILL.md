@@ -117,10 +117,15 @@ platform pulls). Rules:
   ("{metric} would strengthen this trend read but isn't captured in
   insight-log.md's headline and the linked report isn't reachable this
   session") and generate without it. If the SAME metric keeps being
-  needed period after period, that's a signal worth a `PROCESS` note to
-  the improve skill ~ promote it into `context.md` so it's reliably
-  available next time, instead of re-fetching an external report on every
-  future run.
+  needed period after period, that's a signal worth a `CLIENT-FACT` note
+  to the improve skill ~ promote it into `context.md`, **carrying its
+  origin period explicitly** ("engagement rate 4.2% as of Mar 2026"),
+  since a dated `context.md` entry is a third accepted historical source
+  (alongside the insight-log entry and a reachable linked report ~ see
+  `amplifi-qa/SKILL.md` check 4). An undated promotion doesn't count ~ the
+  same period-labeling rule this whole bullet already runs on applies to
+  `context.md` too, so the value stays reliably available next time
+  instead of needing an external report re-fetched on every future run.
 - Stamp the draft: client, period, data window dates.
 
 ## Step 2 ~ Generate to the bar

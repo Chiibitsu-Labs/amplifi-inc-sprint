@@ -141,8 +141,18 @@
    unresolved would starve the rework baseline of exactly the clean
    deliveries it needs to mean anything. **If a revision request arrives
    after a silent auto-accept, re-open the SAME row** ~ `Status` back to
-   `revising`, bump `Rounds`, add the cause per touch 3 above (which also
-   re-stamps `Last Sent`). Late feedback is still real rework on this
+   `revising`, and **before the first touch-3 bump for this reopen, stamp
+   Notes with the pre-reopen round count:** `late-reopen {date}: pre-reopen
+   Rounds={N}` (N = whatever `Rounds` read the instant before this
+   reopen's first bump). Then bump `Rounds` and add the cause per touch 3
+   above (which also re-stamps `Last Sent`), repeating touch 3 for as many
+   additional rounds as this late feedback actually takes to resolve ~ a
+   reopen isn't always exactly one round. This stamp is what lets a later
+   walkthrough know how many of the row's now-cumulative `Rounds` are
+   freshly relevant (`current Rounds − stamped pre-reopen Rounds`) versus
+   already-accounted-for history, without needing a timestamp on every
+   individual round (see Instrument §3's cohort rule). Late feedback is
+   still real rework on this
    report; a fresh row with no period/due/delivered of its own would just
    delete the evidence, not relocate it. Only re-finalize to `accepted`
    once the late round is actually resolved. First version accepted with

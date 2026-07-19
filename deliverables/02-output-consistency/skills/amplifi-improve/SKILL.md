@@ -32,6 +32,19 @@ feels like a documentation chore, you've failed. Two modes.
    collides even with seconds included, append `-2`, `-3`, etc. before
    `.md` and use the first suffix that doesn't already exist)
 
+   **Slug `{analyst}` and `{client-or-topic}` before interpolating them
+   into the path ~ never write the raw label straight into a filename.**
+   A client/topic name containing a `/` (`ACME/EMEA`), or any other
+   filesystem-reserved character (`\ : * ? " < > |`), turns "one file"
+   into an unintended nested path, which fails outright if the
+   directories don't already exist and silently misfiles the learning if
+   they do. Replace any such character with `-` when building the
+   filename (`ACME/EMEA` → `ACME-EMEA`), collapse repeated `-`, and keep
+   the ORIGINAL, unslugged names inside the file's own `# {date} ~
+   {analyst} ~ {client/topic}` header ~ the slug is a filesystem-safety
+   measure for the path only, never a substitute for the readable name a
+   human (or the promotion pass) actually reads.
+
    **This requires an actual write path to the live corpus** ~ a
    Drive-connector attachment that only lets you *read* files can't create
    this one. Before relying on this step, confirm which applies:
