@@ -74,9 +74,11 @@ see either `SKILL.md`) ~ correcting one while leaving the other stale
 doesn't fix the problem, it just adds a second, conflicting "trusted"
 value to the corpus, and a future report could easily pull the WRONG one
 (Codex catch, 2026-07-19). Update the `context.md` fact's own value (keep
-its original promotion date, since that's still when it was FIRST
-recorded ~ note the correction date alongside it, e.g. "as of Mar 2026,
-corrected Jun 2026") rather than leaving a second, newer fact for the
+its original source-period date, per `README.md`'s "one fact, one home"
+exception ~ that's still WHEN THE METRIC HAPPENED, unchanged by a later
+correction to its value; note the correction date alongside it, e.g. "as
+of Mar 2026, corrected Jun 2026") rather than leaving a second, newer fact
+for the
 same period sitting next to the stale one ~ two dated facts for one
 period is the same ambiguity as one wrong one, just harder to notice.
 

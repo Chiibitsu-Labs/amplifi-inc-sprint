@@ -303,23 +303,40 @@ never as part of this whole-file STOP condition.
    ghost ~ flat is expected and explicitly allowed elsewhere in this
    deliverable (the "boring months" trend-read case); don't flag it.
 5. **Compounding** ~ does the draft use the insight-log trend where it
-   should? A quiet month with no trend read = flag. **Exception: a
+   should? A quiet month with no trend read = flag. **Exception 1: a
    client's genuinely first-ever period**, where `insight-log.md` is
    still correctly empty because no report has shipped yet (see
    `amplifi-insights/SKILL.md`'s Step 0 first-period exception, same
    corpus, same logic) ~ there is no trend to have used, so mark this
    check `PASS` (or `N/A`) instead of flagging an impossible requirement.
    Confirm it's genuinely period one the same way `amplifi-insights` does
-   ~ check `brief.md`'s Snapshot `Client history` field FIRST (an
-   "Established since {…}" client is never genuinely period one, no
-   matter how empty the logs read ~ `ROADMAP.md`'s rollout only backfills
-   in-flight cycles, never a client's actual historical archive), then,
-   only for a "New" client, check `delivery-log.md` for any prior `delivered`/`revising`/
-   `revising (reopened)`/`accepted` row, not just whether `insight-log.md`
-   is empty (an empty
-   log alone doesn't distinguish real period one from a broken capture
-   loop) ~ before applying this exception; a second period with a still-empty
-   log is a real gap, not a bootstrap state, and gets flagged normally.
+   ~ check `brief.md`'s Snapshot `Client history` field FIRST: for a
+   "New" client, then check `delivery-log.md` for any prior `delivered`/
+   `revising`/`revising (reopened)`/`accepted` row, not just whether
+   `insight-log.md` is empty (an empty log alone doesn't distinguish real
+   period one from a broken capture loop) ~ before applying this
+   exception; a second period with a still-empty log is a real gap, not a
+   bootstrap state, and gets flagged normally.
+   **Exception 2: an "Established since {…}" client's FIRST report under
+   THIS corpus.** `Client history` says "Established" precisely because
+   real prior reports exist that predate this corpus, so Exception 1
+   above doesn't apply ~ but `ROADMAP.md`'s rollout only backfills
+   in-flight cycles, never the client's actual historical archive, so
+   `insight-log.md` is empty for this client for a REAL reason that
+   waiting doesn't fix: there is no trend captured in this corpus to have
+   used, and none will retroactively appear. Apply the same "no trend
+   exists" logic Exception 1 uses, scoped to THIS corpus rather than the
+   client's real history: if `delivery-log.md` shows no prior `delivered`/
+   `revising`/`revising (reopened)`/`accepted` row for this client either
+   (i.e. this is their first report since onboarding onto this system),
+   mark `PASS` (or `N/A`); their second report onward has a real
+   in-corpus baseline and gets flagged normally. Without this second
+   exception, `ROADMAP.md` task 1.3b's requirement that every actively-
+   engaged client be marked "Established" (never "New") at rollout means
+   EVERY rollout client's first report hits Exception 1's carve-out but
+   not its relief, earning a Compounding flag with no trend that could
+   ever clear it ~ permanently blocking ship clearance on an otherwise-
+   correct report (Codex catch, 2026-07-19).
 
 ## Step 2 ~ Report format (fixed)
 

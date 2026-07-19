@@ -38,16 +38,28 @@ filesystem-safety measure for the folder name only. **If a Snapshot
 table VALUE contains a literal `|`, escape it as `\|`, never a bare `|`
 ~ and this isn't scoped to the `Client` row alone.** The Snapshot is a
 Markdown table with several free-form cells besides `Client` ~
-`Platforms monitored` (e.g. "Sentimo | MCP"), `Client contacts`, and
-`Amplifi lead analyst` (its own `{name} · backup: {name}` shape can
-plausibly become "Dale | Janelle" for a handoff note) can all just as
-easily contain a literal `|` as the client name can, and an unescaped one
-in ANY of them is read as a NEW column boundary by any Markdown parser
+`Platforms monitored` (e.g. "Sentimo | MCP") and
+`Client contacts` can
+easily contain a literal `|`, and an unescaped one
+in either is read as a NEW column boundary by any Markdown parser
 the same way, corrupting the row and shifting every field after it out of
-alignment (Codex catch, 2026-07-19) ~ this breaks not just the
-name-resolution lookup but also `INSTRUMENT.md` §5b's automated ingestion
-of the `Amplifi lead analyst` field specifically. Escape every Snapshot
-cell's literal pipes, not only `Client`'s. The
+alignment (Codex catch, 2026-07-19). **`Amplifi lead analyst` is
+DIFFERENT, though ~ it's not a free-form cell to escape into, it's a
+fixed, machine-parsed shape (`{lead} · backup: {name}`) that
+`INSTRUMENT.md` §5b's automated ingestion reads specifically to determine
+which name is the lead vs the backup.** Don't put a `|`-separated handoff
+note ("Dale | Janelle") into this cell even escaped ~ escaping preserves
+the Markdown table structure but still destroys the `{lead} · backup:
+{name}` schema itself, and the automated ownership test would then have
+no reliable way to tell which of the two names is actually the current
+lead, risking a narrow client signal getting attributed to the wrong
+analyst's WIP/load or the join failing outright (Codex catch,
+2026-07-19: an earlier draft of this fix used exactly that example,
+suggesting the wrong cell as a place for free-form handoff notes). Keep
+`Amplifi lead analyst` in its fixed format always; if a handoff needs its
+own note, that belongs in `brief.md`'s prose or a client-specific comment
+elsewhere, never inside this cell. Escape every OTHER Snapshot
+cell's literal pipes. The
 Snapshot itself is a Markdown table, and an unescaped `|` inside a cell
 is read as a NEW column boundary by any Markdown parser, corrupting the
 row and breaking the exact lookup `amplifi-improve`, `amplifi-qa`, and
@@ -64,8 +76,16 @@ proof of matching ACCOUNTS.** Slugging is lossy ~ different real
 names can normalize to the same string (`ACME/EMEA`, `ACME:EMEA`, and a
 client literally named `ACME-EMEA` all slug to `clients/ACME-EMEA/`), so
 the folder name alone can't be trusted to be unique without an explicit
-check. Before finishing the copy, list `clients/*`: if the target slug
-does NOT already exist, use it as-is. If it DOES already exist, read that
+check. **Compare slugs case-INsensitively, not exact-string ~ the
+documented Drive-for-Desktop deployment runs on Windows/macOS, both
+case-insensitive filesystems, where `clients/ACME-EMEA/` and a
+newly-computed `clients/acme-emea/` are the SAME folder on disk even
+though they're different strings** (Codex catch, 2026-07-19: an
+exact-string check would miss this and let a sync silently attempt to
+create a second folder the filesystem then collapses into the first,
+corrupting whichever write lands second). Before finishing the copy, list
+`clients/*` and compare case-insensitively: if the target slug does NOT
+already exist under any casing, use it as-is. If it DOES already exist, read that
 existing folder's `brief.md` Snapshot table and **STOP for a human
 decision, don't auto-resolve either way:** "`clients/{slug}/` already
 exists for a client named '{existing name}' ~ is this the SAME account
@@ -96,12 +116,18 @@ and making Snapshot resolution ambiguous between them (Codex catch,
 the base slug AND every numbered variant already present, and compare
 against the account being onboarded (the same human-confirmed identity
 check above) BEFORE allocating anything new ~ if any of them already IS
-this account, reuse that folder, don't create another. Only once none of
-the existing base/variants match does allocating the next free suffix
+this account, reuse that folder, don't create another. **This enumeration
+is case-insensitive too, same as the base-slug check above** ~ `clients/
+ACME-EMEA-2/` and a freshly-slugged `acme-emea-2` are the same folder on
+a case-insensitive filesystem, so treat `-2`, `-3`, etc. as taken
+regardless of casing when scanning for the already-existing variants, not
+just when checking the base. Only once none of
+the existing base/variants match (case-insensitively) does allocating the next free suffix
 apply: append a
 numeric suffix,
 DETERMINISTIC and creation-order based ~ `-2` if the base slug is taken,
-`-3` if `-2` is also taken, and so on, first available number wins, same
+`-3` if `-2` is also taken, and so on, first available number wins
+(checking "taken" case-insensitively at each step), same
 "first suffix that doesn't already exist" rule `amplifi-improve` already
 uses for colliding learning filenames.
 
@@ -201,13 +227,23 @@ missing something: add it there, not in the prompt.
    `skills/amplifi-qa/SKILL.md` check 4 explicitly accepts either copy as
    a valid historical source for exactly this reason. `insight-log.md`'s
    entry is the canonical original; `context.md`'s `CLIENT-FACT` is the
-   sourced copy, dated with when it was first promoted, and
+   sourced copy, dated with the metric's own source period (see below,
+   never the promotion date), and
    `insight-log.md`'s own "conditional third touch" requires a later
    correction to update BOTH when a matching promoted fact exists ~
    applying this rule's "one of them is wrong, delete the extra" reflex to
    that intentional cache would remove a source future sessions need
-   (Codex catch, 2026-07-19). This exception is scoped to that one
-   promotion pattern, not a general license to duplicate facts elsewhere.
+   (Codex catch, 2026-07-19). **Date the promoted copy with the metric's
+   own source period ~ when it happened (e.g. "March 2026"), never the
+   date it was promoted into `context.md`.** A metric is often promoted
+   weeks or months after the period it describes; dating the cached copy
+   with its promotion date would conflict with `amplifi-improve` and
+   `skills/amplifi-qa/SKILL.md`, which both key historical figures off
+   when they happened, not when they were written down. If the promotion
+   timestamp itself is worth keeping, log it as separate metadata, never
+   in place of the source period (Codex catch, 2026-07-19). This exception
+   is scoped to that one promotion pattern, not a general license to
+   duplicate facts elsewhere.
 3. **The corpus outranks memory.** If the corpus and someone's recollection
    disagree, fix the corpus ~ then it's fixed for everyone, forever.
 

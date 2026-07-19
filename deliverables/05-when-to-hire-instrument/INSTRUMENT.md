@@ -1330,7 +1330,9 @@ above by hand:
    DENOMINATOR is a THIRD mechanism ~ the UNION of two row sets, not one:
    (i) rows with STATUS `accepted` OR `revising (reopened)` SPECIFICALLY
    (the SAME scope the numerator above reads, never bare `revising`,
-   never `delivered`) with `Due` in the trailing 90 days, INCLUDING
+   never `delivered`) with `Due` in the SAME epoch-clamped window the
+   numerator uses (`max(trailing 90 days, Sep 4)`, above ~ NOT the
+   unconditional trailing-90-days alone), INCLUDING
    zero-round rows (omitting clean rows here turns "rounds per report"
    into "rounds per reworked report," inflating gate (a) and firing it on
    noise); PLUS (ii) any `accepted`/`revising (reopened)` row (the

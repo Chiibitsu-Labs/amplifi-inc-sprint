@@ -16,12 +16,7 @@
 | Data sources | {Sentimo / MCP / third-party provider names} |
 | Client contacts | {name, role, channel} |
 | Amplifi lead analyst | {name} · backup: {name} |
-| Client history | {"New" ~ this system's own delivery-log/insight-log ARE
-  this client's whole history, genuinely period one when both are empty;
-  OR "Established since {approx. date/engagement length}" ~ real prior
-  reports exist, they just predate this corpus and aren't captured here.
-  Set ONCE at onboarding (`ROADMAP.md` task 1.3b), never inferred from
-  whether the logs happen to be empty} |
+| Client history | {"New" or "Established since {approx. date/engagement length}" ~ see note below} |
 
 > **Keep "Amplifi lead analyst" current the moment ownership PERMANENTLY
 > changes** ~ not the per-cycle cover `delivery-log.md`'s `Analyst`
@@ -32,6 +27,13 @@
 > stale name here quietly points that test at the wrong person's
 > WIP/load. Update it here, right when the reassignment happens (see
 > `delivery-log.md` touch 2 for the same rule from the other side).
+
+> **"Client history" ~ "New"** means this system's own delivery-log/
+> insight-log ARE this client's whole history, genuinely period one when
+> both are empty. **"Established since {approx. date/engagement length}"**
+> means real prior reports exist, they just predate this corpus and
+> aren't captured here. Set ONCE at onboarding (`ROADMAP.md` task 1.3b),
+> never inferred from whether the logs happen to be empty.
 
 ## The brief (what they actually asked for)
 
