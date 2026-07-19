@@ -6,8 +6,10 @@ a byproduct, or it dies.
 
 ## File convention (what the improve skill writes)
 
-One file per session: `YYYY-MM-DD-HHMM-{analyst}-{client-or-topic}.md`
-(the HHMM time keeps two same-day sessions from colliding)
+One file per session: `YYYY-MM-DD-HHMMSS-{analyst}-{client-or-topic}.md`
+(seconds, not just HHMM ~ keeps two sessions in the same MINUTE for the
+same analyst/client from colliding, not just two in the same day; if a
+name still collides, append `-2`, `-3`, etc. before `.md`)
 
 ```markdown
 # 2026-07-24 ~ Dale ~ {Client}

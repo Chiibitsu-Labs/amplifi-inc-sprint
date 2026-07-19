@@ -62,6 +62,7 @@ High impact, more effort. The system starts measuring itself.
 | Daily | capchecker 3-tap check-in (08:00) · summary to Michele (10:00) | all · auto |
 | Per cycle | delivery-log: open at start, ship-touch + insight-log entry at delivery, finalize at acceptance (~20–30s each) | delivering analyst |
 | Weekly (Fri) | promotion pass: learnings → corpus | Rica (+ improve skill) |
+| Weekly (Fri, same sitting) | silent-acceptance scan: any `delivered`/`revising` row whose `Last Sent` + 5 business days has passed with no revision request finalizes to `accepted` now ~ plain markdown doesn't do this on its own, nothing revisits a row automatically after 5 quiet days, so without this scan a silently-clean report can sit unresolved indefinitely and stay excluded from the accepted-only rework calculation (skewing rounds-per-report upward). Piggybacks on the promotion pass's existing Friday sitting rather than adding a new habit | Rica |
 | Monthly | walk the router chain by hand (Instrument §5a) and log the routing decision ~ starts at 2.2 (Sep 11), continues on this cadence whether or not 2.3's automation has shipped | Michele |
 | Quarterly | threshold calibration against real distributions · corpus health check (stale files, unfilled frames) | Michele + Chii |
 

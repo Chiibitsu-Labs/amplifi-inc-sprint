@@ -129,12 +129,17 @@ End every output with this reminder, verbatim:
 
 ```
 If you fix any flag above before this report ships, log it now ~
-delivery-log.md touch 1.5: bump Rounds, append the cause tag
-(brief-misalign / brand / quality-bar / data), right on this row, before
-you move on. Checks 1/2/4 map to brief-misalign/brand/data respectively;
-checks 3 (actionability) and 5 (compounding) map to quality-bar ~ they're
-failures against what-good-looks-like.md's bar, not the brief, brand
-standard, or a data problem specifically.
+delivery-log.md touch 1.5: bump Rounds by ONE (this whole pass, not once
+per flag fixed) and append ONE cause tag, chosen by priority if more than
+one check flagged something (brief-misalign > brand > quality-bar > data),
+right on this row, before you move on. Checks 1/2/4 map to
+brief-misalign/brand/data respectively; checks 3 (actionability) and 5
+(compounding) map to quality-bar ~ they're failures against
+what-good-looks-like.md's bar, not the brief, brand standard, or a data
+problem specifically. Fixing BOTH a brief-alignment flag and a data flag
+in this one pass is still ONE round, ONE tag (brief-misalign wins the
+priority, data goes in Notes) ~ never one bump per flag, never more than
+one tag entry for this pass.
 ```
 
 This QA gate is one of the three pre-send checkpoints touch 1.5 exists to

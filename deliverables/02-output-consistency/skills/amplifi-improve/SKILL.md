@@ -23,9 +23,14 @@ feels like a documentation chore, you've failed. Two modes.
    never grows past one. If rework happened or friction showed up this
    session, log it under `REWORK`/`PROCESS` even if the exact same theme
    was captured last week too ~ especially then.
-3. Write ONE file: `learnings/YYYY-MM-DD-HHMM-{analyst}-{client-or-topic}.md`
-   (the HHMM time keeps two same-day sessions from colliding ~ never
-   overwrite an existing learning file)
+3. Write ONE file:
+   `learnings/YYYY-MM-DD-HHMMSS-{analyst}-{client-or-topic}.md` (seconds,
+   not just HHMM ~ two sessions for the same analyst/client inside the
+   same minute, e.g. a quick correction pass right after the first
+   capture, would otherwise collide on an identical filename. **Never
+   overwrite an existing learning file, full stop:** if a name still
+   collides even with seconds included, append `-2`, `-3`, etc. before
+   `.md` and use the first suffix that doesn't already exist)
 
    **This requires an actual write path to the live corpus** ~ a
    Drive-connector attachment that only lets you *read* files can't create
@@ -60,7 +65,7 @@ later.
 ## Mode 2 ~ PROMOTE (weekly, run with Rica)
 
 1. Read only files matching the dated session-file pattern,
-   `learnings/YYYY-MM-DD-HHMM-*.md`, that are NOT already prefixed
+   `learnings/YYYY-MM-DD-HHMMSS-*.md`, that are NOT already prefixed
    `archived-`. **Explicitly exclude `learnings/patterns.md` and
    `learnings/README.md`** ~ `patterns.md` is the permanent output of this
    step, not an input to it; reading it back in would re-promote its own

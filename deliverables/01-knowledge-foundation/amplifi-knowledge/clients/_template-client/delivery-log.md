@@ -117,7 +117,16 @@
    touch for every additional round.
 4. **At actual client acceptance ~ or after 5 business days of silence
    following the row's current `Last Sent` date, with no revision
-   request:** `Status = accepted`. **Count the 5 days from `Last Sent`,
+   request:** `Status = accepted`. **This transition needs someone to
+   actually check** ~ plain markdown doesn't revisit a row on its own once
+   5 days pass, so relying on "whoever happens to notice" leaves silently-
+   clean reports sitting at `delivered`/`revising` indefinitely, excluded
+   from the accepted-only rework calculation the whole time (skewing
+   rounds-per-report upward, since the clean majority never counts).
+   `ROADMAP.md`'s Phase 3 rhythm covers this: a weekly scan (piggybacked on
+   the Friday promotion-pass sitting, no new habit needed) finalizes every
+   row whose silence window has quietly closed. **Count the 5 days from
+   `Last Sent`,
    never from the original `Delivered`** ~ this is what actually makes the
    rule work once a row has been revised: using the original `Delivered`
    date would auto-accept a row the moment a late-cycle revision goes back
@@ -154,12 +163,15 @@ never shipped has no completed-work evidence to lose. **But "still `open`"
 splits into two different cases, distinguished by comparing `Last Sent`
 (the cancellation date) against `Due` ~ and only ONE of them is a clean
 exclusion:**
-- **Cancelled BEFORE `Due` passes** (`Last Sent < Due`)**:** the cycle was
-  never late and was never going to exist ~ fully excluded from
-  on-cadence's numerator AND denominator. It was never a miss, so there's
-  nothing to preserve.
-- **Cancelled AFTER `Due` has already passed** (`Last Sent ≥ Due`)**,
-  while still `open`:** this row was ALREADY counted as an automatic
+- **Cancelled BEFORE, or ON, `Due`** (`Last Sent ≤ Due` ~ same-day counts
+  as on-time here, matching `Delivered ≤ Due`'s own boundary elsewhere in
+  this doc)**:** the cycle was never late and was never going to exist ~
+  fully excluded from on-cadence's numerator AND denominator. It was never
+  a miss, so there's nothing to preserve.
+- **Cancelled AFTER `Due` has already passed** (`Last Sent > Due`, strictly
+  ~ a cancellation stamped ON `Due` itself is same-day, not yet overdue,
+  same boundary rule as `Delivered ≤ Due` counting the due date itself as
+  on-time)**, while still `open`:** this row was ALREADY counted as an automatic
   overdue-in-progress miss the moment `Due` passed (see "How to fill a
   row" → Status, below) ~ that miss is a fact that already happened, not a
   future obligation the client can retroactively un-create by cancelling
@@ -265,9 +277,11 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   `Due` (future work, not yet resolved either way). **`cancelled` rows are
   NOT uniformly excluded** ~ compare `Last Sent` (the cancellation date,
   stamped when `Status` was set to `cancelled`) against `Due`: cancelled
-  BEFORE `Due` passed (`Last Sent < Due`), exclude fully (never a miss);
-  cancelled AFTER `Due` had already passed while still `open` (`Last Sent
-  ≥ Due`), the automatic miss it already accrued STAYS in the numerator
+  BEFORE `Due` passed, `Last Sent ≤ Due` (same-day cancellation counts as
+  before, matching `Delivered ≤ Due`'s own boundary), exclude fully (never
+  a miss); cancelled AFTER `Due` had already passed while still `open`
+  (`Last Sent > Due`, strictly), the automatic miss it already accrued
+  STAYS in the numerator
   shortfall and denominator (see above) ~ cancelling only stops further
   tracking, it doesn't retroactively erase a miss that already happened.
   This comparison reads the structured `Last Sent` field, never the free
