@@ -86,11 +86,22 @@ resolves by matching that cell, not the folder name.** Two folders named
 whatever) silently reads or writes the WRONG account's brief/context/
 delivery history exactly as often as it picks right (Codex catch,
 2026-07-19). **When a genuine duplicate-name collision is confirmed,
-write a DISTINGUISHING qualifier directly into the new account's Snapshot
-`Client` cell, not just the folder name** ~ whatever real fact actually
+write a DISTINGUISHING qualifier into BOTH accounts' Snapshot `Client`
+cells, not just the new one and not just the folder name** ~ whatever
+real fact actually
 tells them apart (`ACME Corp (Chicago office, since 2024)` vs `ACME Corp
 (new account, 2026)`; region, industry, or onboarding date, whichever is
-true and durable). This keeps the Snapshot `Client` field as the one
+true and durable). **Qualifying only the new account leaves the ORIGINAL
+account's Snapshot reading the bare, unqualified name** ~ a plain "ACME
+Corp" resolution request then still matches exactly that one
+(now-unqualified) Snapshot, so it silently succeeds against the original
+account's brief/context/delivery history without ever triggering the
+"matches more than one" stop-and-ask condition below, exactly the silent
+wrong-account read this whole mechanism exists to prevent (Codex catch,
+2026-07-19). Requalifying the ORIGINAL account the moment the collision is
+confirmed is what actually closes this ~ an unqualified request then
+matches ZERO Snapshots exactly, which forces the stop-and-ask path instead
+of a silent single match. This keeps the Snapshot `Client` field as the one
 identity key every skill already reads ~ it just has to actually stay
 UNIQUE per account once a duplicate name is confirmed, which a bare
 display name can't guarantee on its own. **Any resolution request that
@@ -120,8 +131,14 @@ FAQ section, once. Nobody re-infers it again.
 ~ 20 seconds. This is what makes an overdue, still-undelivered report
 visible to the instrument, not just a shipped one.
 
-**Shipping a report?** Append the key insights to the client's
-`insight-log.md`, and mark the delivery-log row `delivered` (~1 minute
+**Shipping a report?** Add the key insights to the client's
+`insight-log.md` ~ **new entry goes at the TOP, below the header, never
+the bottom** (`insight-log.md`'s own convention: "newest at the top" ~
+adding to the bottom instead reverses chronology over successive reports
+and eventually buries the most relevant period under a long history,
+making it the first content likely to get missed or truncated when the
+insights skill reads the accumulated log, Codex catch, 2026-07-19) ~ and
+mark the delivery-log row `delivered` (~1 minute
 total).
 
 **Client accepts the report?** Finalize that row's rounds + rework tag,
@@ -142,6 +159,21 @@ missing something: add it there, not in the prompt.
    upload/sync as `.md` so the structure survives the future git migration.
 2. **One fact, one home.** Client facts live in the client folder; how-we-work
    facts live in `standards/`. If you wrote it twice, one of them is wrong.
+   **Exception: a metric promoted from `insight-log.md` into `context.md`
+   as a dated `CLIENT-FACT`, per the recurs-enough-to-promote convention
+   ~ that's a deliberate cache, not a duplication mistake.** A repeatedly-
+   needed figure lives in BOTH places on purpose, so it's still readable
+   even when the linked full report isn't reachable, and
+   `skills/amplifi-qa/SKILL.md` check 4 explicitly accepts either copy as
+   a valid historical source for exactly this reason. `insight-log.md`'s
+   entry is the canonical original; `context.md`'s `CLIENT-FACT` is the
+   sourced copy, dated with when it was first promoted, and
+   `insight-log.md`'s own "conditional third touch" requires a later
+   correction to update BOTH when a matching promoted fact exists ~
+   applying this rule's "one of them is wrong, delete the extra" reflex to
+   that intentional cache would remove a source future sessions need
+   (Codex catch, 2026-07-19). This exception is scoped to that one
+   promotion pattern, not a general license to duplicate facts elsewhere.
 3. **The corpus outranks memory.** If the corpus and someone's recollection
    disagree, fix the corpus ~ then it's fixed for everyone, forever.
 
