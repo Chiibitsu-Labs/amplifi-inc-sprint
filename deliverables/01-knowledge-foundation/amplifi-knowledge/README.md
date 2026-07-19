@@ -80,7 +80,25 @@ every skill's Snapshot-based resolver at one shared brief/context/
 delivery history for what are actually two separate clients (Codex
 catch, 2026-07-19). Only once a human confirms "yes, same account" does
 this become a non-collision; a confirmed DIFFERENT account (whether the
-name differs OR merely happens to match) is a genuine collision: append a
+name differs OR merely happens to match) is a genuine collision. **Before
+picking a numeric suffix, though, enumerate the base slug AND every
+already-existing numbered variant (`-2`, `-3`, …), not just the base ~
+this account being onboarded might already BE one of them.** Onboarding
+rerun for an account that's already stored under a suffix is a real case,
+not a hypothetical: if the base slug belongs to an unrelated client A and
+THIS account already exists at `clients/{slug}-2/` from an earlier
+onboarding, checking only the base folder finds client A there, correctly
+calls it a different account, and would then allocate the next free
+suffix (`-3`) for what's actually the SAME account already living at
+`-2` ~ splitting its brief/context/delivery history across two folders
+and making Snapshot resolution ambiguous between them (Codex catch,
+2026-07-19). So: list `clients/*`, read the Snapshot/`Account label` of
+the base slug AND every numbered variant already present, and compare
+against the account being onboarded (the same human-confirmed identity
+check above) BEFORE allocating anything new ~ if any of them already IS
+this account, reuse that folder, don't create another. Only once none of
+the existing base/variants match does allocating the next free suffix
+apply: append a
 numeric suffix,
 DETERMINISTIC and creation-order based ~ `-2` if the base slug is taken,
 `-3` if `-2` is also taken, and so on, first available number wins, same

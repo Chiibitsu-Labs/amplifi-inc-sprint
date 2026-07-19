@@ -169,11 +169,25 @@ never optional. But files 6–7 legitimately stay templated for different
 reasons and on different timelines, so they get two DIFFERENT exceptions,
 not one shared cutoff:
 - **`insight-log.md` (file 7): first period ONLY ~ and verify it, don't
-  infer it from the log alone.** An empty `insight-log.md` is ambiguous by
+  infer it from the log alone, and check `brief.md`'s Snapshot `Client
+  history` field FIRST, before even looking at delivery-log.md.** An empty
+  `insight-log.md` is ambiguous by
   itself: it's consistent with a genuine first period, but it's ALSO
-  consistent with period one's capture-loop write having been skipped,
-  which would make period two (or later) look like a bootstrap state when
-  it's actually a real gap. Before applying this exception, check
+  consistent with period one's capture-loop write having been skipped
+  (period two or later mistakenly reading as bootstrap), AND with an
+  ESTABLISHED client whose real prior history simply predates this corpus
+  ~ `ROADMAP.md`'s rollout only backfills cycles already in flight at
+  onboarding, never a client's actual historical archive, so an
+  established client's delivery-log/insight-log legitimately start
+  exactly as empty as a genuinely new client's do (Codex catch,
+  2026-07-19). **Check `Client history` first:** if it reads "Established
+  since {…}," this is NOT a first period no matter how empty the logs
+  are ~ flag it explicitly ("established client, no historical trend
+  captured in this system yet ~ real prior history exists but predates
+  this corpus, not evaluable for a trend read here") rather than silently
+  treating it as day one and discarding the fact that real context
+  exists, just not here. Only if `Client history` reads "New" does the
+  original delivery-log check apply: check
   `clients/{client}/delivery-log.md` for any prior row with `Status =
   delivered`/`revising`/`revising (reopened)`/`accepted` (a cycle that has
   actually shipped

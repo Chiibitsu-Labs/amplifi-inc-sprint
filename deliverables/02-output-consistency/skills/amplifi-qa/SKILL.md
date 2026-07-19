@@ -310,7 +310,11 @@ never as part of this whole-file STOP condition.
    corpus, same logic) ~ there is no trend to have used, so mark this
    check `PASS` (or `N/A`) instead of flagging an impossible requirement.
    Confirm it's genuinely period one the same way `amplifi-insights` does
-   ~ check `delivery-log.md` for any prior `delivered`/`revising`/
+   ~ check `brief.md`'s Snapshot `Client history` field FIRST (an
+   "Established since {…}" client is never genuinely period one, no
+   matter how empty the logs read ~ `ROADMAP.md`'s rollout only backfills
+   in-flight cycles, never a client's actual historical archive), then,
+   only for a "New" client, check `delivery-log.md` for any prior `delivered`/`revising`/
    `revising (reopened)`/`accepted` row, not just whether `insight-log.md`
    is empty (an empty
    log alone doesn't distinguish real period one from a broken capture

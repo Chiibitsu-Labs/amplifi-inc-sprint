@@ -177,7 +177,12 @@
    rounds-per-report upward, since the clean majority never counts).
    `ROADMAP.md`'s Phase 3 rhythm covers this: a weekly scan (piggybacked on
    the Friday promotion-pass sitting, no new habit needed) finalizes every
-   row whose silence window has quietly closed. **Count the 5 days from
+   row whose silence window has quietly closed ~ **and updates that same
+   row's `insight-log.md` entry's `Client reaction` from `pending` to `no
+   feedback / administratively accepted` in the same pass, `insight-log.md`'s
+   own required distinction** (see `ROADMAP.md`'s Phase 3 rhythm for why
+   this is the one place that write actually happens, since the
+   feedback-moment touch only fires when the client reacts). **Count the 5 days from
    `Last Sent`,
    never from the original `Delivered`** ~ this is what actually makes the
    rule work once a row has been revised: using the original `Delivered`
