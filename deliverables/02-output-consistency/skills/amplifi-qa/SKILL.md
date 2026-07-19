@@ -123,7 +123,13 @@ exactly the gap `amplifi-insights` already closes on the generation side
 route around the insights skill's check and still get a clean QA pass.
 `context.md`/`insight-log.md` keep their existing first-period/no-context
 exceptions (see check 5 below) ~ this stricter rule is brief.md/
-brand-standard.md only.
+brand-standard.md only. **Within those two files, the SAME "same
+detection" cross-reference also carries over `amplifi-insights`' two
+accumulating-section carve-outs** ~ `brief.md`'s FAQ table and
+`brand-standard.md`'s revision-history list stay template-example rows by
+design even once the rest of the file is genuinely filled, so check those
+two sections entry-by-entry (per `amplifi-insights/SKILL.md`'s Step 0),
+never as part of this whole-file STOP condition.
 
 ## Step 1 ~ Run the five checks
 
@@ -157,7 +163,24 @@ brand-standard.md only.
    as long as its date travels with it). The log entry itself is a terse
    headline, not every figure from that period, so a historical number
    genuinely sourced from (b) or (c) is still a pass, not a flag, same
-   labeling rule as any other historical figure. If the insights skill
+   labeling rule as any other historical figure. **Before passing a
+   historical figure off ANY single source, cross-check the OTHER
+   reachable sources for the SAME metric and period ~ don't stop looking
+   the moment one source agrees with the draft.** The three sources are
+   supposed to describe the same historical fact, but a correction can
+   reach one without reaching the others (`insight-log.md`'s own
+   "conditional third touch" is explicitly required to update a matching
+   `context.md` fact when one exists, but that's a human step and can be
+   missed ~ see `insight-log.md`). If `insight-log.md` and `context.md`
+   (or either against a reachable linked report) disagree on the SAME
+   period's SAME metric, that's a **data-integrity FLAG, not a pass**,
+   regardless of which value the draft happens to use ~ list it
+   explicitly ("{metric} for {period}: insight-log.md says {X}, context.md
+   says {Y}, sources disagree, resolve before trusting either") rather
+   than silently accepting whichever source matches (Codex catch,
+   2026-07-19: without this check, a draft could reuse a stale `context.md`
+   value and still clear check 4 because SOME accepted source technically
+   agreed with it). If the insights skill
    flagged a figure as unavailable this period (none of the three sources
    reachable or dated, per its own Step 1 rule), don't re-flag that same
    gap here as a data-integrity failure ~ it's already surfaced honestly,

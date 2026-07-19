@@ -230,6 +230,20 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
 
 ## How to fill a row
 
+**This is a Markdown table ~ escape any literal `|` in ANY free-text
+cell, not just a client's real name.** `Analyst`, `Notes`, and any other
+field an analyst types by hand can end up holding a pasted client phrase
+or a shorthand like `Dale | Janelle` for a handoff; an unescaped `|`
+inside a cell reads as a NEW column boundary to any Markdown parser,
+shifting every field after it in that row out of alignment with this
+table's fixed 11-column schema (`Period | Analyst | Start | Due |
+Delivered | Last Sent | Status | Rounds | Effort (h) | Rework tag |
+Notes`). A shifted row either loses or misassigns its own data to §5b's
+future automated ingestion (Codex catch, 2026-07-19), the same corruption
+`README.md`'s Snapshot-table pipe-escaping rule exists to prevent, just
+here on every cell instead of one specific one. Write `\|` for a literal
+pipe in any cell (`Dale \| Janelle`), never a bare `|`.
+
 - **Period** ~ a short, human-readable label for this cycle (e.g. `2026-07
   / wk 29` for a weekly client, `2026-07` for a monthly one). **Written
   ONCE at row creation (touch 1) and NEVER edited afterward** ~ together

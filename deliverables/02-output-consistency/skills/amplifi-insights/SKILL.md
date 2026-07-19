@@ -74,6 +74,27 @@ section remains, when a real entry sits right next to it, would re-block
 every second-and-later period the exact way the first-period exceptions
 below exist to prevent for period one.
 
+**Two accumulating sections live INSIDE the otherwise one-shot
+`brief.md`/`brand-standard.md` files, and get this SAME entry-by-entry
+carve-out, not the strict whole-file test:** `brief.md`'s "FAQs &
+clarifications" table (explicitly "append new rows; never delete" ~ its
+own header) and `brand-standard.md`'s "Revision history lessons" list
+(explicitly grows "when a revision round teaches us a brand rule").
+Both ship with one or two illustrative example rows that are reasonably
+left in place as a formatting reference for whoever appends the NEXT row
+~ neither file's own instructions say to delete them, and a client can
+legitimately have zero FAQs or zero revision-history lessons yet even
+once every genuinely one-shot section (Snapshot, the pasted brief, Unique
+asks, Out-of-scope, Voice & tone, Formatting rules, Terminology) is fully
+real. Applying the strict whole-file test to these two tables would
+permanently block a client whose brief and brand standard are otherwise
+completely ready, the same failure mode the `context.md`/`insight-log.md`
+carve-out above exists to prevent (Codex catch, 2026-07-19). Check these
+two sections entry-by-entry, same rule as `context.md`/`insight-log.md`:
+a template example row sitting unused next to zero or more real rows
+doesn't block the file; the REST of `brief.md`/`brand-standard.md` still
+gets the strict whole-file test.
+
 **Exception, or every brand-new client permanently blocks their own first
 report:** `brief.md` and `brand-standard.md` (files 4–5 above) still MUST
 be filled before generating ~ they're what the client actually asked for,

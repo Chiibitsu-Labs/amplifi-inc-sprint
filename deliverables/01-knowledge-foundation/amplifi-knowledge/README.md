@@ -30,6 +30,26 @@ and reads back as the real `ACME|EMEA` ~ un-escape `\|` → `|` when
 comparing a requested name against this cell, same as any other
 Markdown-escaped value.
 
+**Check for a slug COLLISION before creating the folder, and never
+silently reuse an existing one.** Slugging is lossy ~ different real
+names can normalize to the same string (`ACME/EMEA`, `ACME:EMEA`, and a
+client literally named `ACME-EMEA` all slug to `clients/ACME-EMEA/`), so
+the folder name alone can't be trusted to be unique without an explicit
+check. Before finishing the copy, list `clients/*`: if the target slug
+does NOT already exist, use it as-is. If it DOES already exist, read that
+existing folder's `brief.md` Snapshot table ~ if its stored real name
+matches the NEW client's real name, this is the same client (not a
+collision, don't create a second folder). If the stored real name is
+DIFFERENT, this is a genuine collision: append a numeric suffix,
+DETERMINISTIC and creation-order based ~ `-2` if the base slug is taken,
+`-3` if `-2` is also taken, and so on, first available number wins, same
+"first suffix that doesn't already exist" rule `amplifi-improve` already
+uses for colliding learning filenames. Never let a second client's folder
+silently overwrite or get merged into the first client's ~ the
+Snapshot-based resolver every skill now uses (Codex catch, 2026-07-19)
+would otherwise read or write the WRONG client's brief, context, and
+delivery data for whichever name lost the collision.
+
 **A client clarifies something?** Write it into that client's `brief.md`
 FAQ section, once. Nobody re-infers it again.
 

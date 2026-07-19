@@ -44,14 +44,23 @@ on its own; the numbers that fired them have to be dated too.
     sequential, not alternatives: {(a) N rounds/accepted-report frequency
     threshold} AND {(b) N% round-tag-share threshold} · evaluation cohort:
     {trailing 90 days, but NOT the same mechanism as on-cadence above,
-    don't record it as such ~ gate (a)'s DENOMINATOR is the row-level,
-    `Due`-anchored cohort (every `accepted` row with `Due` in the trailing
-    90 days, including zero-round rows, same set on-cadence uses); gate
+    don't record it as such ~ gate (a)'s DENOMINATOR is the UNION of two
+    row sets, never just the `Due`-anchored one alone: (i) every
+    `accepted` row with `Due` in the trailing 90 days, including
+    zero-round rows, same set on-cadence uses; PLUS (ii) any `accepted`
+    row that contributed at least one in-window round even though its OWN
+    `Due` falls outside the window (a late reopen on an old report) ~
+    omitting set (ii) undercounts the denominator for exactly the reopened
+    case and can divide by zero in a month with live reopen activity but
+    no row `Due`-in-window at all. Gate
     (a)'s NUMERATOR and all of gate (b) are ROUND-level instead: every
     individually-dated `Rework tag` entry, across every `accepted` row
     regardless of THAT row's own `Due`, whose own date falls in the
     trailing 90 days ~ see §5a's "FIX_CORPUS's cohort works differently"
-    block for why these two cohort mechanisms are deliberately different}.
+    block for why these mechanisms are deliberately different (Codex
+    catch, 2026-07-19: an earlier draft of this snapshot line recorded
+    only set (i), which silently reproduces the exact bug §5a's own
+    history already worked through and fixed)}.
     Record both values even if (a)
     didn't clear and (b) was never reached ~ a later audit needs the full
     pair to know WHY FIX_CORPUS read absent, not just that it did.
@@ -88,6 +97,24 @@ on its own; the numbers that fired them have to be dated too.
   absence, and collapsing the two would make a deliberately-deferred HIRE
   read, later, as if every earlier route had been checked and genuinely
   ruled out.
+- **HIRE-EVALUATION-BLOCKED, its own separate line, recorded even when NO
+  route above is individually PROVISIONAL:** {if capchecker's DATA signal
+  was active (response rate <70%/7d or <10 days history) OR WIP DATA
+  COVERAGE fell below its ≥70%-of-roster floor this walkthrough, say so
+  here explicitly: "DATA gate: {clear / active}" and "WIP coverage: {N of
+  full roster cleared ≥7-of-10-valid-observations ~ clear / insufficient}"}.
+  This is DIFFERENT from the PROVISIONAL bullet above ~ REDESIGN/FIX_CORPUS
+  PROVISIONAL means a SPECIFIC narrow candidate's evidence can't be read
+  yet; DATA/WIP-insufficient means HIRE ITSELF cannot be evaluated AT ALL
+  this walkthrough, regardless of what every other route reads (Instrument
+  §3's HIRE check requires both gates clear before HIRE is even
+  reachable). Leaving this state unrecorded lets a data-gated month fall
+  through to "none crossed" by default ~ that reads as "every route was
+  checked and genuinely absent," when the honest state is "HIRE couldn't
+  be checked at all, chase the response rate up first" (Codex catch,
+  2026-07-19). Note it here even on a month where AUTOMATE/REDESIGN/
+  FIX_CORPUS all genuinely read absent, so a later audit can tell "checked
+  everything, clean" from "couldn't finish checking."
 - Per route, one line each:
   - {ROUTE}: {evidence} → {scope: portfolio-wide, or narrow (name the
     client/theme)} → {action taken, or "insufficient to explain the
