@@ -115,7 +115,27 @@
    write lets `brief.md` go stale and quietly point that scope test at the
    former lead's WIP/load instead of the actual current owner's (Codex
    catch, 2026-07-19).
-3. **If the client asks for a revision:** bump `Rounds` by 1, set
+3. **If the client asks for a revision:** **first check whether `Last
+   Sent` is ALREADY blank** (a prior revision request from this same
+   pending correction pass hasn't been resent yet). **If it's already
+   blank, this new message is NOT a new round ~ it's additional feedback
+   stacking onto the round already in progress, since no corrected
+   version has gone back to the client for them to react to between the
+   two messages.** Do NOT bump `Rounds` again or append a second tag
+   entry for it: re-apply the tag-priority pick (below) across ALL causes
+   received so far this SAME still-open round, not just the new one, and
+   note whichever cause loses the priority pick in **Notes** ~ the same
+   bundling treatment a single message already gets when it names more
+   than one cause. Re-running this whole touch once per stacked message
+   before any resend happens would bump `Rounds` and append a tag every
+   time, measuring what's genuinely still ONE pending correction pass as
+   several separate rounds, which can spuriously clear or miss
+   FIX_CORPUS's rounds-per-report threshold on inflated counts (Codex
+   catch, 2026-07-19). **Only when `Last Sent` CURRENTLY holds a real,
+   non-blank date** (the prior correction WAS actually resent, and this
+   message is the client reacting to THAT resend with a fresh ask) does a
+   new client message count as a genuinely NEW round: bump `Rounds` by 1,
+   set
    `Rework tag`. **Do NOT top up `Effort (h)` here** ~ at the moment a
    revision request arrives, no revision work has actually happened yet,
    so there are no real hours to add; top it up later, at the SAME moment

@@ -141,9 +141,23 @@ Required inputs, all of them:
      against a manually-assembled draft may have no session context
      pointing at a row at all. Match by the report's own `Period` (the
      same period-stamp this Step already needs for the export-window
-     check above) against `delivery-log.md`'s `Period` column, resolving
-     to whichever status actually fits (`open` for a first pass, `revising`/
-     `revising (reopened)` for a re-QA after a flagged correction). If
+     check above) against `delivery-log.md`'s `Period` column. **`open` is the
+     right status for EVERY pre-ship QA run, including a rerun after
+     touch 1.5 already logged a flagged correction ~ not just "a first
+     pass":** touch 1.5 records a pre-delivery catch (either QA pass,
+     internal alignment, or pass 2) WITHOUT advancing `Status` away from
+     `open`, and the row only moves to `delivered` once pass 2 clears and
+     the client actually receives it. Only resolve to `revising`/`revising
+     (reopened)` for a genuinely POST-DELIVERY re-QA ~ the row has already
+     shipped once (`Delivered` is filled) and this run is checking a
+     client-requested revision before it goes back out, a materially
+     different situation from an ordinary pre-ship pass-1/pass-2 rerun
+     (Codex catch, 2026-07-19: this resolution treated "a re-QA after a
+     flagged correction" as automatically `revising`, but an ordinary
+     pre-ship rerun after a touch-1.5 catch is still squarely `open` per
+     `delivery-log.md`'s own state machine ~ matching it to `revising`
+     instead would resolve to the wrong row, or to no row at all, for the
+     single most common QA-rerun case). If
      more than one row could plausibly match and the report doesn't carry
      enough to disambiguate, STOP and ask which cycle this QA run is for
      ~ never guess, and never let Step 3 emit "log it on this row" against
