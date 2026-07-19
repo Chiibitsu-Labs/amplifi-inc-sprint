@@ -59,7 +59,17 @@ the skill's output and the Canva deck.}
 ## Fresh-data rules (the "old data retained in templates" fix)
 
 - Every number in sections 2–6 must come from THIS period's data pull or the
-  insight-log trend ~ never typed over last period's deck.
+  insight-log trend ~ never typed over last period's deck. **Exception: a
+  clearly-labeled KPI target, contractual baseline, or campaign budget
+  figure in section 3 ("Performance vs baseline") is a DIFFERENT kind of
+  number from either of those and is sourced from `brief.md` instead** ~
+  it was never measured this period (not a current pull) and was never
+  logged as a past actual either (not an insight-log trend), so this rule
+  as written would wrongly forbid the exact figure section 3's own name
+  describes as normal. `skills/amplifi-qa/SKILL.md` check 4 already
+  accepts a brief-sourced target/baseline/budget as a pass, not a flag ~
+  this rule needs the same carve-out, or QA can clear a figure this
+  section still forbids (Codex catch, 2026-07-19).
 - Period-stamp the exec summary: "{Month YYYY} · data window {start}–{end}."
 - The QA skill cross-checks the deck's period stamp against the data window
   and flags any figure that matches last period's report verbatim AND

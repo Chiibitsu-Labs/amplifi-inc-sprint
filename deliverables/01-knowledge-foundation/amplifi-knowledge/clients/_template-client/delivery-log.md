@@ -161,7 +161,16 @@
    nobody writes back to say so, and treating silence as permanently
    unresolved would starve the rework baseline of exactly the clean
    deliveries it needs to mean anything. **If a revision request arrives
-   after a silent auto-accept, re-open the SAME row** ~ `Status` to
+   after EITHER form of acceptance ~ explicit sign-off or a silent
+   auto-accept, no distinction between the two here ~ re-open the SAME
+   row** (a client who explicitly said "looks great" and then comes back
+   with a late ask is exactly as real a reopen as one who simply stayed
+   quiet past the silence window; scoping this to "after a silent
+   auto-accept" only would leave the analyst with no valid transition to
+   record a late round on an explicitly-accepted report, forcing either a
+   silently-dropped round or a detached new row with no period/due/
+   delivered of its own, understating FIX_CORPUS's metrics either way,
+   Codex catch, 2026-07-19) ~ `Status` to
    **`revising (reopened)`, NOT bare `revising`** (a new, distinct value,
    not a first-pass revision relabeled), then bump `Rounds` and add the dated cause per touch 3
    above (which also re-stamps `Last Sent`), repeating touch 3 for as many
@@ -347,7 +356,8 @@ pipe in any cell (`Dale \| Janelle`), never a bare `|`.
   needed) → `accepted`, always in that order. `accepted` is set once for
   the normal case (explicit sign-off, or 5 business days of silence
   following `Last Sent` ~ see above) ~ **with two documented exceptions:**
-  (1) a revision request arriving AFTER a silent auto-accept re-opens the
+  (1) a revision request arriving AFTER acceptance ~ explicit sign-off OR
+  a silent auto-accept, either one ~ re-opens the
   same row, `accepted → revising (reopened)` ~ a DISTINCT status value
   from bare `revising`, not the same label reused (see touch 4) ~ then
   back to `accepted` once that late

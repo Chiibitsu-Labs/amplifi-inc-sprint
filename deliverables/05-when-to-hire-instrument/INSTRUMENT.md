@@ -921,7 +921,8 @@ Once the manual version has run a few cycles and the thresholds feel
 right, encode the same logic into the dashboard so nobody has to do the
 above by hand:
 
-1. **Ingest feed 2, AND `learnings/patterns.md`:** a light weekly pass
+1. **Ingest feed 2, `learnings/patterns.md`, AND each client's current
+   ownership:** a light weekly pass
    reads `clients/*/delivery-log.md` from Drive into capchecker's
    Supabase (or renders alongside ~ data stays canonical in the owned
    corpus; the app is a lens on it), **EXCLUDING `clients/_template-client/`**
@@ -956,6 +957,23 @@ above by hand:
    14-day-window call) ~ without this second ingest, `patterns.md` keeps
    accumulating and never actually influences a routing decision, which
    defeats the point of promoting REWORK/PROCESS themes there at all.
+
+   **Also ingest each client's `brief.md` Snapshot ("Amplifi lead
+   analyst: {name} · backup: {name}") as a THIRD source, not just
+   delivery-log and patterns.md.** The HIRE scope check later in this
+   same section explicitly requires mapping each narrow client signal to
+   its CURRENT owner via this Snapshot field, not the delivery-log's most
+   recent `Analyst` cell (see below for why those two answer different
+   questions) ~ without ingesting the field itself, the dashboard has
+   nothing to run that mapping against, and would either fall back to the
+   delivery-log's most-recent-row attribution the scope check explicitly
+   rejects, or have no owner at all for a client whose narrow signal it's
+   trying to scope (Codex catch, 2026-07-19). Keep this field updated
+   alongside the log in the same weekly pass ~ `brief.md`'s own
+   maintenance-trigger note (per `README.md`) means it changes on
+   reassignment, not on a fixed schedule, so a weekly re-read (not a
+   one-time import) is what keeps it from silently drifting stale between
+   ownership changes.
    **This has to be an idempotent UPSERT, never a blind append.** A
    delivery-log row is mutable for its entire life ~ `Status` advances,
    `Rounds`/`Rework tag` accumulate, `Last Sent` updates on every resend,

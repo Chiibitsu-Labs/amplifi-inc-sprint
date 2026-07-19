@@ -39,7 +39,25 @@ grows under their roof. Chii's repo remains the reference/spec copy.
    before treating deployment as done. If the connector isn't available on
    the plan, fall back to attaching the relevant corpus files per session
    ~ works, but means re-attaching every time, so note it as a rough edge,
-   not a config to leave broken permanently.
+   not a config to leave broken permanently. **"The relevant corpus files"
+   has to include more than just the one client's own folder, though.**
+   `amplifi-insights/SKILL.md` and `amplifi-qa/SKILL.md` both require
+   listing `clients/*` and matching every folder's `brief.md` Snapshot
+   table before trusting a client-name resolution, specifically to catch
+   the duplicate-account case (`README.md`'s collision handling) ~ a
+   fallback that attaches only the preselected client's files gives the
+   skill nothing to enumerate, so it either has to stop for lack of the
+   corpus listing it's required to check, or silently skip the check and
+   risk running against the wrong same-named account (Codex catch,
+   2026-07-19). Attach either (a) every client's `brief.md` (small files,
+   cheap to include every session, and this is exactly what "enumerate
+   `clients/*`" needs), or (b) a standing index file listing every client
+   folder + Snapshot name, kept current the same way the corpus itself is;
+   if truly attaching only one client's files, name the account
+   explicitly as a pre-verified override ("this session is confirmed
+   `{client}` at `clients/{folder}/`, skip the collision scan") so the
+   skills have a documented, deliberate reason to skip enumeration rather
+   than silently doing so by omission.
 
 5. **Keep an owned copy ~ and know that editing it isn't enough on its
    own.** Copy each skill into its OWN subfolder in Drive ~

@@ -137,7 +137,29 @@ So: if any of those three files is still a frame when running the
 ship-clearance checkpoint, don't emit `PASS`/`N flags`/`partial` in the
 header at all ~ emit `{blocked ~ standards not yet encoded}`, name exactly
 which file(s) are still frames, and say plainly that this deck cannot
-clear until they're filled. Still run every check that doesn't depend on
+clear until they're filled.
+
+**"Still a frame" here means the SAME marker-AND-brace-scan test
+`amplifi-insights/SKILL.md`'s Step 0 uses, not the `Status: FRAME` marker
+alone.** Trusting the marker alone would let clearance through the moment
+someone flips a file to `Status: LIVE`, even if they did that before
+actually replacing its fill-once placeholders ~ this gate would then
+grant ship clearance believing the standard was encoded when it wasn't,
+the exact false-pass this whole exception exists to prevent, and
+manually-assembled reports that bypass the insights skill entirely have
+no other checkpoint that would ever catch it (Codex catch, 2026-07-19).
+So: for each of the three files, run BOTH checks Step 0's opening
+paragraph already requires (marker AND brace-scan) before treating it as
+genuinely ready ~ `house-voice.md`/`what-good-looks-like.md` get a
+whole-file brace-scan (any `{...}` still standing after `Status: LIVE` is
+a real unfilled placeholder); `report-template-rules.md` gets the same
+scan minus its one named exemption (the three permanent runtime tokens
+under its own Fresh-data rules section, `{Month YYYY}`/`{start}`/`{end}`),
+never a blanket pass on marker alone. A file that reads `Status: LIVE`
+but still fails its brace-scan is treated exactly like a frame for this
+gate ~ blocked, not cleared.
+
+Still run every check that doesn't depend on
 the frame'd file(s) and report those results normally underneath ~ it's
 the overall clearance verdict that's blocked, not the whole pass. The
 first pass (pre-Canva) and the two lesser second-pass tiers (text-only,
