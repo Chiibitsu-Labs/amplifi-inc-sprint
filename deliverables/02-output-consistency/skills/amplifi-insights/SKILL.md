@@ -75,14 +75,33 @@ below).
 **A freshly-copied `_template-client` folder is not a filled corpus, even
 though every file technically exists and has bytes in it.** Treat these as
 equivalent to "missing" and flag them the same way: unresolved template
-markers (literal `{...}` placeholder text ~ `{Client Name}`, `{YYYY-MM-DD}`,
-and the like), any file whose content is still the template's own
+markers, any file whose content is still the template's own
 instructional/example prose rather than this client's real content, and
 any standards file still carrying a `status: FRAME` header (`README.md`
 of `learnings/`, or the standards files themselves, before Rica's
 extraction pass fills them). File-not-empty is not the same test as
 file-actually-filled-in ~ check for these before treating a read as
 successful.
+
+**"Brace-scan" here, and everywhere it's used below, means matching a
+cell/section's content against `_template-client/brief.md`'s (or
+`brand-standard.md`'s, or the relevant standards file's) OWN shipped
+placeholder text for that SAME cell/section ~ never a blind scan for ANY
+literal `{` character anywhere in the file.** A genuinely completed brief
+can legitimately contain real client content that happens to use curly
+braces on its own terms ~ a `{{first_name}}` mail-merge/personalization
+token the client actually uses in their comms, a pasted JSON example, a
+regex pattern quoted verbatim in a client instruction ~ and a naive
+brace-pattern scan can't tell that apart from a genuinely unresolved
+`{Client Name}`/`{YYYY-MM-DD}`-style placeholder still sitting there
+unfilled, permanently blocking an otherwise-ready client the moment their
+real content happens to contain a brace (Codex catch, 2026-07-19). The
+test: does this cell/section still read VERBATIM as `_template-client`'s
+own placeholder text for that position, unchanged from the template file?
+If yes, it's unfilled. If the analyst replaced it with anything else ~
+even text that happens to also contain literal braces of its own ~ it's
+filled, full stop, regardless of whether a blind brace-pattern would still
+register a hit inside it.
 
 **This ONE exception is scoped to `report-template-rules.md` BY NAME,
 never to "any file carrying a `Status: FRAME`/`Status: LIVE` marker" ~
@@ -111,11 +130,13 @@ insight skill would then generate against a genuinely undefined report
 contract (no real section order, no real branding rules) while believing
 the corpus gap was already closed (Codex catch, 2026-07-19 ×2: first the
 over-generalization to every Status-marker file, now the
-all-or-nothing trust for this one file specifically). Scan for ANY `{...}`
+all-or-nothing trust for this one file specifically). Brace-scan (per the
+template-text-matching definition above) everywhere
 outside that one exempted period-stamp line, exactly like any other
 one-shot file; a hit there is still a real, unresolved placeholder.
 `house-voice.md` and `what-good-looks-like.md` have no runtime
-tokens at all ~ any brace still standing there after `Status: LIVE` is a real,
+tokens at all ~ any of their OWN placeholder text still standing there
+after `Status: LIVE` is a real,
 unfilled placeholder, and the brace-scan is a genuine independent defense
 against Status being flipped prematurely, exactly like it is for
 `brief.md`/`brand-standard.md`. Every standards file gets both checks

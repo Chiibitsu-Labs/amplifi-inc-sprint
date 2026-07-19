@@ -716,7 +716,17 @@ dated entries get counted this month).
      FIX_CORPUS instead. Read what tagged the MISSES, not the portfolio
      (matches §5b's coded rule, which already scopes this to "those
      specific cycles"). Within that late-cycle set, this still only counts
-     `accepted` rows ~ a `delivered` or `revising` late row's tag is still
+     `accepted` OR `revising (reopened)` rows ~ the SAME trusted scope
+     FIX_CORPUS's own numerator/denominator already use, and for the same
+     reason: a reopened row already has an established `accepted`
+     baseline behind it, with its own dated rounds, so it's settled
+     evidence, not a provisional guess (Codex catch, 2026-07-19: an
+     earlier draft of this qualifier read left `revising (reopened)`
+     grouped with bare `revising` instead of `accepted`, dropping its
+     established rework history and risking REDESIGN reading PROVISIONAL
+     or absent off a status transition alone, inconsistent with how
+     FIX_CORPUS already trusts the exact same rows). A `delivered` or
+     bare `revising` late row's tag is still
      provisional (more rounds, and a corpus-tagged one among them, could
      still land before it finalizes); pulling REDESIGN evidence from an
      unresolved late row risks reading it as clean days before a
@@ -724,7 +734,7 @@ dated entries get counted this month).
      have pointed at FIX_CORPUS instead. `open`/`delivered`/`revising` rows still count
      in the on-cadence rate itself (that's a delivery-date fact, settled
      at ship, not a tag) ~ only the REWORK-TAG qualifier on top of it waits
-     for `accepted`. If too few late rows are `accepted` yet to read this
+     for `accepted`/`revising (reopened)`. If too few late rows are trusted yet to read this
      qualifier meaningfully, say so and mark this client's REDESIGN read
      **PROVISIONAL, a distinct third state from "fired" and "genuinely
      absent" ~ and PROVISIONAL BLOCKS HIRE too, exactly like "fired"
@@ -1325,9 +1335,42 @@ above by hand:
    dated `Rework tag` entries (each stamped `[YYYY-MM-DD]` at the moment
    it's logged, per `delivery-log.md`) to those whose OWN date falls in
    the trailing 90 days, across every row with STATUS `accepted` OR
-   `revising (reopened)` regardless of that row's `Due` (NOT bare
+   `revising (reopened)` regardless of that row's `Due`, AND whose OWN
+   `Start` is ≥ Sep 4 (NOT bare
    `revising`, NOT `delivered`, and NOT `cancelled` either ~ see below for
-   why).** **`cancelled` rows feed a SEPARATE, corroborating count
+   why).** **The `Start ≥ Sep 4` piece applies at the ROW level, gating a
+   row's dated rounds out of the numerator entirely, not just its
+   zero-round denominator seat ~ this is deliberate, and it's what
+   actually closes the set (ii) loophole below.** A row whose `Start`
+   predates the epoch had at least PART of its active correction window
+   fall before touch 1.5 was systematically catching and recording
+   issues, so its TRUE round total for that stretch is presumptively an
+   undercount, not a verified zero or verified low number ~ even a round
+   dated safely after Sep 4 on that same row doesn't rehabilitate the
+   row's OVERALL count, because there could be more, unrecorded rounds
+   sitting in the pre-epoch portion of its history that will never
+   surface. Excluding the row's rounds from the numerator at the source
+   means it can never re-enter through set (ii) either (which only admits
+   a row that "contributed at least one round to the numerator" ~ a row
+   that can't contribute to begin with can't qualify), closing the exact
+   gap where a boundary-straddling cycle (`Start` before Sep 4, a stray
+   round dated after it) could otherwise bypass set (i)'s `Start` floor
+   and get treated as a complete, fully-instrumented report through set
+   (ii) instead (Codex catch, 2026-07-19: an earlier draft only applied
+   `Start ≥ Sep 4` to set (i)'s zero-round denominator test, leaving this
+   exact numerator-level back door open). The tradeoff: a genuinely OLD,
+   fully pre-epoch report (say, accepted back in July) that gets a late
+   reopen after Sep 4 also can't corroborate gate (a) through that reopen
+   ~ its reopen round IS reliably observed on its own, but the row it
+   belongs to still carries an unverifiable pre-epoch history, and this
+   rule doesn't try to distinguish "genuinely clean old report, late
+   reopen only" from "boundary-straddling, partially instrumented"
+   automatically. That's a deliberate, stated cost of keeping this rule
+   simple and machine-checkable rather than a missed case ~ any client
+   whose only recent evidence is a reopen on a pre-epoch report reads as
+   `PROVISIONAL`/insufficient data for gate (a), same honest "not yet
+   evaluable" treatment used elsewhere in this doc, until enough
+   post-epoch-`Start` cycles exist to evaluate normally.** **`cancelled` rows feed a SEPARATE, corroborating count
    instead, computed alongside FIX_CORPUS but never mixed into gate (a)'s
    or gate (b)'s math:** tally each cancelled row's dated,
    corpus-tagged rounds and their `missing`/`not-followed` qualifier split,
@@ -1370,19 +1413,26 @@ above by hand:
    window (Codex catch, 2026-07-19). **Don't fold this `Start` floor into
    the rolling window itself, though ~ requiring `Start` to fall inside
    the CURRENT trailing-90-day window too (not just past the fixed Sep 4
-   line) overcorrects into a second bug:** it wrongly excludes an
-   entirely ordinary boundary-straddling report whose `Start` sits just
-   outside the rolling window's own moving edge while its `Due` still
-   falls inside it (a monthly cycle Start Sep 1, Due Sep 5, evaluated
-   right as the rolling floor happens to sit at Sep 4) ~ that's exactly
-   the report §5a's `Due`-only test was always meant to include, dropped
-   here in favor of a stricter rule the epoch problem never actually
-   required; rows that DO carry an in-window round get restored through
-   set (ii) below regardless, so this specifically strips out zero-round
-   boundary reports, inflating rounds-per-report the same way the
-   original gap did, just approached from the opposite direction (Codex
-   catch, 2026-07-19: an earlier draft of this fix combined `Start` and
-   `Due` into one shared window and reintroduced exactly this bug). The
+   line) overcorrects into a second bug:** months into the rollout, once
+   the rolling floor has moved well past Sep 4 (say, evaluating in
+   mid-January, trailing 90 days back to mid-October), a monthly cycle
+   fully past the epoch (`Start` Oct 1, comfortably ≥ Sep 4) but started
+   just before the CURRENT rolling floor, with `Due` Oct 20 still falling
+   inside it, is an entirely ordinary, fully-instrumented report ~ that's
+   exactly what §5a's `Due`-only test was always meant to include, and a
+   `Start`-inside-the-ROLLING-window requirement would drop it in favor of
+   a stricter rule the epoch problem never actually required (the epoch
+   only ever needed a FIXED, one-time floor at Sep 4, never a second
+   rolling requirement stacked on top of it); rows like this that DO
+   carry an in-window round still get restored through set (ii) below
+   regardless, so this specifically strips out zero-round boundary
+   reports, inflating rounds-per-report the same way the original gap
+   did, just approached from the opposite direction (Codex catch,
+   2026-07-19: an earlier draft of this fix combined `Start` and `Due`
+   into one shared rolling window and reintroduced exactly this bug; a
+   still-earlier example here used a `Start` that itself predated Sep 4,
+   which the numerator's own epoch gate above now correctly excludes
+   anyway ~ replaced with this genuinely post-epoch case). The
    rule, stated as two independent conditions: `Start ≥ Sep 4` (fixed,
    permanent, never rolls forward) AND `Due` in `max(trailing 90 days,
    Sep 4)` (the ordinary rolling test above, unchanged) ~ satisfy both to
@@ -1593,9 +1643,17 @@ above by hand:
    - on-cadence rate below threshold, OR cycle time trending up against
      baseline while on-cadence still narrowly holds (the early-warning
      path ~ §2), where the rework on those specific cycles (if any),
-     **read from `accepted` rows of those cycles ONLY**, is low or isn't
+     **read from `accepted` OR `revising (reopened)` rows of those cycles
+     ONLY** (the SAME trusted scope FIX_CORPUS's own numerator/denominator
+     already use, for the same reason ~ a reopened row already carries an
+     established `accepted` baseline and its own dated rounds, settled
+     evidence, not a provisional guess; Codex catch, 2026-07-19: an
+     earlier draft of this bullet restricted to `accepted` alone, dropping
+     a reopened row's established rework history and disagreeing with how
+     FIX_CORPUS already reads the exact same rows), is low or isn't
      corpus-tagged. **This restriction matters, don't implement the bullet
-     without it:** a late row still sitting `open`/`delivered`/`revising`
+     without it:** a late row still sitting `open`/`delivered`/bare
+     `revising` (never yet accepted at all)
      carries a provisional tag ~ its default `0`/`none`, or whatever it
      currently holds, could still change before the row finalizes (a
      `brief-misalign`/`brand`/`quality-bar` revision landing later), and
@@ -1605,14 +1663,15 @@ above by hand:
      `cancelled` rows from this qualifying set entirely, even ones
      cancelled after `Due`** ~ `cancelled` is terminal in `delivery-log.md`'s
      state machine and never reaches `accepted`, so a cancelled row can
-     never satisfy this bullet's "read from `accepted` rows" condition;
+     never satisfy this bullet's "read from `accepted`/`revising
+     (reopened)` rows" condition;
      counting it toward "too few late/trending cycles accepted yet" would
      wait on data that can never arrive and hard-block PROVISIONAL
      permanently instead of until-resolved (same reasoning as §5a's
      matching exclusion). The cancelled row still counts in the on-cadence
      rate itself if it was cancelled after `Due` ~ only this qualifier
      read excludes it. If too few of the (non-cancelled) late/trending
-     cycles are `accepted` yet to read this qualifier
+     cycles are `accepted`/`revising (reopened)` yet to read this qualifier
      meaningfully, don't fire either REDESIGN or hold it back confidently
      ~ surface it as provisional, same as §5a does by hand. **AND the
      misses cluster** (one client, one
