@@ -61,7 +61,7 @@ AI starts. Here, every handoff is a decision, not a default.
 
 | # | Step | Who does what | Vault touchpoint |
 |---|---|---|---|
-| 1 | Brief | **H** owns client relationship · AI summarizes into living-brief shape | **V** `brief.md` created/updated; FAQs start; **delivery-log row opened** (`Status = open`) ~ this is what makes an overdue cycle visible before anything ships |
+| 1 | Brief | **H** owns client relationship · AI summarizes into living-brief shape | **V** `brief.md` created/updated; FAQs start; **delivery-log row opened** (`Status = open`) for this client's FIRST cycle ~ this is what makes an overdue cycle visible before anything ships. **This step is one-time onboarding, not part of the recurring loop** ~ every SUBSEQUENT cycle's row is opened at the recurring-cycle boundary (step 12's own touchpoint), not here, since step 1 doesn't recur |
 | 2 | Baseline | AI drafts from brief + data · **H** shapes unique asks | **V** reads `brief.md`; unique asks written back |
 | 3 | Internal alignment | **H** judgment call | **V** misalignments → learnings |
 | 4 | Present | **H** ~ the room is human | — |
@@ -72,7 +72,21 @@ AI starts. Here, every handoff is a decision, not a default.
 | 9 | Report | AI outputs template-shaped draft → **QA gate** (pass 1, pre-Canva) → **H** final verify → Canva polish | **V** reads `report-template-rules.md`. NOT the ship write (no `Delivered` date, `Status` stays `open` ~ this is an internal draft, not what the client received) ~ but IF pass 1 or `H`'s verify catches and corrects a `brief-misalign`/`brand`/`quality-bar`/`data` issue right here, THAT does get logged: `delivery-log.md` touch 1.5, bump `Rounds` + tag, while `Status` is still `open`. "Not delivered yet" and "no rework happened" are different facts ~ this row can be true on the first and false on the second |
 | 10 | Internal alignment | **H** ~ faster because pass 1 already ran; if this step requests deck edits, they happen here | **V** same as step 9 ~ a brief-misalign/brand/quality-bar/data catch corrected here also logs via touch 1.5, `Status` still `open` |
 | 11 | Client presentation | **QA gate pass 2 on the assembled deck, run AFTER step 10's edits (if any)** → **any flags pass 2 raises get cleared by a human or the deck gets corrected and pass 2 re-run ~ a flagged deck does not proceed to presenting on its own** → **H** presents ~ the relationship is the product | **V** two writes here, not one: (a) if pass 2 itself catches and corrects a `brief-misalign`/`brand`/`quality-bar`/`data` issue, that's ALSO touch 1.5 ~ bump `Rounds` + tag, `Status` still `open`, same as steps 9–10's catches (pass 2 exists to catch Canva-stage drift specifically; a correction it finds is no less real than one caught earlier). (b) THEN the ship write: insight-log entry + delivery-log row UPDATED to `delivered` (row already existed from step 1, opened at period start, possibly already carrying `Rounds` from steps 9–11's internal catches). `Delivered` means the client actually received it ~ writing it before pass 2 clears would mark a cycle on-time and clean even if a known flag shipped uncorrected |
-| 12 | Repeat | improve skill closes the loop | **V** learnings promoted weekly → next cycle starts smarter |
+| 12 | Repeat | improve skill closes the loop; **delivery-log row for the NEXT cycle opens here** (`Status = open`, per `delivery-log.md` touch 1's own SCHEDULED-start timing) ~ this is the actual recurring-cycle boundary, not step 1 (one-time onboarding only) | **V** learnings promoted weekly → next cycle starts smarter; next cycle's row created |
+
+**The improve skill's capture (Mode 1) is NOT reserved for step 12 alone
+~ it runs at the end of EVERY work session, per its own contract, and one
+client cycle commonly spans several separate sessions on different days**
+(briefing, internal alignment, presentation, revisions, and monthly
+analysis/report are all plausibly separate sittings). Waiting until step
+12 to capture the WHOLE cycle in one pass means an earlier session's
+context ~ a client fact learned at briefing, a correction cause from an
+early QA pass, process friction from presentation ~ is gone by the time
+capture finally runs, especially once compaction or a new session boundary
+has already closed over it (Codex catch, 2026-07-19). Run Mode 1 at the
+close of EACH session touching this client, not just once at step 12;
+step 12 is the guaranteed LAST capture point for whatever's left, not the
+only one.
 
 The capchecker check-in (3 taps, daily 08:00) runs alongside all twelve ~
 the instrument's pulse.

@@ -155,10 +155,17 @@ threshold crossed →
                  gap at all ~ routing there anyway means repeatedly
                  "fixing" a file that was never broken while the actual
                  cause (an execution/attention miss, or a process gap
-                 REDESIGN should examine) goes unaddressed.
+                 REDESIGN should examine) goes unaddressed. **"Majority
+                 missing" here means within the corpus-tagged rounds
+                 specifically ~ ALSO require that missing-round count to
+                 clear ≥half of ALL rework rounds, not just a majority of
+                 the smaller tagged subset** (see §5 for the worked
+                 example of why a subset-only majority can pass while only
+                 ~30% of all rework is a genuine gap).
                  → route: Deliverable 1+2 ~ align the brief, encode the
                  standard, ONLY when the qualifier majority reads
-                 `missing`. NEVER route this to hire. (Watch survivorship
+                 `missing` AND that missing count is ≥half of ALL rework
+                 rounds. NEVER route this to hire. (Watch survivorship
                  bias: `revising` rows aren't counted yet by design, but a
                  backlog of long-open, high-round `revising` rows during
                  an active problem means the accepted-only rate reads as a
@@ -427,17 +434,23 @@ why that's a second, deliberately separate test, not a contradiction of
 "filter on rounds, not rows.")
 
 - **Rounds-per-report (gate a):** numerator = count of in-window dated
-  rounds (the round-level filter above, unchanged). **Denominator = count
-  of DISTINCT `accepted` rows in the UNION of two sets, never just one:**
-  **(i)** every row whose OWN `Due` falls in the trailing 90 days ~ the
+  rounds, read from `accepted` rows only (unchanged ~ a still-`revising`
+  row's round data isn't final yet, same reasoning REDESIGN's rework-tag
+  qualifier reads already use). **Denominator = count
+  of DISTINCT rows with STATUS `delivered`, `revising`, OR `accepted` (NOT
+  `accepted`-only) in the UNION of two sets, never just one:**
+  **(i)** every such row whose OWN `Due` falls in the trailing 90 days ~ the
   SAME row-level, `Due`-anchored cohort REDESIGN's on-cadence check uses
-  above, including rows with ZERO rework rounds (this is what keeps gate
+  above (matching its `delivered`/`revising`/`accepted` status scope
+  exactly, not a narrower one), including rows with ZERO rework rounds
+  (this is what keeps gate
   (a) a genuine per-REPORT average, not per-REWORKED-report: a clean row
   has no dated `Rework tag` entry to filter by at all, so relying on set
   (ii) alone would silently drop every clean accepted report and let one
   two-round report among nine clean ones read 2.0 instead of 0.2,
   firing the gate on noise); **(ii)** every row that contributed AT LEAST
-  ONE in-window dated round to the numerator, even if that row's OWN `Due`
+  ONE in-window dated round to the numerator (so, `accepted` specifically,
+  per the numerator's own scope), even if that row's OWN `Due`
   falls OUTSIDE the trailing 90 days ~ the late-reopen-on-an-old-report
   case (touch 4: a report due and accepted months ago reopens with a
   fresh revision dated inside the window). Count a row that qualifies
@@ -451,7 +464,25 @@ why that's a second, deliberately separate test, not a contradiction of
   division-by-zero that set (i) alone can never prevent (Codex catch,
   2026-07-19: an earlier draft of this gate called that divergence
   "intentional," which was wrong ~ every row that feeds the numerator
-  needs a place in the denominator, full stop).
+  needs a place in the denominator, full stop). **Set (i)'s
+  `accepted`-ONLY status scope from an earlier draft had its own bug,
+  a different one:** `delivery-log.md` touch 4 flips a row's `Status`
+  straight back to `revising` the instant late feedback reopens it, with
+  no retained record that it was ever `accepted` before ~ an
+  `accepted`-only denominator would silently DROP every reopened row from
+  the count the moment it reopens, shrinking the denominator with NO
+  matching change to the numerator (the row's PAST clean rounds already
+  weren't in the numerator to begin with, and its fresh reopen round
+  isn't either, since the numerator is still `accepted`-only). Reopening
+  8 previously-clean rows out of 10 while 2 unrelated rows sit at
+  2 total rounds combined would move that reading from `2 ÷ 10 = 0.2` to
+  `2 ÷ 2 = 1.0`, purely from a temporary status flip, with the actual
+  rework picture completely unchanged (Codex catch, 2026-07-19). Widening
+  set (i) to `delivered`/`revising`/`accepted` ~ exactly on-cadence's own
+  status scope, not a narrower one invented for this gate specifically ~
+  fixes this at the root: a row's REPORT-LEVEL existence for the
+  denominator no longer depends on its live rework-finality status, which
+  is exactly the numerator's concern, not the denominator's.
 - **Tag-share (gate b):** of the SAME in-window ROUND set gate (a)'s
   numerator uses (not gate (a)'s row-level denominator), what fraction
   are tagged `brief-misalign`/`brand`/`quality-bar`. Zero-round rows
@@ -686,6 +717,35 @@ dated entries get counted this month).
    editing it fixes nothing ~ the real cause is execution or process, not
    the corpus (see `delivery-log.md`'s Rework tag bullet for the full
    reasoning).
+   **"Majority missing" here means majority WITHIN the corpus-tagged
+   subset ~ that's necessary but NOT sufficient on its own to actually
+   fire the corpus edit.** The action also requires the missing-qualified
+   round count to independently clear ≥half of ALL qualifying rounds from
+   gate (a) ~ the SAME denominator gate (b)'s own ≥half-tagged threshold
+   already uses, not just a majority of the smaller corpus-tagged subset.
+   Worked example of why this second check is required: 3 `missing` + 2
+   `not-followed` + 5 `client-new-ask` = 10 total rounds. Corpus-tagged =
+   5 (3 + 2), which clears gate (b)'s ≥half-of-10 threshold (5/10 = 50%).
+   Within that tagged subset, `missing` (3) is the majority over
+   `not-followed` (2) ~ but missing ÷ ALL rounds = 3/10 = 30%, well under
+   half. Firing the corpus edit here would act as if half of this
+   client's rework were a genuine corpus gap, when only 30% of it actually
+   is (Codex catch, 2026-07-19) ~ the other 20 percentage points of
+   "corpus-tagged" share came from an ALREADY-correct standard nobody
+   applied, not a missing one. Require BOTH: majority `missing` within
+   the tagged subset (the test above, unchanged) AND missing-count ≥ half
+   of ALL qualifying rounds (this additional check) before actually
+   opening a file to edit. Since `missing` rounds are always a subset of
+   corpus-tagged rounds, and corpus-tagged rounds are always a subset of
+   all rounds, clearing the ALL-rounds bar automatically clears the
+   subset-majority bar too ~ this strengthens the existing test, it
+   doesn't replace it. **A reading that clears the subset-majority test
+   but NOT this all-rounds bar (exactly Codex's worked example) is a
+   FOURTH outcome, distinct from missing / not-followed / tie:** treat it
+   the same as a majority-`not-followed` reading ~ real FIX_CORPUS-family
+   evidence for step 4's portfolio-wide gate below, but the corpus-edit
+   action does NOT fire, since less than half of this client's actual
+   rework is a genuine, currently-missing corpus gap.
    **A majority-`not-followed` reading isn't just "the corpus-edit action
    doesn't fire" ~ it's still real evidence for step 4's portfolio-wide-
    vs-narrow gate below, not a silent nothing.** REDESIGN's own
@@ -934,18 +994,31 @@ above by hand:
    it's logged, per `delivery-log.md`) to those whose OWN date falls in
    the trailing 90 days, across every `accepted` row regardless of that
    row's `Due`. Rounds-per-report's DENOMINATOR is a THIRD mechanism ~ the
-   UNION of two row sets, not one: (i) `accepted` rows with `Due` in the
+   UNION of two row sets, not one: (i) rows with STATUS `delivered`,
+   `revising`, OR `accepted` (NOT `accepted`-only ~ matching on-cadence's
+   own status scope exactly) with `Due` in the
    trailing 90 days, INCLUDING zero-round rows (omitting clean rows here
    turns "rounds per report" into "rounds per reworked report," inflating
-   gate (a) and firing it on noise); PLUS (ii) any `accepted` row that
+   gate (a) and firing it on noise; restricting set (i) to `accepted`-only
+   ALSO breaks it a different way ~ `delivery-log.md` touch 4 flips a
+   reopened row straight back to `revising` with no retained record it
+   was ever accepted, so an `accepted`-only denominator would silently
+   drop every currently-reopened row out of the count the instant it
+   reopens, shrinking the denominator with no offsetting numerator change
+   and inflating the ratio: 8 previously-clean rows reopening while 2
+   unrelated rows hold 2 total rounds moves the reading from `2÷10=0.2` to
+   `2÷2=1.0` off a temporary status flip alone, not any real change in
+   rework ~ Codex catch, 2026-07-19); PLUS (ii) any `accepted` row (the
+   numerator's own scope, unchanged) that
    contributed at least one round to the numerator above even though its
    OWN `Due` falls outside the window (the late-reopen-on-an-old-report
    case) ~ every row counted in the numerator MUST have a place in this
    denominator, or the ratio inflates at the edges and can divide by zero
    in a month where no row's `Due` lands in-window at all despite live
-   reopen activity (Codex catch, 2026-07-19 ×2: first the zero-round-row
-   omission, then this numerator/denominator population mismatch; see
-   §5a's worked examples for both). See §5a's "FIX_CORPUS's cohort
+   reopen activity (Codex catch, 2026-07-19: first the zero-round-row
+   omission, then this numerator/denominator population mismatch, now
+   the accepted-only status restriction; see
+   §5a's worked examples for all three). See §5a's "FIX_CORPUS's cohort
    works differently" block for the full reasoning. Coding the numerator
    as one shared
    row-filter (in or out by `Due`, same as denominator set (i) alone)
@@ -1021,7 +1094,24 @@ above by hand:
        qualifier check, would have the coded router repeatedly prescribe
        edits to an already-correct corpus file ~ exactly what the manual
        rule (§3, and this section's own rounds-per-report rule above)
-       exists to prevent. **This surfaced finding still has to feed HIRE's
+       exists to prevent. **"Majority `missing`" ALONE is still not
+       sufficient to fire, though ~ code the same second check §5a
+       requires:** the missing-qualified round count must ALSO
+       independently clear ≥half of ALL qualifying rounds from gate (a),
+       not just a majority of the smaller corpus-tagged subset (e.g. 3
+       `missing` + 2 `not-followed` + 5 `client-new-ask` = 10 rounds: the
+       5 corpus-tagged rounds clear gate (b)'s ≥half-tagged bar, and
+       `missing` is the majority within that 5, but `missing` ÷ ALL 10
+       rounds is only 30% ~ firing here would act as if half of this
+       client's rework were a genuine corpus gap when only 30% is; see
+       §5a's full worked example). Since `missing` is always a subset of
+       corpus-tagged, and corpus-tagged is always a subset of all rounds,
+       this is a strengthening of the subset-majority test, not a
+       replacement ~ code both checks, gate on both. A row that clears
+       subset-majority but not this all-rounds bar reads the same as a
+       majority-`not-followed` case: real evidence for HIRE's
+       portfolio-wide gate, but the corpus-edit action does NOT fire.
+       **This surfaced finding still has to feed HIRE's
        portfolio-wide gate, not just a UI label.** A majority-`not-followed`
        reading doesn't fire the corpus-edit action, but it's still real
        evidence for the SAME narrow-vs-portfolio-wide test the REDESIGN

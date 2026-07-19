@@ -190,10 +190,18 @@ text.** (`Last Sent` is otherwise only used for shipped rows; a `cancelled`
 row repurposes it as "the date this row was finalized as cancelled,"
 which is exactly the one piece of structured data §5b's automated
 ingestion needs to reconstruct the before/after-`Due` distinction below
-without parsing **Notes**.) Also note the reason in **Notes**
+without parsing **Notes**.) **Also top up `Effort (h)` with whatever time
+was genuinely spent before cancellation, same as any other touch** ~ a
+cycle that gets cancelled after real drafting/research work already
+happened is NOT zero-effort just because it never shipped, and leaving
+this field blank on cancellation silently drops exactly the wasted work a
+recurring pattern of late client cancellations should surface in the
+effort-per-deliverable signal. Also note the reason in **Notes**
 (`client paused, wk3` / `cadence cancelled, see brief`) for the human
 reading the row. This transition is ONLY valid from `open` ~ a cycle that
-never shipped has no completed-work evidence to lose. **But "still `open`"
+never shipped has no completed-work EVIDENCE (no `Delivered`, no
+`Rounds`) to lose, but any hours already logged toward it are still real
+and still belong in `Effort (h)`. **But "still `open`"
 splits into two different cases, distinguished by comparing `Last Sent`
 (the cancellation date) against `Due` ~ and only ONE of them is a clean
 exclusion:**

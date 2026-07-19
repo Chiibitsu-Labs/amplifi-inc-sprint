@@ -225,7 +225,16 @@ platform pulls). Rules:
   the trend read ~ but ALWAYS labeled with their period ("engagement was
   4.2% in Mar 2026"), never presented as this period's number. Current
   numbers come from the export; past numbers come from the log, wearing
-  their date.
+  their date, OR from the CURRENT export itself when it directly supplies
+  a labeled comparison-period value (Sentimo/MCP pulls commonly include a
+  period-over-period column or a prior-period reference alongside the
+  current numbers) ~ same fourth accepted historical source
+  `amplifi-qa/SKILL.md` check 4 now reads on the verification side. Don't
+  omit or flag a past-period figure the export ALREADY states outright
+  just because it isn't ALSO sitting in the terse insight-log headline ~
+  that would have generation and verification applying different sourcing
+  policies for the exact same value (Codex catch, 2026-07-19). Still label
+  it with its period, same rule as any other historical figure.
 - **The insight-log entry itself is a terse 5–10 line headline, not a full
   metrics snapshot** ~ by design (`insight-log.md`'s own format: "keep it
   tight... link the full report, don't paste it"). A metric that matters
