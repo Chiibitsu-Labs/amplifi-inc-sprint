@@ -508,12 +508,25 @@ why that's a second, deliberately separate test, not a contradiction of
 
 - **Rounds-per-report (gate a):** numerator = count of in-window dated
   rounds, read from `accepted` OR `revising (reopened)` rows (see below
-  for why the reopened variant counts here too). **Denominator = count
+  for why the reopened variant counts here too), **AND whose OWN `Start`
+  is ≥ the pinned rollout epoch `2026-09-04` ~ a row whose correction
+  window began before the QA gate (touch 1.5) existed to record it has a
+  presumptively-undercounted true round total, so its rounds don't enter
+  this numerator at all, not even ones dated safely after the epoch
+  (§5b below has the full reasoning for why this has to gate the row's
+  ENTIRE round history, not just its pre-epoch rounds individually).**
+  **Denominator = count
   of DISTINCT rows with STATUS `accepted` OR `revising (reopened)`
   SPECIFICALLY (never bare `revising`, never `delivered`) in the UNION of
   two sets, never just one:**
   **(i)** every such row whose OWN `Due` falls in the trailing 90 days,
-  including rows with ZERO rework rounds
+  including rows with ZERO rework rounds, **AND whose OWN `Start` is ALSO
+  ≥ `2026-09-04` ~ an INDEPENDENT condition, never folded into the SAME
+  rolling window `Due` uses** (both must hold to count in set (i); a row
+  with `Start` before the epoch doesn't qualify here even with a
+  perfectly in-window `Due`, since its true round count for the pre-epoch
+  stretch is unverifiable, same reasoning as the numerator gate just
+  above)
   (this is what keeps gate
   (a) a genuine per-REPORT average, not per-REWORKED-report: a clean row
   has no dated `Rework tag` entry to filter by at all, so relying on set
@@ -523,7 +536,19 @@ why that's a second, deliberately separate test, not a contradiction of
   ONE in-window dated round to the numerator, even if that row's OWN `Due`
   falls OUTSIDE the trailing 90 days ~ the late-reopen-on-an-old-report
   case (touch 4: a report due and accepted months ago reopens with a
-  fresh revision dated inside the window). Count a row that qualifies
+  fresh revision dated inside the window). **Set (ii) needs no SEPARATE
+  `Start ≥ 2026-09-04` test of its own ~ a row can only reach set (ii) by
+  first contributing to the numerator, and the numerator gate above
+  already excludes any row whose `Start` predates the epoch, so set (ii)
+  automatically inherits that same floor rather than needing it restated
+  (Codex catch, 2026-07-19: this manual definition never stated the epoch
+  floor at all, even though a later step in this same walkthrough already
+  assumed it was defined here, and even though §5b's coded version
+  requires it for exactly this set ~ a manual walkthrough run without it
+  would admit an under-instrumented pre-epoch cycle as an apparently
+  clean, zero-round report, diluting rounds-per-report and risking a
+  false "FIX_CORPUS absent" reading during the epoch's own first
+  calibration window).** Count a row that qualifies
   through BOTH sets only ONCE. Set (ii) is required, not optional
   polish: without it, a row whose `Due` sits outside the window but whose
   reopen just added an in-window round would contribute to the numerator
@@ -741,9 +766,23 @@ dated entries get counted this month).
      spuriously fire it. Before trusting the computed rate, bracket it:
      recompute the SAME formula twice more ~ once treating every excluded
      row as a HIT and once as a MISS, denominator adjusted accordingly
-     each time. If 80% falls strictly BETWEEN the worst-case and
-     best-case rates (the excluded rows could plausibly move the reading
-     across the line either way), this on-cadence read is data-incomplete,
+     each time. **Flag as data-incomplete whenever `worst_case < 80%` AND
+     `best_case ≥ 80%`, not "80% strictly between" the two** ~ REDESIGN
+     fires on `<80%`, so a best-case bracket that lands EXACTLY on 80% is
+     still a genuinely different routing outcome from the worst case, not
+     a boundary that resolves cleanly. Example: 4 valid rows (3 on-time)
+     plus 1 excluded malformed row ~ worst case (excluded counts as a
+     miss) is 3/5 = 60%, best case (excluded counts as a hit) is 4/5 =
+     80%. 80% is not "strictly between" 60% and 80%, so a strict-between
+     test would call this clean and route on the excluded-rows-dropped
+     rate (3/4 = 75%, firing REDESIGN) ~ but the honest range genuinely
+     includes an outcome (the best case) where REDESIGN would NOT have
+     fired, so this is exactly the swingable case the gate exists to
+     catch, not a resolved one (Codex catch, 2026-07-19: the original
+     `<`/`≥` boundary asymmetry silently exempted every bracket whose best
+     case landed precisely on the firing threshold, the single most likely
+     value for a small excluded-row count to produce). If `worst_case <
+     80%` AND `best_case ≥ 80%`, this on-cadence read is data-incomplete,
      not clean: flag it and fix the logging gap first, rather than routing
      on (or ruling out REDESIGN from) whatever the excluded-rows-dropped
      rate happens to compute to (Codex catch, 2026-07-19: removing invalid

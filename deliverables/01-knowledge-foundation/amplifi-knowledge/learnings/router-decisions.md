@@ -102,6 +102,11 @@ on its own; the numbers that fired them have to be dated too.
     {date}} · margin: {+2} · sustain window: {≥5 of last 10 working days}
     · min valid-observation coverage: {≥7 of 10 working days per analyst}
   - Load structural line: {N ~ capchecker default unless Michele changed it}
+    · per-analyst "overloaded day" sustain window: {≥7 of last 10 working
+    days at/above N} ~ the SAME per-day line and window the team-average
+    reading uses, evaluated per person for HIRE's breadth test below, not
+    just the raw team-average threshold this line's `N` alone describes
+    (Instrument §5b)
   - DATA completeness gate: {response-rate floor, e.g. ≥70%/7d · min
     history, e.g. ≥10 days}
   - REBALANCE headroom threshold: {relative-gap trigger, e.g. ≥2pt · rest-
@@ -118,15 +123,32 @@ on its own; the numbers that fired them have to be dated too.
     elevated → 3 is not > half of 6 (needs more than half, i.e. ≥4 AT
     TODAY'S HEADCOUNT) → NOT most, narrow signal
     still blocks HIRE" (this denominator does NOT shrink to whoever
-    reported ~ Instrument §5b). **This same dynamically-derived
+    reported ~ Instrument §5b). **Record perceived load's SAME breadth
+    count SEPARATELY, its own line, never folded into the WIP figures
+    above:** {N analysts individually read elevated on load (own daily
+    rating ≥ the structural-line `N` recorded above, on ≥7 of the last 10
+    working days)} / MOST = more than half of the SAME FULL, CURRENT
+    ROSTER, plus the active sustain window this count was evaluated over
+    ({most recent 10 working days as of this walkthrough}, so a later
+    reviewer can reproduce which window the count came from, not just
+    trust the number). Instrument §5b's HIRE predicate requires MORE THAN
+    HALF of the roster individually clearing EACH signal's own elevation
+    threshold INDEPENDENTLY, WIP and load both ~ recording only WIP's
+    breadth and load's raw threshold value (above) leaves this audit trail
+    unable to show whether load's OWN breadth predicate actually cleared,
+    or to reproduce a HIRE decision that depended on it once dashboard
+    history or thresholds later change (Codex catch, 2026-07-19). **This
+    same dynamically-derived
     more-than-half-of-roster count is ALSO the
-    unconditional BASE predicate for HIRE** (Instrument §5b: WIP must read
+    unconditional BASE predicate for HIRE** (Instrument §5b: WIP AND load
+    must EACH independently read
     elevated at this bar, re-derived from the roster's real size at every
     evaluation, even with NO narrow signal to
     scope-map against at all) ~ a clean HIRE month with every earlier
-    route genuinely absent still needs this headcount recorded, or the
+    route genuinely absent still needs both headcounts recorded, or the
     actual evidence that justified HIRE (how many of the roster, how many
-    had data, how many read elevated) is unreproducible from this audit
+    had data, how many read elevated, on EACH signal) is unreproducible
+    from this audit
     trail later (Codex catch, 2026-07-19). Narrow-signal coexistence is
     ONE reason this count matters, not the only one this line applies to.
     **When a narrow AUTOMATE/REDESIGN/FIX_CORPUS signal DOES coexist,

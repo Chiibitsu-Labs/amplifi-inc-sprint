@@ -421,7 +421,23 @@ pipe in any cell (`Dale \| Janelle`), never a bare `|`.
   one, creating a duplicate under the new label. **Use the SAME format
   for every row on THIS client's log, matching that client's cadence
   exactly** (a weekly client always writes `{YYYY-MM} / wk {N}`, a
-  monthly client always writes `{YYYY-MM}`, etc.) ~ format drift within
+  monthly client always writes `{YYYY-MM}`; **a bi-weekly client ALSO
+  writes `{YYYY-MM} / wk {N}`, `{N}` still the ISO week number of that
+  cycle's OWN `Period start` (not a running "cycle number since
+  onboarding" or any invented range label) ~ the same weekly format,
+  reused, not a third format of its own** (Codex catch, 2026-07-19: this
+  rule previously defined a concrete format for weekly and monthly only
+  and left bi-weekly to an implicit "etc.," even though `brief.md`'s
+  Snapshot explicitly lists bi-weekly as a supported cadence; without a
+  stated format, an analyst falling back to the monthly-style bare
+  `{YYYY-MM}` for a bi-weekly client collides the moment that client
+  ships twice in the same calendar month, silently orphaning the FIRST
+  cycle's row under the ingestion upsert key the SECOND cycle then
+  reuses). This reuse isn't a coincidence: ISO week numbers don't repeat
+  within a year regardless of how many weeks apart consecutive cycles
+  land, so a bi-weekly client's cycles (`wk 27`, `wk 29`, `wk 31`, …)
+  are already guaranteed unique under the exact same rule weekly uses,
+  with no new format to invent or learn) ~ format drift within
   one client's own log (`2026-07 / wk 29` one row, `Jul wk29` the next)
   breaks the same automated matching the `Analyst` field's exact-spelling
   rule protects, just one column over.
