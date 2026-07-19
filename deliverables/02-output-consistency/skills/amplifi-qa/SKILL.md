@@ -94,15 +94,25 @@ Required inputs, all of them:
    - `clients/{client}/brand-standard.md`, `brief.md`, `context.md`,
      `insight-log.md` ~ **resolve `{client}` to its ACTUAL folder name
      under `clients/` first, never assume the display name IS the folder
-     name.** A client name with a `/` or other filesystem-reserved
+     name ~ even when that name has no reserved characters and a folder
+     matching it literally exists.** A client name with a `/` or other
+     filesystem-reserved
      character is slugged per `README.md`'s rule (`ACME/EMEA` → folder
      `clients/ACME-EMEA/`); reading `clients/{client}/...` straight from
      the raw display name breaks on exactly this case (an unintended
      nested path, or an outright failure), silently missing the corpus
-     this whole gate exists to check against (Codex catch, 2026-07-19).
+     this whole gate exists to check against. **A direct match existing is
+     NOT proof it's the right folder** ~ `README.md`'s collision rule can
+     push a later, unreserved-character client name into a suffixed
+     folder (a client literally named `ACME-EMEA` lands at
+     `clients/ACME-EMEA-2/` if `ACME/EMEA` already took the base slug), so
+     confirming a path exists without checking WHOSE folder it actually is
+     can silently run this gate against the wrong client's brand/brief/
+     context entirely (Codex catch, 2026-07-19).
      List `clients/*` and match against each folder's `brief.md` Snapshot
      table (which keeps the REAL, unslugged name for this lookup) to find
-     the right folder.
+     the right folder ~ always, not only when the name looks like it needs
+     slugging.
 
 If a standards file is an unfilled frame, run anyway but say so at the top:
 "Bar not yet encoded for: {file} ~ checks in that area are generic."
@@ -185,6 +195,25 @@ never as part of this whole-file STOP condition.
    reachable or dated, per its own Step 1 rule), don't re-flag that same
    gap here as a data-integrity failure ~ it's already surfaced honestly,
    not hidden.
+
+   **A KPI target, contractual baseline, or campaign budget figure is a
+   DIFFERENT kind of number from either CURRENT or HISTORICAL above, and
+   gets its own accepted source: `brief.md`, loaded in Step 0.**
+   `report-template-rules.md`'s canonical "Performance vs baseline"
+   section means a report explicitly comparing against a target isn't an
+   edge case, it's the normal shape ~ but a target/baseline was never
+   measured this period (it's not a CURRENT actual) and was never logged
+   as a past ACTUAL either (it's not HISTORICAL in the insight-log/
+   context.md sense), so running it through either check above would fail
+   it as untraceable even though its real, authoritative source was
+   already loaded and available (Codex catch, 2026-07-19). Treat a
+   clearly-labeled target/baseline/budget figure that traces to `brief.md`
+   the same as a pass, not a flag ~ same labeling discipline as any other
+   figure (it has to actually be IN `brief.md`, and has to be presented as
+   what it is ~ a target, not silently as this period's current
+   performance). A number that claims to be a brief-sourced target but
+   ISN'T actually in `brief.md` still fails its own check, same as any
+   other unsupported figure.
    List any number that fails its OWN check ~ isn't in the export, can't
    be re-derived from it, and isn't a labeled historical figure ~ these go
    to the human verify step first. Also flag: any CURRENT-labeled figure

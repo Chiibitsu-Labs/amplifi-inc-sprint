@@ -6,10 +6,20 @@ a byproduct, or it dies.
 
 ## File convention (what the improve skill writes)
 
-One file per session: `YYYY-MM-DD-HHMMSS-{analyst}-{client-or-topic}.md`
+**One file per CLIENT per session**, not just one file per session:
+`YYYY-MM-DD-HHMMSS-{analyst}-{client-or-topic}.md`
 (seconds, not just HHMM ~ keeps two sessions in the same MINUTE for the
 same analyst/client from colliding, not just two in the same day; if a
-name still collides, append `-2`, `-3`, etc. before `.md`)
+name still collides, append `-2`, `-3`, etc. before `.md`). **A session
+touching more than one client writes a SEPARATE file per client**, since
+the promotion pass resolves every item in a file through that ONE file's
+own header ~ folding several clients under one header would send items
+for anyone but the header's client to the wrong folder or fail the lookup
+outright (`amplifi-improve/SKILL.md`'s Mode 1 has the full rule, including
+the narrow `[ClientName]`-bracket exception for one incidental
+cross-client fact inside an otherwise topic-scoped file ~ Codex catch,
+2026-07-19). This applies in the no-write manual fallback too, not just
+when the skill writes directly.
 
 ```markdown
 # 2026-07-24 ~ Dale ~ {Client}

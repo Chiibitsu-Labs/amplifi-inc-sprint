@@ -12,18 +12,32 @@ human work ~ that means reading the encoded standard before writing a word.
 ## Step 0 ~ Read the corpus (never skip)
 
 **Resolve `{client}` to its ACTUAL folder name under `clients/` before any
-of the reads below ~ never assume the display name IS the folder name.**
-A client whose real name contains `/` or another filesystem-reserved
+of the reads below ~ never assume the display name IS the folder name,
+EVEN when the name has no reserved characters and a folder matching it
+literally exists.** A client whose real name contains `/` or another
+filesystem-reserved
 character (`\ : * ? " < > |`) is slugged per `README.md`'s rule (`ACME/EMEA`
 → folder `clients/ACME-EMEA/`); interpolating the raw display name
 straight into `clients/{client}/...` breaks on exactly this case ~ either
 failing outright or resolving into an unintended nested path
 (`clients/ACME/EMEA/...`), silently missing the corpus this whole skill
-exists to read (Codex catch, 2026-07-19). List `clients/*` and match
+exists to read. **A direct name-to-folder match is NOT automatically
+safe, though, because `README.md`'s own collision rule can push a
+DIFFERENT client into that exact folder name:** if `ACME/EMEA` was
+onboarded first and took `clients/ACME-EMEA/`, a LATER client literally
+named `ACME-EMEA` (no reserved characters at all) gets bumped to
+`clients/ACME-EMEA-2/` by the collision suffix, not the literal name a
+naive direct-match would reach for ~ confirming "the folder exists" alone
+would silently read the FIRST client's brief, history, and brand rules
+for the second client's request (Codex catch, 2026-07-19). Always take
+the extra step: read the matched folder's `brief.md` Snapshot and confirm
+its stored real name equals the REQUESTED name, whether or not the path
+that got you there needed any character substitution. List `clients/*`
+and match
 against each folder's `brief.md` Snapshot table (which keeps the REAL,
 unslugged name specifically for this lookup, per `README.md`) to find the
-right folder; a display name with no reserved characters needs no
-resolution beyond confirming the direct match exists.
+right folder ~ this Snapshot check is the resolution step itself, not an
+optional extra confirmation skippable when the name looks clean.
 
 From `amplifi-knowledge/`, read in this order:
 1. `standards/house-voice.md` ~ how to sound

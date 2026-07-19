@@ -82,6 +82,20 @@
    analyst-level scope check (§3). `Rounds`/`Rework tag` carry forward
    whatever touch 1.5 already logged (default `0`/`none` if internal
    review caught nothing) ~ never reset to zero out pre-delivery catches.
+   **This `Analyst` update is scoped to THIS ONE CYCLE ~ a temporary
+   cover, not a change of who owns the account.** If the reassignment is
+   actually PERMANENT (the client's lead analyst changed for good, not
+   just this cycle's coverage), that's a DIFFERENT write, in a DIFFERENT
+   file: update `brief.md`'s Snapshot "Amplifi lead analyst" field too,
+   right when the reassignment happens, not deferred to whenever someone
+   next touches that file. Nothing else in this corpus updates that field
+   automatically ~ it's the source Instrument §3's HIRE analyst-scope test
+   trusts as CURRENT ownership specifically because delivery-log's
+   `Analyst` only ever answers "who shipped THIS cycle," not "who owns the
+   account now" (see "How to fill a row" → Analyst, below); skipping this
+   write lets `brief.md` go stale and quietly point that scope test at the
+   former lead's WIP/load instead of the actual current owner's (Codex
+   catch, 2026-07-19).
 3. **If the client asks for a revision:** bump `Rounds` by 1, top up
    `Effort (h)`, set `Rework tag`. **One tag entry per round, always ~
    if a single round has more than one cause** (e.g. a brand correction

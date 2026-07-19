@@ -214,8 +214,16 @@ grouping rule below for why that corrupts cross-week recurrence).
      recurrence inside a single inflated count, either way corrupting
      exactly the signal this file exists to preserve. Write one dated
      week-block per distinct week actually represented in the backlog,
-     each with its own real date, even if that means writing several
-     historical blocks in one catch-up promotion pass. **Before writing
+     each dated to THAT WEEK'S MONDAY specifically (`patterns.md`'s own
+     canonicalization rule ~ never today's date, never the date this
+     catch-up pass happens to be running, never any other day inside that
+     week), even if that means writing several
+     historical blocks in one catch-up promotion pass. Two different
+     promotion passes writing two different dates for the same real week
+     (one the Monday, one the day it happened to run) would otherwise read
+     as two distinct weeks to anything counting cross-week recurrence ~
+     canonicalizing to Monday every time is what keeps the SAME week
+     always matching itself (Codex catch, 2026-07-19). **Before writing
      any of those blocks, check whether `patterns.md` already has a
      `## {that week} (week of)` header** ~ a prior promotion pass may
      already have covered that week normally, and this run is only

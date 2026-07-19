@@ -900,8 +900,24 @@ above by hand:
    addition's counts into the week it names, exactly as the manual
    walkthrough does. Store the cursor wherever the ingestion job's own
    state lives (alongside the delivery-log sync watermark, if one
-   exists), and treat a cursor reset (or a first-ever run) as "ingest
-   everything," never partial re-reads mid-file.
+   exists). **A genuine first-ever run (destination has never been
+   ingested into) and a LOST/RESET cursor after prior successful runs are
+   NOT the same case, and "ingest everything" is only safe for the
+   first.** A cursor reset after the destination already holds data from
+   earlier runs means "ingest everything from byte 0" would replay every
+   already-ingested week/theme bullet ON TOP of data that's already
+   there, duplicating or re-counting every prior theme and silently
+   inflating AUTOMATE/REDESIGN confidence off nothing new ~ exactly the
+   bug this whole cursor mechanism exists to prevent, just triggered by
+   losing the cursor instead of never having one (Codex catch,
+   2026-07-19). On a detected reset (cursor missing/corrupt but the
+   destination is non-empty): **rebuild, don't replay** ~ atomically wipe
+   the destination's patterns-derived records first, THEN re-ingest the
+   whole file from byte 0 into a clean slate, and only commit the new
+   cursor position once that rebuild completes. Only skip the wipe when
+   the destination is ALSO genuinely empty (a true first-ever run) ~
+   there, "ingest everything" needs no rebuild because there's nothing to
+   collide with yet.
 2. **Add the two missing branches:** `REDESIGN` and `FIX_CORPUS` actions in
    the router (`lib/analytics.ts`), fed by rework tags + cadence data,
    **each windowed to a trailing 90 days, same principle §5a uses, but NOT

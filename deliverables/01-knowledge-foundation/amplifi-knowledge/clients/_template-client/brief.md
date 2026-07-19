@@ -16,6 +16,16 @@
 | Client contacts | {name, role, channel} |
 | Amplifi lead analyst | {name} · backup: {name} |
 
+> **Keep "Amplifi lead analyst" current the moment ownership PERMANENTLY
+> changes** ~ not the per-cycle cover `delivery-log.md`'s `Analyst`
+> column already tracks, an actual change of who owns this account.
+> Instrument §3's HIRE analyst-scope test reads THIS field as the
+> current owner specifically because `delivery-log.md`'s `Analyst` only
+> ever answers "who shipped last," not "who owns the account now" ~ a
+> stale name here quietly points that test at the wrong person's
+> WIP/load. Update it here, right when the reassignment happens (see
+> `delivery-log.md` touch 2 for the same rule from the other side).
+
 ## The brief (what they actually asked for)
 
 {Paste/summarize the original client brief here. Objectives, KPIs they care

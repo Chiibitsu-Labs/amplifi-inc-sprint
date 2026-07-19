@@ -22,6 +22,21 @@ bullet trying to hold three themes:
 - PROCESS: {friction theme, count, which clients} ~ e.g. "long queue for data pulling, 4x, ClientA ClientC ClientD"
 ```
 
+**`{YYYY-MM-DD}` in the header is ALWAYS that week's Monday (ISO-week
+start), never whatever day the promotion pass happened to run on.** Two
+different operators covering the same calendar week could otherwise write
+two different dates for it (one writes the Monday, another writes the
+Friday they actually ran the pass) ~ since week-block matching is exact-
+date, that reads as TWO distinct weeks to anything counting cross-week
+recurrence, letting occurrences that all happened in ONE real week
+falsely satisfy a multi-week threshold (Codex catch, 2026-07-19).
+Normalize whatever date you're tempted to write (today's date, the
+Friday the pass ran, the date of the underlying session) to that week's
+Monday before writing the header ~ this is the SAME normalization step
+`REWORK`/`PROCESS` items' own occurrence-date prefixes (per
+`amplifi-improve/SKILL.md` Mode 1) get grouped against, so the two stay
+consistent.
+
 Keep entries terse ~ counts and themes, not narrative. The instrument's
 manual router walkthrough (`INSTRUMENT.md` §5a) and any future automated
 version (§5b) read the running counts PER THEME across entries ~ merging
