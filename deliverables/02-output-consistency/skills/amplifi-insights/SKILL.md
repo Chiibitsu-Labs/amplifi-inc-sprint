@@ -11,6 +11,20 @@ human work ~ that means reading the encoded standard before writing a word.
 
 ## Step 0 ~ Read the corpus (never skip)
 
+**Resolve `{client}` to its ACTUAL folder name under `clients/` before any
+of the reads below ~ never assume the display name IS the folder name.**
+A client whose real name contains `/` or another filesystem-reserved
+character (`\ : * ? " < > |`) is slugged per `README.md`'s rule (`ACME/EMEA`
+→ folder `clients/ACME-EMEA/`); interpolating the raw display name
+straight into `clients/{client}/...` breaks on exactly this case ~ either
+failing outright or resolving into an unintended nested path
+(`clients/ACME/EMEA/...`), silently missing the corpus this whole skill
+exists to read (Codex catch, 2026-07-19). List `clients/*` and match
+against each folder's `brief.md` Snapshot table (which keeps the REAL,
+unslugged name specifically for this lookup, per `README.md`) to find the
+right folder; a display name with no reserved characters needs no
+resolution beyond confirming the direct match exists.
+
 From `amplifi-knowledge/`, read in this order:
 1. `standards/house-voice.md` ~ how to sound
 2. `standards/what-good-looks-like.md` ~ the quality bar

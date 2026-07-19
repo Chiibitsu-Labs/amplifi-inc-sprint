@@ -92,7 +92,17 @@ Required inputs, all of them:
    - `standards/house-voice.md`
    - `standards/report-template-rules.md`
    - `clients/{client}/brand-standard.md`, `brief.md`, `context.md`,
-     `insight-log.md`
+     `insight-log.md` ~ **resolve `{client}` to its ACTUAL folder name
+     under `clients/` first, never assume the display name IS the folder
+     name.** A client name with a `/` or other filesystem-reserved
+     character is slugged per `README.md`'s rule (`ACME/EMEA` → folder
+     `clients/ACME-EMEA/`); reading `clients/{client}/...` straight from
+     the raw display name breaks on exactly this case (an unintended
+     nested path, or an outright failure), silently missing the corpus
+     this whole gate exists to check against (Codex catch, 2026-07-19).
+     List `clients/*` and match against each folder's `brief.md` Snapshot
+     table (which keeps the REAL, unslugged name for this lookup) to find
+     the right folder.
 
 If a standards file is an unfilled frame, run anyway but say so at the top:
 "Bar not yet encoded for: {file} ~ checks in that area are generic."
@@ -225,8 +235,10 @@ just caught it not being applied. This isn't optional: delivery-log.md's
 router treats a corpus-tagged entry with no qualifier as incomplete data,
 same as a missing tag entirely. IF THE TAG IS BRAND SPECIFICALLY: the
 qualifier needs a SECOND part too, since check 2 covers two different
-corpus files ~ `brand (missing, house-voice)` if the violation was
-against the shared standards/house-voice.md, `brand (not-followed,
+corpus files ~ SLASH-separated, never comma-separated (a comma here would
+parse as a second round entry and break the round-count check):
+`brand (missing/house-voice)` if the violation was
+against the shared standards/house-voice.md, `brand (not-followed/
 brand-standard)` if it was against THIS client's own brand-standard.md.
 Never log a bare `brand (missing)` or `brand (not-followed)` with no file
 named ~ that's incomplete the same way a missing qualifier is, because it

@@ -35,7 +35,8 @@ on its own; the numbers that fired them have to be dated too.
   - AUTOMATE: {prevalence threshold, e.g. ≥40% of high-load days · min
     occurrence count, e.g. ≥3}
   - Cycle-time baseline (REDESIGN early-warning): {per-client baseline
-    span, §7}
+    span, §7} · margin: {≥20% OR ≥1 working day, whichever is larger ~
+    the absolute floor matters at a zero/near-zero baseline, §2}
   - On-cadence threshold: {N%} · evaluation cohort: {trailing 90 days,
     row-level, `Due`-anchored ~ per §3 / §5a's Fixed evaluation cohort
     paragraph}

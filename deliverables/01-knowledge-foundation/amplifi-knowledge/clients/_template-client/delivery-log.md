@@ -387,7 +387,7 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   and `quality-bar` ~ `missing` = the corpus genuinely didn't cover this,
   or was stale; `not-followed` = the corpus was already right, it just
   wasn't applied. A multi-round cell then reads like
-  `brief-misalign (missing), brand (not-followed, brand-standard),
+  `brief-misalign (missing), brand (not-followed/brand-standard),
   client-new-ask` ~ three
   entries for three rounds, matching `Rounds = 3`, each qualifier
   unambiguously bound to its own entry by position, same list, same
@@ -414,10 +414,20 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   the fix.
 
   **`brand` specifically covers TWO different corpus files, and the tag
-  alone can't say which ~ its qualifier carries a second, comma-separated
-  component to disambiguate:** `brand (missing, house-voice)` or `brand
-  (not-followed, brand-standard)`, never a bare `brand (missing)` on its
-  own. `brief-misalign` always points at `brief.md` and `quality-bar`
+  alone can't say which ~ its qualifier carries a second component to
+  disambiguate, SLASH-separated, never comma-separated:** `brand
+  (missing/house-voice)` or `brand
+  (not-followed/brand-standard)`, never a bare `brand (missing)` on its
+  own. **Slash, not comma, on purpose:** the comma is already load-bearing
+  as the TOP-LEVEL separator between round entries in this cell (`entry1,
+  entry2, entry3`) ~ a comma inside one entry's own parenthetical would
+  make a single one-round value like `brand (missing, house-voice)` parse
+  as TWO entries to anything splitting the cell on commas, silently
+  breaking the "entry count must equal `Rounds`" completeness gate on a
+  perfectly valid single round (Codex catch, 2026-07-19). The slash never
+  appears anywhere else in this cell's grammar, so it's a safe, unambiguous
+  choice for this ONE internal pairing. `brief-misalign` always points at
+  `brief.md` and `quality-bar`
   always points at `what-good-looks-like.md` ~ each maps to exactly one
   file, no ambiguity. `brand` is different: `amplifi-qa`'s check 2 ("Voice
   & brand") covers BOTH `standards/house-voice.md` (Amplifi-wide, shared
@@ -442,7 +452,7 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   for a client revision, including every round of a late reopen) ~ never
   backdated to `Period start` or `Due`, and never left off. A multi-round
   cell then reads `brief-misalign (missing) [2026-06-01], brand
-  (not-followed, house-voice) [2026-06-14], client-new-ask [2026-07-02]`
+  (not-followed/house-voice) [2026-06-14], client-new-ask [2026-07-02]`
   ~ still one
   entry per round, matching `Rounds`, now with an unambiguous date bound
   to each entry by the same position-based rule the qualifier already

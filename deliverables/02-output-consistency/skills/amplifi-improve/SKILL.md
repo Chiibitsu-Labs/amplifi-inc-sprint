@@ -127,8 +127,11 @@ specifically, same scope as Mode 2's rule below.
      `clients/ACME/` doesn't exist. Before writing, list `clients/*` and
      match the learning's client name against each folder's `brief.md`
      Snapshot (which keeps the real, unslugged name per `README.md`) to
-     find the right slugged folder ~ same resolution direction QA/insights
-     skills already use when reading a client folder, just applied here on
+     find the right slugged folder ~ the same resolution direction
+     `amplifi-qa`'s and `amplifi-insights`' own Step 0 now require when
+     reading a client folder (Codex catch, 2026-07-19: an earlier draft of
+     this bullet claimed those two skills already did this read-side
+     resolution when neither actually did), just applied here on
      the write side. If no folder's `brief.md` matches, flag it to Rica
      rather than guessing or creating a new folder silently. **If the fact
      IS or CONTAINS a metric** (a
@@ -166,7 +169,16 @@ specifically, same scope as Mode 2's rule below.
      exactly the signal this file exists to preserve. Write one dated
      week-block per distinct week actually represented in the backlog,
      each with its own real date, even if that means writing several
-     historical blocks in one catch-up promotion pass.
+     historical blocks in one catch-up promotion pass. **Before writing
+     any of those blocks, check whether `patterns.md` already has a
+     `## {that week} (week of)` header** ~ a prior promotion pass may
+     already have covered that week normally, and this run is only
+     catching a straggler capture for it. If so, do NOT write a second
+     normal week-block (that duplicates the week and inflates cross-week
+     recurrence) ~ append a `LATE ADDITION to {that week's date}` block
+     instead, exactly as `patterns.md`'s own "How a promotion pass writes
+     here" section defines, so the router folds it into the ORIGINAL
+     week's tally rather than reading it as a second occurrence week.
 3. On Rica's confirmation, apply the edits to the corpus files. Same write-
    path requirement as Mode 1: if you can't write to `amplifi-knowledge/`
    directly, output every edit as a fenced block per destination file and

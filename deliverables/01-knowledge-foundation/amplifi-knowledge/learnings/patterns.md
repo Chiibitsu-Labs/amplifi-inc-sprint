@@ -28,6 +28,39 @@ version (§5b) read the running counts PER THEME across entries ~ merging
 distinct themes into one bullet would hide which one is actually
 recurring, which is the entire thing this file exists to show.
 
+**A late-arriving capture for an ALREADY-promoted week needs a defined
+home too, not silence.** Session captures don't always land inside the
+same week they describe (a Monday capture for last Friday's work, a
+delayed manual save) ~ if that week's block has already been written and
+promoted, this file's own rules leave nowhere valid to put it: editing
+the existing block violates "never edited/overwritten," but appending
+ANOTHER `## {that same week} (week of)` header violates "one block per
+week" AND would make the router's cross-week recurrence count read two
+blocks from ONE real week as if the theme recurred across two, inflating
+exactly the signal this file exists to measure honestly. **The fix: append
+a clearly-marked LATE ADDITION block instead of a normal week-block,
+naming which earlier week it actually belongs to:**
+
+```markdown
+## {YYYY-MM-DD} (week of) ~ LATE ADDITION to {original week's date}
+- REWORK: {theme}, +{N}, {clients} (late capture, belongs to week of
+  {original week's date})
+```
+
+This stays append-only (nothing already written is ever touched) while
+giving the late data a home. **When counting how many DISTINCT weeks a
+theme recurs across (the number the router actually reads), fold a LATE
+ADDITION block's counts into the week it names, not the week it was
+appended under** ~ a `REWORK: brief-misalign, +1` late-added to "week of
+2026-06-01" adds to THAT week's brief-misalign tally for recurrence
+purposes, it does not create a second distinct week where brief-misalign
+happened to show up. Reading two blocks (the original + the late
+addition) as two separate weeks of recurrence would be the same
+inflation bug as if they'd been silently merged into one over-counted
+block ~ this notation exists specifically so a human or the router can
+tell "same week, split across two promotion passes" from "genuinely
+recurred again."
+
 ## Reading this file
 
 - **Trend, not snapshot:** a theme appearing once is noise; the same
