@@ -474,7 +474,25 @@ pipe in any cell (`Dale \| Janelle`), never a bare `|`.
   followed by `accepted`, and never applied to a row that's already
   `delivered`/`revising`/`revising (reopened)`/`accepted` (a shipped cycle's evidence stays
   exactly as recorded, even if the client pauses future reporting
-  afterward). On-cadence is computed as `Delivered ≤ Due` for any row that
+  afterward); (3) **a revision request itself gets abandoned, not the
+  original cycle** ~ the client asked for a fix (row is `revising`, `Last
+  Sent` blanked by touch 3), then goes silent on THAT ask specifically, or
+  explicitly says don't bother / the engagement pauses mid-fix.
+  `Last Sent` blank means the 5-business-day silent-acceptance clock (touch
+  4) has nothing to count from, and `cancelled` isn't reachable from
+  `revising` (exception 2 above is `open`-only) ~ without an explicit
+  path, this row is stuck at `revising` forever, permanently unresolved,
+  and (for a first-pass `revising` row specifically) its real rounds stay
+  excluded from the trusted `accepted`/`revising (reopened)` rework
+  cohort the whole time (Codex catch, 2026-07-19). Close it manually:
+  finalize `Status → accepted`, treating the LAST version actually
+  shipped (before this abandoned revision request arrived) as the final
+  deliverable, and note the manual closure explicitly in **Notes** with
+  today's date (`"revision request abandoned {date}, closed to last
+  shipped version"`) ~ this is a human judgment call, not an automatic
+  5-day timer, since there's no valid `Last Sent` for one to run against.
+  The row's already-accrued `Rounds`/`Rework tag` entries stay exactly as
+  recorded, same as any other finalization. On-cadence is computed as `Delivered ≤ Due` for any row that
   has shipped (`delivered`/`revising`/`revising (reopened)`/`accepted` ~ on-cadence reads the shipped-or-not fact, unaffected by which revising variant applies), an automatic miss for
   any `open` row where `Due` has already passed, and excluded entirely
   from both numerator and denominator for any `open` row not yet past

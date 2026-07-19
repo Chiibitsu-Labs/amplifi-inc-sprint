@@ -7,7 +7,16 @@
 > this file is the compounding.
 
 Format per entry ~ keep it tight, 5–10 lines. Link the full report, don't
-paste it.
+paste it. **Heading = the exact `delivery-log.md` `Period` value for this
+cycle, verbatim, never independently re-typed** (`## 2026-07 / wk 29` for
+a weekly client, `## 2026-07` for monthly) ~ a bare `{YYYY-MM}` heading
+collides for any client shipping more than once a month (weekly,
+bi-weekly), leaving two entries both headed `2026-07` with no way to tell
+which cycle either belongs to. The silent-acceptance scan and the
+substantive-revision procedure (below) both need to find "the matching
+insight-log entry" by period ~ that lookup only works if this heading and
+`delivery-log.md`'s `Period` cell are the SAME string (Codex catch,
+2026-07-19).
 
 **Two touches per entry, plus a conditional third:** create it at ship
 (client reaction is genuinely unknown yet ~ don't guess), then update the
@@ -84,7 +93,7 @@ period is the same ambiguity as one wrong one, just harder to notice.
 
 ---
 
-## {YYYY-MM} ({cadence period})
+## {Period}
 
 **Headline insight:** {the one thing this period}
 **Data notes:** {volume/engagement level, anomalies, source gaps}
@@ -96,6 +105,6 @@ pushed back / asked for X / no feedback ~ administratively accepted}
 
 ---
 
-## {YYYY-MM} ({cadence period})
+## {Period}
 
 …
