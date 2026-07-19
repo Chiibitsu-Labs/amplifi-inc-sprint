@@ -484,7 +484,30 @@ block} in clients/{resolved folder}/insight-log.md):
 {the 5–10 line entry per the log's format}
 ```
 
-**Paste vs. replace depends on which kind of run this is, and getting it
+**This trailer is a DRAFT of the entry, not a paste-it-now instruction ~
+don't write it into `insight-log.md` the moment this skill produces it.**
+`insight-log.md`'s own rule is explicit: the entry gets created "at ship,"
+not at draft-generation time, and creating it means pasting "what
+actually shipped, not the insight skill's original draft trailer
+verbatim" ~ this skill's trailer is drafted BEFORE the QA gate, human
+verify, or the post-Canva pass run, any of which can still correct a
+number, a claim, or a recommendation before the report reaches the
+client, and a revision request can be abandoned entirely without ever
+resending (`delivery-log.md`'s abandoned-revision closure, above).
+Pasting this trailer into the log immediately, as this skill hands it
+over, risks permanently recording content that was never actually sent,
+or that pre-send QA has already superseded ~ future generation and QA
+runs then trust that unshipped content as historical fact (Codex catch,
+2026-07-19: this Step 4 output described paste-vs-replace mechanics in
+full but never stated WHEN the paste should happen, leaving the trailer
+readable as "do this now," directly contradicting `insight-log.md`'s own
+create-at-ship rule one file over). Hold this trailer until the
+corresponding version actually ships (first send for an ordinary draft;
+resend for a substantive-revision rerun) ~ at that point, check it
+against whatever touch 1.5 or the revision process actually corrected
+(same standard `insight-log.md`'s own rule already requires of the
+analyst) and paste/replace with what genuinely went out, never this
+skill's original wording unchecked. **Paste vs. replace depends on which kind of run this is, and getting it
 wrong duplicates or loses history:** an ORDINARY draft (Step 0 resolved an
 `open` row) pastes as a brand-new entry, same as always. A
 substantive-revision rerun (Step 0 resolved a `revising`/`revising

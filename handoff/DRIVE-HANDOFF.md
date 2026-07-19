@@ -33,10 +33,26 @@ grows under their roof. Chii's repo remains the reference/spec copy.
    connect the Google Drive integration (org admin: Settings →
    Connectors → Google Drive, or per-user connector depending on the
    plan) and grant it read access to the `amplifi-knowledge/` folder
-   specifically. **Verify it, don't assume it:** open a fresh Claude
-   session, run `amplifi-insights` against any client, and confirm it
-   actually reads `house-voice.md` back to you (ask it to quote a line)
-   before treating deployment as done. If the connector isn't available on
+   specifically. **Verify it, don't assume it ~ but this specific
+   verification method (run `amplifi-insights`, confirm it reads
+   `house-voice.md` back to you) can only actually be RUN once a skill is
+   installed somewhere that can invoke it, which hasn't happened yet at
+   this point in the runbook.** This step establishes the CONNECTOR only;
+   defer the actual run of this check to whichever tier step 6 selects ~
+   for the primary tier (6a), it's the identical check step 6a's own
+   verification already performs once local installation completes, so
+   don't duplicate it here; for the Enterprise-fallback tier (6b), it only
+   becomes runnable once `amplifi-insights`/`amplifi-qa` are actually
+   uploaded to that Enterprise workspace, a step that happens alongside or
+   after this connector setup, never before it (Codex catch, 2026-07-19:
+   this step's verification instruction read as something to perform
+   immediately, but for the primary tier no skill exists to invoke until
+   step 6a, several steps later, leaving an operator following the runbook
+   in order with no way to actually complete this instruction here).
+   Confirm the connector itself is live now (Drive shows the connection
+   active, folder permissions correct); confirm a SKILL can actually read
+   through it once one exists to test with, at whichever later step
+   installs it. If the connector isn't available on
    the plan, fall back to attaching the relevant corpus files per session
    ~ works, but means re-attaching every time, so note it as a rough edge,
    not a config to leave broken permanently. **"The relevant corpus files"

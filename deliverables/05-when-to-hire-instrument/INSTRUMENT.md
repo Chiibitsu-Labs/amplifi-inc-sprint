@@ -1365,10 +1365,20 @@ dated entries get counted this month).
    editing it fixes nothing ~ the real cause is execution or process, not
    the corpus (see `delivery-log.md`'s Rework tag bullet for the full
    reasoning).
-   **"Majority missing" here means majority WITHIN the corpus-tagged
-   subset ~ that's necessary but NOT sufficient on its own to actually
-   fire the corpus edit.** The action also requires the missing-qualified
-   round count to independently clear ≥half of ALL qualifying rounds from
+   **"Majority missing" here is NOT the same test as the one that actually
+   fires the corpus edit ~ don't read it as a two-part AND, subset-majority
+   PLUS all-rounds-bar.** A strict `missing` majority WITHIN the
+   corpus-tagged subset is neither necessary (the all-rounds bar below can
+   fire on a subset TIE too, the 5-`missing`/5-`not-followed` boundary
+   case worked through below) nor sufficient on its own (see the worked
+   example immediately below, where `missing` IS the subset majority but
+   the edit correctly does NOT fire) to determine the outcome by itself
+   (Codex catch, 2026-07-19: this opening framing survived unedited from
+   an earlier draft that treated subset-majority as a required
+   precondition, directly contradicting the all-rounds-bar-fires-
+   independently fix applied a few sentences later in this same
+   paragraph). The actual operative test is the missing-qualified
+   round count independently clearing ≥half of ALL qualifying rounds from
    gate (a) ~ the SAME denominator gate (b)'s own ≥half-tagged threshold
    already uses, not just a majority of the smaller corpus-tagged subset.
    Worked example of why this second check is required: 3 `missing` + 2
