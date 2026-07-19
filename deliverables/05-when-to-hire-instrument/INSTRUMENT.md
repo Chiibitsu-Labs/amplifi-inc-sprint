@@ -657,7 +657,19 @@ baseline ~ there's no self-referential creep risk here, it's just which
 dated entries get counted this month).
 2. **REDESIGN check:** open each client's `delivery-log.md`, two reads ~
    either fires REDESIGN:
-   - **Confirmed (on-cadence):** compute the rate by hand: numerator =
+   - **Confirmed (on-cadence):** **validate `Delivered` FIRST, before
+     computing anything:** any row whose `Status` is
+     `delivered`/`revising`/`revising (reopened)`/`accepted` but whose
+     `Delivered` cell is blank or not a parseable date is a data-entry
+     gap, not a cadence outcome ~ pull it out of BOTH the numerator and
+     the denominator, and flag it separately as unevaluable data to fix
+     in the log, rather than letting it silently fail `Delivered ≤ Due`
+     by default and count as an automatic miss (Codex catch, 2026-07-19:
+     admitting a blank/malformed `Delivered` straight into this
+     calculation turns a missing field into a spurious cadence breach,
+     which can depress the rate enough to fire REDESIGN off incomplete
+     data instead of a real pattern). Once validated: compute the rate by
+     hand: numerator =
      rows with `Delivered ≤ Due`; denominator = rows that have shipped
      (`delivered`/`revising`/`revising (reopened)`/`accepted`) **plus**
      `open` rows already past
@@ -770,8 +782,14 @@ dated entries get counted this month).
      that number is trustworthy to act on, not what it is), **on cycles
      whose rework (if any)
      stays low or isn't corpus-tagged** ~ the same qualifier the
-     on-cadence read above already uses (accepted rows only, for the same
-     provisional-tag reason), applied here too so this bullet is
+     on-cadence read above already uses (`accepted` OR `revising
+     (reopened)` rows, NOT `accepted`-only, same trusted scope FIX_CORPUS
+     and the rest of this doc already use ~ a reopened row carries an
+     established baseline and dated rounds, not a provisional guess;
+     Codex catch, 2026-07-19: an earlier draft of this bullet restricted
+     to `accepted`-only, dropping established rework history and risking
+     this early-warning path disagreeing with §5b's automated version on
+     identical data), applied here too so this bullet is
      self-contained and doesn't need to borrow step 3's answer to resolve
      itself. Trending up under that condition, even while still narrowly
      hitting `Due` → REDESIGN, flagged as "before it becomes a miss" ~
@@ -800,7 +818,22 @@ dated entries get counted this month).
    below is row-level, same PRINCIPLE as on-cadence but NOT the same set,
    while the
    numerator and gate (b) are round-level, reading each dated `Rework tag`
-   entry on its own regardless of its row's `Due`), two
+   entry on its own regardless of its row's `Due`). **This "trailing-90-day"
+   window is the SAME epoch-clamped one the numerator/denominator
+   definitions above use ~ `max(trailing 90 days, Sep 4)`, AND rows also
+   need their own `Start ≥ Sep 4` before their rounds count at all (the
+   numerator-level epoch gate above), never the unconditional
+   trailing-90-days a first read of "same trailing-90-day PRINCIPLE"
+   might suggest.** `ROADMAP.md` task 2.2 flags this exact requirement for
+   the Sep 11 walkthrough specifically, but the clamp applies to every
+   walkthrough while post-epoch history is still filling in, not just the
+   first one ~ running this check by hand without it admits August rows
+   (under-instrumented, pre-QA-gate) as apparently clean data, the same
+   dilution the coded version exists to prevent, on the manual side
+   instead (Codex catch, 2026-07-19: this local restatement pointed back
+   at "the full definition above" for the epoch/`Start` rule instead of
+   stating it here directly, and an operator working from just this step
+   could easily miss it). Two
    gates in order, not one, and ONE metric throughout, not two ~ **average
    rounds per report** (total in-window rework rounds ÷ number of
    `accepted`/`revising (reopened)` rows ~ NOT `accepted`-only, same
@@ -1024,21 +1057,34 @@ dated entries get counted this month).
    capchecker's sustained-load signal against WIP
    per analyst (capchecker Q3, read manually until §5b's automation
    exists) ~ both maxed ACROSS THE TEAM, **defined exactly here too, not
-   left to eyeballing the dashboard: ≥4 of the full, fixed 6-person roster
-   individually reading WIP-elevated (§2's frozen-baseline-+2 threshold),
-   the SAME fixed-roster count §5b codes as HIRE's unconditional base
-   predicate.** Never settle for "looks maxed" or "most people seem
+   left to eyeballing the dashboard: MORE THAN HALF of the roster's
+   ACTUAL CURRENT headcount individually reading WIP-elevated (§2's
+   frozen-baseline-+2 threshold) ~ derived from today's real roster size
+   at every walkthrough, never hard-coded to "4 of 6" as a fixed number
+   that quietly goes stale the moment the team grows or shrinks, the SAME
+   dynamic-derivation rule §3/§5b already use for the identical predicate
+   (Codex catch, 2026-07-19: an earlier draft hard-coded the 6-person/
+   ≥4 figures here, so a manual walkthrough run after a headcount change
+   would keep testing against a stale bar while the automated router
+   correctly recalculated ~ 4-of-8 wrongly passing after growth, or
+   3-of-5 wrongly failing after shrinkage).** **If this HIRE check is
+   running alongside an already-identified narrow AUTOMATE/REDESIGN/
+   FIX_CORPUS signal, this same count EXCLUDES that signal's own named
+   analyst(s)** ~ the exact worked reasoning and exclusion rule are in
+   §3's narrow-signal scope test below; don't re-derive a second version
+   of it here, read that section's numerator definition and apply it
+   (Codex catch, 2026-07-19: an earlier draft counted every elevated
+   analyst including the narrow signal's own, which the coded §5b
+   version already excludes, letting a manual walkthrough clear this bar
+   more easily than the automated router would on identical data). Never
+   settle for "looks maxed" or "most people seem
    loaded," and never let this count shrink to whoever happens to have
    sufficient WIP data this cohort ~ that's a different, already-cleared
-   gate above (the ≥70%-roster-coverage floor), not this one. Three
-   elevated analysts out of six, even with clean coverage and DATA, does
+   gate above (the ≥70%-roster-coverage floor), not this one. A minority
+   of the roster elevated, even with clean coverage and DATA, does
    NOT clear this bar by itself, no matter how loaded the load signal
    reads ~ that's a genuinely narrow WIP pattern REDESIGN or a
-   redistribution should absorb, not a portfolio-wide hire (leaving "maxed
-   across the team" unquantified here, while §5b codes an explicit
-   fixed-roster count for the identical predicate, let a manual walkthrough
-   read the same evidence more permissively than the automated router
-   would ~ Codex catch, 2026-07-19). Not concentrated in the one
+   redistribution should absorb, not a portfolio-wide hire. Not concentrated in the one
    person REBALANCE would have caught, and not an artifact of who
    happened to respond ~ this fixed-count test is exactly what confirms
    that. No automate/redesign/corpus/rebalance
@@ -1491,7 +1537,18 @@ above by hand:
      - **Completeness gate, run FIRST, before any cohort/window filtering
        ~ against every `accepted` OR `revising (reopened)` row with
        `Rounds ≥ 1`, regardless of
-       `Due`:** don't gate this on rows the round-level date filter
+       `Due`, PLUS every `cancelled` row with `Rounds ≥ 1` for the
+       SEPARATE corroborating count above (same validation, different
+       consequence: a `cancelled` row that fails it is excluded from the
+       corroborating count only, it was never eligible for gates (a)/(b)
+       to begin with).** Scoping this gate to `accepted`/`revising
+       (reopened)` alone would leave the corroborating count reading
+       whatever partial/undated tag entries a `cancelled` row happens to
+       have as if they were complete, understating or misreporting the
+       `missing`/`not-followed` split it's supposed to surface (Codex
+       catch, 2026-07-19: §5a's manual procedure already validates
+       `cancelled` rows before trusting them here; the coded version
+       hadn't). Don't gate this on rows the round-level date filter
        already surfaced ~ a row whose only recent activity is an UNDATED
        round never gets a valid date to test against the 90-day window in
        the first place, so running this check only on rows that already
@@ -1695,7 +1752,8 @@ above by hand:
    - HIRE requires ALL of: sustained load over the structural line (the
      live rule) AND WIP per analyst sustainedly elevated vs baseline (the
      capacity-ceiling signal ~ independent of cadence, threshold defined
-     in §2), **read at the SAME fixed roster-wide bar this section defines
+     in §2), **read at the SAME dynamically-derived roster-wide bar this
+     section defines
      below for the narrow-signal scope test ~ MORE THAN HALF of the full
      roster individually clearing WIP's elevation threshold, never "at
      least one analyst" or "elevated in aggregate."** `6`-person roster
@@ -1770,6 +1828,13 @@ above by hand:
      is the deliberately-maintained, current-as-of-now ownership record
      (updated whenever ownership actually changes, not just whenever
      someone happens to ship); it's the ONLY source for this mapping.
+     **This mapping is only as good as the name's spelling, though ~
+     `brief.md`'s own field note now requires the EXACT capchecker
+     identity here, same rule `delivery-log.md`'s `Analyst` field already
+     had, since this field, not `Analyst`, is what THIS join actually
+     matches on** (Codex catch, 2026-07-19: `delivery-log.md`'s
+     exact-spelling rule doesn't protect this specific join, because this
+     step deliberately reads `brief.md` instead of `Analyst`).
      **If `brief.md`'s field is itself still templated/unfilled for that
      client, do NOT fall back to the delivery-log's most recent row ~
      that reintroduces the exact attribution error described above:** a
@@ -1785,9 +1850,18 @@ above by hand:
      elevated only for that same small
      set of analysts, or for most of the team? **"MOST," defined exactly,
      not left to operator judgment, and ANCHORED TO THE FULL ROSTER, not
-     just whoever has data this cohort:** more than half of the FULL,
-     fixed roster count ~ for today's 6-person function, that's ALWAYS ≥4
-     of 6, regardless of how many analysts happen to clear the WIP
+     just whoever has data this cohort:** more than half of the roster's
+     ACTUAL CURRENT headcount ~ the SAME dynamic derivation this doc's
+     unconditional base predicate above already uses, re-derived from
+     today's real roster size at every walkthrough, never hard-coded to
+     "6"/"4" as fixed numbers that quietly go stale the moment the team
+     grows or shrinks (`6`-person roster and `≥4` elevated are TODAY's
+     concrete numbers, illustrative only, not the rule itself ~ Codex
+     catch, 2026-07-19: this narrow-signal override restated the roster
+     size as a fixed constant even after the unconditional base predicate
+     above was fixed to derive it dynamically, so the two tests could
+     disagree the moment headcount changed), regardless of how many
+     analysts happen to clear the WIP
      observation-completeness bar this cohort. **Do not shrink the
      denominator to "analysts with sufficient data" here** ~ that's a
      different question (§2's WIP row already gates whether WIP can
@@ -1796,10 +1870,10 @@ above by hand:
      (say 5 of 6 with data) would silently lower the portfolio-wide bar to
      3-of-5-elevated, when genuine portfolio-wide evidence still means
      reaching most of the ACTUAL team, not most of whoever reported in.
-     Count elevated analysts against the fixed ≥4-of-6 bar directly; an
+     Count elevated analysts against the dynamically-derived bar directly; an
      analyst without sufficient data simply can't be counted as elevated
      (missing data isn't evidence of elevation), which makes reaching the
-     fixed bar harder when coverage is thin, exactly as it should be ~
+     bar harder when coverage is thin, exactly as it should be ~
      thin coverage should make broad evidence HARDER to establish, never
      easier. Record the exact headcount
      used (full roster size, how many had sufficient data, how many of
@@ -1808,29 +1882,29 @@ above by hand:
      not re-litigated. **Confined to the narrow
      signal's own analyst(s) DOES block HIRE** ~ their already-named
      problem plausibly explains all the observed strain, so that gets
-     fixed first, not hired around. **Elevation reaching the fixed ≥4-of-6
-     full-roster bar, COUNTED EXCLUDING the narrow signal's own named
+     fixed first, not hired around. **Elevation reaching the dynamically-derived
+     more-than-half-of-roster bar, COUNTED EXCLUDING the narrow signal's own named
      analyst(s), does
      NOT block HIRE** ~ a client-scoped fix can't explain strain in
      analysts who were never part of that narrow signal at all, so letting
      it rule out HIRE there would wrongly suppress a genuine portfolio-wide
      need. **This exclusion is required, not descriptive color:** simply
-     reaching ≥4-of-6 elevated in TOTAL doesn't by itself prove the
-     elevation survives independently of the narrow signal ~ if exactly 4
-     of 6 are elevated and one of them happens to BE one of the narrow
+     reaching the bar elevated in TOTAL doesn't by itself prove the
+     elevation survives independently of the narrow signal ~ if exactly
+     enough analysts to clear the bar are elevated and one of them happens to BE one of the narrow
      signal's own named analysts, fixing that signal would plausibly drop
-     the count to 3, below the bar, meaning the ≥4 reading was never
+     the count below the bar, meaning that reading was never
      independently portfolio-wide to begin with (with several
-     narrow-signal-named clients, this can explain most of the 4).
-     Compute the count as: of the full 6-person roster, how many analysts
+     narrow-signal-named clients, this can explain most of that count).
+     Compute the count as: of the roster's ACTUAL CURRENT headcount, how many analysts
      who are NOT among the narrow signal's own named analyst(s) read
-     elevated? Only THAT count clearing ≥4 overrides the block ~ counting
+     elevated? Only THAT count clearing more than half of the current roster overrides the block ~ counting
      every elevated analyst including the narrow signal's own would let a
      narrow, already-explained problem masquerade as broad evidence
      (Codex catch, 2026-07-19: this was inverted in an earlier draft of
      this section, and the exclusion itself was still missing even after
-     that fix). The roster DENOMINATOR still never shrinks (stays the full
-     6, per the "do not shrink to analysts with sufficient data" rule
+     that fix). The roster DENOMINATOR still never shrinks (stays the
+     FULL current roster, per the "do not shrink to analysts with sufficient data" rule
      above) ~ only the narrow signal's own analyst(s) are excluded from
      the NUMERATOR being counted toward the override, nothing else about
      the bar changes. (A future capacity feed with real per-client task attribution,

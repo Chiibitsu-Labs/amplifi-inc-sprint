@@ -27,6 +27,15 @@
 > stale name here quietly points that test at the wrong person's
 > WIP/load. Update it here, right when the reassignment happens (see
 > `delivery-log.md` touch 2 for the same rule from the other side).
+> **Use the EXACT same spelling capchecker uses for that person, same
+> rule as `delivery-log.md`'s `Analyst` field** (their Telegram display
+> name / capchecker identity, never a nickname, initial, or shorthand) ~
+> the HIRE scope check maps this name straight to capchecker's per-person
+> WIP/load data, and `delivery-log.md`'s own exact-spelling rule doesn't
+> protect this join, since §3 explicitly reads THIS field instead of
+> `Analyst` for current ownership (Codex catch, 2026-07-19). `Dale` here
+> and `Dale S.` in capchecker silently points the scope check at nobody's
+> real data instead of the right person's.
 
 > **"Client history" ~ "New"** means this system's own delivery-log/
 > insight-log ARE this client's whole history, genuinely period one when

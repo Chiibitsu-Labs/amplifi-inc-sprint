@@ -34,8 +34,17 @@ on its own; the numbers that fired them have to be dated too.
   wasn't evaluated this month, but don't drop the line):
   - AUTOMATE: {prevalence threshold, e.g. ≥40% of high-load days · min
     occurrence count, e.g. ≥3}
-  - Cycle-time baseline (REDESIGN early-warning): {per-client baseline
-    span, §7} · margin: {≥20% OR ≥1 working day, whichever is larger ~
+  - Cycle-time baseline (REDESIGN early-warning), **per client, WITH its
+    cadence version, never the span alone** ~ {per-client baseline span,
+    §7} at {cadence version this baseline was frozen under, e.g. `weekly
+    (v1, since 2026-07-24)`, full value per `brief.md`'s versioned
+    `Reporting cadence` field, NOT just the bare cadence word} · frozen/
+    recalibrated: {date}: a bare "Client A: 4 days" doesn't say whether
+    that's `weekly v1`, `monthly v2`, or a returning `weekly v3`, and
+    §2's baseline-versioning rule means those can be genuinely different
+    numbers for the same client ~ recording only the span risks a later
+    walkthrough or the eventual §5b automation applying the right number
+    to the wrong cohort (Codex catch, 2026-07-19) · margin: {≥20% OR ≥1 working day, whichever is larger ~
     the absolute floor matters at a zero/near-zero baseline, §2}
   - On-cadence threshold: {N%, v1 seed <80% per §3 ~ record here whatever
     Michele's actual current number is, even if still the unadjusted
