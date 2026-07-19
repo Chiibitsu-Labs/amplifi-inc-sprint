@@ -60,7 +60,10 @@
    `brand` > `quality-bar` > `data` > `client-new-ask`, rest noted in
    **Notes**) ~ the
    same bundling rule touch 3 already uses for a client revision with
-   multiple causes in one message. A pass that runs twice (fix, re-check,
+   multiple causes in one message. **Stamp the entry with TODAY's date**
+   (see the `Rework tag` bullet below for the exact format) ~ same
+   requirement as every other touch that appends a round. A pass that runs
+   twice (fix, re-check,
    fix again) before it clears is two rounds, one per re-check, not one
    round for the whole back-and-forth. Skip this touch entirely for
    cycles where nothing needed fixing before send ~ most of them,
@@ -92,7 +95,11 @@
    corpus gap is worse than over-counting one, and FIX_CORPUS existing to
    catch it is the whole point of this priority). One round, one entry, no exceptions ~ this
    keeps the entry count always equal to `Rounds`, which is what makes
-   the per-round share countable at all. **"Replaces the provisional
+   the per-round share countable at all. **Stamp the entry with TODAY's
+   date** (see the `Rework tag` bullet below for the exact format) ~ the
+   same requirement touch 1.5 uses for its own entries, and for the same
+   reason: a later 90-day cohort read needs to know when THIS round
+   happened, not just when the row was `Due`. **"Replaces the provisional
    `none`" applies ONLY if `Rounds` is still 0 when this touch fires** ~
    i.e., this client revision really is the row's first-ever recorded
    round. If touch 1.5 already logged one or more pre-delivery catches,
@@ -141,28 +148,23 @@
    unresolved would starve the rework baseline of exactly the clean
    deliveries it needs to mean anything. **If a revision request arrives
    after a silent auto-accept, re-open the SAME row** ~ `Status` back to
-   `revising`, and **before the first touch-3 bump for this reopen, stamp
-   Notes with the pre-reopen round count:** `late-reopen {date}: pre-reopen
-   Rounds={N}` (N = whatever `Rounds` read the instant before this
-   reopen's first bump). Then bump `Rounds` and add the cause per touch 3
+   `revising`, then bump `Rounds` and add the dated cause per touch 3
    above (which also re-stamps `Last Sent`), repeating touch 3 for as many
    additional rounds as this late feedback actually takes to resolve ~ a
    reopen isn't always exactly one round. Late feedback is
    still real rework on this
    report; a fresh row with no period/due/delivered of its own would just
-   delete the evidence, not relocate it. **Only re-finalize to `accepted`
-   once the late round is actually resolved ~ and when you do, UPDATE the
-   SAME `late-reopen` marker (don't add a new one) with the resolution:**
-   `late-reopen {start-date}: pre-reopen Rounds={N} → resolved
-   {resolve-date}, Rounds={M}` (M = `Rounds` at the moment this episode
-   closes back to `accepted`). This gives the episode an exact START and
-   END date instead of just a start ~ what lets a later walkthrough test
-   whether the WHOLE episode's span overlaps its 90-day window, rather
-   than guessing from the start date alone (a reopen that started just
-   before a cutoff, with its actual rework rounds landing well inside the
-   window, needs exactly this end date to be counted correctly ~ see
-   Instrument §3's cohort rule). If the row reopens AGAIN later, that's a
-   NEW marker, own start date, initially unresolved until IT closes too.
+   delete the evidence, not relocate it. **No separate marker or episode
+   bookkeeping is needed here** ~ each round's own date, stamped per touch
+   3/1.5 same as any other round, is what a later 90-day cohort read
+   filters on directly (see Instrument §3), so there's nothing extra to
+   track at reopen time beyond the normal per-round entry every round
+   already gets. Re-finalize to `accepted` once the late round is actually
+   resolved, exactly the same as finalizing after any other round of
+   revision. If the row reopens AGAIN later, that's just more dated rounds
+   appended to the same row ~ there's no meaningful difference between a
+   first-pass round and a late-reopen round once every entry carries its
+   own date, so nothing distinguishes them beyond the dates themselves.
    First version accepted with
    no revisions, explicit or by silence = go straight from `delivered` to
    `accepted`, numbers stay at 0/none.
@@ -396,8 +398,34 @@ the rework signal trusts; `open` past `Due` is a cadence miss in progress;
   WHERE to look, this qualifier as WHETHER editing the corpus is actually
   the fix.
 
+  **Every entry also carries its own date, appended last as `[YYYY-MM-DD]`
+  ~ EVERY tag, not just the three corpus-cause ones:** `brief-misalign
+  (missing) [2026-06-01]`, `data [2026-06-14]`, `client-new-ask
+  [2026-06-20]`. Stamp it with TODAY's date at the moment that specific
+  round is actually logged (touch 1.5 for a pre-delivery catch, touch 3
+  for a client revision, including every round of a late reopen) ~ never
+  backdated to `Period start` or `Due`, and never left off. A multi-round
+  cell then reads `brief-misalign (missing) [2026-06-01], brand
+  (not-followed) [2026-06-14], client-new-ask [2026-07-02]` ~ still one
+  entry per round, matching `Rounds`, now with an unambiguous date bound
+  to each entry by the same position-based rule the qualifier already
+  uses. **Why this exists:** a row's `Due`/`Delivered`/`Last Sent` dates
+  describe the ROW, not any individual round within it, and a revising row
+  can span rounds that happened months apart (an early pre-delivery catch,
+  then a late reopen well after the original ship). Without a per-round
+  date, a later trailing-90-day cohort read has no honest way to know
+  which of a row's rounds actually happened inside its window and which
+  didn't ~ every earlier attempt at solving this by dating the ROW or the
+  REOPEN EPISODE instead of the round itself eventually broke on some
+  layout of rounds the coarser marker couldn't distinguish. Dating the
+  round directly removes the guesswork at the source: FIX_CORPUS's
+  rounds-per-report and tag-share math (Instrument §3) reads individual
+  dated entries against the trailing window, full stop, regardless of
+  which row or which touch logged them, or where `Due`/`Last Sent` happen
+  to fall.
+
 ## The log
 
 | Period | Analyst | Start | Due | Delivered | Last Sent | Status | Rounds | Effort (h) | Rework tag | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|
-| {2026-07 / wk 29} | {Dale} | {YYYY-MM-DD} | {YYYY-MM-DD} | {YYYY-MM-DD or blank} | {YYYY-MM-DD or blank} | {open / delivered / revising / accepted / cancelled} | {0} | {6} | {none} | {—} |
+| {2026-07 / wk 29} | {Dale} | {YYYY-MM-DD} | {YYYY-MM-DD} | {YYYY-MM-DD or blank} | {YYYY-MM-DD or blank} | {open / delivered / revising / accepted / cancelled} | {0} | {6} | {none, or e.g. brief-misalign (missing) [YYYY-MM-DD]} | {—} |

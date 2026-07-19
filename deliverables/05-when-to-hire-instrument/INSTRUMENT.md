@@ -320,10 +320,14 @@ cycles, not elapsed time):
    capchecker's window shows nothing but `patterns.md` shows the same
    theme recurring for months, that's worth a note even without a live
    threshold crossed.
-**Fixed evaluation cohort, used by BOTH checks below:** every rate in
-steps 2–3 (on-cadence, rounds-per-report) is computed over the **trailing
+**Fixed evaluation cohort for REDESIGN's two checks below (on-cadence,
+cycle time):** both are computed over the **trailing
 90 days of that client's rows as of the walkthrough date**, never the
-row's entire history. Without a stated cutoff, months (or years) of
+row's entire history. (FIX_CORPUS's rounds-per-report/tag-share metric in
+step 3 uses a related but distinct ROUND-level version of this same
+fixed-window principle, not this row-level one ~ see the "FIX_CORPUS's
+cohort works differently" block below, after the worked-through reasoning
+for why `Due` is the right row-level anchor.) Without a stated cutoff, months (or years) of
 old, mostly-clean rows dilute a recent cadence collapse into invisibility
 ~ a client with 40 clean historical cycles and 3 recent misses reads as
 "basically fine" on all-time data and "actively breaching" on the last 90
@@ -349,120 +353,68 @@ excluded from the on-cadence rate itself per step 2's existing rule
 (future work, not yet a hit or a miss) ~ cohort membership and hit/miss
 resolution are different questions, don't conflate them.
 
-**One exception to the `Due`-only rule: a row also stays IN the cohort if
-its `Last Sent` falls in the trailing 90 days, even when its `Due` doesn't.**
-This exists specifically for the late-reopen case (touch 4): a silent
-auto-accept from months ago can reopen the SAME row when a client
-revision arrives late, writing a brand-new rework round onto a row whose
-`Due` may now sit well outside any 90-day window. A `Due`-only cohort test
-would silently exclude that row from FIX_CORPUS's current reading even
-though the round it just gained is exactly the kind of fresh rework this
-month's walkthrough needs to see ~ the new tag would exist in the log but
-never reach the router. `Last Sent` already updates on every touch-3
-resend AND every reopen (see `delivery-log.md`), so this reuses existing
-structured data rather than adding a new one: cohort membership = `Due`
-in the last 90 days **OR** `Last Sent` in the last 90 days, whichever
-catches the row.
+**FIX_CORPUS's cohort works differently, at the round level, not the row
+level.** Earlier drafts of this section tried to fit FIX_CORPUS into the
+same row-level, `Due`-anchored cohort as on-cadence, patched with a `Last
+Sent` exception and a `late-reopen` start/end marker to approximate which
+of a row's rounds actually happened inside the 90-day window. That
+approximation went through five different failed shapes across successive
+walkthroughs (single-marker delta → earliest-in-window marker →
+most-recent-marker-overall → sum-by-episode-start-date → exact start/end
+interval overlap), and the last of those still broke: an episode's
+start/end dates bound the EPISODE, not each individual round inside it, so
+a long-spanning episode with 9 old rounds and 1 fresh one still got counted
+as all 10 the moment its span merely overlapped the window.
 
-**The `Last Sent` exception is scoped to FIX_CORPUS's rework math ONLY ~
-it never pulls a row's on-cadence or cycle-time result into this month's
-REDESIGN evidence.** A row's `Delivered ≤ Due` outcome and `Delivered −
-Start` span are facts about when it originally shipped, months ago if
-`Due` is outside the window; a late reopen doesn't change either fact, so
-letting it drag the row back into on-cadence/cycle-time would manufacture
-a current REDESIGN read (a hit OR a miss) out of stale delivery
-performance that has nothing to do with this month. REDESIGN's two checks
-(§3 step 2) stay strictly `Due`-anchored, full stop, no exception. Only
-FIX_CORPUS's rounds-per-report/tag-share math (step 3) reads the `Last
-Sent` exception, and only for the NEWLY added evidence, not the row's
-WHOLE history: `Rounds` and `Rework tag` are cumulative, so a row pulled
-in ONLY by `Last Sent` (its `Due` is outside the window, `Last Sent` is
-inside it) would otherwise dump its ENTIRE historical round count into
-this month's tally ~ a report from 8 months ago with 5 old,
-already-accounted-for rounds plus 2 genuinely new late-reopen rounds
-would count as 7 fresh rounds this month, not 2. A reopen isn't always
-exactly one round either (touch 3 can repeat for multiple additional
-client revisions after the reopen), so "just count the last tag entry"
-isn't enough.
+`delivery-log.md` now stamps every individual `Rework tag` entry with its
+own date (`brief-misalign (missing) [YYYY-MM-DD]`, one per round, at touch
+1.5 or touch 3) specifically to remove this guesswork at the source. So
+the cohort rule for FIX_CORPUS is direct, with no row-level anchoring, no
+exceptions, and no marker bookkeeping:
 
-**This needs EXACT episode boundaries, not a date-of-the-start-marker
-heuristic ~ an episode's start date says nothing about when its rounds
-actually happened, only when it BEGAN; a heuristic gating on the start
-marker alone under- or over-counts depending which way the episode leans
-relative to the cutoff.** So `delivery-log.md`'s touch 4 stamps BOTH ends
-of each reopen episode: `late-reopen {start-date}: pre-reopen Rounds={N}`
-when the row reopens, UPDATED to `… → resolved {end-date}, Rounds={M}`
-when that same episode closes back to `accepted`. The current/most-recent
-episode, if still unresolved, simply has no end date yet (open-ended,
-running to now).
+**Read every individual dated `Rework tag` entry, across every `accepted`
+row (regardless of that row's own `Due`, `Delivered`, or `Last Sent`),
+whose OWN date falls in the trailing 90 days.** That's the entire cohort
+test ~ it's a filter on rounds, not rows. A row's `Due` sitting outside
+the 90-day window doesn't exclude its recent rounds, and a row's `Due`
+sitting inside the window doesn't pull in its old ones ~ each round is
+judged solely on its own date, which is exactly what the row-level
+approximation could never guarantee.
 
-**Count every episode whose span genuinely OVERLAPS the 90-day window,
-using its real start and end dates ~ an exact interval test, not an
-approximation:**
-1. Collect every `late-reopen` episode on the row: each has a start date,
-   and either a resolved end date (if closed) or no end date (if it's the
-   current, still-open episode).
-2. For a CLOSED episode (has both dates): it overlaps the window if
-   `start ≤ today` (always true) AND `end ≥ (today − 90 days)` ~ i.e., its
-   resolution happened within the last 90 days. If it overlaps, add
-   `resolvedRounds − preReopenRounds` to this month's tally. An episode
-   whose END date is older than 90 days is fully outside the window
-   REGARDLESS of how old its start was ~ exclude it. An episode whose
-   start is old but whose END lands inside the window (a reopen that took
-   a long time, or simply started a little before the cutoff) still
-   overlaps and still counts.
-3. For the OPEN (current, unresolved) episode, if one exists: it overlaps
-   if `start ≤ today` AND `now ≥ (today − 90 days)` ~ the second half is
-   always true (now is always inside the window), so an open episode is
-   ALWAYS included as long as it exists at all; add `current Rounds −
-   preReopenRounds`.
-4. Sum every overlapping episode's contribution.
+- **Rounds-per-report (gate a):** numerator = count of in-window dated
+  rounds; denominator = count of DISTINCT accepted rows that contributed
+  at least one in-window round (a row with 9 old rounds and 1 fresh one
+  contributes 1 to the numerator and 1 to the row-count, not 10 and not 0
+  ~ this is precisely the case the old episode-overlap test got wrong).
+- **Tag-share (gate b):** of that same in-window round set, what fraction
+  are tagged `brief-misalign`/`brand`/`quality-bar`. Same set both gates
+  read, no separate collection step.
+- The qualifier-majority read (`missing` vs `not-followed`, step 3's
+  cause-qualifier gate below) also reads only the in-window, corpus-tagged
+  subset of this same round set ~ one consistent population feeds every
+  downstream FIX_CORPUS question.
 
-Worked examples: (a) a row reopens 60 days ago (2 rounds, resolved 55
-days ago), then reopens again 10 days ago (1 round so far, still open).
-Episode 1: end = 55d, inside 90d window → included, contributes 2.
-Episode 2 (open): always included → contributes 1. Total = 3, not just
-the second episode's 1. (b) A row reopens 200 days ago, resolves 195 days
-ago, reopens again 40 days ago (still open). Episode 1: end = 195d,
-OUTSIDE the 90-day window (195 > 90) → excluded, correctly, even though
-its START is irrelevant to that call. Episode 2 (open) → included. (c) A
-row reopens once, 100 days ago, and its rounds resolve at 80 days ago
-(inside the window) before going back to `accepted`, with no further
-reopen. Episode 1: end = 80d, inside the window → included, contributes
-its full delta, even though its START (100d) was outside it ~ this is
-exactly the case a start-date-only heuristic got wrong. Reading the
-actual tag entries for whatever total count this produces: they're always
-the LAST that-many entries in the `Rework tag` list (entries append in
-order, oldest to newest, so the freshest ones are always the tail).
+Worked example: a row reopens 200 days ago (2 old rounds, dated 200 and
+190 days back), then reopens again 10 days ago (1 fresh round, dated 10
+days back). New rule: read the three dated entries directly ~ two are
+outside the 90-day window (200, 190 days back), one is inside it (10 days
+back). This row contributes 1 round to the numerator and 1 to the
+row-count, full stop, regardless of how many total episodes or reopens it
+has ever had, and regardless of where its `Due`/`Last Sent` happen to
+fall.
 
-**A row CAN enter the cohort via `Last Sent` with NO `late-reopen` marker
-at all ~ don't assume that case is impossible.** A reopen marker only
-exists when a row was accepted, went quiet, and got reopened by LATE
-feedback (touch 4). But a row can just as easily still be working through
-its FIRST, never-yet-accepted round of revisions when `Due` is already
-outside the 90-day window ~ e.g. `Due` 100 days ago, shipped late at 95
-days ago, client asked for a normal (non-reopen) revision at 80 days ago
-(an ordinary touch 3, `Last Sent` stamped, no marker involved because the
-row was never `accepted` yet to reopen FROM). That row is in cohort via
-`Last Sent` (80 days, inside the window) with zero markers to compute a
-delta from. Treatment: **when a `Last Sent`-only row has NO `late-reopen`
-marker, count its FULL `Rounds`, same as a `Due`-anchored row** ~ there's
-no "old, already-counted episode" to subtract, because this row has never
-reached `accepted` before now; every round on it is happening during its
-one, still-unfolding first pass through delivery, none of it could have
-been counted in an earlier walkthrough. The marker-and-delta math above
-is ONLY for rows that reached `accepted` at least once and got reopened
-later ~ it doesn't apply, and isn't needed, when no reopen ever happened.
-A row
-in the cohort via
-`Due` (the normal case) still counts in full ~ its rounds genuinely
-happened within, or close to, this window already. 90 days
-re-windows fresh at each monthly walkthrough (not a cumulative rolling
-average like WIP's baseline ~ there's no self-referential creep risk here,
-it's just which raw rows get counted this month). Apply this SAME
-`Due`-anchored 90-day cohort to FIX_CORPUS's rounds-per-report average in
-step 3 too, so the two metrics never drift out of sync by being computed
-over different windows or different anchor dates.
+This also removes the need for the old `Last Sent` exception (REDESIGN's
+on-cadence/cycle-time reads stay exactly as described above ~ strictly
+`Due`-anchored, no exception, never touched by any of this) and the "row
+CAN enter cohort via `Last Sent` with no `late-reopen` marker" special
+case: neither concept is needed once individual rounds carry their own
+dates ~ a row's FIRST-ever pass through revision is read exactly the same
+way as its tenth reopen, because both are just dated entries in the same
+list, tested against the same 90-day window, with no row-level or
+episode-level bookkeeping standing in between. 90 days re-windows fresh at
+each monthly walkthrough (not a cumulative rolling average like WIP's
+baseline ~ there's no self-referential creep risk here, it's just which
+dated entries get counted this month).
 2. **REDESIGN check:** open each client's `delivery-log.md`, two reads ~
    either fires REDESIGN:
    - **Confirmed (on-cadence):** compute the rate by hand: numerator =
@@ -500,7 +452,21 @@ over different windows or different anchor dates.
      all. **This tag
      read is scoped to the LATE cycles specifically ~ the rows actually
      missing `Due` (`Delivered > Due`, plus overdue `open` rows) ~ not the
-     full accepted-row population.** Averaging tags across every accepted
+     full accepted-row population. **`cancelled` rows are excluded from
+     this late-cycle set entirely, even the after-`Due` ones that DO stay
+     counted in on-cadence's miss denominator above** ~ a cancelled cycle
+     was never delivered, so there's no shipped report for a
+     brief-misalign/brand/quality-bar qualifier question to even apply to,
+     and `delivery-log.md`'s state machine makes `cancelled` a terminal
+     state reachable only from `open`, never followed by `accepted`.
+     Leaving a cancelled-after-`Due` row inside this set (or inside the
+     "too few late rows accepted yet" count just below) would wait on a
+     qualifier that can never arrive ~ not provisional-until-resolved, but
+     provisional FOREVER, permanently hard-blocking HIRE off a row that
+     will never finalize. The on-cadence MISS itself still counts (that's
+     settled fact, per the `Status` bullet in `delivery-log.md`); only the
+     corpus-vs-process QUESTION doesn't apply to a cycle nobody ever
+     produced.** Averaging tags across every accepted
      row, including the many that shipped clean and on time, dilutes the
      read past usefulness: eight on-time clean reports (tag `none`)
      alongside two late `brief-misalign` ones would average out to "mostly
@@ -718,8 +684,19 @@ above by hand:
    defeats the point of promoting REWORK/PROCESS themes there at all.
 2. **Add the two missing branches:** `REDESIGN` and `FIX_CORPUS` actions in
    the router (`lib/analytics.ts`), fed by rework tags + cadence data,
-   **both windowed to the same trailing-90-day cohort §5a uses** (never
-   the row's full history ~ same dilution reasoning). **REDESIGN and HIRE
+   **each windowed to a trailing 90 days, same principle §5a uses, but NOT
+   the same cohort mechanism ~ don't implement one shared filter for both.**
+   REDESIGN's on-cadence/cycle-time reads stay row-level and `Due`-anchored
+   (a row is in or out based on its own `Due` date). FIX_CORPUS's
+   rounds-per-report/tag-share reads are round-level: filter individual
+   dated `Rework tag` entries (each stamped `[YYYY-MM-DD]` at the moment
+   it's logged, per `delivery-log.md`) to those whose OWN date falls in
+   the trailing 90 days, across every `accepted` row regardless of that
+   row's `Due` ~ see §5a's "FIX_CORPUS's cohort works differently" block
+   for the full reasoning and worked example. Coding this as one shared
+   row-filter (in or out by `Due`) reproduces the exact bug class §5a's
+   history describes: a row spanning old and fresh rounds gets all-or-
+   nothing counted instead of counted per round. **REDESIGN and HIRE
    are built on deliberately non-overlapping evidence** ~ this matters,
    see the note below:
    - rework rounds/report above threshold FIRST (rework has to be
@@ -815,8 +792,18 @@ above by hand:
      `brief-misalign`/`brand`/`quality-bar` revision landing later), and
      firing REDESIGN off that provisional state risks emitting the wrong
      route from a row whose real rework outcome isn't known yet (§5a's
-     matching rule works the same way, same reasoning). If too few of the
-     late/trending cycles are `accepted` yet to read this qualifier
+     matching rule works the same way, same reasoning). **Exclude
+     `cancelled` rows from this qualifying set entirely, even ones
+     cancelled after `Due`** ~ `cancelled` is terminal in `delivery-log.md`'s
+     state machine and never reaches `accepted`, so a cancelled row can
+     never satisfy this bullet's "read from `accepted` rows" condition;
+     counting it toward "too few late/trending cycles accepted yet" would
+     wait on data that can never arrive and hard-block PROVISIONAL
+     permanently instead of until-resolved (same reasoning as §5a's
+     matching exclusion). The cancelled row still counts in the on-cadence
+     rate itself if it was cancelled after `Due` ~ only this qualifier
+     read excludes it. If too few of the (non-cancelled) late/trending
+     cycles are `accepted` yet to read this qualifier
      meaningfully, don't fire either REDESIGN or hold it back confidently
      ~ surface it as provisional, same as §5a does by hand. **AND the
      misses cluster** (one client, one
@@ -837,7 +824,24 @@ above by hand:
    - HIRE requires ALL of: sustained load over the structural line (the
      live rule) AND WIP per analyst sustainedly elevated vs baseline (the
      capacity-ceiling signal ~ independent of cadence, threshold defined
-     in §2) AND WIP DATA COVERAGE ≥70% of the full roster (≥5 of 6 today,
+     in §2), **read at the SAME fixed roster-wide bar this section defines
+     below for the narrow-signal scope test ~ ≥4 of the full, fixed 6-person
+     roster individually clearing WIP's elevation threshold, never "at
+     least one analyst" or "elevated in aggregate."** This is the BASE
+     predicate, evaluated even when no narrow AUTOMATE/REDESIGN/FIX_CORPUS
+     signal exists to scope-map against at all ~ without stating the
+     breadth requirement here too, a reading of "WIP sustainedly elevated"
+     that's satisfied by just one or two analysts running hot could pass
+     this bullet on its own and let HIRE fire off a genuinely narrow
+     capacity problem, which is exactly the "one client, one handoff"
+     pattern REDESIGN (or a redistribution) should absorb instead, not a
+     portfolio-wide hire. Use the identical fixed-roster counting rule
+     defined below (count elevated analysts against ≥4-of-6 directly; an
+     analyst without sufficient WIP data can't be counted as elevated,
+     never shrink the denominator to "analysts with data this cohort") ~
+     one ≥4-of-6 rule, read twice: once here as the unconditional base
+     gate, once below as the scope test that additionally maps a NAMED
+     narrow signal's analysts against it. AND WIP DATA COVERAGE ≥70% of the full roster (≥5 of 6 today,
      each individually clearing the ≥7-of-10-valid-observations bar ~ its
      own gate, separate from DATA below, since Q3 can go unanswered
      independently of Q1/Q2; below this floor WIP is insufficient-coverage

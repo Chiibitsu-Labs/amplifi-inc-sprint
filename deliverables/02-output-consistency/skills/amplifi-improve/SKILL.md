@@ -70,7 +70,18 @@ feels like a documentation chore, you've failed. Two modes.
 
 Only include tags that actually occurred ~ an empty session writes nothing.
 Keep each line self-contained: the promotion pass reads these cold, weeks
-later.
+later. **If a `CLIENT-FACT` IS or CONTAINS a metric** (a number describing
+some period's performance, not a qualitative observation), **write its
+SOURCE PERIOD into the line right now, at capture** ("engagement rate
+4.2% as of Mar 2026" ~ not just "engagement rate 4.2%"), same requirement
+Mode 2 enforces at promotion ~ don't defer it. Capturing the number
+without the period it describes and expecting the weekly promotion pass to
+recover it later loses exactly the context that's freshest at the moment
+of capture and often unrecoverable by Friday (which report, which period
+was actually being discussed, may no longer be obvious from a terse
+one-line session note read cold a week on). Purely qualitative
+`CLIENT-FACT`s don't need this ~ the period requirement is for metrics
+specifically, same scope as Mode 2's rule below.
 
 4. If the session delivered a report, remind the analyst of the two ship
    writes: insight-log entry + delivery-log row (~2 minutes).
@@ -101,7 +112,26 @@ later.
 2. Group by tag and propose the promotion, showing each item with its
    destination:
    - `CLIENT-FACT` → `clients/{x}/context.md` (or `brief.md` FAQ table if it
-     answers a question). **If the fact IS or CONTAINS a metric** (a
+     answers a question). **Resolve `{x}` against the ACTUAL, already-
+     slugged folder name under `clients/`, never against the raw display
+     name sitting in the learning file's own `# {date} ~ {analyst} ~
+     {client/topic}` header.** Mode 1 deliberately keeps that header
+     unslugged (`README.md`'s slugging rule is a filesystem-safety measure
+     for folder/file names only, not a mandate to rewrite the readable
+     name everywhere) ~ so a learning captured for "ACME/EMEA" carries that
+     exact unslugged string in its header, while the real folder on disk is
+     `clients/ACME-EMEA/`. Writing `clients/{x}/context.md` straight from
+     the header string reproduces the same bug the folder-naming rule
+     exists to prevent, one layer downstream: an unintended nested
+     `clients/ACME/EMEA/context.md` path, or an outright failure if
+     `clients/ACME/` doesn't exist. Before writing, list `clients/*` and
+     match the learning's client name against each folder's `brief.md`
+     Snapshot (which keeps the real, unslugged name per `README.md`) to
+     find the right slugged folder ~ same resolution direction QA/insights
+     skills already use when reading a client folder, just applied here on
+     the write side. If no folder's `brief.md` matches, flag it to Rica
+     rather than guessing or creating a new folder silently. **If the fact
+     IS or CONTAINS a metric** (a
      number that describes some period's performance, not just a
      qualitative observation), **the promoted entry must carry that
      metric's own SOURCE PERIOD explicitly** ("engagement rate 4.2% as of
