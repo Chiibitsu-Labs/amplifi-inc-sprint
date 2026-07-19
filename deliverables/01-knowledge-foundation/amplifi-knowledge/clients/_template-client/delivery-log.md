@@ -737,8 +737,21 @@ writing the composite there in the first place, escaped or not.
   every touch. Gut feel is fine; consistency beats precision.
 - **Rework tag** ~ **required, not optional, the moment `Rounds` goes above
   0** ~ exactly ONE entry per round (if a round has multiple causes, pick
-  by priority `brief-misalign` > `brand` > `quality-bar` > `data` >
-  `client-new-ask` and note the rest in Notes ~ see touch 3). The genuinely
+  by touch 3's FULL priority order, QUALIFIER FIRST, THEN CATEGORY, never
+  category alone: if more than one cause carries its own
+  `(missing)`/`(not-followed)` qualifier, prefer whichever is qualified
+  `(missing)` REGARDLESS of category rank; only once that's settled does
+  category order (`brief-misalign` > `brand` > `quality-bar` > `data` >
+  `client-new-ask`) decide, and note whichever cause loses either step in
+  Notes ~ see touch 3 below for the full reasoning and worked example, it
+  applies here identically). **Stating the category order alone here,
+  without this qualifier-first step, would pick a `(not-followed)` cause
+  over a `(missing)` one whenever the `(not-followed)` cause happens to
+  rank higher, burying a real corpus gap in free-text Notes the router
+  never reads** (Codex catch, 2026-07-19: this field-format summary
+  restated only the category half of touch 3's rule, the same drift
+  already caught and fixed in touch 1.5's own bundling instruction, one
+  section over). The genuinely
   FIRST round recorded on this row (whichever touch fires first ~ 1.5 or
   3) REPLACES the provisional `none`; every round after that, regardless
   of source, APPENDS its own entry, one per round, repeats allowed, never
@@ -812,9 +825,20 @@ writing the composite there in the first place, escaped or not.
   "go edit the corpus file," check the qualifying rounds' qualifiers:
   majority `missing` → real FIX_CORPUS work; majority `not-followed` → a
   different problem, don't edit an already-correct file, look at coaching
-  or process instead; a genuine tie → a resolved "no clear majority"
-  finding, not provisional, don't edit the corpus off a tie either (see
-  Instrument §3 for the full three-way handling). Read the tag share as
+  or process instead; a genuine tie WITHIN this qualified subset is a
+  resolved "no clear majority" finding, not provisional ~ **BUT NOT
+  automatically "don't edit."** Check ONE more thing before treating a tie
+  as "no action": does `missing` ALONE already clear ≥half of ALL
+  qualifying rework rounds (not just half of the missing/not-followed
+  subset)? If yes, the corpus edit fires anyway, tie or not ~ 5 `missing` +
+  5 `not-followed` out of 10 total rounds is a tie WITHIN the tagged
+  subset, but `missing` alone is still 50% of ALL rework, which is exactly
+  what Instrument §3's separate all-rounds bar exists to catch,
+  independent of how the missing/not-followed subset itself splits. Only
+  when `missing` does NOT independently clear that all-rounds bar does a
+  genuine subset tie actually mean "no clear majority, don't edit" (see
+  Instrument §3 for the full three-way handling, including this exact
+  exception). Read the tag share as
   WHERE to look, this qualifier as WHETHER editing the corpus is actually
   the fix.
 

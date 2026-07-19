@@ -619,19 +619,24 @@ is exactly as real a risk here as a parsing bug there.** Validate every
 entry's base tag against an exact match on the five defined values, the
 required `(missing)`/`(not-followed)` qualifier on the three corpus
 causes, the required source component on `brand` specifically, AND that
-the entry's date is a genuinely valid, parseable date NO LATER than the
-evaluation date this walkthrough is reading as of. A mistyped tag
-(`brief-misalgn`) or a plausible year typo (`[2027-09-10]` during a 2026
-walkthrough) reads as a normal, complete entry to a human skimming the
+the entry's date is a genuinely valid, parseable date that falls BETWEEN
+that row's own `Start` and the evaluation date this walkthrough is
+reading as of, inclusive on both ends ~ NEITHER later than today NOR
+earlier than the cycle it belongs to. A mistyped tag
+(`brief-misalgn`) or a plausible year typo, in EITHER direction
+(`[2027-09-10]` during a 2026 walkthrough, or `[2025-09-10]` on a cycle
+whose `Start` is in 2026), reads as a normal, complete entry to a human
+skimming the
 row quickly ~ the tag LOOKS like a real one, the date LOOKS like a real
-date ~ and without checking it against the exact enum and against today's
+date ~ and without checking it against the exact enum and against both
+the row's own `Start` and today's
 date specifically, it can either silently drop out of the trailing-90-day
-window as "not in scope" (a future date) or get read as a valid but
+window as "not in scope" (too far future OR too far past) or get read as a valid but
 non-corpus tag by gate (b) while still counting toward gate (a)'s
 numerator (a misspelled corpus cause), understating the real corpus-tag
 share and potentially clearing FIX_CORPUS on evidence that was never
 actually complete (Codex catch, 2026-07-19: §5b's coded gate now
-validates tag value and future-dating explicitly, precisely because a
+validates tag value and both date bounds explicitly, precisely because a
 human or a parser can both produce the same plausible-but-wrong entry, but
 this manual procedure, reading the identical field, was left trusting
 every entry at face value). Treat a failing entry exactly like an
@@ -1470,10 +1475,23 @@ dated entries get counted this month).
    qualifier entirely (genuinely missing data, waitable); step 3's
    survivorship-bias backlog, when an unresolved `revising` backlog is
    large/tagged enough to plausibly flip the FIX_CORPUS reading; and gate
-   (a)/(b)'s own `Status`-validation gate (above, where the cohort itself
-   is built), when a row rejected for an invalid `Status` could plausibly
-   have swung gate (a)'s frequency average or gate (b)'s tag-share had it
-   validated cleanly. A
+   (a)/(b)'s own COHORT-VALIDATION gates (above, where the cohort itself
+   is built) collectively, when a row or entry rejected by ANY of them
+   could plausibly have swung gate (a)'s frequency average or gate (b)'s
+   tag-share had it validated cleanly ~ this covers EVERY validation
+   failure this section defines, not `Status` alone: an invalid `Status`,
+   a malformed `Rounds` cell, an unrecognized/malformed `Rework tag` base
+   value, a missing or invalid `(missing)`/`(not-followed)` qualifier, an
+   invalid `brand` source component, or a tag entry dated outside its
+   valid range (future-dated, or earlier than the row's own `Start`) all
+   trigger this SAME fourth source (Codex catch, 2026-07-19: this line
+   named only `Status` explicitly, even though the validation gate it
+   points back to grew, across rounds 79-80, to cover several other
+   swing-capable rejection types under the identical PROVISIONAL
+   consequence; an operator following just this HIRE checklist, blind to
+   those other rejection types, could read every earlier branch as clear
+   and let HIRE proceed on a cohort this section itself had already
+   declared unreliable). A
    COMPLETE tie in the missing/not-followed qualifier ~ every round tagged,
    the `missing`/`not-followed` counts landing exactly equal ~ is NOT
    provisional (see step 3): it's a resolved "no clear corpus-cause
@@ -2079,7 +2097,30 @@ above by hand:
    router (Codex catch, 2026-07-19: "ingest the most recent snapshot"
    read as one atomic pull, when `router-decisions.md`'s own n/a
    convention means each signal's currency has to be resolved on its own
-   timeline). For each signal, walk backward through `router-decisions.md`
+   timeline). **Not everything in this file is a real entry, either ~ the
+   same scaffold-exclusion discipline `patterns.md`'s own ingestion needs
+   (above) applies here too, in a slightly different shape.** This file
+   ships with a fenced ` ```markdown ` example block (illustrating the
+   entry format, `## {YYYY-MM-DD} ~ monthly walkthrough`, complete with
+   plausible-looking, NON-blank example threshold values under it) AND a
+   trailing placeholder header, `## {YYYY-MM-DD} ~ first entry lands
+   here`, sitting after it until a real walkthrough actually gets logged.
+   A backward-walk that doesn't strip these first can resolve a signal
+   straight to the FENCED EXAMPLE's own placeholder threshold value ~
+   which reads as a normal, non-blank, well-formed number, not something
+   that fails a blank/`n/a` check ~ and treat fabricated example data as
+   the current, human-approved figure, or choke trying to parse the
+   trailing placeholder header's literal `{YYYY-MM-DD}` as a real entry
+   date (Codex catch, 2026-07-19: this per-signal backward-walk was
+   specified to read "entries" without first excluding the file's own
+   documentation scaffold, the identical gap `patterns.md`'s ingestion
+   spec was already fixed to close one section over). **Filter BEFORE
+   walking backward, not after:** strip any content inside triple-backtick
+   fences, and skip any `##` entry header whose date field is the literal,
+   unresolved string `{YYYY-MM-DD}` rather than a real parsed date, before
+   this backward-walk ever starts ~ only entries surviving both filters are
+   real, dated walkthroughs eligible to resolve a signal's current value.
+   For each signal, walk backward through `router-decisions.md`
    entries from most recent to oldest and take the first NON-blank/
    non-`n/a` value found for THAT signal specifically ~ carrying the
    previous approved value forward exactly the way a human reading the
@@ -2381,7 +2422,24 @@ above by hand:
        apart once a bad date has already passed this gate). Treat a
        future-dated entry exactly like a malformed one: excluded from BOTH
        gates and flagged as a data-hygiene fix, never silently reclassified
-       as merely out-of-window. **Entry count and date are only two of
+       as merely out-of-window. **The SAME entry date also needs a LOWER
+       bound, not just the upper one above ~ no rework round can honestly
+       predate the cycle it belongs to.** Validate every entry's date is
+       NOT EARLIER than that row's own `Start` (the cycle's SCHEDULED
+       beginning, already read for cycle-time/on-cadence validation
+       elsewhere in this doc): a plausible PRIOR-year typo
+       (`[2025-09-10]` logged on a cycle whose `Start` is in 2026) is
+       parseable and isn't future-dated either, so it clears the check
+       above cleanly, then reads as simply outside the trailing-90-day
+       window and gets silently dropped as stale ~ the same false-absence
+       failure mode the upper-bound fix just closed, just from the other
+       direction (Codex catch, 2026-07-19: validating only that a date
+       isn't too LATE leaves it exactly as exposed to a date that's
+       impossibly too EARLY, and a "too old" misread is just as
+       undercounting as a "not yet in scope" one). Treat an entry dated
+       before its row's own `Start` exactly like a future-dated one:
+       excluded from both gates, flagged as a data-hygiene fix, never
+       silently reclassified as merely out-of-window. **Entry count and date are only two of
        three things this gate has to validate ~ the TAG VALUE itself, the
        actual content the entry exists to carry, is currently unchecked.**
        Validate every entry's base tag against an EXACT match on the five
