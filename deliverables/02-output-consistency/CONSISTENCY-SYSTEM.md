@@ -45,19 +45,40 @@ slop.
 | `standards/report-template-rules.md` | structure + branding + fresh-data rules | "doesn't align w/ branding," "old data retained" |
 | `clients/{x}/brand-standard.md` | per-client voice/format | client-specific misses |
 
-Ships as **frames with extraction prompts** ~ Rica fills three of these
-four from the 2–3
-best past reports (the bar comes from real winning work, not theory):
-`what-good-looks-like.md`, `house-voice.md`, and `brand-standard.md`.
-**`report-template-rules.md` is the exception, not more of the same
-process** ~ it's extracted from the CURRENT Canva template and brand kit
-instead, never past reports (see that file's own "How to fill this file"
-section). Gold reports can reflect an outdated deck structure, fonts,
-colors, or logo placement that the team has since revised in Canva
-directly ~ extracting structure/branding rules from old winning reports
-instead of the live template risks encoding exactly the stale rules the
-post-Canva brand checks exist to catch (Codex catch, 2026-07-19). One
-hour of Rica's judgment per frame, encoded forever, whichever source each
+Ships as **frames with extraction prompts**, but the four rows above
+split into THREE different fill methods, not one shared process ~
+picking the wrong source for any of them encodes the wrong bar:
+- **`what-good-looks-like.md` and `house-voice.md`** ~ Rica fills these
+  TWO from the 2–3 best past AMPLIFI reports (the bar comes from real
+  winning work, not theory): these are shared, Amplifi-wide standards, so
+  Amplifi's OWN best work is the right source.
+- **`report-template-rules.md`** ~ extracted from the CURRENT Canva
+  template and brand kit instead, never past reports (see that file's own
+  "How to fill this file" section). Gold reports can reflect an outdated
+  deck structure, fonts,
+  colors, or logo placement that the team has since revised in Canva
+  directly ~ extracting structure/branding rules from old winning reports
+  instead of the live template risks encoding exactly the stale rules the
+  post-Canva brand checks exist to catch.
+- **`clients/{x}/brand-standard.md`** ~ **NEITHER gold-report method
+  above applies here.** This is a PER-CLIENT file, not a shared standards
+  frame ~ Amplifi's own past winning reports reflect Amplifi's overall
+  house style across every client, not any ONE client's specific
+  terminology, preferences, or formatting quirks, so extracting a
+  client's brand standard from Amplifi's gold reports would encode the
+  wrong client's voice into every OTHER client's deliverable (Codex
+  catch, 2026-07-19: an earlier draft of this section grouped
+  `brand-standard.md` in with the gold-report method above, contradicting
+  `ROADMAP.md`'s own task 1.3b, which correctly assigns Dale + Janelle to
+  fill each client's copy from THAT client's kickoff material and
+  correction history, not from gold reports, and not Rica's task at all).
+  Each client's own kickoff brief, and the "Revision history lessons"
+  section once real corrections start landing, are this file's real
+  sources.
+
+One
+hour of judgment per frame, encoded forever, whichever source and owner
+each
 frame actually calls for. Until filled, the skills run but
 the bar is generic ~ **filling these frames is the highest-leverage hour in
 the roadmap.**

@@ -75,7 +75,29 @@ numeric suffix,
 DETERMINISTIC and creation-order based ~ `-2` if the base slug is taken,
 `-3` if `-2` is also taken, and so on, first available number wins, same
 "first suffix that doesn't already exist" rule `amplifi-improve` already
-uses for colliding learning filenames. Never let a second client's folder
+uses for colliding learning filenames.
+
+**A suffixed FOLDER alone doesn't fix a duplicate NAME ~ the two accounts'
+Snapshot `Client` cells would still read identically, and every skill
+resolves by matching that cell, not the folder name.** Two folders named
+`clients/ACME/` and `clients/ACME-2/` whose `brief.md` Snapshots BOTH say
+`Client | ACME Corp` are still ambiguous to any resolver: a request for
+"ACME Corp" now matches both, and picking one (first found, alphabetical,
+whatever) silently reads or writes the WRONG account's brief/context/
+delivery history exactly as often as it picks right (Codex catch,
+2026-07-19). **When a genuine duplicate-name collision is confirmed,
+write a DISTINGUISHING qualifier directly into the new account's Snapshot
+`Client` cell, not just the folder name** ~ whatever real fact actually
+tells them apart (`ACME Corp (Chicago office, since 2024)` vs `ACME Corp
+(new account, 2026)`; region, industry, or onboarding date, whichever is
+true and durable). This keeps the Snapshot `Client` field as the one
+identity key every skill already reads ~ it just has to actually stay
+UNIQUE per account once a duplicate name is confirmed, which a bare
+display name can't guarantee on its own. **Any resolution request that
+still matches MORE than one folder's Snapshot (the qualifier wasn't
+included, or two accounts haven't been disambiguated yet) must STOP and
+ask which account, never silently pick one** ~ ambiguous is not the same
+as resolved. Never let a second client's folder
 silently overwrite or get merged into the first client's ~ the
 Snapshot-based resolver every skill now uses (Codex catch, 2026-07-19)
 would otherwise read or write the WRONG client's brief, context, and

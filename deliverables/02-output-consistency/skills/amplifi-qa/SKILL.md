@@ -112,7 +112,10 @@ Required inputs, all of them:
      List `clients/*` and match against each folder's `brief.md` Snapshot
      table (which keeps the REAL, unslugged name for this lookup) to find
      the right folder ~ always, not only when the name looks like it needs
-     slugging.
+     slugging. **If MORE THAN ONE folder's Snapshot plausibly matches**
+     (two different accounts sharing a display name, per `README.md`'s
+     duplicate-name handling) **~ STOP and ask which account, never
+     silently pick one.**
 
 If a standards file is an unfilled frame, run anyway but say so at the top:
 "Bar not yet encoded for: {file} ~ checks in that area are generic."
@@ -161,7 +164,7 @@ never as part of this whole-file STOP condition.
    from it (total, average, rate, period-over-period change) that you can
    re-derive and show ~ that's a pass, not a flag; figures explicitly
    labeled with a past period (the insight-log trend reads the insights
-   skill is required to include) must exist in ONE of three accepted
+   skill is required to include) must exist in ONE of FOUR accepted
    historical sources, all still needing the same period label: (a)
    `insight-log.md`'s entry for that period; (b) ~ only if this session has
    live, already-confirmed Drive access reaching it, never assumed ~ the
@@ -170,13 +173,23 @@ never as part of this whole-file STOP condition.
    promotion time (the weekly promotion pass writes these with an origin
    date, per `learnings/README.md` ~ a metric promoted here because it
    recurs is exactly as valid a historical source as the terse log line,
-   as long as its date travels with it). The log entry itself is a terse
+   as long as its date travels with it); (d) **the CURRENT-period export
+   itself, when it directly supplies a labeled comparison-period value**
+   (Sentimo/MCP pulls commonly include a period-over-period column or a
+   prior-period reference alongside the current numbers) ~ this is
+   different from the deterministic-calculation allowance above (which
+   derives a NEW figure from current data), source (d) is a value the
+   export ALREADY states outright, explicitly labeled with its own past
+   period, sitting in the same file Step 0 already loaded. Rejecting it
+   unless it's ALSO duplicated in one of (a)/(b)/(c) would flag a directly
+   traceable, already-loaded figure as unsupported for no real reason
+   (Codex catch, 2026-07-19). The log entry itself is a terse
    headline, not every figure from that period, so a historical number
-   genuinely sourced from (b) or (c) is still a pass, not a flag, same
+   genuinely sourced from (b), (c), or (d) is still a pass, not a flag, same
    labeling rule as any other historical figure. **Before passing a
    historical figure off ANY single source, cross-check the OTHER
    reachable sources for the SAME metric and period ~ don't stop looking
-   the moment one source agrees with the draft.** The three sources are
+   the moment one source agrees with the draft.** The four sources are
    supposed to describe the same historical fact, but a correction can
    reach one without reaching the others (`insight-log.md`'s own
    "conditional third touch" is explicitly required to update a matching

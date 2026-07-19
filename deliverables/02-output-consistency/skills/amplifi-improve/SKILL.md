@@ -169,7 +169,12 @@ grouping rule below for why that corrupts cross-week recurrence).
      file's header name for this one item,** same Snapshot-matching
      process, then continue reading the rest of the file's un-bracketed
      items against the header as normal. If no folder's `brief.md` matches, flag it to Rica
-     rather than guessing or creating a new folder silently. **If the fact
+     rather than guessing or creating a new folder silently. **If MORE
+     THAN ONE folder's Snapshot plausibly matches** (two different
+     accounts sharing a display name, per `README.md`'s duplicate-name
+     handling) **~ also flag it to Rica rather than guessing which
+     account this fact belongs to;** promoting it into the wrong one of
+     two same-named accounts is worse than not promoting it at all. **If the fact
      IS or CONTAINS a metric** (a
      number that describes some period's performance, not just a
      qualitative observation), **the promoted entry must carry that

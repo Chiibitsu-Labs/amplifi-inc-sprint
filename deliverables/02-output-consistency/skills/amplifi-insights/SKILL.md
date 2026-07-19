@@ -37,7 +37,13 @@ and match
 against each folder's `brief.md` Snapshot table (which keeps the REAL,
 unslugged name specifically for this lookup, per `README.md`) to find the
 right folder ~ this Snapshot check is the resolution step itself, not an
-optional extra confirmation skippable when the name looks clean.
+optional extra confirmation skippable when the name looks clean. **If
+MORE THAN ONE folder's Snapshot plausibly matches the requested name**
+(two genuinely different accounts that share a display name, per
+`README.md`'s duplicate-name handling) **~ STOP and ask which account,
+never silently pick one** (first found, alphabetical, or otherwise);
+guessing between two real accounts risks generating against the wrong
+client's brief and history entirely.
 
 From `amplifi-knowledge/`, read in this order:
 1. `standards/house-voice.md` ~ how to sound
@@ -79,20 +85,35 @@ carve-out to every Status-marker file, which would let a `house-voice.md`
 or `what-good-looks-like.md` still holding real unfilled `{...}`
 placeholders pass as ready the moment Status merely flips to LIVE, with
 no independent check that the fill-once content behind it is actually
-real ~ Codex catch, 2026-07-19). Only `report-template-rules.md`
-gets the marker-alone trust, because it's the one file explicit about
-retaining literal, PERMANENT `{...}` runtime tokens even once genuinely
-live ~ `"{Month YYYY} · data window {start}–{end}"` under its own
-Fresh-data rules is a format instruction for every future report, not a
-one-time fill-in-the-blank, so a generic brace-scan against THIS file
-specifically would flag it as forever-unresolved the moment it's actually
-done. `house-voice.md` and `what-good-looks-like.md` have no such runtime
-tokens ~ any brace still standing there after `Status: LIVE` is a real,
+real ~ Codex catch, 2026-07-19). **`report-template-rules.md` does NOT get
+blanket marker-alone trust either, though ~ it gets a NARROWER exception:
+brace-scan the WHOLE file as normal, but exempt ONLY the three specific,
+known-permanent runtime tokens under its own Fresh-data rules section,
+`{Month YYYY}`, `{start}`, and `{end}` (the exact period-stamp line,
+`"{Month YYYY} · data window {start}–{end}"`), never every brace in the
+file.** This file has BOTH kinds of placeholder ~ those three permanent
+runtime tokens under Fresh-data rules, AND genuine one-shot fill-once
+placeholders everywhere else (the Canonical report structure table's
+`{N}` bullet count and `{the metrics blocks in order}`, Branding rules'
+`{…}` fonts/colors/chart-style entries). Trusting the `Status: LIVE`
+marker alone for the WHOLE file, as an earlier draft of this exception
+did, would accept the file the moment Rica flips Status even if she
+flipped it before actually replacing those one-shot placeholders ~ the
+insight skill would then generate against a genuinely undefined report
+contract (no real section order, no real branding rules) while believing
+the corpus gap was already closed (Codex catch, 2026-07-19 ×2: first the
+over-generalization to every Status-marker file, now the
+all-or-nothing trust for this one file specifically). Scan for ANY `{...}`
+outside that one exempted period-stamp line, exactly like any other
+one-shot file; a hit there is still a real, unresolved placeholder.
+`house-voice.md` and `what-good-looks-like.md` have no runtime
+tokens at all ~ any brace still standing there after `Status: LIVE` is a real,
 unfilled placeholder, and the brace-scan is a genuine independent defense
 against Status being flipped prematurely, exactly like it is for
-`brief.md`/`brand-standard.md`. Both checks (marker AND brace-scan) apply
-to every standards file except `report-template-rules.md`, which trusts
-the marker alone.
+`brief.md`/`brand-standard.md`. Every standards file gets both checks
+(marker AND brace-scan) ~ `report-template-rules.md` just has one small,
+named exemption carved out of its brace-scan, not an exemption from the
+brace-scan itself.
 
 **This is a WHOLE-FILE test for the one-shot required files (the
 standards files, `brief.md`, `brand-standard.md`) ~ they're written once,
