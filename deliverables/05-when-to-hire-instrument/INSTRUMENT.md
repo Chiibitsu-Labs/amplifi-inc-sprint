@@ -138,9 +138,20 @@ threshold crossed →
                  the two-gate order that keeps one stray tag from firing
                  this on its own (see §5). **Data-quality gate, THREE
                  forms,
-                 all hard-block:** (a) an accepted row with `Rounds ≥ 1`
+                 all hard-block, and all apply to `accepted` OR `revising
+                 (reopened)` rows equally, never `accepted`-only** (a
+                 reopened row's fresh, still-incomplete tag entry is
+                 exactly as capable of silently undercounting either gate
+                 as an accepted row's would be, and the row-level
+                 denominator/numerator scope elsewhere in this doc already
+                 treats the two statuses identically ~ scoping just this
+                 validation to `accepted` alone would let an incomplete
+                 `revising (reopened)` row's round slip through unvalidated
+                 while still counting toward the denominator, understating
+                 FIX_CORPUS on exactly the data this gate exists to catch,
+                 Codex catch, 2026-07-19):** (a) such a row with `Rounds ≥ 1`
                  but `Rework tag = none` is untagged, not zero-corpus; (b)
-                 an accepted row where the tag entry count doesn't equal
+                 such a row where the tag entry count doesn't equal
                  `Rounds` (e.g. `Rounds = 3`, only two comma-separated
                  entries recorded) is PARTIALLY untagged and just as
                  unusable ~ the missing round(s) could swing the
@@ -771,8 +782,12 @@ dated entries get counted this month).
    interchangeable (one 5-round report among ten clean ones is 0.5
    rounds/report but only 10% of rows touched; picking whichever makes
    the gate pass on a given month would make routing decisions
-   incomparable across months). (a) first, is that rounds-per-report
-   average above threshold? If rework is rare, stop here ~ one
+   incomparable across months). (a) first, does that rounds-per-report
+   average MEET OR EXCEED the threshold (≥, matching the v1 seed's own
+   `≥2` framing above ~ read literally, "above" means strictly `>`, which
+   would route an exact 2.0 average differently than the declared
+   threshold and any future coded implementation, Codex catch,
+   2026-07-19)? If rework is rare, stop here ~ one
    brand-tagged revision among many clean reports is noise, not a corpus
    signal, even though it'd be "100% corpus-tagged" by count alone.
    (b) Only once (a) clears: **count
@@ -1351,7 +1366,9 @@ above by hand:
    **REDESIGN and HIRE
    are built on deliberately non-overlapping evidence** ~ this matters,
    see the note below:
-   - rework rounds/report above threshold FIRST (rework has to be
+   - rework rounds/report meeting or exceeding threshold FIRST (≥, not a
+     strict `>` ~ same boundary as gate (a)'s own definition above) (rework
+     has to be
      meaningfully frequent, not just present ~ a single tagged revision
      among many clean reports is noise, not signal), AND, counted at the
      ROUND level (not the row level ~ a row with one `brief-misalign`

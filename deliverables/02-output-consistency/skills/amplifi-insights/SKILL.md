@@ -38,12 +38,19 @@ against each folder's `brief.md` Snapshot table (which keeps the REAL,
 unslugged name specifically for this lookup, per `README.md`) to find the
 right folder ~ this Snapshot check is the resolution step itself, not an
 optional extra confirmation skippable when the name looks clean. **If
-MORE THAN ONE folder's Snapshot plausibly matches the requested name**
+MORE THAN ONE folder's `Client` plausibly matches the requested name**
 (two genuinely different accounts that share a display name, per
-`README.md`'s duplicate-name handling) **~ STOP and ask which account,
+`README.md`'s duplicate-name handling) **~ check whether the request
+carries enough distinguishing detail to match exactly one folder's
+`Account label` instead** (README.md's internal-only disambiguation row,
+separate from `Client` ~ never the display name itself, which stays the
+real, unqualified name in both colliding folders); if it does, resolve
+there. **If it still doesn't, STOP and ask which account,
 never silently pick one** (first found, alphabetical, or otherwise);
 guessing between two real accounts risks generating against the wrong
-client's brief and history entirely.
+client's brief and history entirely. Whichever folder resolution lands on,
+generate using its `Client` value, never `Account label` ~ the qualifier
+is for telling folders apart internally, not for anything a client sees.
 
 From `amplifi-knowledge/`, read in this order:
 1. `standards/house-voice.md` ~ how to sound

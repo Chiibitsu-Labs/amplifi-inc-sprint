@@ -43,7 +43,22 @@ Required inputs, all of them:
      a printed number, a legend'd total, as above), or the chart's OWN
      underlying/embedded data as Canva actually built it (e.g. an export
      of that specific chart object's live data table from inside Canva,
-     not a description of what it should contain). **A separately-supplied
+     not a description of what it should contain). **This evidence has to
+     cover EACH plotted element being cleared, not the chart as a
+     whole** ~ a legend'd TOTAL or an axis scale establishes the
+     AGGREGATE, never each individual bar/point/series inside it. A
+     multi-bar chart with five unlabeled bars and one legend'd total of
+     450 could have that same 450 split completely differently between
+     bars than what actually shipped last period (100/100/100/100/50 one
+     month, silently 90/90/90/90/90 the next, same total, every individual
+     value wrong) ~ letting the total alone earn a `✔` for all five bars
+     would clear exactly the stale-distribution case this checkpoint
+     exists to catch (Codex catch, 2026-07-19). Only a plotted element
+     with its OWN value label (or its own entry in the chart's underlying
+     data export) earns a `✔`; a chart-level aggregate label clears the
+     aggregate claim only, if the report separately states one, and every
+     individual element still unlabeled underneath it stays a BLOCKING
+     flag same as if no label existed at all. **A separately-supplied
      source table the analyst says the chart "was built from" does NOT
      qualify, and does not earn a `✔` here** ~ it proves the INTENDED
      number is correct, not what's actually rendered. The chart could
@@ -112,9 +127,13 @@ Required inputs, all of them:
      List `clients/*` and match against each folder's `brief.md` Snapshot
      table (which keeps the REAL, unslugged name for this lookup) to find
      the right folder ~ always, not only when the name looks like it needs
-     slugging. **If MORE THAN ONE folder's Snapshot plausibly matches**
+     slugging. **If MORE THAN ONE folder's `Client` plausibly matches**
      (two different accounts sharing a display name, per `README.md`'s
-     duplicate-name handling) **~ STOP and ask which account, never
+     duplicate-name handling) **~ check whether the request carries enough
+     distinguishing detail to match exactly one folder's `Account label`
+     instead** (README.md's internal-only disambiguation row ~ never the
+     display name itself)**; if it still doesn't, STOP and ask which
+     account, never
      silently pick one.**
 
 If a standards file is an unfilled frame, run anyway but say so at the top:

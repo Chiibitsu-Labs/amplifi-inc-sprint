@@ -9,6 +9,7 @@
 | | |
 |---|---|
 | Client | {name} |
+| Account label | {blank, unless this name collides with another account ~ see `README.md`'s duplicate-name handling. Internal disambiguation only, e.g. "Chicago office, since 2024" ~ never shown to the client, never used as the display name in generated output. `Client` above always stays the real, unqualified name} |
 | Reporting cadence | {weekly / bi-weekly / monthly} |
 | Report due | {e.g. every Friday / 5th working day of month} |
 | Platforms monitored | {FB / IG / Reddit / YouTube / TikTok / …} |

@@ -95,29 +95,35 @@ resolves by matching that cell, not the folder name.** Two folders named
 "ACME Corp" now matches both, and picking one (first found, alphabetical,
 whatever) silently reads or writes the WRONG account's brief/context/
 delivery history exactly as often as it picks right (Codex catch,
-2026-07-19). **When a genuine duplicate-name collision is confirmed,
-write a DISTINGUISHING qualifier into BOTH accounts' Snapshot `Client`
-cells, not just the new one and not just the folder name** ~ whatever
-real fact actually
-tells them apart (`ACME Corp (Chicago office, since 2024)` vs `ACME Corp
-(new account, 2026)`; region, industry, or onboarding date, whichever is
-true and durable). **Qualifying only the new account leaves the ORIGINAL
-account's Snapshot reading the bare, unqualified name** ~ a plain "ACME
-Corp" resolution request then still matches exactly that one
-(now-unqualified) Snapshot, so it silently succeeds against the original
-account's brief/context/delivery history without ever triggering the
-"matches more than one" stop-and-ask condition below, exactly the silent
-wrong-account read this whole mechanism exists to prevent (Codex catch,
-2026-07-19). Requalifying the ORIGINAL account the moment the collision is
-confirmed is what actually closes this ~ an unqualified request then
-matches ZERO Snapshots exactly, which forces the stop-and-ask path instead
-of a silent single match. This keeps the Snapshot `Client` field as the one
-identity key every skill already reads ~ it just has to actually stay
-UNIQUE per account once a duplicate name is confirmed, which a bare
-display name can't guarantee on its own. **Any resolution request that
-still matches MORE than one folder's Snapshot (the qualifier wasn't
-included, or two accounts haven't been disambiguated yet) must STOP and
-ask which account, never silently pick one** ~ ambiguous is not the same
+2026-07-19). **When a genuine duplicate-name collision is confirmed, add
+a distinguishing qualifier to BOTH accounts' `Account label` Snapshot row
+~ a SEPARATE row from `Client`, never written into `Client` itself.**
+`Client` is the real, client-facing name ~ it's what `amplifi-insights`
+stamps onto anything a client actually sees (cover, exec summary), so it
+has to stay the genuine, unqualified name forever, collision or not; a
+generated report reading "ACME Corp (new account, 2026)" on its own cover
+would be a visible, embarrassing leak of an internal disambiguation label
+into client-facing output (Codex catch, 2026-07-19: an earlier draft of
+this fix wrote the qualifier straight into `Client`, conflating the
+resolver identity with the display name that same field is also used
+for). `Account label` holds whatever real fact
+tells the two accounts apart (`ACME Corp (Chicago office, since 2024)` vs
+`ACME Corp (new account, 2026)`; region, industry, or onboarding date,
+whichever is true and durable) ~ **add this row to BOTH accounts'
+Snapshots the moment a collision is confirmed, not just the new one** ~
+qualifying only the new account would leave the original account's
+`Account label` blank, and a resolution request that DOES carry enough
+distinguishing detail to match uniquely would then only ever match the
+new account, silently treating the original as if it were never part of
+the collision. Skills resolve `Client` first, same as always (unqualified,
+identical across colliding accounts by design) ~ when MORE than one
+folder's `Client` matches, THEN check whether the request carries enough
+distinguishing detail to match exactly one folder's `Account label`; if it
+does, resolve there without asking; **if it still doesn't, STOP and ask,
+never guess.** `Client` never needs to be unique on its own ~ that was
+never really the right invariant to enforce on a client-facing display
+field; `Account label` is what carries the actual disambiguation burden,
+scoped to internal resolution only ~ ambiguous is not the same
 as resolved. Never let a second client's folder
 silently overwrite or get merged into the first client's ~ the
 Snapshot-based resolver every skill now uses (Codex catch, 2026-07-19)

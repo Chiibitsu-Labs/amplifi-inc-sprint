@@ -41,7 +41,18 @@ same rules either way):
 2. Move each durable item to its permanent home:
    - `CLIENT-FACT` → that client's `context.md` (or `brief.md` FAQ if it was
      a client answer)
-   - `STANDARD` → the matching file in `standards/`
+   - `STANDARD` → **two different destinations, not one ~ depends whose
+     standard it is.** A lesson true for every client (house voice,
+     quality bar, the current template) goes to the matching shared file
+     in `standards/`. A lesson specific to ONE client (a client-only
+     terminology correction, a client-only formatting preference) goes to
+     THAT client's `clients/{x}/brand-standard.md` instead ~ both the
+     operative section it belongs to (Voice/Formatting/Terminology) AND a
+     line in its Revision history lessons. Routing a client-specific
+     lesson to the shared file would globalize one client's preference
+     across every account (Codex catch, 2026-07-19); see
+     `amplifi-improve/SKILL.md` Mode 2 for the full rule, identical here
+     whether the skill runs promotion or a human does it by hand
    - `CONTRADICTS` → **don't auto-apply.** Show Rica the corpus text and
      what contradicted it, side by side, and get an explicit yes/no before
      changing anything. This is the highest-value capture in the whole
