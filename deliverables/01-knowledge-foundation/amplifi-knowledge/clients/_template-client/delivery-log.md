@@ -75,11 +75,29 @@
    per issue found within a pass:** if QA gate pass 1 catches three
    separate material issues in the same review, that's ONE bump to
    `Rounds` (that pass), with all three causes bundled into that single
-   round's tag entry by touch 3's priority order (`brief-misalign` >
+   round's tag entry by touch 3's FULL priority order, QUALIFIER FIRST,
+   THEN CATEGORY ~ never category alone: if more than one of this pass's
+   causes is a corpus cause (`brief-misalign`/`brand`/`quality-bar`)
+   carrying its own `(missing)`/`(not-followed)` qualifier, prefer
+   whichever is qualified `(missing)` over any qualified `(not-followed)`
+   REGARDLESS of category rank, and only once that qualifier check is
+   settled does the category order (`brief-misalign` >
    `brand` > `quality-bar` > `data` > `client-new-ask`, rest noted in
-   **Notes**) ~ the
+   **Notes**) decide (see touch 3's own "Qualifier comes first, before
+   category" rule below for the full reasoning and worked example ~ it
+   applies here identically, not just to a client revision) ~ the
    same bundling rule touch 3 already uses for a client revision with
-   multiple causes in one message. **Stamp the entry with TODAY's date**
+   multiple causes in one message. **Applying category order alone in
+   THIS pre-send pass would bury a real corpus gap in Notes the exact same
+   way touch 3's own rule was written to prevent** ~ a QA pass that catches
+   both a higher-ranked `brief-misalign (not-followed)` and a lower-ranked
+   `brand (missing)` in one review would record the `not-followed` cause on
+   category rank alone, silently understating how often the corpus itself
+   is the actual problem, since the router's qualifier math never reads
+   **Notes** (Codex catch, 2026-07-19: this touch cross-referenced "touch
+   3's priority order" but then spelled out only the category-rank half of
+   it, leaving the qualifier-first step ~ the part that actually decides
+   whether FIX_CORPUS fires ~ implicit at best). **Stamp the entry with TODAY's date**
    (see the `Rework tag` bullet below for the exact format) ~ same
    requirement as every other touch that appends a round. A pass that runs
    twice (fix, re-check,
@@ -126,7 +144,24 @@
    received so far this SAME still-open round, not just the new one, and
    note whichever cause loses the priority pick in **Notes** ~ the same
    bundling treatment a single message already gets when it names more
-   than one cause. Re-running this whole touch once per stacked message
+   than one cause. **If this re-applied pick REPLACES the entry's tag,
+   keep that entry's ORIGINAL date exactly as it already was ~ do NOT
+   re-stamp it with today's date just because a stacked message triggered
+   the replacement** (the "stamp the entry with TODAY's date" instruction
+   below governs a genuinely NEW entry, never a same-round tag correction;
+   `skills/amplifi-qa/SKILL.md`'s own touch-3 tag-replacement step
+   already keeps the original date for exactly this reason, and this touch
+   needs the identical discipline). This round STILL started on its
+   original date, whichever specific cause ends up tagged on it ~
+   re-dating it to the latest stacked message would let a long-running
+   correction pass look newly incurred every time another message stacks
+   onto it, which can pull it into (or hold it inside) FIX_CORPUS's
+   trailing-90-day window on a date that was never real, changing a
+   routing result without an actual new round ever occurring (Codex catch,
+   2026-07-19: this bundling instruction says what to do with the TAG on a
+   stacked message but never addresses the entry's DATE, leaving it
+   exposed to whatever blanket "stamp with today's date" instruction the
+   original single-message case already carries). Re-running this whole touch once per stacked message
    before any resend happens would bump `Rounds` and append a tag every
    time, measuring what's genuinely still ONE pending correction pass as
    several separate rounds, which can spuriously clear or miss

@@ -463,6 +463,23 @@ own date (`brief-misalign (missing) [YYYY-MM-DD]`, one per round, at touch
 the cohort rule for FIX_CORPUS is direct, with no row-level anchoring, no
 exceptions, and no marker bookkeeping:
 
+**Before any of this can run, `Status` itself has to be trustworthy ~ the
+whole cohort ("every `accepted`/`revising (reopened)` row," "every
+`cancelled` row") is built by matching this field against its recognized
+values, and nothing validates that match is actually clean.** A typo
+(`acceptd`) or stray whitespace matches none of the recognized values
+this cohort-building step tests for, so a row like that doesn't fail
+loudly ~ it just never gets claimed by ANY of gate (a)/(b)'s status-based
+sets and silently drops out of the whole calculation, exactly the same
+failure mode this doc's on-cadence validation (§3, above) was fixed to
+catch for its own `Status`-based branches (Codex catch, 2026-07-19: the
+fix closing this gap for on-cadence's numerator/denominator never carried
+over to gate (a)/(b)'s cohort-building, which reads the identical field
+the identical way). Validate every row's `Status` against an exact match
+on the six defined values before building ANY of the sets below; a row
+matching none of them is excluded from every gate (a)/(b) set and flagged
+as a data-hygiene gap, never silently treated as if it doesn't exist.
+
 **Validate BEFORE filtering, never after ~ the completeness/date gate
 (below) has to run across EVERY `accepted`/`revising (reopened)` row
 with `Rounds ≥ 1` first, independent of `Due` and independent of whether
@@ -744,7 +761,35 @@ baseline ~ there's no self-referential creep risk here, it's just which
 dated entries get counted this month).
 2. **REDESIGN check:** open each client's `delivery-log.md`, two reads ~
    either fires REDESIGN:
-   - **Confirmed (on-cadence):** **validate EVERY date this calculation
+   - **Confirmed (on-cadence):** **validate `Status` itself FIRST, before
+     any of the date checks below, and before this calculation's
+     `Due`/`Delivered`/`Last Sent` machinery can even be assumed to know
+     which branch a row belongs in.** Every check below silently ASSUMES a
+     row's `Status` is one of the six real values
+     (`open`/`delivered`/`revising`/`revising (reopened)`/`accepted`/
+     `cancelled`) and routes it into the matching hit/miss/overdue/
+     excluded branch accordingly ~ but nothing checks that assumption
+     itself. A typo (`acceptd`) or stray whitespace (`accepted `) matches
+     NONE of the recognized branches this formula's numerator/denominator
+     logic tests for, so the row doesn't fail loudly, it just never gets
+     claimed by any branch and silently drops out of BOTH the numerator
+     and denominator with no flag at all ~ if that row was genuinely late,
+     losing it can pull a borderline rate across REDESIGN's threshold on
+     bad data, the exact same failure mode this doc's own automated §5b
+     ingestion already guards against with its exact-match `Status`
+     validation, but which the MANUAL walkthrough run until that
+     automation ships has no equivalent check for (Codex catch,
+     2026-07-19: §5b's coded ingestion spec validates `Status` against the
+     six-value enum before a row is even eligible for upsert, but this
+     manual on-cadence procedure, reading the identical field by hand, was
+     left assuming it without checking). Validate every row's `Status`
+     against an EXACT match on the six values above before running any
+     check below; a row whose `Status` matches none of them is excluded
+     from BOTH numerator and denominator and flagged as a data-hygiene gap
+     to fix in the log, the same bracket/flag treatment every other
+     validation failure in this list already gets ~ never silently
+     dropped as if the row simply doesn't exist.
+     **Also validate EVERY date this calculation
      touches FIRST, before computing anything, not just `Delivered`:**
      - Any row entering this calculation AT ALL (every status this rule
        reads) needs a blank/not-parseable `Due` treated the same way ~
