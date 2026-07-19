@@ -405,7 +405,8 @@ the cohort rule for FIX_CORPUS is direct, with no row-level anchoring, no
 exceptions, and no marker bookkeeping:
 
 **Validate BEFORE filtering, never after ~ the completeness/date gate
-(below) has to run across EVERY `accepted` OR `revising (reopened)` row
+(below) has to run across EVERY `accepted`/`revising (reopened)`/
+`cancelled` row
 with `Rounds ≥ 1` first, independent of `Due` and independent of whether
 any entry's date would otherwise land it in-window.** (Bare `revising` and
 bare `delivered` rows stay outside this gate entirely ~ they contribute
@@ -428,7 +429,20 @@ it "interesting" to the window filter on its own.
 **Read every individual dated `Rework tag` entry, across every `accepted`
 OR `revising (reopened)` row (regardless of that row's own `Due`,
 `Delivered`, or `Last Sent`), whose OWN date falls in the trailing 90
-days.** That's the cohort test for
+days ~ PLUS every dated entry on a `cancelled` row.** A cancelled row's
+entries are, by construction, ALL pre-send catches (`delivery-log.md`
+touch 1.5 ~ touches 3/4, which log post-ship rounds, can only ever fire
+on a row that already shipped, which a cancelled-from-`open` row never
+did), so they need no extra pre-send/post-send filtering of their own ~
+the whole row qualifies. Excluding cancelled rows from this round-level
+read entirely would silently drop real, dated corpus-vs-process evidence
+the moment a client cancels a cycle mid-flight, understating gate (b)'s
+tag-share off nothing more than a cancellation timing coincidence (Codex
+catch, 2026-07-19). **This is a NUMERATOR/gate-(b)-only addition ~ a
+cancelled row NEVER enters gate (a)'s row-level denominator**, since it
+never became a delivered, accepted report; its rounds count toward "how
+much of the rework that happened was corpus-caused," not toward "how many
+reports existed this window." That's the cohort test for
 COUNTING ROUNDS ~ a filter on rounds, not rows, and it's what gate (a)'s
 numerator and all of gate (b) read. A row's `Due` sitting outside the
 90-day window doesn't exclude its recent rounds, and a row's `Due` sitting
@@ -1115,7 +1129,26 @@ above by hand:
    the router (`lib/analytics.ts`), fed by rework tags + cadence data,
    **each windowed to a trailing 90 days, same principle §5a uses, but NOT
    the same cohort mechanism ~ don't implement one shared filter for all
-   of it.** REDESIGN's on-cadence/cycle-time reads stay row-level and
+   of it.** **FIX_CORPUS's window specifically is NOT unconditionally
+   trailing-90-days ~ it carries the same Sep 4 rollout-epoch lower bound
+   `ROADMAP.md` task 2.2 already requires for the manual version, until 90
+   full post-epoch days have accumulated.** Touch 1.5 (the QA gate that
+   actually records pre-send rework rounds) doesn't go live until Sep 4,
+   so any dated `Rework tag` entry before that date reflects an
+   under-instrumented period where QA-catchable defects went uncounted,
+   not a genuine absence of rework. `lib/analytics.ts`'s earliest
+   documented ship date is Oct 9 (`ROADMAP.md` task 2.3) ~ only 5 weeks
+   past the Sep 4 epoch, so an unconditional trailing-90-day window at
+   that ship date would still reach back into July, mixing pre-epoch
+   under-instrumented rows into the SAME denominator/numerator as
+   genuinely-gated ones and risking exactly the spurious "rollout looks
+   like a rework spike" false fire task 2.2 already identified and fixed
+   for the manual walkthrough (Codex catch, 2026-07-19: the coded version
+   inherited the same bug the manual version was already patched for).
+   Code the window as `max(trailing 90 days, Sep 4)` for its lower bound
+   until the rolling 90-day window's own start date passes Sep 4 on its
+   own, at which point the epoch clamp becomes a no-op and can stay in the
+   code harmlessly rather than needing a removal step. REDESIGN's on-cadence/cycle-time reads stay row-level and
    `Due`-anchored (a row is in or out based on its own `Due` date).
    FIX_CORPUS's tag-share (gate b) AND rounds-per-report's NUMERATOR
    (gate a) are round-level instead: filter individual
@@ -1123,7 +1156,14 @@ above by hand:
    it's logged, per `delivery-log.md`) to those whose OWN date falls in
    the trailing 90 days, across every row with STATUS `accepted` OR
    `revising (reopened)` regardless of that row's `Due` (NOT bare
-   `revising`, NOT `delivered` ~ see below for why). Rounds-per-report's
+   `revising`, NOT `delivered` ~ see below for why), **PLUS every dated
+   entry on a `cancelled` row, numerator/gate-(b) only, never contributing
+   to the denominator below** ~ a cancelled row's entries are always
+   pre-send catches by construction (post-ship touches can't fire on a
+   row that never shipped), so excluding cancelled rows here would
+   silently drop real, dated corpus-vs-process evidence purely because a
+   client cancelled mid-flight (Codex catch, 2026-07-19; see §5a for the
+   full reasoning). Rounds-per-report's
    DENOMINATOR is a THIRD mechanism ~ the UNION of two row sets, not one:
    (i) rows with STATUS `accepted` OR `revising (reopened)` SPECIFICALLY
    (the SAME scope the numerator above reads, never bare `revising`,

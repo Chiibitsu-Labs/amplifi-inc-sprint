@@ -128,7 +128,21 @@
    corpus-caused, not just whether any round ever was) ~ a row with one
    `brand` fix among four `client-new-ask` fixes is 20% corpus-driven,
    not 100%, and the entry count must equal `Rounds` for that math to
-   mean anything. `Status = revising` ~ **not** `accepted`. Once the
+   mean anything. `Status = revising` ~ **not** `accepted`. **Blank
+   `Last Sent` too, at this same moment ~ don't leave the old date sitting
+   there while the fix is still in progress.** A revision request logged
+   this way but not yet resent is otherwise indistinguishable from a
+   PRIOR resend that's genuinely gone quiet: both read `Status = revising`
+   with a `Last Sent` date on the row, and if the request itself arrives
+   late (close to or past the OLD `Last Sent`'s 5-business-day mark) or
+   the fix simply takes a while, touch 4's silence scan could see that
+   stale date age past 5 business days and auto-accept a report that was
+   never actually resent ~ genuinely unfinished work marked `accepted`
+   (Codex catch, 2026-07-19). A blank `Last Sent` gives the weekly scan
+   nothing to count 5 days from, so a `revising` row with no `Last Sent`
+   is never eligible for silent acceptance, full stop, no matter how old
+   the row otherwise looks ~ it waits until the next step re-stamps a real
+   date. Once the
    corrected version actually goes back to the client, stamp `Last Sent`
    with THAT date ~ this is what touch 4's silence window counts from
    next, never the original `Delivered` date. `Delivered` itself never
@@ -138,7 +152,12 @@
    touch for every additional round.
 4. **At actual client acceptance ~ or after 5 business days of silence
    following the row's current `Last Sent` date, with no revision
-   request:** `Status = accepted`. **This transition needs someone to
+   request:** `Status = accepted`. **A row with `Last Sent` blank (touch
+   3 blanks it the instant a revision request arrives, before the fix is
+   resent) is NEVER eligible for this ~ there's no valid date to count 5
+   days from, which is exactly the point: a fix still in progress reads
+   as "not yet eligible," not as "quiet long enough to auto-accept."**
+   This transition needs someone to
    actually check** ~ plain markdown doesn't revisit a row on its own once
    5 days pass, so relying on "whoever happens to notice" leaves silently-
    clean reports sitting at `delivered`/`revising` indefinitely, excluded
@@ -219,8 +238,18 @@ recurring pattern of late client cancellations should surface in the
 effort-per-deliverable signal. Also note the reason in **Notes**
 (`client paused, wk3` / `cadence cancelled, see brief`) for the human
 reading the row. This transition is ONLY valid from `open` ~ a cycle that
-never shipped has no completed-work EVIDENCE (no `Delivered`, no
-`Rounds`) to lose, but any hours already logged toward it are still real
+never shipped has no `Delivered` date, but **it can already carry real,
+dated `Rounds`/`Rework tag` entries from touch 1.5's pre-send catches
+(QA gate pass 1, internal alignment, or post-Canva pass 2), and those are
+NOT lost by cancelling** ~ every entry a cancelled row carries is, by
+construction, a pre-send catch (touches 3/4 only ever fire on a row
+that's already shipped, which this one never did), so nothing about
+cancellation invalidates them as real corpus-vs-process evidence. Leave
+`Rounds`/`Rework tag` exactly as touch 1.5 left them ~ don't clear them
+on cancellation, and see `INSTRUMENT.md` §5a's round-level cohort for how
+these dated entries stay counted even though the row itself is excluded
+from FIX_CORPUS's row-level denominator (Codex catch, 2026-07-19). Any
+hours already logged toward it are still real
 and still belong in `Effort (h)`. **But "still `open`"
 splits into two different cases, distinguished by comparing `Last Sent`
 (the cancellation date) against `Due` ~ and only ONE of them is a clean
@@ -339,8 +368,12 @@ pipe in any cell (`Dale \| Janelle`), never a bare `|`.
   late one, or vice versa.
 - **Last Sent** ~ for a shipped row: the date the most recently sent
   version (first ship, or the latest revision) actually went to the
-  client. Equals `Delivered` at first ship (touch 2); updated at every
-  touch-3 resend. This is what the 5-business-day silent-acceptance rule
+  client. Equals `Delivered` at first ship (touch 2); updated ONLY at
+  the moment of every touch-3 RESEND, never at the moment the revision
+  request itself arrives ~ touch 3 blanks this field the instant a
+  request comes in, precisely so a fix still in progress (not yet
+  resent) can never be mistaken for a resend that's gone quiet (see
+  touch 3). This is what the 5-business-day silent-acceptance rule
   (touch 4) counts from ~ using `Delivered` there instead would
   auto-accept a row the instant a late revision ships, if enough days had
   already passed since the first send; never updating anything would
@@ -399,7 +432,15 @@ pipe in any cell (`Dale \| Janelle`), never a bare `|`.
   (touch 3, after delivery). Both are real rework; the router doesn't
   care which side of delivery it happened on, or which checkpoint caught
   it, only whether the standard needed correcting. Only trusted once
-  `Status = accepted`.
+  `Status = accepted` OR `revising (reopened)` ~ **not `accepted`-only**
+  (a reopened row already has an established `accepted` baseline behind
+  it; excluding it here would drop its real, dated rounds from the
+  rework signal for however long the late feedback takes to resolve,
+  contradicting the trust rule stated elsewhere in this same file at the
+  `Status` bullet below and `INSTRUMENT.md` §5a's gate (a), Codex catch,
+  2026-07-19). A `cancelled` row's dated rounds are ALSO trusted, but
+  narrower still ~ see `INSTRUMENT.md` §5a's round-level cohort for the
+  numerator/gate-(b)-only scope that applies there.
 - **Effort (h)** ~ rough total hours, self-estimated, running total across
   every touch. Gut feel is fine; consistency beats precision.
 - **Rework tag** ~ **required, not optional, the moment `Rounds` goes above

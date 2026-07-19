@@ -34,18 +34,28 @@ Skipping either case doesn't fail loudly ~ it fails as a sync error or a
 silently-renamed folder days later, which is worse (Codex catch,
 2026-07-19). Keep the
 REAL, unslugged name inside `brief.md`'s Snapshot table ~ the slug is a
-filesystem-safety measure for the folder name only. **If the real name
-contains a literal `|`** (one of the same reserved characters that
-already triggers folder slugging above, e.g. "ACME|EMEA") **~ escape it
-as `\|` when writing that Snapshot table cell, never a bare `|`.** The
+filesystem-safety measure for the folder name only. **If a Snapshot
+table VALUE contains a literal `|`, escape it as `\|`, never a bare `|`
+~ and this isn't scoped to the `Client` row alone.** The Snapshot is a
+Markdown table with several free-form cells besides `Client` ~
+`Platforms monitored` (e.g. "Sentimo | MCP"), `Client contacts`, and
+`Amplifi lead analyst` (its own `{name} · backup: {name}` shape can
+plausibly become "Dale | Janelle" for a handoff note) can all just as
+easily contain a literal `|` as the client name can, and an unescaped one
+in ANY of them is read as a NEW column boundary by any Markdown parser
+the same way, corrupting the row and shifting every field after it out of
+alignment (Codex catch, 2026-07-19) ~ this breaks not just the
+name-resolution lookup but also `INSTRUMENT.md` §5b's automated ingestion
+of the `Amplifi lead analyst` field specifically. Escape every Snapshot
+cell's literal pipes, not only `Client`'s. The
 Snapshot itself is a Markdown table, and an unescaped `|` inside a cell
 is read as a NEW column boundary by any Markdown parser, corrupting the
 row and breaking the exact lookup `amplifi-improve`, `amplifi-qa`, and
 `amplifi-insights` all now rely on (matching a requested display name
 against this table to resolve the slugged folder, per each skill's own
-Step 0/Mode 2 ~ Codex catch, 2026-07-19). The escaped form still displays
-and reads back as the real `ACME|EMEA` ~ un-escape `\|` → `|` when
-comparing a requested name against this cell, same as any other
+Step 0/Mode 2). The escaped form still displays
+and reads back as the real value ~ un-escape `\|` → `|` when
+comparing or reading any Snapshot cell, same as any other
 Markdown-escaped value.
 
 **Check for a slug COLLISION before creating the folder, and never

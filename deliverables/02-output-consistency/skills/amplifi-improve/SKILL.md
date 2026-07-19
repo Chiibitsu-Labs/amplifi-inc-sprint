@@ -43,7 +43,20 @@ feels like a documentation chore, you've failed. Two modes.
    the ORIGINAL, unslugged names inside the file's own `# {date} ~
    {analyst} ~ {client/topic}` header ~ the slug is a filesystem-safety
    measure for the path only, never a substitute for the readable name a
-   human (or the promotion pass) actually reads.
+   human (or the promotion pass) actually reads. **Apply `README.md`'s
+   TWO Windows-specific cases here too, not just the reserved-character
+   list** ~ this is the primary Drive-for-Desktop deployment, commonly a
+   Windows filesystem underneath, and a filename (not just a folder name)
+   is exactly as exposed to both failure modes: trim any trailing `.` or
+   space from the slugged `{analyst}`/`{client-or-topic}` components
+   before use (Windows silently strips or rejects a name ending in either),
+   and if a component IS or reduces to a reserved device name (`CON`,
+   `PRN`, `AUX`, `NUL`, `COM0`–`COM9`, `LPT0`–`LPT9`, case-insensitive,
+   reserved even with an extension appended), give it a disambiguating
+   suffix the same way a slug collision does above. Skipping either case
+   doesn't fail loudly here either ~ Mode 1's entire capture silently
+   fails to persist, same as `README.md`'s folder-slug version of this gap
+   (Codex catch, 2026-07-19).
 
    **This requires an actual write path to the live corpus** ~ a
    Drive-connector attachment that only lets you *read* files can't create
