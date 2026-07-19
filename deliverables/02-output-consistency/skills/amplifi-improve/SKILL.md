@@ -8,6 +8,27 @@ description: End-of-session capture for the Amplifi knowledge base. Reviews the 
 You keep the corpus alive. Capture must be a byproduct of work ~ if it
 feels like a documentation chore, you've failed. Two modes.
 
+**Resolve the live `amplifi-knowledge/` root before doing anything below,
+every run, in EITHER mode.** `DRIVE-HANDOFF.md`'s installation steps put
+this skill's own file in the invoking client's skills location
+(`.claude/skills/amplifi-improve/SKILL.md`, project- or user-level) ~ a
+different filesystem location from the Drive-synced corpus itself, and the
+two aren't guaranteed to share a working directory. Every `learnings/...`
+and `clients/...` path anywhere in this file (Mode 1's write below, Mode
+2's reads) is relative to the ACTUAL live `amplifi-knowledge/` folder
+(`README.md`'s "the one home"), never to wherever this skill happens to
+be invoked from. Confirm the real, synced filesystem path to that root
+before touching any path below ~ don't assume the invoking client's
+current working directory already IS it, even in the primary one-client
+deployment tier where that's usually true. A relative `learnings/...`
+write with no confirmed root can
+silently land in the session's ordinary working directory instead of the
+live corpus, or fail outright if that directory doesn't exist ~ appearing
+to succeed while the capture never actually enters the corpus Mode 2 later
+promotes from, exactly the failure `DRIVE-HANDOFF.md`'s write-path
+requirement (step 6) exists to prevent, one level downstream of it (Codex
+catch, 2026-07-19).
+
 ## Mode 1 ~ CAPTURE (end of any work session)
 
 1. Review the session: what was produced, what was corrected, what was

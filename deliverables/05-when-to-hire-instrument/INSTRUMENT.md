@@ -700,6 +700,25 @@ dated entries get counted this month).
        exactly this ordering failure as disqualifying ~ on-cadence was
        left able to compute a clean-looking `Delivered ≤ Due` hit or miss
        off a row cycle-time has already flagged as corrupted).
+     - Any row whose `Start` is present and parseable ALSO needs it
+       cross-checked against `Due` directly, not just against `Delivered`
+       ~ this applies even to `open` rows with no `Delivered` yet, since
+       those get tested against `Due` too (the "already past `Due`"
+       overdue-in-progress read above). A `Start` that falls AFTER `Due`
+       (a mistyped `Due`, e.g. `Start` July 10, `Due` July 1, `Delivered`
+       July 10) is a row whose `Due` predates its own scheduled beginning
+       ~ never a real deadline this cycle could honestly have met.
+       Excluding this case isn't covered by the `Start`-vs-`Delivered`
+       check above: a row shaped exactly this way stays individually
+       parseable AND clears `Start ≤ Delivered` (both dated the same day
+       here), while still producing a false `Delivered > Due` miss off a
+       `Due` that was never real, which can push REDESIGN's on-cadence
+       read below its threshold on bad data instead of a genuine pattern.
+       Exclude a row failing `Start ≤ Due` from on-cadence the same way as
+       every check above (Codex catch, 2026-07-19: the validation block
+       closes `Delivered`-vs-`Start` ordering but left `Due`-vs-`Start`
+       just as open, even though `Due` is the anchor every other test in
+       this formula compares against).
      Any row failing ONE of these checks: pull it out of BOTH the
      numerator and
      the denominator, and flag it separately as unevaluable data to fix

@@ -491,6 +491,18 @@ pipe in any cell (`Dale \| Janelle`), never a bare `|`.
   today's date (`"revision request abandoned {date}, closed to last
   shipped version"`) ~ this is a human judgment call, not an automatic
   5-day timer, since there's no valid `Last Sent` for one to run against.
+  **Restore `Last Sent` too, as part of this SAME closure ~ don't leave it
+  blank.** Touch 3 blanked it the instant the now-abandoned request
+  arrived (above); leaving it blank on the finalized `accepted` row
+  contradicts `Last Sent`'s own definition (the date the most recently
+  sent version actually went to the client) and hands §5b's ingestion a
+  false null on a row that, by this closure's own logic, DID ship a real,
+  accepted version ~ the last one sent before the abandoned request.
+  Restore it to THAT version's send date: the row's `Last Sent` value as
+  it stood immediately before touch 3 blanked it this round (a prior
+  round's resend stamp), or `Delivered` itself if the abandoned request
+  was the row's very first-ever revision (no prior resend exists, so the
+  original ship date is the last real send) (Codex catch, 2026-07-19).
   The row's already-accrued `Rounds`/`Rework tag` entries stay exactly as
   recorded, same as any other finalization. On-cadence is computed as `Delivered ≤ Due` for any row that
   has shipped (`delivered`/`revising`/`revising (reopened)`/`accepted` ~ on-cadence reads the shipped-or-not fact, unaffected by which revising variant applies), an automatic miss for
