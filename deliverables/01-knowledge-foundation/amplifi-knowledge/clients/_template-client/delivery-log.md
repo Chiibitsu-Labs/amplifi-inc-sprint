@@ -192,7 +192,23 @@
    corpus-caused, not just whether any round ever was) ~ a row with one
    `brand` fix among four `client-new-ask` fixes is 20% corpus-driven,
    not 100%, and the entry count must equal `Rounds` for that math to
-   mean anything. `Status = revising` ~ **not** `accepted`. **Before
+   mean anything. `Status = revising` ~ **not** `accepted` ~ **UNLESS the
+   row entering this touch is already `revising (reopened)`, in which case
+   leave it exactly as `revising (reopened)`, don't downgrade it back to
+   bare `revising`.** Touch 4 explicitly directs a reopened row through a
+   SECOND (or later) pass of this same touch 3 for "as many additional
+   rounds as this late feedback actually takes to resolve" (see touch 4
+   below) ~ an unconditional `Status = revising` here would overwrite that
+   `revising (reopened)` marker the moment a reopened row's second round
+   reaches this step, even though the row never actually finalized back to
+   `accepted` in between. Instrument §3/§5b's trusted rework cohort is
+   `accepted` OR `revising (reopened)` specifically, never bare `revising`
+   (a still-unresolved first-ever pass isn't trusted evidence yet); a
+   reopened row's later round silently downgrading to `revising` would drop
+   that report and every one of its rounds out of the trusted cohort for as
+   long as the round stays open, understating FIX_CORPUS's real
+   rounds-per-report share on exactly the reports it should be counting
+   (Codex catch, 2026-07-19). **Before
    blanking `Last Sent` (next), record the value being cleared in
    **Notes** first: `"prior Last Sent: {date}"`, overwriting that same
    note on every round that reaches this step rather than appending a
