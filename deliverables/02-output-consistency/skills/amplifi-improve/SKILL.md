@@ -58,6 +58,22 @@ feels like a documentation chore, you've failed. Two modes.
    fails to persist, same as `README.md`'s folder-slug version of this gap
    (Codex catch, 2026-07-19).
 
+   **If this session's client has a duplicate-name collision ~ an
+   `Account label` set in its `brief.md` Snapshot, per `README.md`'s
+   duplicate-name handling ~ record that `Account label` in the header
+   too:** `# {date} ~ {analyst} ~ {client/topic} ({account label})` (or,
+   for a bracketed incidental line, `CLIENT-FACT: [ClientName (account
+   label)] {the fact}`). This session already knows which of the two
+   same-named accounts it's about ~ Step 0's Snapshot resolution already
+   ran to get here ~ so throwing that identity away at capture time means
+   Mode 2 below can only recover it if the fact text HAPPENS to carry
+   enough distinguishing detail on its own, which an ordinary
+   `CLIENT-FACT` or `STANDARD` correction usually doesn't, leaving it
+   permanently stuck at "flag to Rica, don't guess" even though the
+   identity was already resolved once (Codex catch, 2026-07-19). Skip
+   this for any client with no collision ~ a blank/never-set `Account
+   label` needs no header addition.
+
    **This requires an actual write path to the live corpus** ~ a
    Drive-connector attachment that only lets you *read* files can't create
    this one. Before relying on this step, confirm which applies:
@@ -185,12 +201,21 @@ grouping rule below for why that corrupts cross-week recurrence).
      rather than guessing or creating a new folder silently. **If MORE
      THAN ONE folder's `Client` plausibly matches** (two different
      accounts sharing a display name, per `README.md`'s duplicate-name
-     handling) **~ check whether the learning carries enough
+     handling) **~ check the header (or the item's own `[ClientName
+     (account label)]` bracket) for an `Account label` FIRST, before
+     falling back to scanning the fact text for incidental distinguishing
+     detail.** Mode 1's collision paragraph above has the capturing
+     session record its already-resolved `Account label` right there
+     specifically so Mode 2 doesn't have to re-derive it from context ~ if
+     the header carries one, match it directly against each candidate
+     folder's `Account label` row. Only if the header carries none (an
+     older capture written before this rule, say) fall back to checking
+     whether the learning's fact text itself happens to carry enough
      distinguishing detail to match exactly one folder's `Account label`
-     instead** (README.md's internal-only disambiguation row)**; if it
-     still doesn't, also flag it to Rica rather than guessing which
-     account this fact belongs to;** promoting it into the wrong one of
-     two same-named accounts is worse than not promoting it at all. **If the fact
+     instead; if THAT still doesn't resolve it either, flag it to Rica
+     rather than guessing which account this fact belongs to ~ promoting
+     it into the wrong one of two same-named accounts is worse than not
+     promoting it at all. **If the fact
      IS or CONTAINS a metric** (a
      number that describes some period's performance, not just a
      qualitative observation), **the promoted entry must carry that

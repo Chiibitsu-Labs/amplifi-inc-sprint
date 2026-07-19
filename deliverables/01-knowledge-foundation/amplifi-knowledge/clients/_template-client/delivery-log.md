@@ -12,7 +12,8 @@
    the cycle begins (every Monday for a weekly client, the 1st for a
    monthly one), **known in advance, a calendar fact ~ NOT whenever an
    analyst actually gets around to the work:** create the row. `Period`,
-   `Analyst`, `Start`, `Due` filled; `Status = open`; `Rounds = 0`,
+   `Cadence`, `Analyst`, `Start`, `Due` filled; `Status = open`;
+   `Rounds = 0`,
    `Rework tag = none` **explicitly initialized, not left implicit** ~
    this is the defined starting state touch 1.5's "bump `Rounds`" and
    "replaces the provisional `none`" operations are defined relative to;
@@ -33,7 +34,19 @@
    a cycle delayed by queue backup could pass its due date while never
    having existed in the log at all ~ invisible to on-cadence tracking,
    and cycle time would only ever measure from whenever things finally
-   started, silently erasing the wait.
+   started, silently erasing the wait. **`Cadence`: copy `brief.md`'s
+   Snapshot `Reporting cadence` value AS OF right now, at row creation ~
+   never leave it blank, and never treat it as inferable later.**
+   `brief.md`'s Snapshot field is overwritten in place whenever a client's
+   cadence actually changes, so it only ever answers "what's the cadence
+   TODAY," not "what was it when THIS row opened" ~ without a per-row
+   copy, Instrument §2's cadence-change baseline-versioning rule (cycle
+   time) has no structured way to tell which rows belong to the old
+   baseline and which to the new one once a change happens, and a
+   trailing-90-day window would silently pool pre-change and post-change
+   cycles into one reading (Codex catch, 2026-07-19). Once written, this
+   value is historical fact for that row and never gets edited
+   retroactively, even after a later cadence change.
 1.5. **Any time between period start and the actual ship write ~ the QA
    gate (pass 1), internal alignment, OR the post-Canva pass 2 (steps
    9–11) ~ catches and corrects ANY material issue BEFORE the client ever
@@ -340,8 +353,8 @@ field an analyst types by hand can end up holding a pasted client phrase
 or a shorthand like `Dale | Janelle` for a handoff; an unescaped `|`
 inside a cell reads as a NEW column boundary to any Markdown parser,
 shifting every field after it in that row out of alignment with this
-table's fixed 11-column schema (`Period | Analyst | Start | Due |
-Delivered | Last Sent | Status | Rounds | Effort (h) | Rework tag |
+table's fixed 12-column schema (`Period | Cadence | Analyst | Start |
+Due | Delivered | Last Sent | Status | Rounds | Effort (h) | Rework tag |
 Notes`). A shifted row either loses or misassigns its own data to §5b's
 future automated ingestion (Codex catch, 2026-07-19), the same corruption
 `README.md`'s Snapshot-table pipe-escaping rule exists to prevent, just
@@ -662,6 +675,6 @@ pipe in any cell (`Dale \| Janelle`), never a bare `|`.
 
 ## The log
 
-| Period | Analyst | Start | Due | Delivered | Last Sent | Status | Rounds | Effort (h) | Rework tag | Notes |
-|---|---|---|---|---|---|---|---|---|---|---|
-| {2026-07 / wk 29} | {Dale} | {YYYY-MM-DD} | {YYYY-MM-DD} | {YYYY-MM-DD or blank} | {YYYY-MM-DD or blank} | {open / delivered / revising / revising (reopened) / accepted / cancelled} | {0} | {6} | {none, or e.g. brief-misalign (missing) [YYYY-MM-DD]} | {—} |
+| Period | Cadence | Analyst | Start | Due | Delivered | Last Sent | Status | Rounds | Effort (h) | Rework tag | Notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| {2026-07 / wk 29} | {weekly} | {Dale} | {YYYY-MM-DD} | {YYYY-MM-DD} | {YYYY-MM-DD or blank} | {YYYY-MM-DD or blank} | {open / delivered / revising / revising (reopened) / accepted / cancelled} | {0} | {6} | {none, or e.g. brief-misalign (missing) [YYYY-MM-DD]} | {—} |

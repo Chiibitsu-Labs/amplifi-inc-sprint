@@ -126,7 +126,21 @@ grows under their roof. Chii's repo remains the reference/spec copy.
    both read (via the local sync) and write access (Claude Code, or any
    client with real filesystem access to that synced folder). No
    context-switch, no handoff needed, because there's only ever one
-   session. This is the deployment to aim for.
+   session. This is the deployment to aim for. **Install ALL THREE
+   skills in that client's own skills location, same pattern step 6b uses
+   for `amplifi-improve` alone** (for Claude Code: the project's
+   `.claude/skills/{skill-name}/SKILL.md`, or
+   `~/.claude/skills/{skill-name}/SKILL.md` for a user-level install) ~
+   `amplifi-insights/SKILL.md`, `amplifi-qa/SKILL.md`, AND
+   `amplifi-improve/SKILL.md` each need their own subfolder there.
+   Connecting Drive (step 4) makes the CORPUS reachable, and Drive for
+   Desktop's filesystem access is what makes writes possible, but neither
+   one installs a SKILL ~ without this step, following this tier as
+   written can leave all three skills unavailable in the one client doing
+   the whole session, even though the corpus connection and write path
+   both check out (Codex catch, 2026-07-19). Verify the same way step 4
+   already does: fresh session, confirm each skill actually runs and
+   reads the corpus back to you.
 
    **(b) Fallback ~ only if the team keeps drafting in Claude Enterprise.**
    If insights/QA work stays in Claude Enterprise (paid seat, org

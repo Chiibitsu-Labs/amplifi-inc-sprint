@@ -296,7 +296,17 @@ platform pulls). Rules:
   with a so-what for THIS client.
 - Weave the insight-log: connect this period to the accumulated trend.
   A flat period is a trend story ("3rd flat month; here's the 6-month
-  drift and what historically moved it"), never filler.
+  drift and what historically moved it"), never filler. **Exception: this
+  client's first report under this corpus** (Step 0's first-period
+  exception, whether genuinely period one for a "New" client or an
+  "Established" client's first report since onboarding onto this system
+  ~ same two cases, same `Client history` check). There is no accumulated
+  trend to weave yet either way, so note that plainly ("no prior
+  context/trend to draw on, first period for this client" / "no
+  historical trend captured in this system yet") instead of inventing one
+  or blocking the report over an unweavable requirement (Codex catch,
+  2026-07-19: this step's unconditional wording conflicted with Step 0's
+  own exception for exactly this state).
 - Voice: follow `house-voice.md` and the client's `brand-standard.md`.
   The "we never sound like" list is a hard ban.
 
@@ -321,8 +331,18 @@ own sources. End with:
 
 ```
 DATA NOTES: {gaps, anomalies, anything a human should verify}
-INSIGHT-LOG ENTRY (paste into clients/{client}/insight-log.md):
+INSIGHT-LOG ENTRY (paste into clients/{resolved folder}/insight-log.md):
 {the 5–10 line entry per the log's format}
 ```
+
+**`{resolved folder}` is the ACTUAL folder Step 0 resolved to (the slugged
+and, if collision-suffixed, numbered path ~ e.g. `ACME-EMEA-2`), never the
+client's raw display name re-typed here.** This trailer is the operational
+paste instruction, not client-facing content ~ for a slugged or
+collision-suffixed client, `clients/{display name}/insight-log.md` can
+fail outright or resolve into an unintended nested path, leaving the real
+client's history empty (Codex catch, 2026-07-19). Keep the unslugged,
+real name inside the log entry's own prose; only the path uses the
+resolved folder.
 
 That trailer is mandatory ~ it's how reports compound.
