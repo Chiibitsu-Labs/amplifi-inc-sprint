@@ -386,21 +386,31 @@ moment a row reopens ~ `late-reopen {date}: pre-reopen Rounds={N}` (see
 `delivery-log.md`). **A row can accumulate MORE THAN ONE such marker over
 its life** (accepted → late-reopened → re-accepted → late-reopened again,
 months later) ~ don't just grab "the" marker as if only one exists. For a
-`Last Sent`-only row: collect every `late-reopen` marker in Notes, keep
-only the ones whose {date} falls within the trailing 90-day window, and
-take the EARLIEST of those in-window markers ~ call its stamped value
+`Last Sent`-only row: collect every `late-reopen` marker in Notes and take
+the MOST RECENT one (latest date, regardless of whether that date itself
+falls inside or outside the 90-day window) ~ call its stamped value
 `N_cutoff`. Count exactly `current Rounds − N_cutoff` rounds toward this
 month's tally, reading the LAST that-many entries in the `Rework tag` list
 (entries append in order, so the newest ones are always the tail of the
-list). Using the earliest IN-WINDOW marker (not the single latest marker
-overall, and not the single oldest marker regardless of window) is what
-makes this correct when a row reopened twice: it captures rounds from
-every reopen that happened within the last 90 days, while still excluding
-rounds from an EARLIER reopen-and-reaccept cycle that fully resolved
-before this window began. If no marker falls in-window at all, this row
-isn't actually in the cohort via `Last Sent` after all (its most recent
-activity predates the window) ~ exclude it, same as any other out-of-
-cohort row. A row in the cohort via
+list). **Latest marker overall, NOT "earliest marker that happens to fall
+in-window"** ~ a row can genuinely reopen just before the 90-day cutoff
+(the marker itself a few days outside it) and still take several more
+rounds to resolve, with those later rounds' `Last Sent` stamps landing
+well inside the window; gating on the MARKER's own date would wrongly
+exclude that row's real, freshly-in-window rework. The latest-marker rule
+handles both shapes correctly: a row reopened twice (old reopen fully
+resolved back to `accepted`, then reopened again recently) correctly
+starts counting from the SECOND, more recent marker, since it's the
+latest one regardless of window; a row reopened once, just before the
+cutoff, with resolution activity continuing past it, correctly starts
+counting from that same (only) marker, since it's still the latest one
+even though its own date sits just outside the window. If a row genuinely
+has NO `late-reopen` marker at all, it can't be in the cohort via `Last
+Sent` in the first place ~ `Last Sent` only moves after a row has already
+reached `accepted` once via a reopen (see `delivery-log.md`); an
+un-reopened row's `Last Sent` tracks its normal pre-acceptance revisions
+and was never excluded from the `Due`-anchored cohort to begin with. A row
+in the cohort via
 `Due` (the normal case) still counts in full ~ its rounds genuinely
 happened within, or close to, this window already. 90 days
 re-windows fresh at each monthly walkthrough (not a cumulative rolling
@@ -534,11 +544,15 @@ over different windows or different anchor dates.
    than reporting a clean FIX_CORPUS read that a few weeks of hindsight
    would contradict.
 4. **HIRE check:** only if none of the above fired **portfolio-wide** ~ AND
-   none of the above sits **PROVISIONAL** either (step 2's REDESIGN read
-   can be too-few-accepted-rows-to-evaluate, not just fired-or-absent; a
-   PROVISIONAL read blocks HIRE the same as a fired one does, until enough
-   rows resolve to actually read it ~ see step 2). Genuinely-absent
-   evidence lets HIRE through; can't-be-evaluated-yet doesn't. A
+   none of the above sits **PROVISIONAL** either. Two sources of
+   PROVISIONAL, both block HIRE the same way a fired branch would, until
+   resolved: step 2's REDESIGN read, when too few late/trending cycles
+   have reached `accepted` to evaluate the rework qualifier; and step 3's
+   FIX_CORPUS read, when qualifying rounds are missing their `missing`/
+   `not-followed` Notes qualifier or the qualifier count genuinely ties.
+   Genuinely-absent
+   evidence lets HIRE through; can't-be-evaluated-yet doesn't, from either
+   source. A
    narrow AUTOMATE/REDESIGN/FIX_CORPUS signal on ONE client while WIP/load
    are elevated broadly across MOST clients/analysts doesn't explain away
    the team-wide breach; that narrow fix wouldn't relieve it. Only let an
@@ -644,7 +658,27 @@ above by hand:
        qualifier check, would have the coded router repeatedly prescribe
        edits to an already-correct corpus file ~ exactly what the manual
        rule (§3, and this section's own rounds-per-report rule above)
-       exists to prevent.
+       exists to prevent. **A missing or tied qualifier reading is its own
+       hard-block, not a silent default to "FIX_CORPUS absent":** require
+       ONE recognized qualifier (`missing` or `not-followed`) per
+       corpus-tagged qualifying round before this gate can resolve at all.
+       `Notes` is free text, defaulting to `—` on a fresh row ~ a
+       qualifying round can clear BOTH the tag-count completeness gate
+       above (entries == `Rounds`) AND still carry no qualifier, or the
+       qualifier count can genuinely tie (`missing` = `not-followed`),
+       and neither case has a defined majority. Don't let that silently
+       resolve to "no majority found, treat as not-fired" ~ that reads as
+       "FIX_CORPUS checked, ruled out" when the honest state is "FIX_CORPUS
+       can't be evaluated, qualifier data is incomplete," which is exactly
+       the false-absence failure mode the tag-count completeness gate
+       above already exists to prevent, just one layer deeper. Missing or
+       tied qualifiers on enough rounds to plausibly swing the
+       missing-vs-not-followed read: mark this client's FIX_CORPUS-vs-
+       execution question **PROVISIONAL** (same status, same consequence,
+       as REDESIGN's provisional state in step 2 above) ~ it blocks
+       downstream HIRE conclusions until enough qualifiers are actually
+       filled in to read a real majority, rather than letting an
+       unresolved question quietly clear the way for HIRE.
      Also surface a separate warning (not a
      blocking gate, just visibility) when `revising` rows with elevated
      `Rounds` have been open unusually long ~ the accepted-only

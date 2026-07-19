@@ -42,6 +42,24 @@ extraction pass fills them). File-not-empty is not the same test as
 file-actually-filled-in ~ check for these before treating a read as
 successful.
 
+**This is a WHOLE-FILE test for the one-shot required files (the
+standards files, `brief.md`, `brand-standard.md`) ~ they're written once,
+so any remaining placeholder means genuinely not done yet.** It is NOT a
+whole-file test for `context.md` and `insight-log.md` specifically ~ both
+are accumulating logs that ship with unused template scaffold BY DESIGN
+(insight-log.md's trailing "next entry goes here" placeholder block;
+context.md's optional sections nobody's populated yet), and that scaffold
+is expected to keep sitting there, unfilled, even after the file holds
+real content elsewhere. For these two, check ENTRY-by-entry (insight-log)
+or SECTION-by-section (context.md): does at least one real, non-template
+unit exist? If yes, the file is usable ~ read the real units, ignore
+whatever scaffold is still sitting unused elsewhere in the same file.
+Only if EVERY unit is still template prose is the file genuinely unfilled.
+Flagging the whole file as "missing" because ONE unused placeholder
+section remains, when a real entry sits right next to it, would re-block
+every second-and-later period the exact way the first-period exceptions
+below exist to prevent for period one.
+
 **Exception, or every brand-new client permanently blocks their own first
 report:** `brief.md` and `brand-standard.md` (files 4–5 above) still MUST
 be filled before generating ~ they're what the client actually asked for,
@@ -63,8 +81,9 @@ not one shared cutoff:
   explicitly ("prior cycle(s) shipped per delivery-log.md but no
   insight-log entry exists ~ capture gap, not a first period") instead of
   silently treating it as day one. Once `insight-log.md` holds its first
-  real entry, the normal missing/templated check applies to it like any
-  other corpus file.
+  real entry, it's usable ~ read that entry (and any others) for the
+  trend, per the entry-level check above; an unused trailing placeholder
+  block below the real entries doesn't make the file "missing" again.
 - **`context.md` (file 6): no fixed cutoff, exception lasts until it has
   real content.** It's populated by the weekly promotion pass writing
   actual `CLIENT-FACT` learnings into it (Deliverable 1 §5, `learnings/
