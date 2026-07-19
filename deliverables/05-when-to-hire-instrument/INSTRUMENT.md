@@ -681,6 +681,25 @@ dated entries get counted this month).
        ~ `§5b`'s ingestion filter doesn't close this either, since it only
        rejects unresolved `{...}` template markers, not a real-looking but
        invalid date a human typo produced).
+     - Any row whose `Delivered` cell IS parseable (cleared the check
+       above) also needs its `Start` cross-checked against it, not just
+       parsed in isolation: a blank/not-parseable `Start` is fine here ~
+       on-cadence's own formula never reads `Start` directly ~ but a
+       `Start` that IS present and parseable yet falls AFTER `Delivered`
+       (the same out-of-order data-entry error §2's cycle-time validation
+       already excludes for its own calculation) means this row's dates
+       are internally inconsistent, not just individually well-formed.
+       A row whose own `Start`/`Delivered` pair couldn't have happened in
+       that order gives no honest reason to trust its `Delivered ≤ Due`
+       reading either ~ exclude it from on-cadence the same way, don't let
+       cycle-time's exclusion rule quietly stop at cycle-time's own door
+       (Codex catch, 2026-07-19: this validation block checks
+       `Due`/`Delivered`/cancellation `Last Sent` for parseability, but
+       never cross-checks `Start` against `Delivered` for chronological
+       sense, even though §2's cycle-time validation already treats
+       exactly this ordering failure as disqualifying ~ on-cadence was
+       left able to compute a clean-looking `Delivered ≤ Due` hit or miss
+       off a row cycle-time has already flagged as corrupted).
      Any row failing ONE of these checks: pull it out of BOTH the
      numerator and
      the denominator, and flag it separately as unevaluable data to fix
@@ -1800,14 +1819,28 @@ above by hand:
      workflow/scheduling signal ~ on-cadence and cycle time live here and
      nowhere else in the router, and only when there's a specific place to
      point at.
-   - HIRE requires ALL of: sustained load over the structural line (the
-     live rule) AND WIP per analyst sustainedly elevated vs baseline (the
+   - HIRE requires ALL of: sustained load over the structural line AND
+     WIP per analyst sustainedly elevated vs baseline (the
      capacity-ceiling signal ~ independent of cadence, threshold defined
-     in §2), **read at the SAME dynamically-derived roster-wide bar this
-     section defines
+     in §2), **BOTH read at the SAME dynamically-derived roster-wide bar
+     this section defines
      below for the narrow-signal scope test ~ MORE THAN HALF of the full
-     roster individually clearing WIP's elevation threshold, never "at
-     least one analyst" or "elevated in aggregate."** `6`-person roster
+     roster individually clearing EACH signal's own elevation threshold,
+     never "at least one analyst" or "elevated in aggregate."** Load's
+     per-analyst threshold is the same per-day "overloaded day" line and
+     `structuralDays: 7` window §4's live rule already uses (an analyst's
+     own daily rating ≥6 on ≥7 of the last 10 working days), evaluated
+     per person instead of averaged across the team ~ **§4's deployed
+     `team avg > 6/10` reading is NOT this test and doesn't satisfy it on
+     its own:** a team average can clear 6/10 with the elevation
+     concentrated in a minority (the same "5 analysts at 6, 1 at 8.5 →
+     6.42 average" shape REBALANCE's own headroom check below already
+     has to guard against), which is exactly the narrow-not-
+     portfolio-wide pattern WIP's breadth test exists to catch and load
+     was left exposed to, letting a concentrated few analysts' strain
+     read as team-wide simply because their high ratings pulled the
+     average over the line while most of the roster sat comfortably
+     below it (Codex catch, 2026-07-19). `6`-person roster
      and `≥4` elevated are TODAY's concrete numbers, not hard-coded
      constants ~ **code this as "more than half of the CURRENT active
      roster count," re-derived from the roster's actual size at each

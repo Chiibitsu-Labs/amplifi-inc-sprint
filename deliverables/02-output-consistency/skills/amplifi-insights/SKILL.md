@@ -64,13 +64,29 @@ From `amplifi-knowledge/`, read in this order:
 If any of these are missing or empty, say so before generating ~ name the
 file, ask for it or flag the gap. Do not silently default to generic.
 
-**One targeted extra read, only when checking the insight-log exception
-below:** `clients/{client}/delivery-log.md`, scanned only for whether any
-prior row exists with `Status = delivered`/`revising`/`revising
-(reopened)`/`accepted` ~ not a
-full read, just an existence check, and only needed to distinguish "this
-is genuinely period one" from "the capture loop broke" (see the exception
-below).
+**Read `clients/{client}/delivery-log.md` on EVERY run, not only when
+checking the insight-log exception below** ~ this same read now serves
+two purposes: (1) the existence check (whether any prior row exists with
+`Status = delivered`/`revising`/`revising (reopened)`/`accepted`, still
+not a full read for this purpose, only needed to distinguish "this is
+genuinely period one" from "the capture loop broke," see the exception
+below), and (2) **capturing THIS cycle's own row `Period` value
+verbatim**, from the client's currently `open` row (the cycle this draft
+is being generated for) ~ carry that exact string forward to Step 4's
+mandatory insight-log trailer, whose heading MUST be this row's `Period`
+value, never independently re-typed or reconstructed from the request's
+own wording. `insight-log.md`'s intro section requires this exact match
+for the silent-acceptance scan and the substantive-revision procedure to
+find "the matching entry" by period; a heading that merely LOOKS like the
+right period but isn't the identical string breaks both lookups. If no
+`open` row exists yet for this client (drafting ahead of the delivery-log
+touch that opens one), flag this and hold the trailer's heading as
+unresolved rather than inventing or guessing one (Codex catch,
+2026-07-19: this read was scoped to a first-period bootstrap existence
+check only, so an ordinary later-period run never captured the current
+row's exact `Period` value at all, leaving Step 4's trailer heading only
+as reliable as whatever the prompt happened to say, not the corpus's own
+key).
 
 **A freshly-copied `_template-client` folder is not a filled corpus, even
 though every file technically exists and has bytes in it.** Treat these as
@@ -353,8 +369,17 @@ own sources. End with:
 ```
 DATA NOTES: {gaps, anomalies, anything a human should verify}
 INSIGHT-LOG ENTRY (paste into clients/{resolved folder}/insight-log.md):
+## {Period}
 {the 5–10 line entry per the log's format}
 ```
+
+**`{Period}` is Step 0's captured value from this cycle's `open`
+delivery-log row, pasted verbatim ~ never re-typed from the client name
+or date the way an entry's prose might phrase it.** This heading is the
+exact lookup key `insight-log.md`'s silent-acceptance scan and
+substantive-revision procedure both match against; a hand-typed
+`{YYYY-MM} ({cadence period})`-style heading can look right and still be
+the wrong string.
 
 **`{resolved folder}` is the ACTUAL folder Step 0 resolved to (the slugged
 and, if collision-suffixed, numbered path ~ e.g. `ACME-EMEA-2`), never the

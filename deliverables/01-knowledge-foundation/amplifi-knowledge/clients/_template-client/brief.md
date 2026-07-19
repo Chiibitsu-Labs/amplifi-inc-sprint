@@ -83,6 +83,17 @@ analyst handoffs.}
 > that leaves two "active" answers and a skill could apply either.
 > Add the new row AND flip the old row's Status to `superseded`, pointing
 > at the date that replaced it. Skills only trust rows marked `current`.
+> **This is a Markdown table too ~ escape any literal `|` in `Question`,
+> `Answer`, or `Source` the same way `README.md`'s Snapshot-table rule and
+> `delivery-log.md`'s free-text-cell rule already require** (Codex catch,
+> 2026-07-19: this append procedure never stated the rule at all, unlike
+> either of those two). A client's actual wording can easily contain a
+> literal `|` (a platform list like "FB | IG", a pasted comparison), and an
+> unescaped one is read as a NEW column boundary by any Markdown parser,
+> corrupting the row and shifting `Status`/`Source` out of alignment with
+> what they're supposed to describe. Write `\|` for a literal pipe in any
+> cell, never a bare `|`; un-escape back to `|` when reading a cell's real
+> value, same as any other Markdown-escaped value in this corpus.
 
 | Date | Question | Answer | Status | Source |
 |---|---|---|---|---|

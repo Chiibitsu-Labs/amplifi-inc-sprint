@@ -63,16 +63,35 @@ feels like a documentation chore, you've failed. Two modes.
    duplicate-name handling ~ record that `Account label` in the header
    too:** `# {date} ~ {analyst} ~ {client/topic} ({account label})` (or,
    for a bracketed incidental line, `CLIENT-FACT: [ClientName (account
-   label)] {the fact}`). This session already knows which of the two
-   same-named accounts it's about ~ Step 0's Snapshot resolution already
-   ran to get here ~ so throwing that identity away at capture time means
-   Mode 2 below can only recover it if the fact text HAPPENS to carry
-   enough distinguishing detail on its own, which an ordinary
-   `CLIENT-FACT` or `STANDARD` correction usually doesn't, leaving it
-   permanently stuck at "flag to Rica, don't guess" even though the
-   identity was already resolved once (Codex catch, 2026-07-19). Skip
-   this for any client with no collision ~ a blank/never-set `Account
-   label` needs no header addition.
+   label)] {the fact}`). **Mode 1 has no Step 0 of its own and is
+   explicitly meant to run at the end of ANY work session, standalone ~
+   it is not always preceded by `amplifi-insights`/`amplifi-qa`'s Step 0,
+   which is the only place this identity normally gets resolved** (Codex
+   catch, 2026-07-19: the prior wording assumed "Step 0's Snapshot
+   resolution already ran to get here," true only when this session
+   generated or QA'd a report first; a standalone correction, brief edit,
+   or process-friction capture session can invoke Mode 1 with no such
+   resolution having happened at all). If THIS session already ran
+   `amplifi-insights`/`amplifi-qa`'s Step 0 earlier (a normal generate-
+   then-capture or QA-then-capture flow), reuse that already-resolved
+   identity here rather than re-deriving it. If it didn't ~ Mode 1 running
+   on its own ~ run the SAME resolution here, before writing: list
+   `clients/*` and match each folder's `brief.md` Snapshot `Client` value
+   against this session's client name; if more than one folder plausibly
+   matches (two genuinely different accounts sharing a display name), check
+   whether this session carries enough distinguishing detail to match
+   exactly one folder's `Account label`, and resolve there if it does; if
+   it still doesn't, STOP and ask which account before writing anything ~
+   guessing between two real accounts risks filing this capture, and
+   whatever Mode 2 later promotes from it, against the wrong client's
+   corpus entirely. Whichever path resolved the identity, throwing it away
+   at capture time means Mode 2 below can only recover it if the fact text
+   HAPPENS to carry enough distinguishing detail on its own, which an
+   ordinary `CLIENT-FACT` or `STANDARD` correction usually doesn't, leaving
+   it permanently stuck at "flag to Rica, don't guess" even though the
+   identity was already resolved once. Skip all of this for any client with
+   no collision ~ a blank/never-set `Account label` needs no header
+   addition and no extra resolution step.
 
    **This requires an actual write path to the live corpus** ~ a
    Drive-connector attachment that only lets you *read* files can't create

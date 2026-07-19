@@ -62,7 +62,7 @@ on its own; the numbers that fired them have to be dated too.
     STATUS `accepted` OR `revising (reopened)` SPECIFICALLY (never bare
     `revising`, never `delivered`) with `Due` in the trailing 90 days,
     including zero-round rows, same set on-cadence uses, PLUS its own
-    `Start ≥ Sep 4` rollout-epoch floor (see below) ~ PLUS (ii) any
+    `Start ≥ 2026-09-04` rollout-epoch floor (see below) ~ PLUS (ii) any
     `accepted`/`revising (reopened)` row that contributed at least one
     in-window round even though its OWN
     `Due` falls outside the window (a late reopen on an old report) ~
@@ -71,9 +71,9 @@ on its own; the numbers that fired them have to be dated too.
     no row `Due`-in-window at all. **Record the rollout-epoch clamp
     explicitly, every walkthrough until 90 post-epoch days exist, not just
     the first one:** this whole cohort (numerator AND denominator) is
-    windowed to `max(trailing 90 days, Sep 4)`, NOT the unconditional
+    windowed to `max(trailing 90 days, 2026-09-04)`, NOT the unconditional
     trailing 90 days alone, AND every row's dated rounds only count if
-    that row's OWN `Start` is ALSO `≥ Sep 4` (an independent, permanent
+    that row's OWN `Start` is ALSO `≥ 2026-09-04` (an independent, permanent
     floor, never folded into the rolling window itself ~ see `INSTRUMENT.md`
     §5a/§5b for the full two-condition rule and why they're separate).
     Leaving this off the snapshot risks a later audit or implementation
