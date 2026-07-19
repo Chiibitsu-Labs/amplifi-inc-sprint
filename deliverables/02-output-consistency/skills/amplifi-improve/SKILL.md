@@ -70,7 +70,24 @@ feels like a documentation chore, you've failed. Two modes.
 
 Only include tags that actually occurred ~ an empty session writes nothing.
 Keep each line self-contained: the promotion pass reads these cold, weeks
-later. **If a `CLIENT-FACT` IS or CONTAINS a metric** (a number describing
+later. **If this session touched MORE than one client, write a SEPARATE
+capture file per client** (same filename pattern, one `{client-or-topic}`
+each) rather than folding several clients' items under one header ~ the
+file's single `# {date} ~ {analyst} ~ {client/topic}` header is what Mode
+2 resolves every item in that file through, so a `CLIENT-FACT`/`REWORK`
+line for a client OTHER than the header's would either get proposed for
+the wrong folder or fail the Snapshot lookup outright and never get
+promoted (Codex catch, 2026-07-19). **Exception: a genuinely topic-scoped
+session** (not about any one client) **that happens to surface ONE
+incidental fact about a NAMED client** doesn't need a whole second file
+for that one line ~ prefix just that line with the client name in
+brackets instead: `CLIENT-FACT: [ClientC] {the fact}`. Mode 2 resolves a
+bracketed line against ITS named client, ignoring the file's own header
+for that one item only; an un-bracketed line still resolves through the
+header as normal. Use the bracket sparingly ~ if more than one or two
+items in a "topic" file end up bracketed for actual clients, that session
+was really multi-client and should have been split into separate files
+per the rule above instead. **If a `CLIENT-FACT` IS or CONTAINS a metric** (a number describing
 some period's performance, not a qualitative observation), **write its
 SOURCE PERIOD into the line right now, at capture** ("engagement rate
 4.2% as of Mar 2026" ~ not just "engagement rate 4.2%"), same requirement
@@ -146,7 +163,12 @@ grouping rule below for why that corrupts cross-week recurrence).
      reading a client folder (Codex catch, 2026-07-19: an earlier draft of
      this bullet claimed those two skills already did this read-side
      resolution when neither actually did), just applied here on
-     the write side. If no folder's `brief.md` matches, flag it to Rica
+     the write side. **If the item line itself carries a `[ClientName]`
+     bracket** (Mode 1's exception for one incidental fact inside an
+     otherwise topic-scoped file) **~ resolve THAT name instead of the
+     file's header name for this one item,** same Snapshot-matching
+     process, then continue reading the rest of the file's un-bracketed
+     items against the header as normal. If no folder's `brief.md` matches, flag it to Rica
      rather than guessing or creating a new folder silently. **If the fact
      IS or CONTAINS a metric** (a
      number that describes some period's performance, not just a

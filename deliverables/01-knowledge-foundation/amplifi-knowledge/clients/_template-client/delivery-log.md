@@ -464,7 +464,19 @@ pipe in any cell (`Dale \| Janelle`), never a bare `|`.
   [2026-06-20]`. Stamp it with TODAY's date at the moment that specific
   round is actually logged (touch 1.5 for a pre-delivery catch, touch 3
   for a client revision, including every round of a late reopen) ~ never
-  backdated to `Period start` or `Due`, and never left off. A multi-round
+  backdated to `Period start` or `Due`, and never left off. **A missing
+  date is the SAME class of incomplete data as a missing or partial tag,
+  and gets the SAME hard-block treatment** ~ an otherwise-correct entry
+  (right tag, right qualifier, right position) with no `[YYYY-MM-DD]`
+  suffix can't be tested against Instrument §3's trailing-90-day window at
+  all, so it silently drops out of BOTH FIX_CORPUS gates rather than
+  counting as either in-window or out-of-window (Codex catch, 2026-07-19)
+  ~ the same false-absence failure mode the tag-completeness gate above
+  exists to prevent, one field over. Before trusting any row's
+  contribution to FIX_CORPUS's math, confirm every entry has all three
+  parts (tag, qualifier where required, date) ~ missing any one of them
+  excludes the row and hard-blocks the reading the same way a bare `none`
+  does. A multi-round
   cell then reads `brief-misalign (missing) [2026-06-01], brand
   (not-followed/house-voice) [2026-06-14], client-new-ask [2026-07-02]`
   ~ still one

@@ -73,14 +73,23 @@ on its own; the numbers that fired them have to be dated too.
     history, e.g. ≥10 days}
   - REBALANCE headroom threshold: {relative-gap trigger, e.g. ≥2pt · rest-
     of-team absolute-headroom ceiling, e.g. ≤5}
-  - HIRE portfolio-wide headcount (only when a narrow AUTOMATE/REDESIGN/
-    FIX_CORPUS signal coexists with elevated WIP/load): {full roster size
+  - HIRE portfolio-wide headcount, **record this snapshot whenever HIRE
+    is evaluated at all, not only when a narrow AUTOMATE/REDESIGN/
+    FIX_CORPUS signal coexists with elevated WIP/load:** {full roster size
     ~ fixed, e.g. 6} / {N analysts had sufficient WIP data this cohort} /
     {N of those read elevated} / MOST = more than half of the FULL ROSTER,
     not the sufficient-data subset ~ e.g. "roster 6, 5 had data, 3
     elevated → 3 is not > half of 6 (needs ≥4) → NOT most, narrow signal
     still blocks HIRE" (this denominator does NOT shrink to whoever
-    reported ~ Instrument §5b)
+    reported ~ Instrument §5b). **This same ≥4-of-6 count is ALSO the
+    unconditional BASE predicate for HIRE** (Instrument §5b: WIP must read
+    elevated at this fixed-roster bar even with NO narrow signal to
+    scope-map against at all) ~ a clean HIRE month with every earlier
+    route genuinely absent still needs this headcount recorded, or the
+    actual evidence that justified HIRE (how many of the roster, how many
+    had data, how many read elevated) is unreproducible from this audit
+    trail later (Codex catch, 2026-07-19). Narrow-signal coexistence is
+    ONE reason this count matters, not the only one this line applies to.
 - Routes fired: {one or more of AUTOMATE | REDESIGN | FIX_CORPUS |
   REBALANCE | HIRE | none crossed ~ list every one that actually fired,
   not just the "final" one}

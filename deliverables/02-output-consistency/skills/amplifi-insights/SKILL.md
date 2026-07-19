@@ -56,6 +56,23 @@ extraction pass fills them). File-not-empty is not the same test as
 file-actually-filled-in ~ check for these before treating a read as
 successful.
 
+**For a file that carries a `Status: FRAME`/`Status: LIVE` marker
+specifically (`report-template-rules.md` is the one that ships with this
+mechanism today) ~ trust THAT marker alone, don't ALSO brace-scan the rest
+of the file.** `report-template-rules.md` is explicit about this itself
+("the file is live once BOTH [the instruction block and `Status: FRAME`]
+are gone," its own §"How to fill this file") precisely because it's
+designed to retain literal, PERMANENT `{...}` runtime tokens even once
+genuinely live ~ `"{Month YYYY} · data window {start}–{end}"` under
+Fresh-data rules is a format instruction for every future report, not a
+one-time fill-in-the-blank. Running the generic brace-scan against this
+file ANYWAY would flag it as forever-unresolved the moment it's actually
+done, permanently blocking generation on a correctly-completed file
+(Codex catch, 2026-07-19). The brace-scan stays the right test for files
+that DON'T carry this marker (`brief.md`, `brand-standard.md`, and the
+other two standards frames, none of which have runtime tokens meant to
+survive completion) ~ this exception is `Status`-marker files only.
+
 **This is a WHOLE-FILE test for the one-shot required files (the
 standards files, `brief.md`, `brand-standard.md`) ~ they're written once,
 so any remaining placeholder means genuinely not done yet.** It is NOT a
@@ -136,6 +153,22 @@ on yet" / "first period for this client, no trend to draw on") rather than
 silently generating as if the history existed.
 
 ## Step 1 ~ Ground in the period's data
+
+**If NO current-period export was provided at all (no Sentimo/MCP pull,
+no platform data attached) ~ STOP and ask for it before generating
+anything, same blocking precondition `amplifi-qa`'s Step 0 already
+enforces on the verification side.** This skill's whole premise is
+"grounds only in current-period data" ~ without ANY period data to ground
+in, there is nothing to write insights, an exec summary, or
+recommendations FROM except the brief and historical corpus, which would
+produce exactly the generic, ungrounded output this skill exists to ban,
+while still claiming to be data-grounded (Codex catch, 2026-07-19). This
+is different from a single missing FIELD inside an otherwise-supplied
+export (a metric absent from an otherwise-real data pull) ~ that case
+still gets the flag-and-continue treatment below, since most of the
+period genuinely IS covered and one gap doesn't invalidate the rest.
+Refusing outright is for the all-or-nothing case: the export itself is
+missing, not a figure within it.
 
 Work ONLY from the data provided for this period (Sentimo/MCP exports,
 platform pulls). Rules:

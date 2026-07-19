@@ -50,6 +50,16 @@ Snapshot-based resolver every skill now uses (Codex catch, 2026-07-19)
 would otherwise read or write the WRONG client's brief, context, and
 delivery data for whichever name lost the collision.
 
+**Delete the copied example row in the new `delivery-log.md` before
+opening the client's first real row** ~ the copy carries the template's
+own placeholder row (`{YYYY-MM-DD}` / `{Dale}` / etc.) verbatim, and
+nothing else in this setup flow removes it. Leaving it in place doesn't
+just look messy ~ it's a row Instrument §5b's future ingestion has to
+treat as unresolved-template noise, same as it does for the retained
+`_template-client` scaffold itself (see `INSTRUMENT.md` §5b for why that
+ingestion defends against a missed cleanup here too, but don't rely on
+the safety net when a 5-second delete is right here).
+
 **A client clarifies something?** Write it into that client's `brief.md`
 FAQ section, once. Nobody re-infers it again.
 

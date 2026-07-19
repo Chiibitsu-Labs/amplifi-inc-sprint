@@ -113,22 +113,38 @@ threshold crossed →
                  not 100%), half or more are tagged brief-misalign,
                  brand, or quality-bar ~ their exact loudest pain, and
                  the two-gate order that keeps one stray tag from firing
-                 this on its own (see §5). **Data-quality gate, TWO forms,
-                 both hard-block:** (a) an accepted row with `Rounds ≥ 1`
+                 this on its own (see §5). **Data-quality gate, THREE
+                 forms,
+                 all hard-block:** (a) an accepted row with `Rounds ≥ 1`
                  but `Rework tag = none` is untagged, not zero-corpus; (b)
                  an accepted row where the tag entry count doesn't equal
                  `Rounds` (e.g. `Rounds = 3`, only two comma-separated
                  entries recorded) is PARTIALLY untagged and just as
                  unusable ~ the missing round(s) could swing the
                  half-or-more threshold either way, same as a bare `none`
-                 would. Either form: exclude the row from this share until
-                 fixed, and if enough rows are sitting untagged or
-                 partially-tagged to plausibly swing the half-or-more
+                 would; (c) an entry with a complete tag (and qualifier,
+                 where required) but no `[YYYY-MM-DD]` date suffix is just
+                 as unusable ~ it can't be placed inside or outside the
+                 trailing 90-day window at all, so it silently drops out
+                 of the count instead of counting as either. Any form:
+                 exclude the row from BOTH gates, not
+                 just the tag-SHARE gate (b), until
+                 fixed. **This matters for gate (a) too, not only (b):**
+                 gate (a)'s numerator counts the SAME dated tag entries,
+                 so a `Rounds = 3`/2-entries row would silently undercount
+                 to 2 rounds instead of 3, which can drop the frequency
+                 average below threshold and stop the whole FIX_CORPUS
+                 check at gate (a), before gate (b)'s tag-share is ever
+                 evaluated ~ FIX_CORPUS reads as absent when the honest
+                 state is "can't be evaluated, logging is incomplete"
+                 (Codex catch, 2026-07-19). If enough rows are sitting
+                 untagged or
+                 partially-tagged to plausibly swing EITHER gate's
                  threshold either way, that's not a clean FIX_CORPUS
                  reading to route on (or rule out) at all ~ flag the gap
                  and fix the logging before trusting the number
                  (`delivery-log.md`'s own hard-block rule, same reasoning,
-                 covers both forms). **Before actually editing a corpus
+                 covers all three forms). **Before actually editing a corpus
                  file, check the qualifier attached to each qualifying
                  round's tag entry** (`missing` vs `not-followed`, a
                  parenthetical on the tag itself, e.g. `brief-misalign
@@ -805,10 +821,24 @@ above by hand:
    real dates or values. A glob that doesn't skip underscore-prefixed /
    `_template-client` folders will either fail parsing on that row every
    single run or, worse, silently upsert a fake `_template-client` client
-   record into the router's data (Codex catch, 2026-07-19) ~ exclude any
+   record into the router's data ~ exclude any
    folder matching the template naming convention before this glob runs,
    the same exclusion `amplifi-improve`'s promotion pass and any future
-   corpus-wide tooling need too. Plus `patterns.md`'s theme tally as
+   corpus-wide tooling need too. **This folder-level exclusion is NOT
+   sufficient on its own, though** ~ every REAL client's `delivery-log.md`
+   starts life as a COPY of that same template file (`README.md`'s
+   "starting a new client" flow), which means it ALSO ships with that same
+   example row, and nothing in the onboarding instructions requires
+   deleting it before real rows get appended. A real, otherwise-legitimate
+   client log can carry that placeholder row indefinitely, breaking
+   ingestion the exact same way the template folder itself would (Codex
+   catch, 2026-07-19). **Add a ROW-level filter on top of the folder-level
+   one: skip any row containing an unresolved `{...}` template marker in
+   ANY column, regardless of which client folder it's in** ~ this is the
+   actual defense, since it doesn't depend on every analyst remembering to
+   delete the example row during setup. Flag a skipped placeholder row
+   once per client (not once per weekly run) as a reminder to clean it up,
+   rather than silently ignoring it forever. Plus `patterns.md`'s theme tally as
    corroborating signal strength for AUTOMATE/REDESIGN (a theme recurring
    there across multiple weeks raises confidence on a borderline
    14-day-window call) ~ without this second ingest, `patterns.md` keeps
@@ -877,11 +907,25 @@ above by hand:
      fires, both already mandatory in §5a's manual version and equally
      mandatory here, not optional extras for the coded path:**
      - **Completeness gate:** for every accepted row entering this
-       calculation, tag entry count MUST equal `Rounds` exactly ~ a bare
-       `none` on a `Rounds ≥ 1` row, or any partial mismatch (fewer
-       entries than `Rounds`), excludes that row from the tag-share
-       calculation entirely and hard-blocks the conclusion if enough rows
-       are affected to plausibly swing the ≥half threshold either way
+       calculation, tag entry count MUST equal `Rounds` exactly, AND every
+       entry MUST carry a valid, parseable `[YYYY-MM-DD]` date ~ a bare
+       `none` on a `Rounds ≥ 1` row, any partial mismatch (fewer
+       entries than `Rounds`), or any entry missing/malformed on its date
+       suffix, excludes that row from BOTH gates, not
+       just the tag-share calculation (gate b) ~ **gate (a)'s numerator
+       counts the same dated entries, so an incomplete OR undated row
+       silently
+       undercounts it too** (a `Rounds = 3`/2-entries row reads as 2
+       rounds, not 3; an entry with no date can't be tested against the
+       trailing-90-day window at all and just as silently drops out),
+       which can drop the frequency average below
+       threshold and stop the check at gate (a) before gate (b) is ever
+       reached, reading FIX_CORPUS as absent when the honest state is
+       "incomplete data, can't be evaluated" (Codex catch, 2026-07-19 ×2:
+       first the entry-count case, then the same false-absence failure
+       mode one field over for missing dates). Hard-block the conclusion
+       if enough rows
+       are affected to plausibly swing EITHER gate's threshold either way
        (`delivery-log.md`'s own gate, same reasoning, same code needs to
        enforce it here that a human enforces by hand in §5a).
      - **Cause-qualifier gate:** ≥half tagged corpus-cause is necessary but

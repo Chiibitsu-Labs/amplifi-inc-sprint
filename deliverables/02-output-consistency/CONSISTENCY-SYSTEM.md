@@ -45,9 +45,20 @@ slop.
 | `standards/report-template-rules.md` | structure + branding + fresh-data rules | "doesn't align w/ branding," "old data retained" |
 | `clients/{x}/brand-standard.md` | per-client voice/format | client-specific misses |
 
-Ships as **frames with extraction prompts** ~ Rica fills them from the 2–3
-best past reports (the bar comes from real winning work, not theory). One
-hour of Rica's judgment, encoded forever. Until filled, the skills run but
+Ships as **frames with extraction prompts** ~ Rica fills three of these
+four from the 2–3
+best past reports (the bar comes from real winning work, not theory):
+`what-good-looks-like.md`, `house-voice.md`, and `brand-standard.md`.
+**`report-template-rules.md` is the exception, not more of the same
+process** ~ it's extracted from the CURRENT Canva template and brand kit
+instead, never past reports (see that file's own "How to fill this file"
+section). Gold reports can reflect an outdated deck structure, fonts,
+colors, or logo placement that the team has since revised in Canva
+directly ~ extracting structure/branding rules from old winning reports
+instead of the live template risks encoding exactly the stale rules the
+post-Canva brand checks exist to catch (Codex catch, 2026-07-19). One
+hour of Rica's judgment per frame, encoded forever, whichever source each
+frame actually calls for. Until filled, the skills run but
 the bar is generic ~ **filling these frames is the highest-leverage hour in
 the roadmap.**
 
