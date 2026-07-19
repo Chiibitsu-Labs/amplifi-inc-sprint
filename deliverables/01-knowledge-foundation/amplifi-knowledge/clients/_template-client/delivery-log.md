@@ -449,8 +449,24 @@ writing the composite there in the first place, escaped or not.
   Instrument §5b) upserts against, so a label that drifts mid-life would
   silently orphan the row it used to match instead of updating the same
   one, creating a duplicate under the new label. **Use the SAME format
-  for every row on THIS client's log, matching that client's cadence
-  exactly** (a weekly client always writes `{YYYY-MM} / wk {N}`, a
+  for every row WITHIN ONE CADENCE/VERSION ERA on this client's log,
+  matching that era's cadence exactly ~ NOT necessarily the same format
+  across the client's ENTIRE log.** A supported cadence change
+  (`brief.md`'s versioned `Reporting cadence` field, e.g. weekly `v1` →
+  monthly `v2`) genuinely changes which format is correct partway through
+  the log: rows opened under the `v1` weekly era write `{YYYY-MM} / wk
+  {N}`, rows opened after the change to `v2` monthly write bare
+  `{YYYY-MM}` ~ requiring one format across the WHOLE log would make
+  every post-change row either violate the monthly format (keeping `/ wk
+  {N}`) or violate the "same format throughout" rule itself (switching to
+  bare `{YYYY-MM}`), an impossible instruction for any client who's ever
+  changed cadence (Codex catch, 2026-07-19). Consistency is checked
+  PER ERA, matching that row's own `Cadence` cell (the same per-row field
+  `delivery-log.md` touch 1 already stamps at row-creation time, per its
+  own bullet below) ~ every row sharing one `Cadence` value uses the
+  identical format among themselves; a format change is only ever
+  expected to line up with an actual `Cadence` change, never happen
+  independently of one. (a weekly client always writes `{YYYY-MM} / wk {N}`, a
   monthly client always writes `{YYYY-MM}`; **a bi-weekly client ALSO
   writes `{YYYY-MM} / wk {N}`, `{N}` still the ISO week number of that
   cycle's OWN `Period start` (not a running "cycle number since

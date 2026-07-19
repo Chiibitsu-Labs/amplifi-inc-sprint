@@ -7,9 +7,18 @@ without a rebuild.
 
 ## How to use this folder
 
-**Starting a new client?** Copy `clients/_template-client/` → rename to the
-client's name → fill `brief.md` and `brand-standard.md` from the kickoff.
-**Slug the folder name first if the client's real name has a `/` or any
+**Starting a new client?** Compute the target folder slug FIRST, resolve
+any collision against it (see the collision-check procedure below), and
+ONLY THEN copy `clients/_template-client/` → the confirmed-unused path →
+fill `brief.md` and `brand-standard.md` from the kickoff. **Do NOT copy
+the template and rename it into place before checking for a collision ~
+on the case-insensitive Drive-for-Desktop filesystems this corpus
+actually syncs through (see below), a rename straight onto an
+already-taken slug can silently MERGE with or overwrite an existing
+client's folder, and the collision identity prompt below would then be
+asked after that damage is already done, not before it** (Codex catch,
+2026-07-19: this opening sequence read as copy-then-rename-then-check,
+when the check has to gate the copy itself, not follow it). **Slug the folder name first if the client's real name has a `/` or any
 other filesystem-reserved character** (`\ : * ? " < > |`) ~ a client like
 "ACME/EMEA" becomes the folder `clients/ACME-EMEA/`, never a literal `/`
 in the path (that creates an unintended nested directory, or fails

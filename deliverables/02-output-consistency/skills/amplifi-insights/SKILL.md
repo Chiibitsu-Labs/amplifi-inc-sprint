@@ -423,9 +423,20 @@ INSIGHT-LOG ENTRY (paste into clients/{resolved folder}/insight-log.md):
 {the 5–10 line entry per the log's format}
 ```
 
-**`{Period}` is Step 0's captured value from this cycle's `open`
+**`{Period}` is Step 0's already-resolved value for THIS cycle's
 delivery-log row, pasted verbatim ~ never re-typed from the client name
-or date the way an entry's prose might phrase it.** This heading is the
+or date the way an entry's prose might phrase it, and never re-derived
+here from an `open` row specifically.** Step 0 resolves the matching row
+at whichever status actually fits this run (`open` for an ordinary draft,
+`revising`/`revising (reopened)` for a substantive-revision rerun, see
+Step 0) ~ restating "from the `open` row" here would silently override
+that resolution during a revision run, since the row being revised has
+already moved past `open` by the time this trailer gets written, and
+picking a DIFFERENT client `open` row instead (a later cycle's, say)
+would paste the wrong period into the trailer and update the wrong
+insight-log entry (Codex catch, 2026-07-19: this line restated Step 0's
+resolution as `open`-only, contradicting the broader status match Step 0
+itself now performs). This heading is the
 exact lookup key `insight-log.md`'s silent-acceptance scan and
 substantive-revision procedure both match against; a hand-typed
 `{YYYY-MM} ({cadence period})`-style heading can look right and still be

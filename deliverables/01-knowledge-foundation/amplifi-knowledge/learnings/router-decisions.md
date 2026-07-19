@@ -44,12 +44,21 @@ on its own; the numbers that fired them have to be dated too.
     §2's baseline-versioning rule means those can be genuinely different
     numbers for the same client ~ recording only the span risks a later
     walkthrough or the eventual §5b automation applying the right number
-    to the wrong cohort (Codex catch, 2026-07-19) · margin: {≥20% OR
-    STRICTLY >1 working day (never ≥1), whichever is larger ~ the
-    absolute floor matters at a zero/near-zero baseline, §2. `>1`, not
-    `≥1`, specifically so a trailing average of exactly one working day
+    to the wrong cohort (Codex catch, 2026-07-19) · margin: {baseline +
+    max(20%, 1 working day), STRICTLY exceeded ~ ONE test against
+    whichever margin is numerically larger for this baseline, never an
+    `OR` of two separate pass/fail tests (an `OR` fires on whichever
+    margin is EASIEST to clear, the opposite of "whichever is larger" ~
+    Codex catch, 2026-07-19: recording this as "≥20% OR >1 working day"
+    preserves the same larger-vs-smaller inversion INSTRUMENT.md §2 itself
+    was just fixed to close, letting a later manual read or the eventual
+    §5b automation reproduce it off this snapshot). The absolute floor
+    matters specifically at a zero/near-zero baseline, §2, and only ever
+    becomes the operative threshold when it's genuinely the larger of the
+    two. Strictly `>`, not `≥`, on the resulting `max()` ~ specifically so
+    a trailing average of exactly one working day
     off a zero baseline ~ an ordinary next-day cycle ~ does NOT trip the
-    floor; recording `≥1` here would preserve the wrong boundary and can
+    check; recording `≥` here would preserve the wrong boundary and can
     propagate it into a later manual read or the eventual §5b automation
     (Codex catch, 2026-07-19)}
   - On-cadence threshold: {N%, v1 seed <80% per §3 ~ record here whatever
