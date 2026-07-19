@@ -230,10 +230,26 @@ on its own; the numbers that fired them have to be dated too.
   resolved-but-not-a-corpus-edit outcome at all).
 - **Provisional/blocked routes, recorded SEPARATELY from "fired" and
   "none crossed":** {list any of REDESIGN or FIX_CORPUS marked PROVISIONAL
-  this walkthrough (too few late/trending rows accepted yet; missing
-  missing/not-followed qualifiers; or a swing-capable revising backlog ~
-  Instrument §3 step 4), and note that this PROVISIONAL state blocks HIRE
-  the same as a fired route would, until resolved}. Don't fold this into
+  this walkthrough ~ FOUR possible sources, all Instrument §3 step 4: too
+  few late/trending rows accepted yet; missing missing/not-followed
+  qualifiers; a swing-capable revising backlog; OR a row/entry this
+  section's own validation gates rejected (an invalid `Status`, a
+  malformed `Rounds` cell, an unrecognized/malformed `Rework tag` value,
+  or a future-dated tag entry ~ Instrument §3's on-cadence/gate (a)(b)
+  validation, above) whose exclusion could plausibly have swung either
+  gate}, and note that this PROVISIONAL state blocks HIRE
+  the same as a fired route would, until resolved}. **This template's own
+  examples have to name all FOUR sources, not just the first three ~ an
+  operator filling this in from the examples alone, with no source listed
+  for a validation-gate rejection, can leave this line blank or write
+  "none crossed" even though Instrument §3 explicitly required marking
+  FIX_CORPUS provisional and blocking HIRE over it, losing the exact
+  evidence trail this file exists to preserve** (Codex catch, 2026-07-19:
+  Instrument §3's own PROVISIONAL list grew to four sources across rounds
+  78-80 as the Status/Rounds/tag-value validation gates were added, but
+  this audit template's examples were never updated to match, leaving a
+  real fourth source with no home in the record an operator would actually
+  follow). Don't fold this into
   "none crossed" ~ a route marked provisional was never evaluated to
   absence, and collapsing the two would make a deliberately-deferred HIRE
   read, later, as if every earlier route had been checked and genuinely

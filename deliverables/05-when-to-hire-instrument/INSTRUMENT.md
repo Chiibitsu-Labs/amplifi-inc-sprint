@@ -612,6 +612,35 @@ MUST have its real entry count equal `Rounds`, per the check above. A row
 failing either direction is excluded and flagged the same way, not just
 the `Rounds ≥ 1` shortfall case.
 
+**Before reading entries into this cohort at all, validate each one the
+SAME way §5b's coded ingestion gate now has to (below) ~ this manual
+procedure reads the identical `Rework tag` entries, and an analyst's typo
+is exactly as real a risk here as a parsing bug there.** Validate every
+entry's base tag against an exact match on the five defined values, the
+required `(missing)`/`(not-followed)` qualifier on the three corpus
+causes, the required source component on `brand` specifically, AND that
+the entry's date is a genuinely valid, parseable date NO LATER than the
+evaluation date this walkthrough is reading as of. A mistyped tag
+(`brief-misalgn`) or a plausible year typo (`[2027-09-10]` during a 2026
+walkthrough) reads as a normal, complete entry to a human skimming the
+row quickly ~ the tag LOOKS like a real one, the date LOOKS like a real
+date ~ and without checking it against the exact enum and against today's
+date specifically, it can either silently drop out of the trailing-90-day
+window as "not in scope" (a future date) or get read as a valid but
+non-corpus tag by gate (b) while still counting toward gate (a)'s
+numerator (a misspelled corpus cause), understating the real corpus-tag
+share and potentially clearing FIX_CORPUS on evidence that was never
+actually complete (Codex catch, 2026-07-19: §5b's coded gate now
+validates tag value and future-dating explicitly, precisely because a
+human or a parser can both produce the same plausible-but-wrong entry, but
+this manual procedure, reading the identical field, was left trusting
+every entry at face value). Treat a failing entry exactly like an
+undated or entry-count-mismatched one (above): excluded from BOTH gates,
+flagged as a data-hygiene gap, and PROVISIONAL for this client's
+FIX_CORPUS reading if enough such entries could plausibly swing either
+gate's threshold, the same swing-aware treatment this section already
+applies to every other validation failure.
+
 **Read every individual dated `Rework tag` entry, across every `accepted`
 OR `revising (reopened)` row (regardless of that row's own `Due`,
 `Delivered`, or `Last Sent`), whose OWN date falls in the trailing 90
@@ -2821,9 +2850,17 @@ above by hand:
      capchecker's CURRENT identity list, checking the identity-alias table
      (`ROADMAP.md` task 2.3, above) BEFORE falling back to a literal
      spelling match, exactly the same two-step lookup the per-analyst join
-     already uses elsewhere in this doc; only if NEITHER the alias table
-     nor a literal match resolves this field to a real, currently-live
-     capchecker identity does the scope test proceed. A typo (`Dale S.`
+     already uses elsewhere in this doc; the scope test proceeds ONLY once
+     EITHER the alias table OR a literal match actually resolves this
+     field to a real, currently-live capchecker identity ~ if NEITHER
+     lookup resolves it, that's the data-blocked case (below), not a green
+     light to continue (Codex catch, 2026-07-19: this condition was
+     written inverted, describing "proceed" as the outcome of BOTH lookups
+     failing, the exact opposite of the intended behavior ~ read literally,
+     it would either block every correctly-named, cleanly-resolving lead
+     from ever being evaluated, or let an unresolved identity through to
+     evaluate anyway, precisely the false-HIRE risk this whole fallback
+     exists to close). A typo (`Dale S.`
      for the real `Dale`) or a genuinely stale identity (the person's
      capchecker handle changed and no alias entry was ever added) both
      produce the SAME outcome as a blank field would ~ zero matching
