@@ -61,7 +61,7 @@ AI starts. Here, every handoff is a decision, not a default.
 
 | # | Step | Who does what | Vault touchpoint |
 |---|---|---|---|
-| 1 | Brief | **H** owns client relationship · AI summarizes into living-brief shape | **V** `brief.md` created/updated; FAQs start; **delivery-log row opened** (`Status = open`) for this client's FIRST cycle ~ this is what makes an overdue cycle visible before anything ships. **This step is one-time onboarding, not part of the recurring loop** ~ every SUBSEQUENT cycle's row is opened at the recurring-cycle boundary (step 12's own touchpoint), not here, since step 1 doesn't recur |
+| 1 | Brief | **H** owns client relationship · AI summarizes into living-brief shape | **V** `brief.md` created/updated; FAQs start; **delivery-log row opened** (`Status = open`) for this client's FIRST cycle ~ this is what makes an overdue cycle visible before anything ships. **This step is one-time onboarding, not part of the recurring loop** ~ every SUBSEQUENT cycle's row opens on its own SCHEDULED cadence boundary instead (see the note below the table), never gated by step 12 or any other step, since step 1 doesn't recur |
 | 2 | Baseline | AI drafts from brief + data · **H** shapes unique asks | **V** reads `brief.md`; unique asks written back |
 | 3 | Internal alignment | **H** judgment call | **V** misalignments → learnings |
 | 4 | Present | **H** ~ the room is human | — |
@@ -72,7 +72,27 @@ AI starts. Here, every handoff is a decision, not a default.
 | 9 | Report | AI outputs template-shaped draft → **QA gate** (pass 1, pre-Canva) → **H** final verify → Canva polish | **V** reads `report-template-rules.md`. NOT the ship write (no `Delivered` date, `Status` stays `open` ~ this is an internal draft, not what the client received) ~ but IF pass 1 or `H`'s verify catches and corrects a `brief-misalign`/`brand`/`quality-bar`/`data` issue right here, THAT does get logged: `delivery-log.md` touch 1.5, bump `Rounds` + tag, while `Status` is still `open`. "Not delivered yet" and "no rework happened" are different facts ~ this row can be true on the first and false on the second |
 | 10 | Internal alignment | **H** ~ faster because pass 1 already ran; if this step requests deck edits, they happen here | **V** same as step 9 ~ a brief-misalign/brand/quality-bar/data catch corrected here also logs via touch 1.5, `Status` still `open` |
 | 11 | Client presentation | **QA gate pass 2 on the assembled deck, run AFTER step 10's edits (if any)** → **any flags pass 2 raises get cleared by a human or the deck gets corrected and pass 2 re-run ~ a flagged deck does not proceed to presenting on its own** → **H** presents ~ the relationship is the product | **V** two writes here, not one: (a) if pass 2 itself catches and corrects a `brief-misalign`/`brand`/`quality-bar`/`data` issue, that's ALSO touch 1.5 ~ bump `Rounds` + tag, `Status` still `open`, same as steps 9–10's catches (pass 2 exists to catch Canva-stage drift specifically; a correction it finds is no less real than one caught earlier). (b) THEN the ship write: insight-log entry + delivery-log row UPDATED to `delivered` (row already existed from step 1, opened at period start, possibly already carrying `Rounds` from steps 9–11's internal catches). `Delivered` means the client actually received it ~ writing it before pass 2 clears would mark a cycle on-time and clean even if a known flag shipped uncorrected |
-| 12 | Repeat | improve skill closes the loop; **delivery-log row for the NEXT cycle opens here** (`Status = open`, per `delivery-log.md` touch 1's own SCHEDULED-start timing) ~ this is the actual recurring-cycle boundary, not step 1 (one-time onboarding only) | **V** learnings promoted weekly → next cycle starts smarter; next cycle's row created |
+| 12 | Repeat | improve skill closes the loop; this is the recurring-cycle boundary in the ORDINARY case (not step 1, which is one-time onboarding only) ~ **but the NEXT cycle's delivery-log row does NOT wait for this step to fire** | **V** learnings promoted weekly → next cycle starts smarter; next cycle's row already exists by now (see note below) |
+
+**The next cycle's delivery-log row opens on the client's SCHEDULED
+cadence calendar, independent of when step 12 for the PRIOR cycle
+actually happens to fire ~ never gated by it.** `delivery-log.md` touch
+1 is explicit about this: a row is created "at the cycle's SCHEDULED
+start ~ the date this client's cadence says the cycle begins... known in
+advance, a calendar fact ~ NOT whenever an analyst actually gets around
+to the work." Step 12 (repeat/capture) fires when the PRIOR cycle's
+workflow completes or repeats, which is a DIFFERENT event from the next
+period's calendar boundary ~ they only coincide when cycles ship on
+schedule. If a report ships LATE, after the next period has already
+started, gating the next row's creation on step 12 would leave that
+overdue next cycle invisible to the near-real-time on-cadence signal for
+the entire delay (exactly the gap `delivery-log.md` touch 1 exists to
+close); if a report ships EARLY, gating on step 12 would open the row
+before the stated boundary instead (Codex catch, 2026-07-19). Trigger row
+creation from the client's cadence calendar directly ~ a scheduled job,
+or simply whoever owns the queue checking the calendar at period start,
+independent of whether or when the previous cycle's own step 12 has
+fired.
 
 **The improve skill's capture (Mode 1) is NOT reserved for step 12 alone
 ~ it runs at the end of EVERY work session, per its own contract, and one

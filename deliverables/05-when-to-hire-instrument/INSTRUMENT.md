@@ -163,9 +163,15 @@ threshold crossed →
                  example of why a subset-only majority can pass while only
                  ~30% of all rework is a genuine gap).
                  → route: Deliverable 1+2 ~ align the brief, encode the
-                 standard, ONLY when the qualifier majority reads
-                 `missing` AND that missing count is ≥half of ALL rework
-                 rounds. NEVER route this to hire. (Watch survivorship
+                 standard, ONLY when the `missing`-tagged round count
+                 clears ≥half of ALL rework
+                 rounds (the real, standalone test ~ this is what a
+                 qualifier "majority reading `missing`" cashes out to in
+                 the normal case, but it's the all-rounds bar that
+                 actually fires the edit, including at an exact
+                 subset-level tie where `missing` alone still reaches
+                 half of everything, see §5 for why the two aren't
+                 interchangeable at that boundary). NEVER route this to hire. (Watch survivorship
                  bias: bare `revising` rows (first-ever, never-yet-accepted
                  pass) aren't counted yet by design ~ `revising (reopened)`
                  rows ARE, since they already reached `accepted` once ~ but a
@@ -405,10 +411,13 @@ the cohort rule for FIX_CORPUS is direct, with no row-level anchoring, no
 exceptions, and no marker bookkeeping:
 
 **Validate BEFORE filtering, never after ~ the completeness/date gate
-(below) has to run across EVERY `accepted`/`revising (reopened)`/
-`cancelled` row
+(below) has to run across EVERY `accepted`/`revising (reopened)` row
 with `Rounds ≥ 1` first, independent of `Due` and independent of whether
-any entry's date would otherwise land it in-window.** (Bare `revising` and
+any entry's date would otherwise land it in-window** (plus every
+`cancelled` row with `Rounds ≥ 1`, for the separate cancelled-row
+corroborating signal below ~ that signal needs its own dated, validated
+entries just as much as gate (a)/(b) do, even though it never feeds their
+core math). (Bare `revising` and
 bare `delivered` rows stay outside this gate entirely ~ they contribute
 nothing to gate (a) or (b) until they finalize, per the status-scope
 reasoning below.) Reading dated entries directly (the next
@@ -432,9 +441,9 @@ OR `revising (reopened)` row (regardless of that row's own `Due`,
 `Delivered`, or `Last Sent`), whose OWN date falls in the trailing 90
 days.** That's the cohort test for
 COUNTING ROUNDS ~ a filter on rounds, not rows, and it's what gate (a)'s
-numerator reads (gate (b) reads a wider set that also includes cancelled
-rows' entries ~ see gate (b) below for exactly why the two aren't the
-same set here). A row's `Due` sitting outside the
+numerator and all of gate (b) read (cancelled rows feed a separate,
+corroborating signal instead ~ see gate (b) below for why they're
+deliberately kept out of this core round set). A row's `Due` sitting outside the
 90-day window doesn't exclude its recent rounds, and a row's `Due` sitting
 inside the window doesn't pull in its old ones ~ each round is judged
 solely on its own date, which is exactly what the row-level approximation
@@ -509,41 +518,46 @@ why that's a second, deliberately separate test, not a contradiction of
   `revising` rows stay excluded from BOTH numerator and denominator,
   full stop ~ genuinely unresolved, first-pass reports contribute nothing
   to this gate's math until they finalize.
-- **Tag-share (gate b):** of gate (a)'s in-window numerator round set,
-  **PLUS every in-window dated entry on a `cancelled` row** (NOT the same
-  set as gate (a)'s numerator ~ this is the one deliberate divergence),
-  what fraction
-  are tagged `brief-misalign`/`brand`/`quality-bar`. A cancelled row's
-  entries are, by construction, ALL pre-send catches (`delivery-log.md`
-  touch 1.5 ~ touches 3/4, which log post-ship rounds, can only ever fire
-  on a row that already shipped, which a cancelled-from-`open` row never
-  did), so they need no extra pre-send/post-send filtering before being
-  added here. **Why gate (b) specifically, and not gate (a)'s numerator
-  too:** gate (a) measures rounds PER REPORT, and a cancelled row never
-  became a report (no `Delivered`, no place in the row-level denominator)
-  ~ adding its rounds to gate (a)'s numerator while it can never appear in
-  gate (a)'s denominator would inflate "rounds per accepted report" off
-  work attached to no report at all, and in the extreme case (a window
-  where every dated round happens to sit on cancelled rows, none on an
-  accepted/reopened one) could produce a nonzero numerator over a zero
-  denominator, a false FIX_CORPUS route from a division that should never
-  have run (Codex catch, 2026-07-19: an earlier draft of this addition put
-  cancelled rows in BOTH gate (a)'s numerator and gate (b), reproducing
-  exactly the numerator-without-a-denominator-place bug this document's
-  own gate (a) history already worked through and fixed once). Gate (b)
-  has no such row-level denominator to protect ~ it's a pure round-level
-  ratio (real rework rounds that happened, tagged or not), so a cancelled
-  row's rounds are unambiguously real REWORK evidence there with no
-  matching risk. Zero-round rows
+- **Tag-share (gate b):** of the SAME in-window ROUND set gate (a)'s
+  numerator uses (never a wider one, and never including `cancelled`
+  rows), what fraction
+  are tagged `brief-misalign`/`brand`/`quality-bar`. Zero-round rows
   contribute nothing to this ratio either way (they have no round-level
   entries to weigh in), so gate (b) doesn't need the row-level cohort
   gate (a) does ~ it stays a pure round-level ratio, no denominator
   distinction to make.
 - The qualifier-majority read (`missing` vs `not-followed`, step 3's
-  cause-qualifier gate below) also reads gate (b)'s round set (including
-  cancelled rows), not gate (a)'s narrower numerator set ~ one consistent
-  population feeds it and gate (b) together, both deliberately wider than
-  gate (a)'s numerator for the same reason.
+  cause-qualifier gate below) also reads only the in-window, corpus-tagged
+  subset of this same round set ~ one consistent population feeds every
+  downstream FIX_CORPUS question.
+- **Cancelled rows' pre-send rounds are real corpus-vs-process evidence
+  too, but they feed a SEPARATE, corroborating signal, never gate (a)'s
+  or gate (b)'s core ratio.** An earlier draft of this section tried
+  blending cancelled-row rounds directly into gate (b)'s tag-share
+  (reasoning: gate (b) has no row-level denominator to protect, unlike
+  gate (a), so it seemed like the safe place to add them). That broke a
+  DIFFERENT way than the first draft's numerator-without-denominator bug
+  did: gate (b) exists to answer "of the rework that ALREADY cleared gate
+  (a)'s frequency bar, how much was corpus-caused" ~ blending in rounds
+  from cancelled work that never cleared gate (a) at all decouples that
+  answer from the reports it's supposed to describe. A concrete failure:
+  six `accepted` rows clear gate (a)'s frequency threshold on
+  `data`/`client-new-ask` rounds alone (zero corpus-caused among the
+  reports that actually shipped), while one unrelated cancelled draft
+  contributes six `quality-bar (missing)` rounds; blending them reads
+  50% corpus-tagged and fires FIX_CORPUS even though NONE of the
+  delivered-report rework that cleared gate (a) was corpus-caused (Codex
+  catch, 2026-07-19). **The fix: track cancelled-row corpus-tagged rounds
+  as their own corroborating count, reported alongside the FIX_CORPUS
+  reading but never mixed into its firing math** ~ the same treatment
+  step 3 below already gives `not-followed` rework as HIRE-family
+  evidence without letting it change whether the corpus-edit action
+  itself fires. If cancelled-row rounds ALSO show a majority-corpus-cause
+  pattern, say so explicitly ("N cancelled cycles independently show a
+  `{missing/not-followed}` `{tag}` pattern, corroborating this reading")
+  ~ real signal that the corpus gap is costing more than just delivered
+  rework, but it never substitutes for or inflates gate (a)/(b)'s own
+  math, and it never fires the corpus-edit action on its own.
 
 Worked example (numerator, round-level, and denominator via set (ii)): a
 row's `Due` was 150 days ago (well outside the 90-day window) and it was
@@ -785,15 +799,28 @@ dated entries get counted this month).
    client's rework were a genuine corpus gap, when only 30% of it actually
    is (Codex catch, 2026-07-19) ~ the other 20 percentage points of
    "corpus-tagged" share came from an ALREADY-correct standard nobody
-   applied, not a missing one. Require BOTH: majority `missing` within
-   the tagged subset (the test above, unchanged) AND missing-count ≥ half
-   of ALL qualifying rounds (this additional check) before actually
-   opening a file to edit. Since `missing` rounds are always a subset of
+   applied, not a missing one. **The all-rounds bar is the real test,
+   evaluated FIRST and standing on its own ~ missing-count ≥ half of ALL
+   qualifying rounds fires the corpus edit BY ITSELF**, whether or not
+   `missing` is also a strict majority within the narrower tagged subset.
+   An earlier draft of this section required both as a conjunction and
+   claimed clearing the all-rounds bar "automatically" clears the
+   subset-majority bar too (since `missing` rounds are always a subset of
    corpus-tagged rounds, and corpus-tagged rounds are always a subset of
-   all rounds, clearing the ALL-rounds bar automatically clears the
-   subset-majority bar too ~ this strengthens the existing test, it
-   doesn't replace it. **A reading that clears the subset-majority test
-   but NOT this all-rounds bar (exactly Codex's worked example) is a
+   all rounds). That implication is false at exactly one boundary: 5
+   `missing` + 5 `not-followed` = 10 total rounds, all tagged ~ `missing`
+   clears the all-rounds bar at exactly 5/10 = 50%, but 5 vs 5 within the
+   tagged subset is a TIE, not a strict majority, so the conjunction as
+   written would suppress the edit off the very reading the all-rounds
+   bar exists to confirm (half of this client's rework IS a confirmed
+   missing-corpus problem), and the tie-handling rule elsewhere in this
+   document (step 4 below, and this step's own qualifier-gate block)
+   would then read it as "resolved, no clear majority, don't edit,"
+   directly contradicting the all-rounds evidence (Codex catch,
+   2026-07-19). Evaluate the all-rounds bar FIRST; only fall through to
+   the subset-majority/tie logic below when it does NOT clear. **A reading
+   that clears the subset-majority test
+   but NOT this all-rounds bar (exactly the earlier worked example) is a
    FOURTH outcome, distinct from missing / not-followed / tie:** treat it
    the same as a majority-`not-followed` reading ~ real FIX_CORPUS-family
    evidence for step 4's portfolio-wide gate below, but the corpus-edit
@@ -871,7 +898,17 @@ dated entries get counted this month).
    the `missing`/`not-followed` counts landing exactly equal ~ is NOT
    provisional (see step 3): it's a resolved "no clear corpus-cause
    majority" finding with no missing data left to wait for, so it does not
-   block HIRE. A clear `not-followed` MAJORITY (not a tie) is different ~
+   block HIRE. **Unless `missing` alone already clears ≥half of ALL
+   qualifying rounds even at the tie** (step 3's all-rounds bar, evaluated
+   FIRST and standing on its own regardless of the subset tie ~ 5
+   `missing` + 5 `not-followed` out of 10 total rounds is a tie within the
+   tagged subset, but `missing` alone is still 50% of ALL rework, which is
+   exactly the confirmed-corpus-gap reading the all-rounds bar exists to
+   catch) ~ that case fires the corpus edit same as any other
+   all-rounds-bar clear, and DOES block HIRE the same way any fired
+   FIX_CORPUS route does; it never falls into "resolved tie, no action"
+   just because the narrower subset happened to land even (Codex catch,
+   2026-07-19). A clear `not-followed` MAJORITY (not a tie) is different ~
    per step 3's dedicated note above, it's real FIX_CORPUS-family evidence
    read into this same narrow-vs-portfolio-wide gate below, clustering-
    tested exactly like a REDESIGN signal, not something that silently
@@ -1021,6 +1058,27 @@ above by hand:
    any `(client, Period)` collision the ingest finds (two rows claiming
    the same composite key) ~ that's a data-entry error in the corpus, not
    something the ingestion pass should guess its way through.
+   **Upsert alone can only ever add or update a record ~ it has no way to
+   REMOVE one, and a row genuinely disappearing from the canonical
+   markdown log is a real case, not a hypothetical.** Resolving the
+   `(client, Period)` collision this same paragraph just described
+   commonly means a human deletes the erroneous duplicate row (or
+   recreates it under a corrected `Period` value, which is the same
+   problem under a different key). The next weekly pass upserts whatever
+   survives, but the ALREADY-INGESTED duplicate's Supabase record has no
+   corresponding markdown row left to update it, so a pure upsert-only
+   sync leaves it sitting there untouched, feeding stale cadence/rework
+   evidence into the router indefinitely (Codex catch, 2026-07-19). Fix:
+   on every weekly pass, after upserting, RECONCILE ~ diff the full set of
+   `(client, Period)` keys the destination currently holds against the
+   full set actually present in this run's complete read of every
+   client's `delivery-log.md`, and delete any destination record whose
+   key no longer exists in the source. This reconciliation is cheap
+   precisely because the pass already reads every client's FULL log on
+   every run (per the completeness-gate validation above, which is
+   already whole-file, not incremental) ~ no separate tombstone marker or
+   manual delete step needed, the source of truth's own current contents
+   are the reconciliation target.
    **`patterns.md`'s ingestion needs its OWN idempotency strategy, not the
    `(client, Period)` key above ~ that key is specific to delivery-log
    rows and doesn't apply here.** `patterns.md` is genuinely append-only
@@ -1167,30 +1225,34 @@ above by hand:
    code harmlessly rather than needing a removal step. REDESIGN's on-cadence/cycle-time reads stay row-level and
    `Due`-anchored (a row is in or out based on its own `Due` date).
    FIX_CORPUS's tag-share (gate b) AND rounds-per-report's NUMERATOR
-   (gate a) are round-level instead, but NOT the identical round set ~
-   **gate (a)'s numerator: filter individual
+   (gate a) are round-level instead, reading the IDENTICAL round set ~
+   **filter individual
    dated `Rework tag` entries (each stamped `[YYYY-MM-DD]` at the moment
    it's logged, per `delivery-log.md`) to those whose OWN date falls in
    the trailing 90 days, across every row with STATUS `accepted` OR
    `revising (reopened)` regardless of that row's `Due` (NOT bare
    `revising`, NOT `delivered`, and NOT `cancelled` either ~ see below for
-   why).** **Gate (b) reads a WIDER set: the same filter, PLUS every dated
-   entry on a `cancelled` row** ~ a cancelled row's entries are always
-   pre-send catches by construction (post-ship touches can't fire on a
-   row that never shipped), so excluding cancelled rows from gate (b)
-   entirely would silently drop real, dated corpus-vs-process evidence
-   purely because a client cancelled mid-flight. **Cancelled rows stay
-   OUT of gate (a)'s numerator specifically, though** ~ gate (a) measures
-   rounds PER REPORT, a cancelled row never became a report (no
-   `Delivered`, no denominator entry below), and adding its rounds to a
-   numerator with no matching denominator place would inflate "rounds per
-   accepted report" and risks a nonzero-numerator-over-zero-denominator
-   false FIX_CORPUS fire in a window where cancelled-row activity is all
-   there is (Codex catch, 2026-07-19: an earlier draft of this addition
-   put cancelled rows in BOTH gate (a)'s numerator and gate (b),
-   reproducing the exact numerator-without-a-denominator-place bug this
-   document's own gate (a) history already fixed once; see §5a for the
-   full reasoning). Rounds-per-report's
+   why).** **`cancelled` rows feed a SEPARATE, corroborating count
+   instead, computed alongside FIX_CORPUS but never mixed into gate (a)'s
+   or gate (b)'s math:** tally each cancelled row's dated,
+   corpus-tagged rounds and their `missing`/`not-followed` qualifier split,
+   surface it alongside the FIX_CORPUS reading as additional context, but
+   never let it change gate (b)'s ratio or gate (a)'s numerator. Two
+   earlier drafts of this coded spec both broke on cancelled rows: the
+   first put them in BOTH gate (a)'s numerator and gate (b), reproducing
+   the numerator-without-a-denominator-place bug (a cancelled row never
+   becomes a report, so it can never earn a place in gate (a)'s
+   denominator below); the second moved them into gate (b) alone,
+   reasoning gate (b) has no row-level denominator to protect ~ but that
+   decoupled gate (b)'s "how much of the rework that cleared gate (a) was
+   corpus-caused" answer from the reports it's actually describing (six
+   `accepted` rows clearing gate (a) on pure `client-new-ask` rounds,
+   plus one cancelled draft contributing six `quality-bar (missing)`
+   rounds, would read 50% corpus-tagged and fire FIX_CORPUS off work
+   attached to zero delivered reports, Codex catch, 2026-07-19). Keeping
+   cancelled-row evidence in its own tracked count, corroborating but
+   never blended in, is what actually closes both failure modes at once
+   ~ see §5a for the full reasoning. Rounds-per-report's
    DENOMINATOR is a THIRD mechanism ~ the UNION of two row sets, not one:
    (i) rows with STATUS `accepted` OR `revising (reopened)` SPECIFICALLY
    (the SAME scope the numerator above reads, never bare `revising`,
@@ -1299,21 +1361,30 @@ above by hand:
        qualifier check, would have the coded router repeatedly prescribe
        edits to an already-correct corpus file ~ exactly what the manual
        rule (§3, and this section's own rounds-per-report rule above)
-       exists to prevent. **"Majority `missing`" ALONE is still not
-       sufficient to fire, though ~ code the same second check §5a
-       requires:** the missing-qualified round count must ALSO
-       independently clear ≥half of ALL qualifying rounds from gate (a),
-       not just a majority of the smaller corpus-tagged subset (e.g. 3
+       exists to prevent. **The all-rounds bar is the actual test, coded
+       and evaluated FIRST, standing on its own ~ NOT an "AND" alongside
+       the subset-majority check:** the missing-qualified round count
+       clearing ≥half of ALL qualifying rounds from gate (a) fires the
+       corpus-edit action BY ITSELF, whether or not `missing` is also a
+       strict majority within the smaller corpus-tagged subset (e.g. 3
        `missing` + 2 `not-followed` + 5 `client-new-ask` = 10 rounds: the
        5 corpus-tagged rounds clear gate (b)'s ≥half-tagged bar, and
        `missing` is the majority within that 5, but `missing` ÷ ALL 10
-       rounds is only 30% ~ firing here would act as if half of this
-       client's rework were a genuine corpus gap when only 30% is; see
-       §5a's full worked example). Since `missing` is always a subset of
-       corpus-tagged, and corpus-tagged is always a subset of all rounds,
-       this is a strengthening of the subset-majority test, not a
-       replacement ~ code both checks, gate on both. A row that clears
-       subset-majority but not this all-rounds bar reads the same as a
+       rounds is only 30% ~ this reading does NOT clear the all-rounds
+       bar, so the corpus edit correctly does NOT fire here; see §5a's
+       full worked example). **Coding this as a strict conjunction
+       ("majority within subset AND clears all-rounds bar") breaks at
+       exactly one boundary an earlier draft of this coded spec missed:**
+       5 `missing` + 5 `not-followed` = 10 total rounds, all tagged ~
+       `missing` clears the all-rounds bar at exactly 5/10 = 50%, but 5 vs
+       5 within the tagged subset is a TIE, not a strict majority, so a
+       strict-conjunction implementation would fail the subset-majority
+       half of the AND and suppress the edit off the exact reading the
+       all-rounds bar exists to confirm (Codex catch, 2026-07-19). Code
+       the all-rounds bar as the primary, sufficient test; only evaluate
+       the subset-majority/tie logic below when it does NOT clear. A row
+       that clears
+       subset-majority but not the all-rounds bar reads the same as a
        majority-`not-followed` case: real evidence for HIRE's
        portfolio-wide gate, but the corpus-edit action does NOT fire.
        **This surfaced finding still has to feed HIRE's
@@ -1352,8 +1423,19 @@ above by hand:
          equal):** this is NOT provisional ~ there's no missing data left
          to fill in, and no future accepted row is guaranteed to ever
          break the tie, so treating it as "blocked until resolved" could
-         block indefinitely. A complete tie is a fully-evaluated,
-         DEFINITE outcome: it simply fails to clear the majority-`missing`
+         block indefinitely. **But check the all-rounds bar BEFORE
+         treating a tie as "no action" ~ a tie is only a definite
+         no-fire outcome when `missing` alone does NOT also independently
+         clear ≥half of ALL qualifying rounds.** 5 `missing` + 5
+         `not-followed` out of 10 total rounds is a tie within the tagged
+         subset, but `missing` alone is still 50% of ALL rework ~ exactly
+         the confirmed-corpus-gap reading the all-rounds bar exists to
+         catch, so THAT case fires the corpus edit same as any other
+         all-rounds-bar clear and DOES block HIRE, it never falls into
+         "resolved tie, no action" just because the narrower subset
+         happened to land even (Codex catch, 2026-07-19). Only once the
+         all-rounds bar is confirmed NOT cleared is a tie a fully-evaluated,
+         DEFINITE no-fire outcome: it fails to clear the majority-`missing`
          bar the corpus-edit action requires (same as a majority-
          `not-followed` reading would), so FIX_CORPUS's corpus-edit action
          does NOT fire ~ but this is a resolved "checked, no clear
@@ -1509,13 +1591,31 @@ above by hand:
      signal's own analyst(s) DOES block HIRE** ~ their already-named
      problem plausibly explains all the observed strain, so that gets
      fixed first, not hired around. **Elevation reaching the fixed ≥4-of-6
-     full-roster bar, well beyond
-     just the analyst(s) the narrow signal names, does
+     full-roster bar, COUNTED EXCLUDING the narrow signal's own named
+     analyst(s), does
      NOT block HIRE** ~ a client-scoped fix can't explain strain in
      analysts who were never part of that narrow signal at all, so letting
      it rule out HIRE there would wrongly suppress a genuine portfolio-wide
-     need (this was inverted in an earlier draft of this section ~ Codex
-     catch, 2026-07-19). (A future capacity feed with real per-client task attribution,
+     need. **This exclusion is required, not descriptive color:** simply
+     reaching ≥4-of-6 elevated in TOTAL doesn't by itself prove the
+     elevation survives independently of the narrow signal ~ if exactly 4
+     of 6 are elevated and one of them happens to BE one of the narrow
+     signal's own named analysts, fixing that signal would plausibly drop
+     the count to 3, below the bar, meaning the ≥4 reading was never
+     independently portfolio-wide to begin with (with several
+     narrow-signal-named clients, this can explain most of the 4).
+     Compute the count as: of the full 6-person roster, how many analysts
+     who are NOT among the narrow signal's own named analyst(s) read
+     elevated? Only THAT count clearing ≥4 overrides the block ~ counting
+     every elevated analyst including the narrow signal's own would let a
+     narrow, already-explained problem masquerade as broad evidence
+     (Codex catch, 2026-07-19: this was inverted in an earlier draft of
+     this section, and the exclusion itself was still missing even after
+     that fix). The roster DENOMINATOR still never shrinks (stays the full
+     6, per the "do not shrink to analysts with sufficient data" rule
+     above) ~ only the narrow signal's own analyst(s) are excluded from
+     the NUMERATOR being counted toward the override, nothing else about
+     the bar changes. (A future capacity feed with real per-client task attribution,
      not just a per-analyst count, would let this run at the finer client
      grain the original draft assumed ~ noted as a possible roadmap-level
      capchecker enhancement, never a v1 blocker; see `ROADMAP.md`.) ~ the

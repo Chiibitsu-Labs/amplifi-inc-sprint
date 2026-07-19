@@ -49,11 +49,19 @@ grows under their roof. Chii's repo remains the reference/spec copy.
    skill nothing to enumerate, so it either has to stop for lack of the
    corpus listing it's required to check, or silently skip the check and
    risk running against the wrong same-named account (Codex catch,
-   2026-07-19). Attach either (a) every client's `brief.md` (small files,
+   2026-07-19). Attach every client's `brief.md` (small files,
    cheap to include every session, and this is exactly what "enumerate
-   `clients/*`" needs), or (b) a standing index file listing every client
-   folder + Snapshot name, kept current the same way the corpus itself is;
-   if truly attaching only one client's files, name the account
+   `clients/*`" needs) ~ **not a standing index file instead:** neither
+   `amplifi-insights/SKILL.md` nor `amplifi-qa/SKILL.md`'s Step 0 actually
+   knows how to read or resolve through an index file, both only ever
+   enumerate `clients/*` folders directly and match each one's own
+   `brief.md` Snapshot table, so a session supplied with only an index in
+   place of the real briefs still can't perform the resolution either
+   skill requires ~ it has to stop or silently bypass the check either
+   way, the same failure this whole fix exists to close (Codex catch,
+   2026-07-19: an earlier draft of this fix offered an index as an
+   equally-valid alternative when it isn't one, since neither skill was
+   ever taught to consume it). If truly attaching only one client's files, name the account
    explicitly as a pre-verified override ("this session is confirmed
    `{client}` at `clients/{folder}/`, skip the collision scan") so the
    skills have a documented, deliberate reason to skip enumeration rather

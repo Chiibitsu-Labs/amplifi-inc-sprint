@@ -212,15 +212,28 @@ grouping rule below for why that corrupts cross-week recurrence).
      terminology correction, or formatting deviation ~ "this client hates
      the word 'viral'," "always spell out their product name in full")
      **goes to THAT client's `clients/{x}/brand-standard.md` instead,
-     under its "Revision history lessons" section, per that file's own
-     documented mechanism and `ARCHITECTURE-MAP.md`'s workflow step 5**
-     ("every correction → `brand-standard.md` / FAQs ~ the same note
-     never twice"). Writing a client-specific lesson into the shared
-     `standards/` file would globalize one client's preference across
+     per `ARCHITECTURE-MAP.md`'s workflow step 5** ("every correction →
+     `brand-standard.md` / FAQs ~ the same note never twice") **~ and
+     that file's own documented mechanism is a TWO-PART write, not one:**
+     the extracted RULE itself moves into the applicable operative
+     section above (Voice & tone, Formatting rules, or Terminology,
+     whichever the correction actually is), and ONLY the correction STORY
+     ~ what happened, what rule got extracted ~ lands in "Revision history
+     lessons." Writing just the story and skipping the operative-section
+     update leaves the actual enforceable rule buried as historical
+     narrative that `amplifi-insights`/`amplifi-qa` never read as a
+     current requirement (both read the operative sections, not the
+     revision history, when generating or checking against this file) ~
+     the correction can then recur next cycle exactly as if it had never
+     been captured at all, defeating the purpose of promoting it (Codex
+     catch, 2026-07-19). Write both parts, every time: the rule up top,
+     the story in history. Writing a client-specific lesson into the shared
+     `standards/` file instead would ALSO be wrong, a different failure ~
+     it would globalize one client's preference across
      every account; leaving it uncaptured because the shared file felt
      like the only STANDARD destination would let the same correction
-     recur next cycle, exactly what `brand-standard.md`'s revision-history
-     section exists to prevent (Codex catch, 2026-07-19). Resolve `{x}`
+     recur next cycle too, exactly what `brand-standard.md`'s two-part
+     mechanism exists to prevent. Resolve `{x}`
      the SAME way the `CLIENT-FACT` bullet above does ~ against the
      learning's own client identity (header or `[ClientName]` bracket),
      matched to the actual slugged folder via `brief.md` Snapshot, never

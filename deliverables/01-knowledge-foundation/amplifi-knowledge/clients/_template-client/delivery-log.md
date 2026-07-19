@@ -192,7 +192,17 @@
    Codex catch, 2026-07-19) ~ `Status` to
    **`revising (reopened)`, NOT bare `revising`** (a new, distinct value,
    not a first-pass revision relabeled), then bump `Rounds` and add the dated cause per touch 3
-   above (which also re-stamps `Last Sent`), repeating touch 3 for as many
+   above ~ **which means `Last Sent` follows touch 3's own two-step
+   sequence here too: BLANK it the instant this reopen is logged, then
+   stamp the real resend date only once the corrected version actually
+   goes back out, never re-stamp it immediately at reopen** (a reopened
+   row skipping the blank step and jumping straight to a fresh `Last
+   Sent` stamp would reproduce the exact pending-resend ambiguity touch
+   3/4's blank-`Last-Sent` rule exists to prevent, just on a
+   `revising (reopened)` row instead of a first-pass one ~ if the fix
+   then takes a while, the weekly silence scan could auto-accept a
+   reopened report that was never actually resent, Codex catch,
+   2026-07-19) ~ repeating touch 3 for as many
    additional rounds as this late feedback actually takes to resolve ~ a
    reopen isn't always exactly one round. Late feedback is
    still real rework on this
@@ -439,11 +449,12 @@ pipe in any cell (`Dale \| Janelle`), never a bare `|`.
   contradicting the trust rule stated elsewhere in this same file at the
   `Status` bullet below and `INSTRUMENT.md` §5a's gate (a), Codex catch,
   2026-07-19). A `cancelled` row's dated rounds are ALSO trusted, but
-  narrower still ~ gate (b)'s tag-share ONLY, never gate (a)'s
-  rounds-per-report numerator (a cancelled row never became a report, so
-  it has no place in gate (a)'s denominator either) ~ see
-  `INSTRUMENT.md` §5a's gate (b) definition for exactly why the two
-  gates read different round sets here.
+  narrower still ~ they feed a SEPARATE, corroborating count the
+  instrument tracks alongside FIX_CORPUS's reading, never gate (a)'s
+  numerator or gate (b)'s tag-share directly (a cancelled row never
+  became a report, so blending its rounds into either gate's core math
+  would decouple the reading from the reports it's supposed to describe)
+  ~ see `INSTRUMENT.md` §5a's gate (b) definition for the full reasoning.
 - **Effort (h)** ~ rough total hours, self-estimated, running total across
   every touch. Gut feel is fine; consistency beats precision.
 - **Rework tag** ~ **required, not optional, the moment `Rounds` goes above
