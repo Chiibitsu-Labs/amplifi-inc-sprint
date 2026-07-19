@@ -381,6 +381,22 @@ The pause itself is represented by simply not opening a touch-1 row for
 the next scheduled period, plus a note in `brief.md`/`context.md` on why
 ~ future-tense cadence changes and past-tense delivered cycles are
 different facts and belong in different places, never the same row.
+**If the pause is an actual suspension or end of the engagement (not a
+cadence change that still continues reporting on a different schedule),
+this SAME transition also requires flipping `brief.md`'s Snapshot
+`Account status` field to `paused` or `ended`, stamped with today's
+date ~ not just the unstructured note above.** That field is the ONLY
+structured source Instrument §5b's REDESIGN clustering-breadth predicate
+has for "the currently-active client roster"; leaving it `active` while
+representing the pause only through a missing row and free text keeps
+this account counted in that denominator indefinitely, which can make a
+genuinely broad slowdown misread as clustered/narrow simply because a
+paused or ended account is still being counted as available to trigger
+(Codex catch, 2026-07-19). A cadence change alone (the client keeps
+reporting, just on a different schedule) does NOT touch `Account status`
+~ that account is still active, just versioned to a new `Reporting
+cadence` per `brief.md`'s own note; only a genuine pause or end of the
+engagement itself changes this field.
 
 **Why `Status` exists:** without it, a report still mid-revision or still
 awaiting sign-off looks identical to one that shipped clean ~ all read

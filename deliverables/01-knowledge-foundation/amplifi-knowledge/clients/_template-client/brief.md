@@ -49,9 +49,10 @@
 > derive "the currently-active client roster" it needs and has no other
 > structured source for (Codex catch, 2026-07-19). Set to `active` at
 > onboarding; flip to `paused` the moment the client suspends future
-> reporting (`delivery-log.md`'s own supported transition, see its
-> `cancelled`-from-`open` rule for the per-cycle side of the same event)
-> or `ended` the moment the engagement genuinely concludes, stamping the
+> reporting, or `ended` the moment the engagement genuinely concludes
+> (`delivery-log.md`'s own "client pauses future reporting" transition
+> requires this SAME flip, in the same edit as its unstructured note ~
+> this field, not that note, is what the router actually reads), stamping the
 > date either happens ~ same "update it here, right when it happens"
 > discipline as "Amplifi lead analyst" above. A `paused`/`ended` client
 > is excluded from the active-client roster denominator entirely, not

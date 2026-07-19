@@ -71,17 +71,36 @@ two purposes: (1) the existence check (whether any prior row exists with
 not a full read for this purpose, only needed to distinguish "this is
 genuinely period one" from "the capture loop broke," see the exception
 below), and (2) **capturing THIS cycle's own row `Period` value
-verbatim**, from the client's currently `open` row (the cycle this draft
-is being generated for) ~ carry that exact string forward to Step 4's
+verbatim**, from the client's `open` row FOR THE PERIOD THIS DRAFT IS
+BEING GENERATED FOR ~ carry that exact string forward to Step 4's
 mandatory insight-log trailer, whose heading MUST be this row's `Period`
 value, never independently re-typed or reconstructed from the request's
-own wording. `insight-log.md`'s intro section requires this exact match
+own wording. **This is NOT always "the client's currently open row,"
+singular ~ `delivery-log.md`'s own row-creation rule opens the NEXT
+cycle's row on its scheduled `Start` regardless of whether the PRIOR
+cycle has shipped yet (deliberately, so an overdue report stays visible
+as backlog instead of vanishing), so a client can legitimately have MORE
+THAN ONE `open` row at once** (an overdue report still `open` while the
+next scheduled cycle has already opened its own row too). Picking "the"
+open row without matching it to the actual period requested can silently
+copy the WRONG row's `Period` into the trailer ~ every downstream
+lookup keyed on that heading (silent-acceptance scan, the
+substantive-revision procedure) would then target the wrong cycle's
+entry (Codex catch, 2026-07-19: this read assumed exactly one open row
+exists, which `delivery-log.md`'s own scheduled-open rule doesn't
+guarantee). **Resolve to the SPECIFIC open row whose own `Period` matches
+the period actually being drafted** (known from the request's own
+context ~ which cycle's data this session is generating insights from);
+if more than one `open` row exists for this client and the request
+doesn't carry enough to identify which one uniquely, STOP and ask which
+period, never silently pick the most recent or any other default.
+`insight-log.md`'s intro section requires this exact match
 for the silent-acceptance scan and the substantive-revision procedure to
 find "the matching entry" by period; a heading that merely LOOKS like the
 right period but isn't the identical string breaks both lookups. If no
-`open` row exists yet for this client (drafting ahead of the delivery-log
-touch that opens one), flag this and hold the trailer's heading as
-unresolved rather than inventing or guessing one (Codex catch,
+`open` row exists yet for this client at all (drafting ahead of the
+delivery-log touch that opens one), flag this and hold the trailer's
+heading as unresolved rather than inventing or guessing one (Codex catch,
 2026-07-19: this read was scoped to a first-period bootstrap existence
 check only, so an ordinary later-period run never captured the current
 row's exact `Period` value at all, leaving Step 4's trailer heading only
@@ -234,8 +253,26 @@ not one shared cutoff:
   bootstrap state, this is the capture loop having broken ~ flag it
   explicitly ("prior cycle(s) shipped per delivery-log.md but no
   insight-log entry exists ~ capture gap, not a first period") instead of
-  silently treating it as day one. Once `insight-log.md` holds its first
-  real entry, it's usable ~ read that entry (and any others) for the
+  silently treating it as day one. **Once `insight-log.md` holds its first
+  real entry, "usable" still needs a COVERAGE check, not just a
+  non-empty check ~ this same gap can recur at ANY later period, not just
+  the very first one.** A log with entries for periods 1 and 3, missing
+  period 2 entirely (period 2's ship-time capture-loop write silently
+  failed), reads as non-empty and would pass the "holds its first real
+  entry" test cleanly while drafting period 4 ~ but period 2 is
+  permanently missing from the trend this file exists to accumulate, with
+  nothing here ever flagging it (Codex catch, 2026-07-19: the first-period
+  check above only catches a TOTALLY empty log against shipped history;
+  once any real entry exists at all, coverage of every period IN BETWEEN
+  was never checked again). Before reading the log as the accumulated
+  trend, compare its entry headings against every prior row in
+  `delivery-log.md` with `Status = delivered`/`revising`/`revising
+  (reopened)`/`accepted` (the same shipped-history read used above) ~ any
+  shipped `Period` with no matching heading is a capture gap, flagged
+  explicitly the same way ("period {X} shipped per delivery-log.md but no
+  insight-log entry exists ~ capture gap"), not silently treated as if
+  that period simply had nothing worth noting. Read that entry (and any
+  others) for the
   trend, per the entry-level check above; an unused trailing placeholder
   block below the real entries doesn't make the file "missing" again.
 - **`context.md` (file 6): no fixed cutoff, exception lasts until it has

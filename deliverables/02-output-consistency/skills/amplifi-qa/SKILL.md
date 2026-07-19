@@ -101,7 +101,30 @@ Required inputs, all of them:
 2. The **current period's source data** (the same Sentimo/MCP exports the
    draft was generated from). Without it, check 4 cannot trace a single
    figure ~ so if it's not provided, STOP and ask for it. Never run
-   data-integrity blind and flag everything as untraceable.
+   data-integrity blind and flag everything as untraceable. **Before
+   trusting it for anything below, verify this file's OWN date range
+   actually covers the report's claimed period (the `Period` being QA'd,
+   or the exec summary's `{Month YYYY} · data window {start}–{end}`
+   stamp per `report-template-rules.md`'s Fresh-data rules) ~ don't just
+   confirm a file was provided, confirm it's the RIGHT one.** Every
+   figure in a report can trace perfectly to a Sentimo/MCP export that is
+   itself the WRONG period's pull (an analyst attaching last month's
+   export by mistake) and this data-integrity check would still pass
+   every one of them, because tracing a number to its source file says
+   nothing about whether that source file is honestly this period's data
+   (Codex catch, 2026-07-19: `report-template-rules.md`'s own Fresh-data
+   rules promise this exact cross-check ~ "the QA skill cross-checks the
+   deck's period stamp against the data window" ~ but check 4 below never
+   actually implemented it, only tracing individual figures against
+   whatever export happened to be provided). Parse the export's own
+   period/date-range metadata (Sentimo/MCP pulls carry this, the same
+   place source (d) below reads a labeled comparison-period value from)
+   and compare it against the report's period. **On a mismatch, this is a
+   BLOCKING flag, not a data-integrity note buried in check 4's output**
+   ~ the entire ship-clearance pass is unreliable off a wrong-period
+   export, not just the figures that happen to differ, so surface it at
+   the top the same way a missing export gets surfaced, before running
+   anything else against that file.
 3. From `amplifi-knowledge/`:
    - `standards/what-good-looks-like.md` (use its checklist section)
    - `standards/house-voice.md`
