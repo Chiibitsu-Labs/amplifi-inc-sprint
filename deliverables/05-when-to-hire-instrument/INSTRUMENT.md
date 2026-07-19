@@ -1415,8 +1415,17 @@ above by hand:
    like a rework spike" false fire task 2.2 already identified and fixed
    for the manual walkthrough (Codex catch, 2026-07-19: the coded version
    inherited the same bug the manual version was already patched for).
-   Code the window as `max(trailing 90 days, Sep 4)` for its lower bound
-   until the rolling 90-day window's own start date passes Sep 4 on its
+**Pin this to the literal ISO date `2026-09-04`, never a bare `Sep 4`
+   the code re-parses at runtime** ~ a date library handed `"Sep 4"` with
+   no year can resolve it to the CURRENT runtime year (silently sliding
+   this supposedly one-time, permanent epoch forward every single year
+   the router keeps running) or to some other parser-dependent default,
+   either of which defeats the entire point of a fixed historical floor
+   (Codex catch, 2026-07-19). `2026-09-04` is a hard-coded constant, set
+   once, never recalculated ~ **every other "Sep 4" reference in this
+   document, in every gate/test/example that uses it, means this SAME
+   pinned `2026-09-04`, nowhere else re-derived or re-parsed.** Code the window as `max(trailing 90 days, 2026-09-04)` for its lower bound
+   until the rolling 90-day window's own start date passes `2026-09-04` on its
    own, at which point the epoch clamp becomes a no-op and can stay in the
    code harmlessly rather than needing a removal step. REDESIGN's on-cadence/cycle-time reads stay row-level and
    `Due`-anchored (a row is in or out based on its own `Due` date).
@@ -1427,9 +1436,9 @@ above by hand:
    it's logged, per `delivery-log.md`) to those whose OWN date falls in
    the trailing 90 days, across every row with STATUS `accepted` OR
    `revising (reopened)` regardless of that row's `Due`, AND whose OWN
-   `Start` is ≥ Sep 4 (NOT bare
+   `Start` is ≥ the pinned `2026-09-04` epoch (NOT bare
    `revising`, NOT `delivered`, and NOT `cancelled` either ~ see below for
-   why).** **The `Start ≥ Sep 4` piece applies at the ROW level, gating a
+   why).** **The `Start ≥ 2026-09-04` piece applies at the ROW level, gating a
    row's dated rounds out of the numerator entirely, not just its
    zero-round denominator seat ~ this is deliberate, and it's what
    actually closes the set (ii) loophole below.** A row whose `Start`
@@ -1886,19 +1895,33 @@ above by hand:
      leaving the covering backup's fully-explained elevation counted as
      independent portfolio-wide strain, letting HIRE clear on evidence
      that's actually this one narrow signal wearing a broad-elevation
-     costume (Codex catch, 2026-07-19). **Check delivery-log's most
-     recent row for this client too, specifically for active cover, NOT
-     for ownership** (a DIFFERENT question from the one the "NOT the
-     delivery-log's most recent row" rule above answers) ~ if the most
-     recent row's `Analyst` is the backup, not the lead, add the backup to
-     THIS exclusion set alongside the lead for this evaluation only; a
-     backup shipping the most recent cycle is exactly the observable
-     signal of who's carrying the load today, even though (per the rule
-     above) it says nothing reliable about who PERMANENTLY owns the
-     account. If the lead has resumed and shipped since (their name is the
-     most recent `Analyst`), no backup exclusion applies ~ cover has
-     ended, and counting the backup's elevation from unrelated clients as
-     portfolio-wide is correct again.
+     costume (Codex catch, 2026-07-19). **Don't try to infer active cover
+     from delivery-log's most recent row, though ~ that reproduces the
+     EXACT staleness problem the ownership rule above already rules out,
+     one step downstream:** a backup who shipped the most recent cycle
+     still reads as "most recent" even after the lead has already
+     resumed and simply hasn't shipped the NEXT cycle yet at walkthrough
+     time, so a mechanical "most-recent-Analyst-is-the-backup ⇒ exclude
+     the backup" rule can keep excluding a backup whose CURRENT elevation
+     is actually unrelated accounts, not this client at all ~ suppressing
+     a genuine, independently-real HIRE finding instead of correctly
+     scoping a narrow one (Codex catch, 2026-07-19: an earlier draft of
+     this exact fix used the most-recent-row signal, reintroducing the
+     staleness bug into the exclusion set after just having ruled it out
+     for ownership). **No reliable automated signal for "who's actively
+     covering RIGHT NOW" exists anywhere in this corpus** ~ `brief.md`
+     only tracks permanent reassignment, and delivery-log's most recent
+     row is stale exactly when it matters most (right as cover ends).
+     Treat this as a human-confirmation step, not an inference rule: when
+     a narrow signal's client has a designated backup AND that backup
+     also reads WIP/load-elevated, Michele/Rica confirm out loud whether
+     an active temporary cover is genuinely still in place (ask the
+     analyst directly, don't infer from the log) before excluding the
+     backup ~ if confirmed active, exclude them from this evaluation only;
+     if cover has actually ended, count their elevation as independent
+     portfolio-wide evidence like anyone else's, same as WIP's own
+     healthy-seed and quiet-window guards already handle their own
+     un-automatable judgment calls elsewhere in this doc.
      **This mapping is only as good as the name's spelling, though ~
      `brief.md`'s own field note now requires the EXACT capchecker
      identity here, same rule `delivery-log.md`'s `Analyst` field already
