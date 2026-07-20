@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { SESSION_COOKIE } from "@/lib/config";
-import { verifySessionToken } from "@/lib/session";
+import { SESSION_COOKIE } from "./lib/config";
+import { verifySessionToken } from "./lib/session";
 
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico|logos|fonts|pdfs).*)"],
