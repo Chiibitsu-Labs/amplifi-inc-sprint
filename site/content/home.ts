@@ -91,6 +91,6 @@ export const homeHtml = `
 
 <div class="callout"><b>What this deliberately doesn't cover:</b> supplier/vendor pains, a Canva replacement, new platforms, or the git migration — all real, all out of Core Build scope. See the <a href="/deliverable/4">roadmap</a> for why, and when to revisit.</div>
 
-<p class="lede" style="margin-top:2.2rem;">A section for the people behind this — team photos, the human side of the build — is coming. For now, this page and the five behind it are what to hand anyone who asks "what did the sprint actually do."</p>
+<p class="lede" style="margin-top:2.2rem;">Want the human side of it — the room, the agenda, the day this all came out of? See the <a href="/recap">sprint recap</a>. This page and the five behind it are what to hand anyone who asks "what did the sprint actually do."</p>
 
 `;

@@ -15,14 +15,4 @@ export const NAV_DELIVERABLES: NavItem[] = [
   { href: "/deliverable/5", n: "05", label: "When-to-Hire Instrument" },
 ];
 
-export const NAV_TEAM: NavItem = { href: "/team", n: "—", label: "The people", soon: true };
-
-export const PAGE_TITLES: Record<string, string> = {
-  "/": "Executive Overview",
-  "/deliverable/1": "Knowledge Foundation Blueprint",
-  "/deliverable/2": "Output Consistency & Quality System",
-  "/deliverable/3": "AI Ecosystem Architecture Map",
-  "/deliverable/4": "Prioritized Implementation Roadmap",
-  "/deliverable/5": "When-to-Hire Instrument",
-  "/team": "The Team",
-};
+export const NAV_RECAP: NavItem = { href: "/recap", n: "—", label: "Sprint Recap" };

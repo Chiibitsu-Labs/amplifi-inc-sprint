@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { NAV_OVERVIEW, NAV_DELIVERABLES, NAV_TEAM } from "@/lib/nav";
+import { NAV_OVERVIEW, NAV_DELIVERABLES, NAV_RECAP } from "@/lib/nav";
 
 function NavLink({ href, n, label, soon, active }: { href: string; n: string; label: string; soon?: boolean; active: boolean }) {
   return (
@@ -81,9 +81,9 @@ export function Rail({ open, onClose }: { open: boolean; onClose: () => void }) 
           <NavLink key={item.href} {...item} active={pathname === item.href} />
         ))}
         <div className="nav-label" style={{ marginTop: "1.1rem" }}>
-          Team
+          The Day
         </div>
-        <NavLink {...NAV_TEAM} active={pathname === NAV_TEAM.href} />
+        <NavLink {...NAV_RECAP} active={pathname === NAV_RECAP.href} />
       </nav>
       <div className="rail-foot">
         <ThemeToggle />
