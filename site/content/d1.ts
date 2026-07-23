@@ -2,10 +2,11 @@ export const d1Html = `
 <div class="cover">
   <div class="eyebrow"><span class="num">01 / 05</span> Deliverable · Knowledge Foundation</div>
   <h1>The Knowledge Foundation</h1>
-  <p class="dek">Before any AI vision, the workflow has to be known and organized. This is that housekeeping — one shared home for how the analyst function actually works, built and owned by the team.</p>
+  <p class="dek">The vision comes first. This is the middle step it earns — the real workflow, organized, in one shared home the whole analyst function reads from.</p>
   <div class="cover-meta">
     <span><b>Status</b> Live — on the team's shared Drive</span>
     <span><b>Built by</b> The analysts, live in the room</span>
+    <span><b>Foundation</b> <a href="https://drive.google.com/drive/u/3/folders/0AN2kR-z80lGjUk9PVA" target="_blank" rel="noopener">View the shared Drive ↗</a> <span class="tag">Amplifi team access</span></span>
   </div>
   <div class="cover-actions">
     <a class="btn btn-primary" href="/pdfs/amplifi-01-knowledge-foundation.pdf" download="amplifi-01-knowledge-foundation.pdf">Download PDF</a>
@@ -20,9 +21,10 @@ export const d1Html = `
 </blockquote>
 <p>Right now that knowledge lives across "Canva, Claude, and the respective laptops of the analysts." Scattered, person-locked, re-explained every engagement. This deliverable is exactly the thing the intake named — now built, and sitting in one place the whole team can read.</p>
 
-<h2>Why this comes first, before the AI</h2>
-<p>Knowing how the workflow really runs — operationally, not in theory — is half the battle. Knowing what's now possible with AI is the other half. The sprint put both in the team's hands at once, together, instead of leaving anyone to work it out siloed or on their own.</p>
-<p>So the order matters. The AI vision doesn't come first — it's only ever as good as how well the team knows and organizes their real workflow. Clean the workflow, then transform it. This foundation is that clean-up: the housekeeping everything else gets built on.</p>
+<h2>Vision first. Then the workflow. Then the tools.</h2>
+<p>The vision comes first — not which tools to use, but the transformation the team actually wants. Ask that without any constraints, and the real question gets sharp fast: what would this look like if it actually worked?</p>
+<p>That question is what earns everything after it. Once the vision was clear, the sprint went deep on the real workflow — where it actually breaks, and getting it organized. Then the team practiced that organized workflow themselves, as people, before AI touched any of it. AI implementation comes last, on purpose: by the time it arrives, the vision is set and the team already knows the workflow cold, so the AI has something real to work with instead of a guess.</p>
+<p>This foundation is that middle step, done: the workflow, organized, in one place.</p>
 
 <h2>How to think about it</h2>
 <div class="grid grid-2">
@@ -45,11 +47,11 @@ export const d1Html = `
 </div>
 
 <h2>It maintains itself as you work</h2>
-<p>The foundation gets smarter as a byproduct of the work, not as a separate task on someone's list. The team committed to growing it with their function — and the capture skill does the filing.</p>
+<p>The foundation gets smarter as a byproduct of the work, not as a separate task on someone's list. The team committed to growing it with their function — and <code>amplifi-improve</code> does the filing.</p>
 <div class="flow">
   <div class="flow-node"><span class="label">1 · Do the work</span><p>A report ships, a client preference surfaces, a correction lands.</p></div>
   <div class="flow-arrow">→</div>
-  <div class="flow-node"><span class="label">2 · The AI captures it</span><p>The capture skill logs what was learned into the foundation, dated and in place.</p></div>
+  <div class="flow-node"><span class="label">2 · amplifi-improve captures it</span><p>The skill logs what was learned into the foundation, dated and in place.</p></div>
   <div class="flow-arrow">→</div>
   <div class="flow-node"><span class="label">3 · Next time, it knows</span><p>The lesson is already there. No one re-explains the same thing twice.</p></div>
 </div>
@@ -65,7 +67,7 @@ export const d1Html = `
 <h2>What it must not become</h2>
 <p>Not a second inbox. Not a wiki nobody maintains. Not a place where "we'll document it later" quietly turns into never. The just-in-time habit and the AI doing the upkeep are the guardrails against all three.</p>
 
-<div class="callout"><b>Take the capture skill with you.</b> Each person can install the same skill on their own machine, so their learnings log themselves into the foundation automatically — no extra step. <a href="https://github.com/Chiibitsu-Labs/2nd-brain-kit">Get the capture skill →</a></div>
+<div class="callout"><b>Take <code>amplifi-improve</code> with you.</b> The same skill that captures for the knowledge base is what closes the loop on Deliverable 2 — one skill, installed once, filing for both. <a href="/deliverable/2">See how it works →</a></div>
 
 <hr class="hr" />
 <p class="brand-close">Chiibitsu Labs — more human, by design.</p>
