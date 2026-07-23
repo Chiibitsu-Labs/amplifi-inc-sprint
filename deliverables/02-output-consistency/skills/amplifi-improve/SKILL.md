@@ -307,6 +307,15 @@ grouping rule below for why that corrupts cross-week recurrence).
      matched to the actual slugged folder via `brief.md` Snapshot, never
      the raw display name; flag to Rica rather than guess if no folder
      matches or more than one plausibly does, same as `CLIENT-FACT`.
+     **Every `STANDARD` write also bumps that file's own Changelog** (both
+     destinations carry one, per `amplifi-onboarding`'s first-fill
+     convention): patch (0.1.x) for a wording/value tweak, minor (0.x.0)
+     for a new rule or bar item added, major (x.0.0) reserved for a full
+     re-fill. Add the dated changelog line at the top alongside the
+     version bump ~ don't edit the operative section (or, for
+     `brand-standard.md`, the Revision history) without also recording
+     that the file's version moved, or the Changelog stops being a
+     trustworthy record of when the file actually changed.
    - `CONTRADICTS` → the correction, highlighted for Rica's explicit yes/no
    - `REWORK` / `PROCESS` → append a dated pattern entry (theme, count,
      which clients) to `learnings/patterns.md` ~ the durable, append-only

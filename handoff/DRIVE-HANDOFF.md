@@ -9,7 +9,7 @@ grows under their roof. Chii's repo remains the reference/spec copy.
 | From (repo) | To (Amplifi Drive) | Becomes |
 |---|---|---|
 | `deliverables/01-knowledge-foundation/amplifi-knowledge/` | shared folder `amplifi-knowledge/` at the team's Drive root | **the live corpus** ~ the one home |
-| `deliverables/02-output-consistency/skills/*/SKILL.md` | (a) the write-capable client (Claude Code or equivalent, via Drive for Desktop) for ALL THREE skills, ideally ~ Claude Enterprise as a fallback for `amplifi-insights`/`amplifi-qa` only if local sync isn't set up, (b) `amplifi-knowledge/skills/{skill-name}/SKILL.md` in Drive (one subfolder per skill, NOT three files flattened into one folder ~ they'd collide on the shared filename) | (a) the three live skills, one client where possible (see step 6), (b) **Amplifi's owned copy** ~ see steps 4–6 |
+| `deliverables/02-output-consistency/skills/*/SKILL.md` | (a) the write-capable client (Claude Code or equivalent, via Drive for Desktop) for ALL FOUR skills, ideally ~ Claude Enterprise as a fallback for `amplifi-insights`/`amplifi-qa` only if local sync isn't set up, (b) `amplifi-knowledge/skills/{skill-name}/SKILL.md` in Drive (one subfolder per skill, NOT four files flattened into one folder ~ they'd collide on the shared filename) | (a) the four live skills, one client where possible (see step 6), (b) **Amplifi's owned copy** ~ see steps 4–6. `amplifi-onboarding` is the one to actually run first ~ it installs the other three and bootstraps the standards fill (step 8) in one pass |
 | `BLUEPRINT.md`, `CONSISTENCY-SYSTEM.md`, `ARCHITECTURE-MAP.md`, `ROADMAP.md`, `INSTRUMENT.md` | a `deliverables/` folder in Drive (reading copies) | the engagement documents Michele circulates |
 
 ## Steps (~30 minutes, Chii + Michele)
@@ -149,6 +149,10 @@ grows under their roof. Chii's repo remains the reference/spec copy.
    `~/.claude/skills/{skill-name}/SKILL.md` for a user-level install) ~
    `amplifi-insights/SKILL.md`, `amplifi-qa/SKILL.md`, AND
    `amplifi-improve/SKILL.md` each need their own subfolder there.
+   **`amplifi-onboarding/SKILL.md` (install it too, then run it once) does
+   this install step AND step 8's standards fill in one pass** ~ point
+   whoever's setting up their own machine at it instead of doing this
+   install manually and separately scheduling the extraction hour below.
    Connecting Drive (step 4) makes the CORPUS reachable, and Drive for
    Desktop's filesystem access is what makes writes possible, but neither
    one installs a SKILL ~ without this step, following this tier as

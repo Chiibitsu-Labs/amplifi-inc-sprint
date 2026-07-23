@@ -1,0 +1,146 @@
+---
+name: amplifi-onboarding
+description: One pass, run once per analyst per machine. Installs amplifi-insights, amplifi-qa, and amplifi-improve into this client, then bootstraps the shared standards files (and, in a client context, that client's brand-standard.md) from real, already-approved work — live, during onboarding, instead of a separately-scheduled extraction session. Idempotent: re-running skips anything already Status LIVE and offers a refresh pass instead. Use for the initial team rollout, and again for anyone who joins the analyst function later.
+---
+
+# Amplifi Onboarding ~ Install Once, Standard Bootstraps Live
+
+Two jobs, one pass: **install** the toolchain, then **bootstrap** the
+standard from whoever's onboarding own real work. Nobody schedules a
+separate documentation hour for this ~ the fill happens as a byproduct of
+sitting down with Claude for the first time, same "just-in-time, not the
+cathedral" principle the corpus itself runs on.
+
+**Resolve the live `amplifi-knowledge/` root before any step below**,
+same requirement `amplifi-insights`, `amplifi-qa`, and `amplifi-improve`
+each state for themselves ~ this skill's own file lives at
+`.claude/skills/amplifi-onboarding/SKILL.md` (project- or user-level),
+a different filesystem location from the Drive-synced corpus. Confirm the
+real, synced path to `amplifi-knowledge/` before touching anything below;
+don't assume the invoking client's working directory already is it.
+
+## Step 1 ~ Install the toolchain
+
+Check whether `amplifi-insights`, `amplifi-qa`, and `amplifi-improve` are
+already present in this client's own skills location (for Claude Code:
+`.claude/skills/{name}/SKILL.md`, project- or user-level; see
+`DRIVE-HANDOFF.md` step 6 for which tier applies). For each one missing,
+copy it in from `amplifi-knowledge/skills/{name}/SKILL.md` (Amplifi's own
+owned copy, per `DRIVE-HANDOFF.md` step 5 ~ never from Chii's reference
+repo, which can drift from what Amplifi actually has live).
+
+If `amplifi-knowledge/skills/` itself doesn't have all three yet, this
+machine can't be the first install ~ stop and flag it: the Drive handoff's
+step 5 hasn't finished, and installing from an incomplete source risks
+installing a stale or partial skill. Don't improvise a copy from anywhere
+else.
+
+Verify each install the same way `DRIVE-HANDOFF.md` step 4/6a already do:
+fresh session, confirm the skill actually runs and reads the corpus back.
+Don't report "installed" for a file that's present but hasn't actually
+been exercised once.
+
+## Step 2 ~ Bootstrap the shared standards (once per Amplifi-wide file)
+
+Three files in `standards/` carry a `Status: FRAME` / `Status: LIVE`
+marker: `what-good-looks-like.md`, `house-voice.md`,
+`report-template-rules.md`. **Check each file's actual Status before
+touching it ~ this step is per-file, not all-or-nothing.** A file already
+`Status: LIVE` means someone already ran this bootstrap (or the old
+manual extraction) for it; skip straight to Step 4 (refresh) for that one
+file instead of re-filling it from scratch.
+
+For each file still `Status: FRAME`:
+
+1. **Use that file's own "How to fill this file" section and extraction
+   prompt** ~ they already exist, already know the right source
+   (`what-good-looks-like.md`/`house-voice.md` from 2–3 gold reports,
+   `report-template-rules.md` from the live Canva template + brand kit,
+   deliberately different sources). This skill doesn't reinvent that
+   process, it just runs it live instead of waiting on a scheduled hour.
+2. **Ask whoever's onboarding for the real source material** ~ their 2–3
+   best reports, or the current Canva template exports, whichever the
+   file calls for. If they don't have an opinion on which reports are the
+   team's best work, that's a real stop, not a guess: ask, or fall back to
+   whatever the most recent client-accepted report is and say so plainly
+   in the changelog line (a provisional fill is fine; a silent guess
+   presented as the real bar is not).
+3. **Run the extraction prompt, then have the person onboarding edit the
+   draft** ~ same rule the file's own instructions already state: the
+   human authors the bar, the AI does the first pass. This skill doesn't
+   get to skip that review step just because it's now automatic.
+4. **Actually replace every `{...}` placeholder in the file** ~ not just
+   the instruction blockquote. `amplifi-insights`' Step 0 corpus-readiness
+   check runs an independent brace-scan on top of the Status marker
+   specifically because a file can have its Status flipped to LIVE while
+   still carrying real unfilled placeholder text underneath; don't
+   reproduce that gap by treating "Status says LIVE" as sufficient before
+   confirming every placeholder is actually gone.
+5. **Delete the instruction blockquote AND flip `Status: FRAME` to
+   `Status: LIVE`** ~ both, per the file's own rule; either alone doesn't
+   clear the corpus-readiness check.
+6. **Set the Changelog.** Change the header's `Version: 0.1.0 (unfilled)`
+   to `Version: 0.1.0`, and replace the seed changelog line's `{YYYY-MM-DD}`
+   with today's actual date and `{N}` with the real count of sources used.
+   This is the file's first real version ~ every later edit from
+   `amplifi-improve`'s Mode 2 promotion pass bumps it from here, per each
+   file's own Changelog section rules (patch for a tweak, minor for a new
+   rule, major for a full re-fill).
+
+## Step 3 ~ Bootstrap this client's brand-standard.md (if run in a client context)
+
+If this onboarding pass is happening alongside a specific client's setup
+(not just the shared Amplifi-wide standards), and that client's
+`clients/{slug}/brand-standard.md` is still the unfilled template: run the
+same fill using that client's kickoff material (brief, past presentations,
+any voice/terminology notes already in `brief.md`'s FAQ) as the source,
+the person onboarding edits the draft, replace every placeholder, set
+`Version: 0.1.0` and the first Changelog line the same way Step 2 does.
+Resolve `{slug}` the same way every other skill does ~ list `clients/*`
+and match the requested client against each folder's `brief.md` Snapshot,
+never assume the display name is the folder name.
+
+Skip this step entirely for a purely internal/team onboarding pass with no
+specific client in view ~ Step 2's three shared files are what every
+analyst needs regardless; a client's own `brand-standard.md` only needs
+filling once real work with that client exists to draw from.
+
+## Step 4 ~ Refresh pass (a file already Status: LIVE)
+
+Onboarding a later analyst, or re-running against a materially better set
+of gold reports, doesn't mean re-filling a file from zero. For a file
+already `Status: LIVE`: read what's there, ask whether anything in it is
+now wrong or thin given the new source material, and if so **treat the
+edit exactly like `amplifi-improve`'s Mode 2 promotion** ~ bump the
+version (patch/minor per that file's own Changelog rules), add a dated
+changelog line describing what changed and why, never silently overwrite
+without a version bump. If nothing needs to change, don't touch the file
+just to have touched it ~ a live file with nothing new to say gets left
+alone.
+
+## Step 5 ~ Report back
+
+End with a plain summary, not a claim of "done" that outruns what actually
+happened:
+
+- Which of the three skills were already installed vs. freshly installed
+  this session, and whether each was verified (Step 1).
+- Which standards files are now `Status: LIVE` for the first time, which
+  were already live and left alone, and which are still `Status: FRAME`
+  because no source material was available this session ~ name what's
+  still missing and who'd need to supply it, don't leave it ambiguous.
+- If a client's `brand-standard.md` was filled (Step 3), name the client.
+
+Never report a file as filled if any placeholder inside it wasn't actually
+replaced, and never report a skill as installed if it wasn't run once to
+confirm.
+
+---
+
+*This skill is new (built {2026-07-23}) and hasn't been through the same
+adversarial hardening pass the other three skills have. Treat it as a
+solid working v1 ~ if a real onboarding run surfaces a gap, capture it with
+`amplifi-improve` like any other process friction, same as this corpus
+learns anything else.*
+
+*Chiibitsu Labs ~ more human, by design.*
