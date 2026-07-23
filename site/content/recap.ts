@@ -75,8 +75,17 @@ export const recapHtml = `
 <div class="callout"><b>Each person, one commitment.</b> Not a plan handed down from the top. Everyone named the one thing they're owning from here, in their own words. That's what makes it hold.</div>
 
 <h2>Photos</h2>
-<p class="lede">The room, the wall of sticky notes, the buddy-builds, the team at work.</p>
-<div class="callout"><b>From the day.</b> <a href="https://drive.google.com/drive/folders/1Pe0-TelvQLJDgneThQAL1RrUF_Nr85Ha?usp=drive_link" target="_blank" rel="noopener">Browse the photos →</a> · <a href="https://drive.google.com/drive/folders/11McOFr7WbnbiJfI4-aWvfFQ5uA5ycS4n?usp=drive_link" target="_blank" rel="noopener">Raw album →</a></div>
+<p class="lede">The room, the wall, the buddy-builds, the team at work.</p>
+<div class="photo-grid">
+  <figure class="is-wide"><img src="/Lego.jpg" alt="The whole team around the table, mid buddy-build, LEGO everywhere" /><figcaption>The buddy-build — briefing a partner in words only, the same skill as briefing an AI</figcaption></figure>
+  <figure><img src="/Dale-Mitch.jpg" alt="Dale and Michele with their finished LEGO builds" /><figcaption>Dale &amp; Michele — builds compared</figcaption></figure>
+  <figure><img src="/Rica-Janelle.jpg" alt="Rica and Janelle with their finished LEGO builds" /><figcaption>Rica &amp; Janelle</figcaption></figure>
+  <figure><img src="/Aubrey-Sen.jpg" alt="Aubrey and Sen with their matching buddy-builds" /><figcaption>Aubrey &amp; Sen — twin builds from words alone</figcaption></figure>
+  <figure><img src="/Affinity-Mapping.jpg" alt="Silent sticky-note mapping on the wall" /><figcaption>Silent mapping — the pain points go up on the wall</figcaption></figure>
+  <figure class="is-wide"><img src="/Analyst-Workflow.jpg" alt="The twelve workflow steps on pink sticky notes" /><figcaption>The 12 steps, in your own words — now the map on the <a href="/deliverable/3">architecture page</a></figcaption></figure>
+  <figure class="is-wide"><img src="/Post-Sprint-Group-Pic.jpg" alt="The team together at the end of the sprint day" /><figcaption>End of the day</figcaption></figure>
+</div>
+<p style="font-size:.82rem; color:var(--ink-faint);"><a href="https://drive.google.com/drive/folders/1Pe0-TelvQLJDgneThQAL1RrUF_Nr85Ha?usp=drive_link" target="_blank" rel="noopener">Full album →</a> · <a href="https://drive.google.com/drive/folders/11McOFr7WbnbiJfI4-aWvfFQ5uA5ycS4n?usp=drive_link" target="_blank" rel="noopener">Raw photos →</a></p>
 
 <hr class="hr" />
 <p class="brand-close">Chiibitsu Labs — more human, by design.</p>
