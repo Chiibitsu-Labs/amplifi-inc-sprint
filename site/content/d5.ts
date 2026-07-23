@@ -6,7 +6,7 @@ export const d5Html = `
   <div class="cover-meta">
     <span><b>Status</b> Capacity feed live · report feed builds as tracking fills in</span>
     <span><b>Owner</b> Michele Curran, COO</span>
-    <span><b>Live now</b> <a href="https://amplifi-capchecker.vercel.app" target="_blank" rel="noopener">Open the capacity checker ↗</a></span>
+    <span><b>Live now</b> <a href="https://amplifi.chiibitsu.com" target="_blank" rel="noopener">Open the capacity checker ↗</a></span>
   </div>
   <div class="cover-actions">
     <a class="btn btn-primary" href="/pdfs/amplifi-05-when-to-hire-instrument.pdf" download="amplifi-05-when-to-hire-instrument.pdf">Download PDF</a>
@@ -54,8 +54,8 @@ export const d5Html = `
 <div class="callout"><b>The output is never "hire: yes/no."</b> It's "here's what crossed, here's why the answer is this route, here's the evidence trail."</div>
 
 <h2>What's live today</h2>
-<p><a href="https://amplifi-capchecker.vercel.app" target="_blank" rel="noopener">The capacity checker is live</a> — daily check-ins from the team, Michele's morning summary, the dashboard. The report-level view is next, and once the whole thing is proven it moves to Amplifi's own domain and accounts, with a step-by-step migration guide — it was always yours to keep.</p>
-<a href="https://amplifi-capchecker.vercel.app" target="_blank" rel="noopener" style="display:block; margin:1.4rem 0 2rem;">
+<p><a href="https://amplifi.chiibitsu.com" target="_blank" rel="noopener">The capacity checker is live</a> — daily check-ins from the team, Michele's morning summary, the dashboard. The report-level view is next, and once the whole thing is proven it moves to Amplifi's own domain and accounts, with a step-by-step migration guide — it was always yours to keep.</p>
+<a href="https://amplifi.chiibitsu.com" target="_blank" rel="noopener" style="display:block; margin:1.4rem 0 2rem;">
   <img src="/amplifi-cap-checker.png" alt="The live Amplifi capacity dashboard — hire signal, automate/redesign signal, team load, and the who's-strained-when heatmap" style="width:100%; height:auto; border:1px solid var(--line-strong); border-radius:8px; display:block;" />
 </a>
 <p>The when-to-hire reading itself is usable <em>by hand</em>, right now — it doesn't wait on any dashboard code. Michele and Chii walk it monthly with the dashboard and the report tracking open side by side, the moment each has a few weeks of data.</p>
