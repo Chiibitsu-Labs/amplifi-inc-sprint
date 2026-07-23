@@ -4,7 +4,7 @@ export const d1Html = `
   <h1>The Knowledge Foundation</h1>
   <p class="dek">The vision comes first. This is the middle step it earns — the real workflow, organized, in one shared home the whole analyst function reads from.</p>
   <div class="cover-meta">
-    <span><b>Status</b> Live — on the team's shared Drive</span>
+    <span><b>Status</b> Live — on your team's shared Drive</span>
     <span><b>Built by</b> The analysts, live in the room</span>
     <span><b>Foundation</b> <a href="https://drive.google.com/drive/u/3/folders/0AN2kR-z80lGjUk9PVA" target="_blank" rel="noopener">View the shared Drive ↗</a> <span class="tag">Amplifi team access</span></span>
   </div>
@@ -19,10 +19,10 @@ export const d1Html = `
 <blockquote class="pull">A knowledge base across the analyst role — from client pitch to regular insights reporting.
   <cite>Michele Curran, COO — Inc Sprint intake</cite>
 </blockquote>
-<p>Right now that knowledge lives across "Canva, Claude, and the respective laptops of the analysts." Scattered, person-locked, re-explained every engagement. This deliverable is exactly the thing the intake named — now built, and sitting in one place the whole team can read.</p>
+<p>Right now that knowledge lives across "Canva, Claude, and the respective laptops of the analysts." Scattered, person-locked, re-explained every engagement. This deliverable is exactly the thing the intake named — now built, and sitting in one place your whole team can read.</p>
 
 <h2>Vision first. Then the workflow. Then the tools.</h2>
-<p>The vision comes first — not which tools to use, but the transformation the team actually wants. Ask that without any constraints, and the real question gets sharp fast: what would this look like if it actually worked?</p>
+<p>The vision comes first — not which tools to use, but the transformation you actually want. Ask that without any constraints, and the real question gets sharp fast: what would this look like if it actually worked?</p>
 <p>That question is what earns everything after it. Once the vision was clear, the sprint went deep on the real workflow — where it actually breaks, and getting it organized. The team practiced that organized workflow themselves next, AI already in hand as a partner, before the AI implementation itself got built out. Implementation comes last, on purpose: by the time it's built, the vision is set and the team already knows the workflow cold, so the AI has something real to work with instead of a guess.</p>
 <p>This foundation is that middle step, done: the workflow, organized, in one place.</p>
 
@@ -41,8 +41,8 @@ export const d1Html = `
     <p>This knowledge belongs to Amplifi, permanently — not Chiibitsu's, not the tool's. Whichever AI reads it next year, the vault doesn't move and you don't lose it.</p>
   </div>
   <div class="card">
-    <h3>Structure came from the team.</h3>
-    <p>The folders and the shape weren't handed down. The analysts organized their own foundation, live in the room, around how their work actually flows.</p>
+    <h3>Structure came from you.</h3>
+    <p>The folders and the shape weren't handed down. You organized your own foundation, live in the room, around how the work actually flows.</p>
   </div>
 </div>
 
@@ -57,7 +57,7 @@ export const d1Html = `
 </div>
 
 <h2>Where it goes next</h2>
-<p>The foundation is on Google Drive today, because that's what the team already has open. It matures from there — same knowledge, better home each step.</p>
+<p>The foundation is on Google Drive today, because that's what you already have open. It matures from there — same knowledge, better home each step.</p>
 <div class="timeline">
   <div class="tl-mark"><div class="d">Now — Google Drive</div><div class="t">Live, shared, editable by hand. Zero new software to learn.</div></div>
   <div class="tl-mark"><div class="d">Next — GitHub</div><div class="t">Versioned history and clean team-wide access, once the integration is enabled.</div></div>

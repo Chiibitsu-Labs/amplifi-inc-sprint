@@ -54,7 +54,7 @@ export const d2Html = `
 <p><code>amplifi-improve</code> is what keeps this from calcifying. It's the same skill that runs Deliverable 1's capture loop — every session's real lessons get written down, and the good ones get promoted into these standards files, so the definition of "good" keeps sharpening instead of going stale the day it was written.</p>
 
 <h2>Status</h2>
-<p><code>amplifi-insights</code>, <code>amplifi-qa</code>, and <code>amplifi-improve</code> are built and ready — that's done on our side. What's next isn't anyone's homework: it's the onboarding pass that installs all three and bootstraps each function's gold-standard files automatically. That's the top of Phase 1 on the <a href="/deliverable/4">roadmap</a>. From there, consistency depends on the team actually running it — the tool's built, the ball's in play.</p>
+<p><code>amplifi-insights</code>, <code>amplifi-qa</code>, and <code>amplifi-improve</code> are built and ready — that's done on our side. What's next isn't anyone's homework: it's the onboarding pass that installs all three and bootstraps each function's gold-standard files automatically. That's the top of Phase 1 on the <a href="/deliverable/4">roadmap</a>. From there, consistency depends on your team actually running it — the tool's built, the ball's in play.</p>
 
 <hr class="hr" />
 <p class="brand-close">Chiibitsu Labs — more human, by design.</p>

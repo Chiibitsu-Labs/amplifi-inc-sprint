@@ -29,7 +29,7 @@ export const homeHtml = `
   <div class="signal-card">
     <span class="status-pill scheduled">In progress</span>
     <p class="q">Near-real-time capacity view?</p>
-    <p class="a">Daily view live. Per-deliverable panel by Oct 9.</p>
+    <p class="a">Daily view live, tuned for today's walkthrough. Per-deliverable panel next — timing on the roadmap.</p>
     <p class="evidence"><a href="/deliverable/3">Architecture Map →</a></p>
   </div>
   <div class="signal-card">
@@ -45,9 +45,9 @@ export const homeHtml = `
     <p class="evidence"><a href="/deliverable/1">Knowledge Foundation →</a></p>
   </div>
   <div class="signal-card">
-    <span class="status-pill scheduled">Manual Sep 11 · automated Oct 9</span>
+    <span class="status-pill live">Manual · live now</span>
     <p class="q">A clear signal for when to hire?</p>
-    <p class="a">Yes. Usable by hand the moment there's data.</p>
+    <p class="a">Yes, by hand today. One of two feeds is live — the report-level feed builds as delivery logs fill in.</p>
     <p class="evidence"><a href="/deliverable/5">When-to-Hire Instrument →</a></p>
   </div>
 </div>
@@ -66,10 +66,8 @@ export const homeHtml = `
 <h2>What's next</h2>
 
 <div class="timeline">
-  <div class="tl-mark"><div class="d">Today — Jul 20</div><div class="t">Corpus live. Skills deployed to the first client.</div></div>
-  <div class="tl-mark"><div class="d">Aug 21</div><div class="t">Standards encoded. Delivery logs open.</div></div>
-  <div class="tl-mark"><div class="d">Sep 18</div><div class="t">AI-QA gate live. First manual hire-signal walkthrough (Sep 11).</div></div>
-  <div class="tl-mark"><div class="d">Oct 16</div><div class="t">Hire signal automated (Oct 9). Full review against this page.</div></div>
+  <div class="tl-mark"><div class="d">Jul 27</div><div class="t">Team onboarding starts — skills installed, everyone active.</div></div>
+  <div class="tl-mark"><div class="d">Next</div><div class="t">Full 30/60/90 build sequence, confirmed on the <a href="/deliverable/4">roadmap</a>.</div></div>
 </div>
 
 <div class="callout"><b>Out of Core Build scope:</b> supplier pains, a Canva replacement, new platforms, the git migration. The <a href="/deliverable/4">roadmap</a> says when to revisit each.</div>
