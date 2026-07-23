@@ -38,7 +38,7 @@ export const d5Html = `
 <tr><td><strong>Perceived load</strong></td><td>Daily 1–10 self-rating plus a reason — the earliest warning, since people feel strain before metrics show it</td><td>Capacity</td></tr>
 <tr><td><strong>Cycle time</strong></td><td>Period start to delivered — a slow climb here shows up weeks before a due date is actually missed</td><td>Delivery</td></tr>
 <tr><td><strong>On-cadence rate</strong></td><td>% of reports delivered by their due date</td><td>Delivery</td></tr>
-<tr><td><strong>Rework rounds</strong></td><td>Revision rounds before client acceptance — the team's #1 named pain, and usually a corpus gap, not a headcount gap</td><td>Delivery</td></tr>
+<tr><td><strong>Rework rounds</strong></td><td>Revision rounds before client acceptance — your team's #1 named pain, and usually a corpus gap, not a headcount gap</td><td>Delivery</td></tr>
 </tbody>
 </table>
 </div>
@@ -94,7 +94,7 @@ export const d5Html = `
 <h2>Hard rules</h2>
 <ul>
   <li><strong>Owned and portable.</strong> Signal data lives in the corpus and an exportable database — no vendor lock on the data itself.</li>
-  <li><strong>Runs on the stack already in use.</strong> Drive, Telegram, the tools the team already touches.</li>
+  <li><strong>Runs on the stack already in use.</strong> Drive, Telegram, the tools your team already touches.</li>
   <li><strong>Five signals, not twenty.</strong> Readable in 30 seconds, or it's wrong.</li>
   <li><strong>A router, not a binary.</strong> Never a bare hire/no-hire — always the evidence trail behind it.</li>
   <li><strong>Feeding it is never a second job.</strong> Three taps a day, one row opened per scheduled cycle, updated at ship, finalized at acceptance. That's the entire cost.</li>
