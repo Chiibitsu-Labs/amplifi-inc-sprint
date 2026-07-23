@@ -86,10 +86,14 @@ grows under their roof. Chii's repo remains the reference/spec copy.
 5. **Keep an owned copy ~ and know that editing it isn't enough on its
    own.** Copy each skill into its OWN subfolder in Drive ~
    `amplifi-knowledge/skills/amplifi-insights/SKILL.md`,
-   `.../amplifi-qa/SKILL.md`, `.../amplifi-improve/SKILL.md`. All three
-   source files are literally named `SKILL.md`; dumping them into one flat
-   folder means the second and third uploads silently overwrite the first.
-   This is Amplifi's own canonical record ~ without it, the operating
+   `.../amplifi-qa/SKILL.md`, `.../amplifi-improve/SKILL.md`, AND
+   `.../amplifi-onboarding/SKILL.md`. All four source files are literally
+   named `SKILL.md`; dumping them into one flat folder means each later
+   upload silently overwrites the one before it. This is Amplifi's own
+   canonical record for all four ~ `amplifi-onboarding` is the one every
+   new analyst is pointed at first, so it needs to live here as much as
+   the other three, not just get named in the summary table above. Without
+   this, the operating
    instructions for "how the analyst function uses AI" live only in
    Chii's reference repo and inside a vendor product; if Claude access
    changes or the lens swaps, Amplifi would be reconstructing its own
@@ -103,22 +107,26 @@ grows under their roof. Chii's repo remains the reference/spec copy.
    active, so check that first, don't assume the same split always
    applies:
    - **Running tier (a), one client (the deployment to aim for):** all
-     three skills ~ `amplifi-insights`, `amplifi-qa`, AND `amplifi-improve`
-     ~ live ONLY in the write-capable client's local skills location
-     (step 6a). Re-copy whichever skill changed there and re-verify (fresh
-     session, confirm the new behavior). Re-uploading to Claude Enterprise
-     does nothing here if Enterprise isn't the session actually doing the
-     work ~ that copy, if one still exists from an earlier setup, is
-     already dead weight.
+     four skills ~ `amplifi-insights`, `amplifi-qa`, `amplifi-improve`, AND
+     `amplifi-onboarding` ~ live ONLY in the write-capable client's local
+     skills location (step 6a). Re-copy whichever skill changed there and
+     re-verify (fresh session, confirm the new behavior). Re-uploading to
+     Claude Enterprise does nothing here if Enterprise isn't the session
+     actually doing the work ~ that copy, if one still exists from an
+     earlier setup, is already dead weight.
    - **Running tier (b), the fallback:** `amplifi-insights` / `amplifi-qa`
      live in Claude Enterprise ~ re-upload there (step 4), re-verify
-     (fresh session, confirm the new behavior). `amplifi-improve` lives
-     separately, in the write-capable client's local skills location
-     (step 6b) ~ re-copy it there too, independently. It's installed in
-     two places for two different reasons (drafting/QA access vs. write
-     access) and both copies go stale independently; updating only the
-     Enterprise copy leaves the write-capable session ~ the one that
-     actually runs captures ~ on the old behavior.
+     (fresh session, confirm the new behavior). `amplifi-improve` AND
+     `amplifi-onboarding` live separately, in the write-capable client's
+     local skills location (step 6b) ~ re-copy them there too,
+     independently. `amplifi-onboarding` needs the same write access
+     `amplifi-improve` does (it's the one that flips the standards files
+     to `Status: LIVE`), so it belongs on the write-capable side of this
+     split, not in Enterprise. Skills are installed in two places for two
+     different reasons (drafting/QA access vs. write access) and every
+     copy goes stale independently; updating only the Enterprise copy
+     leaves the write-capable session ~ the one that actually runs
+     captures and onboarding ~ on the old behavior.
    Don't tell anyone an update is live until every installed copy FOR THE
    TIER ACTUALLY IN USE is confirmed, not just the first one you
    remembered.

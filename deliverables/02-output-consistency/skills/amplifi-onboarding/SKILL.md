@@ -68,17 +68,30 @@ For each file still `Status: FRAME`:
 3. **Run the extraction prompt, then have the person onboarding edit the
    draft** ~ same rule the file's own instructions already state: the
    human authors the bar, the AI does the first pass. This skill doesn't
-   get to skip that review step just because it's now automatic.
+   get to skip that review step just because it's now automatic. **If the
+   person onboarding isn't Rica**, that edited draft is a proposal, not a
+   ship-ready file: roadmap item 1.2 assigns the shared-standard fill to
+   Rica, and `amplifi-improve` already requires her confirmation before any
+   promotion to these same three files. Send her the draft and wait for
+   her sign-off before item 5 below flips `Status: LIVE` ~ don't let a
+   first analyst who isn't Rica set the Amplifi-wide bar unreviewed.
 4. **Actually replace every `{...}` placeholder in the file** ~ not just
    the instruction blockquote. `amplifi-insights`' Step 0 corpus-readiness
    check runs an independent brace-scan on top of the Status marker
    specifically because a file can have its Status flipped to LIVE while
    still carrying real unfilled placeholder text underneath; don't
    reproduce that gap by treating "Status says LIVE" as sufficient before
-   confirming every placeholder is actually gone.
+   confirming every placeholder is actually gone. **Exception:**
+   `report-template-rules.md`'s own `{Month YYYY}`, `{start}`, and `{end}`
+   tokens (the period-stamp line) are permanent runtime placeholders, not
+   one-time fill-in text ~ `amplifi-insights` fills those fresh for every
+   report and exempts them from its own brace-scan for the same reason.
+   Leave those three exactly as written; only replace the fill-once
+   placeholders around them.
 5. **Delete the instruction blockquote AND flip `Status: FRAME` to
    `Status: LIVE`** ~ both, per the file's own rule; either alone doesn't
-   clear the corpus-readiness check.
+   clear the corpus-readiness check. Only do this once Rica has signed off
+   (item 3 above) when she wasn't the one onboarding.
 6. **Set the Changelog.** Change the header's `Version: 0.1.0 (unfilled)`
    to `Version: 0.1.0`, and replace the seed changelog line's `{YYYY-MM-DD}`
    with today's actual date and `{N}` with the real count of sources used.
