@@ -647,6 +647,14 @@ td.num{font-variant-numeric:tabular-nums;}
   line-height:1.35;
   color:var(--ink-soft);
 }
+.wall-card .pain{
+  display:block;
+  margin-top:.4rem;
+  font-family:'Public Sans';
+  font-size:.74rem;
+  line-height:1.35;
+  color:var(--flag);
+}
 @media (max-width:640px){ .wall-grid{grid-template-columns:repeat(2, 1fr);} }
 
 /* phase bar (roadmap at-a-glance) */

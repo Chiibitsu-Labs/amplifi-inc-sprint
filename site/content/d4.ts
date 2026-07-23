@@ -45,7 +45,7 @@ export const d4Html = `
 <table>
 <thead><tr><th>What happens</th><th>Who</th></tr></thead>
 <tbody>
-<tr><td>Turn on the two AI quality checks as a standing step in the report flow — one on the draft, one on the finished report, before it ever reaches the client</td><td class="owner">Rica, with Chii</td></tr>
+<tr><td>The quality checks become a habit: analysts run the AI check on every draft, and once more on the finished report before it goes to the client. Rica makes it the team routine; Chii tunes the check whenever it misses something or flags too much</td><td class="owner">Rica (routine) · Chii (tuning)</td></tr>
 <tr><td>Walk the when-to-hire signal by hand for the first time, together — Michele sets the first-pass "when does this feel like too much" lines</td><td class="owner">Michele + Chii</td></tr>
 <tr><td>Add the report-level feed to the capacity checker, so Michele sees cycle time, on-time rate, and revision rounds in the same place as daily load</td><td class="owner">Chii</td></tr>
 <tr><td>Once the capacity checker is working as intended, move it onto Amplifi's own accounts and domain — with a step-by-step migration guide. It was always yours to keep</td><td class="owner">Chii + your IT</td></tr>
@@ -62,10 +62,10 @@ export const d4Html = `
 <thead><tr><th>How often</th><th>What happens</th></tr></thead>
 <tbody>
 <tr><td class="owner">Every day</td><td>Three-tap check-in on how loaded everyone feels; a short summary lands with Michele each morning</td></tr>
-<tr><td class="owner">Every report</td><td>The quick tracking line — started, shipped, signed off</td></tr>
+<tr><td class="owner">Every report</td><td>Three quick notes per report: one when work starts, one when it's sent to the client, one when the client approves. Under two minutes total — and it's what makes the when-to-hire signal real</td></tr>
 <tr><td class="owner">Every week</td><td>A short pass that gathers what the team learned that week and files it into the knowledge base, so it keeps getting smarter</td></tr>
 <tr><td class="owner">Every month</td><td>Michele walks the when-to-hire signal and notes the call</td></tr>
-<tr><td class="owner">Every quarter</td><td>Tune the "too much" lines against what actually happened; check the knowledge base is still healthy</td></tr>
+<tr><td class="owner">Every quarter</td><td>Re-tune the alert thresholds — the numbers that decide when the dashboard flags "overloaded" or "off-track" — against what actually happened; check the knowledge base is still healthy</td></tr>
 </tbody>
 </table>
 </div>
@@ -84,6 +84,7 @@ export const d4Html = `
 </tbody>
 </table>
 </div>
+<div class="callout"><b>When any of these becomes real:</b> each one is a scoped build with Chiibitsu Labs — priced per project, sequenced by your own data, on the same playbook as this sprint. The ongoing rhythms above are what a retainer covers. Say the word and it gets a plan.</div>
 
 <h2>The original five goals</h2>
 <p>Checked at the 90-day review — the <a href="/">executive overview</a> shows live status against each.</p>
