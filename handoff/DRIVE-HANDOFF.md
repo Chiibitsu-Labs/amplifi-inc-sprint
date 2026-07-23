@@ -201,15 +201,21 @@ grows under their roof. Chii's repo remains the reference/spec copy.
    recap forward, typed once, right after finishing in Enterprise ~ 2-3
    sentences on what got corrected and what was learned, not a full
    transcript paste. `amplifi-improve` captures FROM that recap in this
-   mode, not from a session it never saw. Install `amplifi-improve` in
-   the write-capable client's own skills location (for Claude Code: the
-   project's `.claude/skills/amplifi-improve/SKILL.md`, or
-   `~/.claude/skills/amplifi-improve/SKILL.md` for a user-level install)
-   ~ uploading it to Claude Enterprise in step 4 does NOT make it
-   available there, that upload only registers the skill where it can't
-   write. Verify by running it once end-to-end with a real recap and
+   mode, not from a session it never saw. Install BOTH `amplifi-improve`
+   AND `amplifi-onboarding` in the write-capable client's own skills
+   location (for Claude Code: the project's
+   `.claude/skills/amplifi-improve/SKILL.md` and
+   `.claude/skills/amplifi-onboarding/SKILL.md`, or the `~/.claude/skills/`
+   equivalents for a user-level install) ~ uploading either to Claude
+   Enterprise in step 4 does NOT make it available there, that upload only
+   registers the skill where it can't write, and `amplifi-onboarding`
+   needs write access for the exact same reason `amplifi-improve` does
+   (it's the one flipping the standards files to `Status: LIVE`). Verify
+   `amplifi-improve` by running it once end-to-end with a real recap and
    confirming a real, meaningful file lands in `learnings/` ~ not just
-   that a file appears, that it reflects something that actually happened.
+   that a file appears, that it reflects something that actually
+   happened. Verify `amplifi-onboarding` the same way step 6a does: fresh
+   session, confirm it actually runs and reads the corpus back.
 
    Until either tier is fully set up, the skill outputs the learning
    file's content and asks the analyst to save it by hand ~ workable, but

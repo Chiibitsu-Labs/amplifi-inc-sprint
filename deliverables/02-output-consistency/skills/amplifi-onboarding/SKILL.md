@@ -146,7 +146,10 @@ happened:
 
 Never report a file as filled if any placeholder inside it wasn't actually
 replaced, and never report a skill as installed if it wasn't run once to
-confirm.
+confirm. **Exception:** `report-template-rules.md`'s `{Month YYYY}`,
+`{start}`, and `{end}` tokens (Step 2, item 4) are supposed to still be
+there ~ a correctly bootstrapped copy of that file has them; don't count
+those three against it when deciding whether to report it as filled.
 
 ---
 
