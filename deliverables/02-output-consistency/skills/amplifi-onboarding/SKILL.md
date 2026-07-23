@@ -66,7 +66,18 @@ touching it ~ this step is per-file, not all-or-nothing.** A file already
 manual extraction) for it; skip straight to Step 4 (refresh) for that one
 file instead of re-filling it from scratch.
 
-For each file still `Status: FRAME`:
+**A file at `Status: FRAME` isn't automatically a blank template either
+~ check its Changelog section before starting extraction.** If it already
+carries a dated "Drafted, pending Rica's approval" line (item 3 below)
+with no later resolution, someone already ran items 1–4 on it and is just
+waiting on her sign-off. Don't restart extraction and don't overwrite
+that draft. If Rica is the one onboarding now: skip straight to reviewing
+the existing draft, and once she signs off, finish at item 5/6. If she
+isn't: leave the file exactly as is and report it as still pending
+(Step 5) ~ don't touch it further this session.
+
+For each file genuinely still blank (`Status: FRAME`, no pending-approval
+changelog line):
 
 1. **Use that file's own "How to fill this file" section and extraction
    prompt** ~ they already exist, already know the right source
@@ -91,6 +102,12 @@ For each file still `Status: FRAME`:
    promotion to these same three files. Send her the draft and wait for
    her sign-off before item 5 below flips `Status: LIVE` ~ don't let a
    first analyst who isn't Rica set the Amplifi-wide bar unreviewed.
+   **Before ending the session either way, write a dated "Drafted,
+   pending Rica's approval" line into the file's Changelog section** ~
+   Status stays `FRAME` (it isn't live yet), but this line is what makes
+   the pending state durable and resumable across sessions instead of
+   something only this conversation remembers; it's what the check above
+   looks for on a later run.
 4. **Actually replace every `{...}` placeholder in the file** ~ not just
    the instruction blockquote. `amplifi-insights`' Step 0 corpus-readiness
    check runs an independent brace-scan on top of the Status marker
@@ -111,7 +128,11 @@ For each file still `Status: FRAME`:
 6. **Set the Changelog.** Change the header's `Version: 0.1.0 (unfilled)`
    to `Version: 0.1.0`, and replace the seed changelog line's `{YYYY-MM-DD}`
    with today's actual date and `{N}` with the real count of sources used.
-   This is the file's first real version ~ every later edit from
+   If a "Drafted, pending Rica's approval" line (item 3) is already
+   sitting in the Changelog from an earlier session, replace it with this
+   real entry rather than leaving both ~ the pending line's job was to
+   mark the wait, and the wait is over now that this is running. This is
+   the file's first real version ~ every later edit from
    `amplifi-improve`'s Mode 2 promotion pass bumps it from here, per each
    file's own Changelog section rules (patch for a tweak, minor for a new
    rule, major for a full re-fill).
