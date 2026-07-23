@@ -17,33 +17,28 @@ export const d3Html = `
 <div class="flow">
   <div class="flow-node"><span class="label">1 · Vault</span><p>The knowledge foundation — client briefs, standards, the corpus. Deliverable 1.</p></div>
   <div class="flow-arrow">→</div>
-  <div class="flow-node"><span class="label">2 · Workflow</span><p>The 12-step path a report actually travels, tool by tool.</p></div>
+  <div class="flow-node"><span class="label">2 · Workflow</span><p>The 12-step path the work actually travels, in the team's own words.</p></div>
   <div class="flow-arrow">→</div>
   <div class="flow-node"><span class="label">3 · Consistent output</span><p>Lens-produced, standard-checked, on-brand. Deliverable 2.</p></div>
   <div class="flow-arrow">→</div>
   <div class="flow-node"><span class="label">4 · The instrument</span><p>Reads the whole system to know when it's time to hire. Deliverable 5.</p></div>
 </div>
 
-<h2>The 12-step workflow</h2>
-<p>Every handoff marked by who — or what — owns that step.</p>
-<div class="table-wrap">
-<table>
-<thead><tr><th>#</th><th>Step</th><th>Owner</th></tr></thead>
-<tbody>
-<tr><td class="num mono">1</td><td>Cycle opens on schedule (delivery log row created)</td><td>Human</td></tr>
-<tr><td class="num mono">2</td><td>Client context pulled from the vault</td><td>Vault</td></tr>
-<tr><td class="num mono">3</td><td>Data gathered (the "long queue" pain point — see Roadmap 2.5)</td><td>Human</td></tr>
-<tr><td class="num mono">4</td><td>First draft written against the encoded standard</td><td>AI</td></tr>
-<tr><td class="num mono">5</td><td>AI-QA pass 1 — markdown draft vs. the standard</td><td>AI</td></tr>
-<tr><td class="num mono">6</td><td>Internal review and edit</td><td>Human</td></tr>
-<tr><td class="num mono">7</td><td>Data and copy transferred into the Canva template</td><td>Human</td></tr>
-<tr><td class="num mono">8</td><td>Deck assembled, styled to brand</td><td>Human</td></tr>
-<tr><td class="num mono">9</td><td>AI-QA pass 2 — rendered deck vs. the standard (ship gate)</td><td>AI</td></tr>
-<tr><td class="num mono">10</td><td>Delivered to client</td><td>Human</td></tr>
-<tr><td class="num mono">11</td><td>Client reaction logged; revisions cycle back to step 6 if needed</td><td>Human</td></tr>
-<tr><td class="num mono">12</td><td>Session captured; real lessons promoted into the vault</td><td>Vault</td></tr>
-</tbody>
-</table>
+<h2>The real workflow — mapped by the team, on the wall</h2>
+<p>Twelve steps, in the analysts' own words — silently mapped by each person, then walked through together in the room. This is the actual cycle, not a generic pipeline.</p>
+<div class="wall-grid">
+  <div class="wall-card"><span class="n">01</span><span class="step">Brief</span></div>
+  <div class="wall-card"><span class="n">02</span><span class="step">Baseline</span></div>
+  <div class="wall-card"><span class="n">03</span><span class="step">Internal Alignment</span></div>
+  <div class="wall-card"><span class="n">04</span><span class="step">Present</span></div>
+  <div class="wall-card"><span class="n">05</span><span class="step">Revisions</span></div>
+  <div class="wall-card"><span class="n">06</span><span class="step">Implement</span></div>
+  <div class="wall-card"><span class="n">07</span><span class="step">Monthly Analysis</span></div>
+  <div class="wall-card"><span class="n">08</span><span class="step">Insights</span></div>
+  <div class="wall-card"><span class="n">09</span><span class="step">Report</span></div>
+  <div class="wall-card"><span class="n">10</span><span class="step">Internal Alignment</span></div>
+  <div class="wall-card"><span class="n">11</span><span class="step">Client Presentation</span></div>
+  <div class="wall-card is-repeat"><span class="n">12</span><span class="step">Repeat</span></div>
 </div>
 
 <h2>Where AI enters, and where it doesn't</h2>
@@ -58,7 +53,7 @@ export const d3Html = `
   </div>
 </div>
 
-<h2>Tools, mapped to what they actually do</h2>
+<h2>Tools, and what they actually do for you</h2>
 <div class="table-wrap">
 <table>
 <thead><tr><th>Tool</th><th>Function</th></tr></thead>

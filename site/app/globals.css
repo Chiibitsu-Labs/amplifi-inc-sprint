@@ -611,6 +611,36 @@ td.num{font-variant-numeric:tabular-nums;}
 }
 @media (max-width:640px){ .flow{flex-direction:column;} .flow-arrow{transform:rotate(90deg); padding:.2rem 0;} }
 
+/* ============ Wall grid (real workflow, as it was mapped on the wall) ============ */
+.wall-grid{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:.65rem;
+  margin:1.6rem 0 2.2rem;
+}
+.wall-card{
+  background:var(--signal-tint);
+  border:1px solid var(--line-strong);
+  border-radius:3px;
+  padding:.85rem 1rem 1rem;
+}
+.wall-card .n{
+  font-family:'Public Sans';
+  font-weight:700;
+  font-size:.66rem;
+  letter-spacing:.06em;
+  color:var(--signal-strong);
+  display:block;
+  margin-bottom:.3rem;
+}
+.wall-card .step{
+  font-family:'Playfair Display';
+  font-weight:700;
+  font-size:1.02rem;
+}
+.wall-card.is-repeat{background:var(--paper-raised); border-style:dashed;}
+@media (max-width:640px){ .wall-grid{grid-template-columns:repeat(2, 1fr);} }
+
 /* ============ Timeline (roadmap) ============ */
 .timeline{
   display:flex;
