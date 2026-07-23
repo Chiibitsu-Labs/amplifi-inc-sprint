@@ -127,20 +127,26 @@ changelog line):
    Leave those three exactly as written; only replace the fill-once
    placeholders around them.
 5. **Now, with item 4's placeholder replacement actually done, check
-   whether Rica has signed off (item 3).** If she has (or she was the one
-   onboarding): delete the instruction blockquote AND flip `Status: FRAME`
-   to `Status: LIVE` ~ both, per the file's own rule; either alone doesn't
-   clear the corpus-readiness check. **If she hasn't yet:** write a dated
-   "Drafted, pending Rica's approval" line into the file's Changelog
-   section now ~ only now, after item 4 has confirmed every fill-once
-   placeholder is actually gone, never before it. Writing this marker
-   before item 4 completes is what makes the pending state falsely look
-   finished to a later session that trusts the marker and skips straight
-   to approval without re-checking placeholders. Status stays `FRAME`;
-   the marker is what makes the pending state durable and resumable
-   across sessions instead of something only this conversation
-   remembers ~ it's what Step 2's check above looks for on a later run.
-6. **Set the Changelog.** Change the header's `Version: 0.1.0 (unfilled)`
+   whether Rica has signed off (item 3).**
+   - **If she hasn't yet:** write a dated "Drafted, pending Rica's
+     approval" line into the file's Changelog section ~ only now, after
+     item 4 has confirmed every fill-once placeholder is actually gone,
+     never before it (writing this marker earlier is what makes the
+     pending state falsely look finished to a later session that trusts
+     it and skips straight to approval without re-checking placeholders).
+     Status stays `FRAME`; the marker is what makes the pending state
+     durable and resumable across sessions instead of something only
+     this conversation remembers ~ it's what Step 2's check above looks
+     for on a later run. **Stop here for this file** ~ don't continue
+     into item 6 this session; that's the approved branch only, and
+     running it now would finalize a version against a draft nobody's
+     signed off on yet.
+   - **If she has (or she was the one onboarding):** delete the
+     instruction blockquote AND flip `Status: FRAME` to `Status: LIVE`
+     ~ both, per the file's own rule; either alone doesn't clear the
+     corpus-readiness check. Continue to item 6.
+6. **Set the Changelog** (approved branch only, continuing from item 5).
+   Change the header's `Version: 0.1.0 (unfilled)`
    to `Version: 0.1.0`, and replace the seed changelog line's `{YYYY-MM-DD}`
    with today's actual date and `{N}` with the real count of sources used.
    If a "Drafted, pending Rica's approval" line (item 3) is already

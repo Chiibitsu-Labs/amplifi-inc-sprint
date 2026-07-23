@@ -724,7 +724,7 @@ td.num{font-variant-numeric:tabular-nums;}
 }
 .photo-grid figure.is-wide{grid-column:1 / -1;}
 .photo-grid figure.is-wide img{aspect-ratio:16 / 9;}
-.photo-grid figure.is-wide.is-portrait img{aspect-ratio:3 / 4;}
+.photo-grid figure.is-portrait img{aspect-ratio:3 / 4;}
 .photo-grid figcaption{
   font-family:'Public Sans';
   font-size:.74rem;
@@ -857,7 +857,7 @@ td.num{font-variant-numeric:tabular-nums;}
 .tl-mark .t{font-size:.86rem; color:var(--ink-soft); margin-top:.3rem;}
 
 /* ============ Misc ============ */
-.hr{height:1px; background:var(--line); border:none; margin:2.6rem 0;}
+.hr{height:1px; background:var(--line); border:none; margin:1.8rem 0 1.2rem;}
 .tag{
   display:inline-block;
   font-family:'Public Sans';
@@ -903,14 +903,15 @@ td.num{font-variant-numeric:tabular-nums;}
   font-family:'Playfair Display';
   font-style:italic;
   font-weight:600;
-  font-size:.92rem;
+  font-size:.8rem;
   color:var(--ink-soft);
 }
 .attribution{
   font-family:'Public Sans';
-  font-size:.76rem;
+  font-size:.66rem;
   color:var(--ink-faint);
-  margin-top:.35rem;
+  margin-top:.25rem;
+  max-width:none;
 }
 .attribution a{
   color:inherit;

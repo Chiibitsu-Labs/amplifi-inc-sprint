@@ -79,9 +79,9 @@ export const recapHtml = `
 <p class="lede">The room, the wall, the buddy-builds, the team at work.</p>
 <div class="photo-grid">
   <figure class="is-wide"><img src="/Lego.jpg" alt="The whole team around the table, mid buddy-build, LEGO everywhere" loading="lazy" /><figcaption>The buddy-build — briefing a partner in words only, the same skill as briefing an AI</figcaption></figure>
-  <figure><img src="/Dale-Mitch.jpg" alt="Dale and Michele with their finished LEGO builds" loading="lazy" /><figcaption>Dale &amp; Michele — builds compared</figcaption></figure>
-  <figure><img src="/Rica-Janelle.jpg" alt="Rica and Janelle with their finished LEGO builds" loading="lazy" /><figcaption>Rica &amp; Janelle</figcaption></figure>
-  <figure><img src="/Aubrey-Sen.jpg" alt="Aubrey and Sen with their matching buddy-builds" loading="lazy" /><figcaption>Aubrey &amp; Sen — twin builds from words alone</figcaption></figure>
+  <figure class="is-portrait"><img src="/Dale-Mitch.jpg" alt="Dale and Michele with their finished LEGO builds" loading="lazy" /><figcaption>Dale &amp; Michele — builds compared</figcaption></figure>
+  <figure class="is-portrait"><img src="/Rica-Janelle.jpg" alt="Rica and Janelle with their finished LEGO builds" loading="lazy" /><figcaption>Rica &amp; Janelle</figcaption></figure>
+  <figure class="is-portrait"><img src="/Aubrey-Sen.jpg" alt="Aubrey and Sen with their matching buddy-builds" loading="lazy" /><figcaption>Aubrey &amp; Sen — twin builds from words alone</figcaption></figure>
   <figure><img src="/Affinity-Mapping.jpg" alt="Silent sticky-note mapping on the wall" loading="lazy" /><figcaption>Silent mapping — the pain points go up on the wall</figcaption></figure>
   <figure class="is-wide is-portrait"><img src="/Analyst-Workflow.jpg" alt="The twelve workflow steps on pink sticky notes" loading="lazy" /><figcaption>The 12 steps, in your own words — now the map on the <a href="/deliverable/3">architecture page</a></figcaption></figure>
   <figure class="is-wide is-portrait"><img src="/Post-Sprint-Group-Pic.jpg" alt="The team together at the end of the sprint day" loading="lazy" /><figcaption>End of the day</figcaption></figure>
@@ -90,6 +90,6 @@ export const recapHtml = `
 
 <hr class="hr" />
 <p class="brand-close">Chiibitsu Labs — more human, by design.</p>
-<p class="attribution">Prepared by Angeline &ldquo;Chii&rdquo; Viray — <a href="https://linkedin.com/in/angelinev" target="_blank" rel="noopener">LinkedIn</a> · <a href="mailto:labs@chiibitsu.com">labs@chiibitsu.com</a> · Viber/WhatsApp +63 924 113 1973 · @chiibitsulabs</p>
+<p class="attribution">Prepared by <a href="https://linkedin.com/in/angelinev" target="_blank" rel="noopener">Angeline &ldquo;Chii&rdquo; Viray</a> · labs@chiibitsu.com · Viber/WhatsApp +63 924 113 1973 · @chiibitsulabs</p>
 
 `;
