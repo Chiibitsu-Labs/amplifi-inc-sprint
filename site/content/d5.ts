@@ -2,7 +2,7 @@ export const d5Html = `
 <div class="cover">
   <div class="eyebrow"><span class="num">05 / 05</span> Deliverable · The Instrument</div>
   <h1>When-to-Hire Instrument</h1>
-  <p class="dek">Not a headcount calculator. A router — it tells you when strain in the analyst function means <em>hire</em>, versus <em>automate</em>, <em>redesign</em>, or <em>fix the corpus</em>. This is Michele's instrument.</p>
+  <p class="dek">Not a headcount calculator. A when-to-hire router — it tells you when strain in the analyst function means <em>hire</em>, versus <em>automate</em>, <em>redesign</em>, or <em>fix the knowledge base</em>. This is Michele's instrument.</p>
   <div class="cover-meta">
     <span><b>Status</b> Capacity feed live · delivery-log feed ships with Deliverable 1</span>
     <span><b>Owner</b> Michele Curran, COO</span>
@@ -23,7 +23,7 @@ export const d5Html = `
 <div class="flow">
   <div class="flow-node"><span class="label">Feed 1 · Capacity</span><p>Daily 3-tap check-in — perceived load, why, and who's working what. Live today.</p></div>
   <div class="flow-arrow">→</div>
-  <div class="flow-node"><span class="label">The router</span><p>Automate → Redesign → Fix corpus → Hire, walked in that order, always.</p></div>
+  <div class="flow-node"><span class="label">The when-to-hire router</span><p>Automate → Redesign → Fix knowledge base → Hire, walked in that order, always.</p></div>
   <div class="flow-arrow">←</div>
   <div class="flow-node"><span class="label">Feed 2 · Delivery</span><p>Per-report facts — cycle time, on-cadence rate, rework rounds. Ships with Deliverable 1.</p></div>
 </div>
@@ -38,7 +38,7 @@ export const d5Html = `
 <tr><td><strong>Perceived load</strong></td><td>Daily 1–10 self-rating plus a reason — the earliest warning, since people feel strain before metrics show it</td><td>Capacity</td></tr>
 <tr><td><strong>Cycle time</strong></td><td>Period start to delivered — a slow climb here shows up weeks before a due date is actually missed</td><td>Delivery</td></tr>
 <tr><td><strong>On-cadence rate</strong></td><td>% of reports delivered by their due date</td><td>Delivery</td></tr>
-<tr><td><strong>Rework rounds</strong></td><td>Revision rounds before client acceptance — your team's #1 named pain, and usually a corpus gap, not a headcount gap</td><td>Delivery</td></tr>
+<tr><td><strong>Rework rounds</strong></td><td>Revision rounds before client acceptance — your team's #1 named pain, and usually a knowledge base gap, not a headcount gap</td><td>Delivery</td></tr>
 </tbody>
 </table>
 </div>
@@ -57,7 +57,7 @@ export const d5Html = `
   </div>
   <div class="chain-step">
     <div class="badge">03</div>
-    <div><h4>Fix the corpus?</h4><p>Is quality inconsistent because the standard still lives in someone's head? Evidence: rework rounds meaningfully frequent, and mostly tagged as a corpus-alignment cause rather than a one-off client ask. → Route: fill the gap in the standard, not the roster.</p></div>
+    <div><h4>Fix the knowledge base?</h4><p>Is quality inconsistent because the standard still lives in someone's head? Evidence: rework rounds meaningfully frequent, and mostly tagged as a standard-alignment cause rather than a one-off client ask. → Route: fill the gap in the standard, not the roster.</p></div>
   </div>
   <div class="chain-step is-hire">
     <div class="badge">04</div>
@@ -73,7 +73,7 @@ export const d5Html = `
 <ul>
   <li><strong>Daily, live today:</strong> a 10:00 summary — team average, everyone's load and reason, sorted most-loaded first, flags for anyone over the line.</li>
   <li><strong>Anytime, live today:</strong> the dashboard — tiles, trend, and plain-language signal detail.</li>
-  <li><strong>Monthly, live today, by hand:</strong> the full router line — <em>"Rework on Client X crossed threshold in week 6 → routes to a corpus fix, not a hire."</em> Fifteen minutes to write, thirty seconds to read, defensible in one line.</li>
+  <li><strong>Monthly, live today, by hand:</strong> the full router line — <em>"Rework on Client X crossed threshold in week 6 → routes to a knowledge base fix, not a hire."</em> Fifteen minutes to write, thirty seconds to read, defensible in one line.</li>
   <li><strong>Once the dashboard build lands (60–90 days):</strong> the same line, generated automatically instead of hand-assembled. Convenience, not new capability — the capability is already there.</li>
 </ul>
 
@@ -93,7 +93,7 @@ export const d5Html = `
 
 <h2>Hard rules</h2>
 <ul>
-  <li><strong>Owned and portable.</strong> Signal data lives in the corpus and an exportable database — no vendor lock on the data itself.</li>
+  <li><strong>Owned and portable.</strong> Signal data lives in your knowledge base and an exportable database — no vendor lock on the data itself.</li>
   <li><strong>Runs on the stack already in use.</strong> Drive, Telegram, the tools your team already touches.</li>
   <li><strong>Five signals, not twenty.</strong> Readable in 30 seconds, or it's wrong.</li>
   <li><strong>A router, not a binary.</strong> Never a bare hire/no-hire — always the evidence trail behind it.</li>

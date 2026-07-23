@@ -641,6 +641,44 @@ td.num{font-variant-numeric:tabular-nums;}
 .wall-card.is-repeat{background:var(--paper-raised); border-style:dashed;}
 @media (max-width:640px){ .wall-grid{grid-template-columns:repeat(2, 1fr);} }
 
+/* ============ Phase bar (roadmap overview) ============ */
+.phasebar{
+  display:flex;
+  gap:.5rem;
+  margin:1.6rem 0 2.4rem;
+}
+.phase-seg{
+  flex:1 1 0;
+  background:var(--paper-raised);
+  border:1px solid var(--line);
+  border-radius:5px;
+  padding:1rem 1.1rem;
+  display:flex;
+  flex-direction:column;
+  gap:.25rem;
+  position:relative;
+}
+.phase-seg.is-now{
+  background:var(--signal-tint);
+  border-color:var(--line-strong);
+}
+.phase-seg .pn{
+  font-family:'Public Sans';
+  font-weight:700;
+  font-size:.62rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--signal-strong);
+}
+.phase-seg .pt{
+  font-family:'Playfair Display';
+  font-weight:700;
+  font-size:1.02rem;
+  line-height:1.2;
+}
+.phase-seg .pd{font-size:.78rem; color:var(--ink-faint);}
+@media (max-width:640px){ .phasebar{flex-direction:column;} }
+
 /* ============ Timeline (roadmap) ============ */
 .timeline{
   display:flex;

@@ -15,7 +15,7 @@ export const d3Html = `
 
 <h2>The four layers</h2>
 <div class="flow">
-  <div class="flow-node"><span class="label">1 · Vault</span><p>The knowledge foundation — client briefs, standards, the corpus. Deliverable 1.</p></div>
+  <div class="flow-node"><span class="label">1 · Knowledge base</span><p>The knowledge foundation — client briefs, standards, the whole KB. Deliverable 1.</p></div>
   <div class="flow-arrow">→</div>
   <div class="flow-node"><span class="label">2 · Workflow</span><p>The 12-step path the work actually travels, in the team's own words.</p></div>
   <div class="flow-arrow">→</div>
@@ -59,7 +59,7 @@ export const d3Html = `
 <thead><tr><th>Tool</th><th>Function</th></tr></thead>
 <tbody>
 <tr><td>Claude (Enterprise)</td><td>Runs the four skills — onboard, draft, QA, capture</td></tr>
-<tr><td>Google Drive</td><td>The vault — corpus storage and shared access</td></tr>
+<tr><td>Google Drive</td><td>The vault — where your knowledge base lives and everyone reaches it</td></tr>
 <tr><td>Sentimo + MCP</td><td>Data connection into the drafting step</td></tr>
 <tr><td>Canva <span class="tag" style="border-color:var(--flag); color:var(--flag);">fragile</span></td><td>Final visual assembly — flagged below as a named risk</td></tr>
 <tr><td>Telegram + capchecker</td><td>Daily capacity check-in — the instrument's first feed</td></tr>
@@ -73,7 +73,7 @@ export const d3Html = `
   <li><strong>Canva fragility.</strong> Crashes and access issues are real and already happening. Not replaced in this build — see the Roadmap for why, and what would change that call.</li>
   <li><strong>Supplier and vendor pain.</strong> Real, but a procurement problem, not an AI problem. Explicitly out of Core Build scope.</li>
   <li><strong>Claude usage caps.</strong> A ceiling worth watching as adoption scales past the first client.</li>
-  <li><strong>Corpus rot.</strong> A vault that stops getting updated is worse than no vault — this is exactly what the capture loop in Deliverable 1 exists to prevent.</li>
+  <li><strong>A knowledge base that goes stale.</strong> A vault that stops getting updated is worse than no vault — this is exactly what the capture loop in Deliverable 1 exists to prevent.</li>
 </ul>
 
 <hr class="hr" />
