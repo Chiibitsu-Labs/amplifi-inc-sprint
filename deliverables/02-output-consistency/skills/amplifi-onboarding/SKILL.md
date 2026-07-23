@@ -79,13 +79,21 @@ file instead of re-filling it from scratch.
 
 **A file at `Status: FRAME` isn't automatically a blank template either
 ~ check its Changelog section before starting extraction.** If it already
-carries a dated "Drafted, pending Rica's approval" line (item 3 below)
-with no later resolution, someone already ran items 1–4 on it and is just
-waiting on her sign-off. Don't restart extraction and don't overwrite
-that draft. If Rica is the one onboarding now: skip straight to reviewing
-the existing draft, and once she signs off, finish at item 5/6. If she
-isn't: leave the file exactly as is and report it as still pending
-(Step 5) ~ don't touch it further this session.
+carries a dated "Drafted, pending Rica's approval" line (item 3 below):
+- **If that same line already notes her approval** (item 3's "approved by
+  Rica, {date}" addendum): the draft is done and reviewed, only the
+  finalization steps never ran. Don't treat this as blank and don't
+  restart extraction ~ skip straight to item 5/6 and finish it. This is
+  exactly the case item 5 below means by "her approval is already noted
+  on the pending Changelog line" ~ any operator can close it out, not
+  only Rica.
+- **If it has no resolution yet:** someone already ran items 1–4 on it
+  and is just waiting on her sign-off. Don't restart extraction and
+  don't overwrite that draft. If Rica is the one onboarding now: skip
+  straight to reviewing the existing draft, and once she signs off,
+  finish at item 5/6. If she isn't: leave the file exactly as is and
+  report it as still pending (Step 5) ~ don't touch it further this
+  session.
 
 For each file genuinely still blank (`Status: FRAME`, no pending-approval
 changelog line):
@@ -114,11 +122,12 @@ changelog line):
    her sign-off before item 5 below flips `Status: LIVE` ~ don't let a
    first analyst who isn't Rica set the Amplifi-wide bar unreviewed. Her
    sign-off doesn't have to land inside a live onboarding session to
-   count: if it arrives afterward (a reply, a message), note it directly
-   on the pending Changelog line item 5 writes below — e.g. "Drafted,
-   pending Rica's approval — approved by Rica, {date}" ~ that's the
-   durable record a later session's item 5 reads, not something only
-   this conversation remembers.
+   count: if it arrives afterward (a reply, a message), append it to the
+   pending Changelog line item 5 writes below, keeping the source count
+   already on it — e.g. "Drafted, pending Rica's approval — N sources,
+   {drafted date} — approved by Rica, {approval date}" ~ that's the
+   durable record a later session's Step 2 check (and item 5) reads, not
+   something only this conversation remembers.
 4. **Actually replace every `{...}` placeholder in the file** ~ not just
    the instruction blockquote. `amplifi-insights`' Step 0 corpus-readiness
    check runs an independent brace-scan on top of the Status marker
@@ -135,19 +144,24 @@ changelog line):
 5. **Now, with item 4's placeholder replacement actually done, check
    whether Rica has signed off (item 3).**
    - **If she hasn't yet:** write a dated "Drafted, pending Rica's
-     approval" line into the file's Changelog section, replacing the
-     still-unfilled seed changelog line rather than adding alongside it
-     ~ only now, after item 4 has confirmed every fill-once placeholder
-     is actually gone, never before it (writing this marker earlier is
-     what makes the pending state falsely look finished to a later
-     session that trusts it and skips straight to approval without
-     re-checking placeholders). Status stays `FRAME`; the marker is what
-     makes the pending state durable and resumable across sessions
-     instead of something only this conversation remembers ~ it's what
-     Step 2's check above looks for on a later run. **Stop here for this
-     file** ~ don't continue into item 6 this session; that's the
-     approved branch only, and running it now would finalize a version
-     against a draft nobody's signed off on yet.
+     approval — N sources, {date}" line into the file's Changelog
+     section (N = the real count of sources used in item 2, {date} =
+     today), replacing the still-unfilled seed changelog line rather
+     than adding alongside it ~ only now, after item 4 has confirmed
+     every fill-once placeholder is actually gone, never before it
+     (writing this marker earlier is what makes the pending state
+     falsely look finished to a later session that trusts it and skips
+     straight to approval without re-checking placeholders). Recording N
+     here matters because the session that later finalizes this draft
+     (item 6) may not be the one that ran item 2 ~ without it on the
+     durable marker, that count can be gone for good by approval time.
+     Status stays `FRAME`; the marker is what makes the pending state
+     durable and resumable across sessions instead of something only
+     this conversation remembers ~ it's what Step 2's check above looks
+     for on a later run. **Stop here for this file** ~ don't continue
+     into item 6 this session; that's the approved branch only, and
+     running it now would finalize a version against a draft nobody's
+     signed off on yet.
    - **If she's already signed off** ~ she's the one onboarding right
      now, or her approval is already noted on the pending Changelog line
      from an earlier exchange (item 3): delete the instruction blockquote AND flip
@@ -161,11 +175,17 @@ changelog line):
 6. **Set the Changelog** (approved branch only, continuing from item 5).
    Change the header's `Version: 0.1.0 (unfilled)` to `Version: 0.1.0`.
    Replace whichever line is sitting where the seed changelog line used
-   to be ~ the "Drafted, pending Rica's approval" line if item 5 wrote
-   one in an earlier session, otherwise the seed line's own
-   `{YYYY-MM-DD}` and `{N}` placeholders ~ with the real first-version
-   entry: today's actual date and the real count of sources used. One
-   line either way, not two: the pending line's job was to mark the
+   to be with the real first-version entry:
+   - If item 5 wrote a "Drafted, pending Rica's approval" line in an
+     earlier session, pull the date and source count straight off that
+     line (it recorded them for exactly this reason) rather than asking
+     again or re-deriving them ~ the source material or the analyst who
+     ran item 2 may not even be available in this session anymore.
+   - Otherwise (direct approval, no pending line ever written), fill
+     the seed line's own `{YYYY-MM-DD}` and `{N}` placeholders with
+     today's actual date and the real count of sources used from item 2.
+
+   One line either way, not two: the pending line's job was to mark the
    wait, and it ends here by becoming the real entry, not by sitting
    alongside it. This is the file's first real version ~ every later
    edit from `amplifi-improve`'s Mode 2 promotion pass bumps it from

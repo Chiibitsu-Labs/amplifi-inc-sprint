@@ -909,7 +909,7 @@ td.num{font-variant-numeric:tabular-nums;}
 .attribution{
   font-family:'Public Sans';
   font-size:.66rem;
-  color:var(--ink-faint);
+  color:var(--ink-soft);
   margin-top:.25rem;
   max-width:none;
 }
