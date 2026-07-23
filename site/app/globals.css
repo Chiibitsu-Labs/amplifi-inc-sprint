@@ -905,6 +905,17 @@ td.num{font-variant-numeric:tabular-nums;}
   font-size:.92rem;
   color:var(--ink-soft);
 }
+.attribution{
+  font-family:'Public Sans';
+  font-size:.76rem;
+  color:var(--ink-faint);
+  margin-top:.35rem;
+}
+.attribution a{
+  color:inherit;
+  text-decoration:underline;
+  text-underline-offset:2px;
+}
 
 /* route transition */
 .page{animation:fadeUp .35s ease both;}

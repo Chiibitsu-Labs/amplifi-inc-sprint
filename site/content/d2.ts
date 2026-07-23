@@ -81,5 +81,6 @@ export const d2Html = `
 
 <hr class="hr" />
 <p class="brand-close">Chiibitsu Labs — more human, by design.</p>
+<p class="attribution">Prepared by Angeline &ldquo;Chii&rdquo; Viray — <a href="https://linkedin.com/in/angelinev" target="_blank" rel="noopener">LinkedIn</a> · <a href="mailto:labs@chiibitsu.com">labs@chiibitsu.com</a> · Viber/WhatsApp +63 924 113 1973 · @chiibitsulabs</p>
 
 `;
