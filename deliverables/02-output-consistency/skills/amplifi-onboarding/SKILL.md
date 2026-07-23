@@ -44,11 +44,12 @@ missing, copy it in from `amplifi-knowledge/skills/{name}/SKILL.md`
 Chii's reference repo, which can drift from what Amplifi actually has
 live).
 
-If `amplifi-knowledge/skills/` itself doesn't have all three yet, this
-machine can't be the first install ~ stop and flag it: the Drive handoff's
-step 5 hasn't finished, and installing from an incomplete source risks
-installing a stale or partial skill. Don't improvise a copy from anywhere
-else.
+If `amplifi-knowledge/skills/` itself doesn't have all four skills yet
+(the three above AND `amplifi-onboarding` itself) ~ stop and flag it: the
+Drive handoff's step 5 hasn't finished, and installing from an incomplete
+source risks installing a stale or partial skill, or leaving the next
+analyst with no canonical copy of `amplifi-onboarding` to install from at
+all. Don't improvise a copy from anywhere else.
 
 Verify each install the same way `DRIVE-HANDOFF.md` step 4/6a already do:
 fresh session, confirm the skill actually runs and reads the corpus back.
