@@ -231,12 +231,19 @@ grows under their roof. Chii's repo remains the reference/spec copy.
    (step 6a/6b) does this fill live, as part of that pass ~ not a
    separately-scheduled hour. If that analyst isn't Rica, the draft sits
    at `Status: FRAME` until she signs off (`amplifi-onboarding`'s own
-   rule); chase that sign-off the same day, don't let it drift. **Only
-   fall back to Rica scheduling a dedicated gold-report extraction hour
-   (roadmap 1.2) if nobody has run `amplifi-onboarding` yet** ~ an empty
-   corpus teaches the team it's decorative, a filling one teaches them
-   it's load-bearing, so don't let the folder sit empty a week either
-   way.
+   rule); chase that sign-off the same day, don't let it drift. **Fall
+   back to Rica scheduling a dedicated gold-report extraction hour
+   (roadmap 1.2) whenever the standards still haven't reached
+   `Status: LIVE`** ~ that covers both nobody having run
+   `amplifi-onboarding` yet, and someone having run it with no source
+   material to draw from (`amplifi-onboarding` Step 5's "no source
+   material" category) with no later onboarding pass having picked it
+   back up since. Onboarding merely having been invoked once isn't the
+   same as the fill having happened ~ don't let one dry run permanently
+   suppress this fallback while the file sits at `Status: FRAME`
+   indefinitely. An empty corpus teaches the team it's decorative, a
+   filling one teaches them it's load-bearing, so don't let the folder
+   sit empty a week either way.
 
 ## Rules that survive the handoff
 

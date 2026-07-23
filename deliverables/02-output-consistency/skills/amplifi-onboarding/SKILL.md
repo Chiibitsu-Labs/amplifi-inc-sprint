@@ -1,6 +1,6 @@
 ---
 name: amplifi-onboarding
-description: One pass, run once per analyst per machine. Installs amplifi-insights, amplifi-qa, and amplifi-improve into this client, then bootstraps the shared standards files (and, in a client context, that client's brand-standard.md) from real, already-approved work — live, during onboarding, instead of a separately-scheduled extraction session. Idempotent: re-running skips anything already Status LIVE and offers a refresh pass instead. Use for the initial team rollout, and again for anyone who joins the analyst function later.
+description: One pass, run once per analyst per machine. Installs amplifi-improve into this client always; also installs amplifi-insights and amplifi-qa there under the one-client deployment tier, while the fallback tier keeps those two in Claude Enterprise instead (see Step 1). Then bootstraps the shared standards files (and, in a client context, that client's brand-standard.md) from real, already-approved work — live, during onboarding, instead of a separately-scheduled extraction session. Idempotent: re-running skips anything already Status LIVE and offers a refresh pass instead. Use for the initial team rollout, and again for anyone who joins the analyst function later.
 ---
 
 # Amplifi Onboarding ~ Install Once, Standard Bootstraps Live
@@ -112,7 +112,13 @@ changelog line):
    Rica, and `amplifi-improve` already requires her confirmation before any
    promotion to these same three files. Send her the draft and wait for
    her sign-off before item 5 below flips `Status: LIVE` ~ don't let a
-   first analyst who isn't Rica set the Amplifi-wide bar unreviewed.
+   first analyst who isn't Rica set the Amplifi-wide bar unreviewed. Her
+   sign-off doesn't have to land inside a live onboarding session to
+   count: if it arrives afterward (a reply, a message), note it directly
+   on the pending Changelog line item 5 writes below — e.g. "Drafted,
+   pending Rica's approval — approved by Rica, {date}" ~ that's the
+   durable record a later session's item 5 reads, not something only
+   this conversation remembers.
 4. **Actually replace every `{...}` placeholder in the file** ~ not just
    the instruction blockquote. `amplifi-insights`' Step 0 corpus-readiness
    check runs an independent brace-scan on top of the Status marker
@@ -129,34 +135,42 @@ changelog line):
 5. **Now, with item 4's placeholder replacement actually done, check
    whether Rica has signed off (item 3).**
    - **If she hasn't yet:** write a dated "Drafted, pending Rica's
-     approval" line into the file's Changelog section ~ only now, after
-     item 4 has confirmed every fill-once placeholder is actually gone,
-     never before it (writing this marker earlier is what makes the
-     pending state falsely look finished to a later session that trusts
-     it and skips straight to approval without re-checking placeholders).
-     Status stays `FRAME`; the marker is what makes the pending state
-     durable and resumable across sessions instead of something only
-     this conversation remembers ~ it's what Step 2's check above looks
-     for on a later run. **Stop here for this file** ~ don't continue
-     into item 6 this session; that's the approved branch only, and
-     running it now would finalize a version against a draft nobody's
-     signed off on yet.
-   - **If she has (or she was the one onboarding):** delete the
-     instruction blockquote AND flip `Status: FRAME` to `Status: LIVE`
-     ~ both, per the file's own rule; either alone doesn't clear the
-     corpus-readiness check. Continue to item 6.
+     approval" line into the file's Changelog section, replacing the
+     still-unfilled seed changelog line rather than adding alongside it
+     ~ only now, after item 4 has confirmed every fill-once placeholder
+     is actually gone, never before it (writing this marker earlier is
+     what makes the pending state falsely look finished to a later
+     session that trusts it and skips straight to approval without
+     re-checking placeholders). Status stays `FRAME`; the marker is what
+     makes the pending state durable and resumable across sessions
+     instead of something only this conversation remembers ~ it's what
+     Step 2's check above looks for on a later run. **Stop here for this
+     file** ~ don't continue into item 6 this session; that's the
+     approved branch only, and running it now would finalize a version
+     against a draft nobody's signed off on yet.
+   - **If she's already signed off** ~ she's the one onboarding right
+     now, or her approval is already noted on the pending Changelog line
+     from an earlier exchange (item 3): delete the instruction blockquote AND flip
+     `Status: FRAME` to `Status: LIVE` ~ both, per the file's own rule;
+     either alone doesn't clear the corpus-readiness check.
+     **Documented approval is what gates this, not who's at the
+     keyboard** ~ whoever's running this session can finish it once her
+     sign-off is on record; don't leave an approved draft stuck at
+     `Status: FRAME` just because Rica isn't the one onboarding today.
+     Continue to item 6.
 6. **Set the Changelog** (approved branch only, continuing from item 5).
-   Change the header's `Version: 0.1.0 (unfilled)`
-   to `Version: 0.1.0`, and replace the seed changelog line's `{YYYY-MM-DD}`
-   with today's actual date and `{N}` with the real count of sources used.
-   If a "Drafted, pending Rica's approval" line (item 3) is already
-   sitting in the Changelog from an earlier session, replace it with this
-   real entry rather than leaving both ~ the pending line's job was to
-   mark the wait, and the wait is over now that this is running. This is
-   the file's first real version ~ every later edit from
-   `amplifi-improve`'s Mode 2 promotion pass bumps it from here, per each
-   file's own Changelog section rules (patch for a tweak, minor for a new
-   rule, major for a full re-fill).
+   Change the header's `Version: 0.1.0 (unfilled)` to `Version: 0.1.0`.
+   Replace whichever line is sitting where the seed changelog line used
+   to be ~ the "Drafted, pending Rica's approval" line if item 5 wrote
+   one in an earlier session, otherwise the seed line's own
+   `{YYYY-MM-DD}` and `{N}` placeholders ~ with the real first-version
+   entry: today's actual date and the real count of sources used. One
+   line either way, not two: the pending line's job was to mark the
+   wait, and it ends here by becoming the real entry, not by sitting
+   alongside it. This is the file's first real version ~ every later
+   edit from `amplifi-improve`'s Mode 2 promotion pass bumps it from
+   here, per each file's own Changelog section rules (patch for a
+   tweak, minor for a new rule, major for a full re-fill).
 
 ## Step 3 ~ Bootstrap this client's brand-standard.md (if run in a client context)
 
