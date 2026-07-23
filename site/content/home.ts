@@ -1,8 +1,8 @@
 export const homeHtml = `
 <div class="cover">
   <div class="eyebrow">AI Incorporation Sprint · Chiibitsu Labs ✕ Amplifi Technologies Corp</div>
-  <h1>The system you asked for, working.</h1>
-  <p class="dek">Report standards now live in one shared vault. AI checks enforce them on every report. A clear signal says when it's time to hire. This page is the live status of the build.</p>
+  <h1>The vision, coming alive.</h1>
+  <p class="dek">One shared vault for the analyst workflow. A quality-check system, going live as the standard fills in. A clear signal for when to hire. This page is the live status of the build.</p>
   <div class="cover-meta">
     <span><b>Delivered</b> week of Jul 20, 2026</span>
     <span><b>Scope</b> Analyst function · Core Build</span>
@@ -21,9 +21,9 @@ export const homeHtml = `
 
 <div class="grid grid-2">
   <div class="signal-card">
-    <span class="status-pill live">Live</span>
+    <span class="status-pill scheduled">In progress</span>
     <p class="q">Same standard from any analyst?</p>
-    <p class="a">Yes. The standard is written down.</p>
+    <p class="a">Already proven once: design guidelines fed straight to Claude, output held steady with zero Canva.</p>
     <p class="evidence"><a href="/deliverable/1">Knowledge Foundation →</a> · <a href="/deliverable/2">Consistency System →</a></p>
   </div>
   <div class="signal-card">
@@ -41,7 +41,7 @@ export const homeHtml = `
   <div class="signal-card">
     <span class="status-pill live">Live</span>
     <p class="q">A knowledge base that grows?</p>
-    <p class="a">Yes. Weekly capture starts Aug 14.</p>
+    <p class="a">Yes. Growing as a byproduct of real work, not on a schedule.</p>
     <p class="evidence"><a href="/deliverable/1">Knowledge Foundation →</a></p>
   </div>
   <div class="signal-card">
@@ -67,7 +67,7 @@ export const homeHtml = `
 
 <div class="timeline">
   <div class="tl-mark"><div class="d">Today — Jul 20</div><div class="t">Corpus live. Skills deployed to the first client.</div></div>
-  <div class="tl-mark"><div class="d">Aug 21</div><div class="t">Standards encoded. Delivery logs open. Weekly capture running.</div></div>
+  <div class="tl-mark"><div class="d">Aug 21</div><div class="t">Standards encoded. Delivery logs open.</div></div>
   <div class="tl-mark"><div class="d">Sep 18</div><div class="t">AI-QA gate live. First manual hire-signal walkthrough (Sep 11).</div></div>
   <div class="tl-mark"><div class="d">Oct 16</div><div class="t">Hire signal automated (Oct 9). Full review against this page.</div></div>
 </div>

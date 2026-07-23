@@ -23,7 +23,7 @@ export const d1Html = `
 
 <h2>Vision first. Then the workflow. Then the tools.</h2>
 <p>The vision comes first — not which tools to use, but the transformation the team actually wants. Ask that without any constraints, and the real question gets sharp fast: what would this look like if it actually worked?</p>
-<p>That question is what earns everything after it. Once the vision was clear, the sprint went deep on the real workflow — where it actually breaks, and getting it organized. Then the team practiced that organized workflow themselves, as people, before AI touched any of it. AI implementation comes last, on purpose: by the time it arrives, the vision is set and the team already knows the workflow cold, so the AI has something real to work with instead of a guess.</p>
+<p>That question is what earns everything after it. Once the vision was clear, the sprint went deep on the real workflow — where it actually breaks, and getting it organized. The team practiced that organized workflow themselves next, AI already in hand as a partner, before the AI implementation itself got built out. Implementation comes last, on purpose: by the time it's built, the vision is set and the team already knows the workflow cold, so the AI has something real to work with instead of a guess.</p>
 <p>This foundation is that middle step, done: the workflow, organized, in one place.</p>
 
 <h2>How to think about it</h2>
@@ -37,8 +37,8 @@ export const d1Html = `
     <p>No big documentation project that stalls on day two. The foundation grows a little every time someone does real work, so it stays alive instead of becoming a thing to "finish later."</p>
   </div>
   <div class="card">
-    <h3>It's theirs.</h3>
-    <p>This knowledge is Amplifi's, permanently — not Chiibitsu's, not the tool's. Whichever AI reads it next year, the vault doesn't move and the team doesn't lose it.</p>
+    <h3>It's yours.</h3>
+    <p>This knowledge belongs to Amplifi, permanently — not Chiibitsu's, not the tool's. Whichever AI reads it next year, the vault doesn't move and you don't lose it.</p>
   </div>
   <div class="card">
     <h3>Structure came from the team.</h3>
