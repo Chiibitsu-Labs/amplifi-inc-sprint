@@ -4,7 +4,7 @@ export const d2Html = `
   <h1>Output Consistency &amp; Quality System</h1>
   <p class="dek">"AI slop" isn't a mystery — it's what happens when the human gives AI too little to work with. This deliverable encodes the standard once and checks against it twice, before anything ships.</p>
   <div class="cover-meta">
-    <span><b>Status</b> v1 · three skills built, onboarding pass next</span>
+    <span><b>Status</b> v1 · all four skills built, team onboarding next</span>
     <span><b>Built by</b> Chii / Chiibitsu Labs</span>
     <span><b>Runs on</b> Every analyst, as they work</span>
   </div>
@@ -54,7 +54,7 @@ export const d2Html = `
 <p><code>amplifi-improve</code> is what keeps this from calcifying. It's the same skill that runs Deliverable 1's capture loop — every session's real lessons get written down, and the good ones get promoted into these standards files, so the definition of "good" keeps sharpening instead of going stale the day it was written.</p>
 
 <h2>Status</h2>
-<p><code>amplifi-insights</code>, <code>amplifi-qa</code>, and <code>amplifi-improve</code> are built and ready — that's done on our side. What's next isn't anyone's homework: it's the onboarding pass that installs all three and bootstraps each function's gold-standard files automatically. That's the top of Phase 1 on the <a href="/deliverable/4">roadmap</a>. From there, consistency depends on your team actually running it — the tool's built, the ball's in play.</p>
+<p>All four skills are built and ready — that's done on our side: <code>amplifi-insights</code> drafts, <code>amplifi-qa</code> checks (twice), <code>amplifi-improve</code> captures, and <code>amplifi-onboarding</code> ties them together — one pass that installs the other three and bootstraps each function's gold-standard files automatically, live, from real work. Nobody's homework. That install is the top of Phase 1 on the <a href="/deliverable/4">roadmap</a>. From there, consistency depends on your team actually running it — the tool's built, the ball's in play.</p>
 
 <hr class="hr" />
 <p class="brand-close">Chiibitsu Labs — more human, by design.</p>
