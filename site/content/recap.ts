@@ -26,19 +26,19 @@ export const recapHtml = `
   </div>
   <div class="chain-step">
     <div class="badge">03</div>
-    <div><h4>Map who owns what</h4><p>Every friction point was pointed to the person who holds the knowledge, or the call, to fix it — mostly Michele, with Rica on the analyst workflow. The full accountability map is held with your team.</p></div>
+    <div><h4>Map who owns what</h4><p>Every friction point was pointed to the person who holds the knowledge, or the call, to fix it — mostly Michele, with Rica on the analyst workflow. The full accountability map is held with your team, sequenced on the <a href="/deliverable/4">roadmap</a>.</p></div>
   </div>
   <div class="chain-step">
     <div class="badge">04</div>
-    <div><h4>Build the shared foundation</h4><p>One knowledge base your whole team reads from, so the standard stops living as tribal knowledge in one analyst's head. Set up live on your shared drive.</p></div>
+    <div><h4>Build the shared foundation</h4><p>One knowledge base your whole team reads from, so the standard stops living as tribal knowledge in one analyst's head. Set up live on <a href="https://drive.google.com/drive/u/3/folders/0AN2kR-z80lGjUk9PVA" target="_blank" rel="noopener">your shared Drive</a>.</p></div>
   </div>
   <div class="chain-step">
     <div class="badge">05</div>
-    <div><h4>Practice on real work</h4><p>Each person ran the capture skill on their own job, on their own machine, and produced an on-brand report the same day — then showed it to Michele.</p></div>
+    <div><h4>Practice on real work</h4><p>Each person worked their own job through Claude, on their own machine, and produced an on-brand report the same day — then showed it to Michele.</p></div>
   </div>
   <div class="chain-step">
     <div class="badge">06</div>
-    <div><h4>Build the instrument live</h4><p>With Michele, we built the capacity checker she now uses for day-to-day planning. Everyone ran it live before the day was out.</p></div>
+    <div><h4>Build the instrument live</h4><p>With Michele, we built the <a href="/deliverable/5">capacity checker</a> she now uses for day-to-day planning. Everyone ran it live before the day was out.</p></div>
   </div>
 </div>
 
@@ -58,8 +58,8 @@ export const recapHtml = `
 <div class="grid grid-2">
   <a class="deliv-card" href="/deliverable/1"><span class="idx">01</span><div><h3>A shared knowledge base</h3><p>One home your whole team reads from, so quality isn't tribal.</p></div></a>
   <a class="deliv-card" href="/deliverable/2"><span class="idx">02</span><div><h3>On-brand reports, from your own work</h3><p>Each person produced one live, in their own role, the same day.</p></div></a>
-  <a class="deliv-card" href="/deliverable/5"><span class="idx">05</span><div><h3>Michele's capacity checker</h3><p>Built live, in use for daily planning ever since.</p></div></a>
   <a class="deliv-card" href="/deliverable/4"><span class="idx">04</span><div><h3>A roadmap with owners and dates</h3><p>What happens next, sequenced, with a name on every task.</p></div></a>
+  <a class="deliv-card" href="/deliverable/5"><span class="idx">05</span><div><h3>Michele's capacity checker</h3><p>Built live, in use for daily planning ever since.</p></div></a>
 </div>
 
 <h2>From the room</h2>
