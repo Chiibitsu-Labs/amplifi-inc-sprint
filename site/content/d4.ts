@@ -24,12 +24,12 @@ export const d4Html = `
 <thead><tr><th>Action</th><th>Owner</th><th>Done by</th></tr></thead>
 <tbody>
 <tr><td>Copy the knowledge scaffold into shared Drive, full team access</td><td class="owner">Michele</td><td class="date">Jul 24</td></tr>
-<tr><td>Fill the three standards frames from gold reports and the live template</td><td class="owner">Rica</td><td class="date">Jul 31</td></tr>
+<tr><td>Run <code>amplifi-onboarding</code> per analyst — installs the toolchain and fills the standards frames live, from real work</td><td class="owner">Every analyst</td><td class="date">Jul 27 on</td></tr>
 <tr><td>Seed every active client's folder from the template</td><td class="owner">Dale + Janelle</td><td class="date">Aug 3</td></tr>
 <tr><td>Fill each client's brief and brand standard, including account status</td><td class="owner">Dale + Janelle</td><td class="date">Aug 7</td></tr>
-<tr><td>Deploy all three skills to every analyst's own workstation, retire the old prompt-heavy approach</td><td class="owner">Chii</td><td class="date">Aug 7</td></tr>
 <tr><td>Verify the capture loop end-to-end on a real session</td><td class="owner">Chii</td><td class="date">Aug 7</td></tr>
 <tr><td>Rename capchecker's early signals to "-candidate" labels until the router backs them fully</td><td class="owner">Chii</td><td class="date">Aug 7</td></tr>
+<tr><td>Placeholder "Report-level feed" tab on capchecker's dashboard — visual only, ahead of the real ingestion below</td><td class="owner">Chii</td><td class="date">This week</td></tr>
 <tr><td>Open a delivery-log row for every cycle already in flight</td><td class="owner">Rica + team</td><td class="date">Aug 7</td></tr>
 <tr><td>Delivery-log habit live for every cycle going forward</td><td class="owner">Rica + team</td><td class="date">Aug 7 on</td></tr>
 <tr><td>First weekly promotion pass — then every Friday</td><td class="owner">Rica + Chii</td><td class="date">Aug 14</td></tr>
