@@ -5,7 +5,7 @@ export const d3Html = `
   <p class="dek">What each tool actually does, where AI enters the workflow, and where a human always stays in charge — laid out as one map instead of six separate mental models.</p>
   <div class="cover-meta">
     <span><b>Status</b> v1</span>
-    <span><b>Owner</b> Chii / Chiibitsu Labs</span>
+    <span><b>Built by</b> Chii / Chiibitsu Labs</span>
   </div>
   <div class="cover-actions">
     <a class="btn btn-primary" href="/pdfs/amplifi-03-architecture-map.pdf" download="amplifi-03-architecture-map.pdf">Download PDF</a>
@@ -63,7 +63,7 @@ export const d3Html = `
 <table>
 <thead><tr><th>Tool</th><th>Function</th></tr></thead>
 <tbody>
-<tr><td>Claude (Enterprise)</td><td>Runs the three skills — draft, QA, capture</td></tr>
+<tr><td>Claude (Enterprise)</td><td>Runs the four skills — onboard, draft, QA, capture</td></tr>
 <tr><td>Google Drive</td><td>The vault — corpus storage and shared access</td></tr>
 <tr><td>Sentimo + MCP</td><td>Data connection into the drafting step</td></tr>
 <tr><td>Canva <span class="tag" style="border-color:var(--flag); color:var(--flag);">fragile</span></td><td>Final visual assembly — flagged below as a named risk</td></tr>

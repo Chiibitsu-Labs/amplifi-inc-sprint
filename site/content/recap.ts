@@ -75,8 +75,8 @@ export const recapHtml = `
 <div class="callout"><b>Each person, one commitment.</b> Not a plan handed down from the top. Everyone named the one thing they're owning from here, in their own words. That's what makes it hold.</div>
 
 <h2>Photos</h2>
-<p class="lede">The gallery from the day goes here.</p>
-<div class="callout"><b>Reserved for photos.</b> The room, the wall of sticky notes, your team at work — ready to drop in from the shared album.</div>
+<p class="lede">The room, the wall of sticky notes, the buddy-builds, the team at work.</p>
+<div class="callout"><b>From the day.</b> <a href="https://drive.google.com/drive/folders/1Pe0-TelvQLJDgneThQAL1RrUF_Nr85Ha?usp=drive_link" target="_blank" rel="noopener">Browse the photos →</a> · <a href="https://drive.google.com/drive/folders/11McOFr7WbnbiJfI4-aWvfFQ5uA5ycS4n?usp=drive_link" target="_blank" rel="noopener">Raw album →</a></div>
 
 <hr class="hr" />
 <p class="brand-close">Chiibitsu Labs — more human, by design.</p>
