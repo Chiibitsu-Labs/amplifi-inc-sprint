@@ -190,9 +190,13 @@ grows under their roof. Chii's repo remains the reference/spec copy.
    everyone but the one person who did the setup). Track completion
    per analyst, same discipline `ROADMAP.md`'s other team-wide rollout
    tasks already use ~ this step isn't "done" until EVERY analyst who
-   drafts/QAs/captures has confirmed all three skills actually run on
-   THEIR own client, not when the corpus connection and one verification
-   session both check out for the first person who tried it.
+   drafts/QAs/captures has confirmed all FOUR skills (the three plus
+   `amplifi-onboarding` itself) actually run on THEIR own client, not
+   when the corpus connection and one verification session both check
+   out for the first person who tried it, and not when someone's
+   installed the three by hand without ever running `amplifi-onboarding`
+   ~ that manual path skips the standards bootstrap this whole tier is
+   supposed to guarantee.
 
    **(b) Fallback ~ only if the team keeps drafting in Claude Enterprise.**
    If insights/QA work stays in Claude Enterprise (paid seat, org
@@ -223,10 +227,16 @@ grows under their roof. Chii's repo remains the reference/spec copy.
 7. **Copy the deliverable docs** into a Drive `deliverables/` folder for
    circulation. Canva/Slides visual of the architecture map: optional
    polish, the markdown is canonical.
-8. **First write, same day:** Rica schedules the gold-report extraction
-   hour (roadmap 1.2). An empty corpus teaches the team it's decorative ~
-   a filling one teaches them it's load-bearing. Don't let the folder sit
-   empty a week.
+8. **First write, same day:** the first analyst to run `amplifi-onboarding`
+   (step 6a/6b) does this fill live, as part of that pass ~ not a
+   separately-scheduled hour. If that analyst isn't Rica, the draft sits
+   at `Status: FRAME` until she signs off (`amplifi-onboarding`'s own
+   rule); chase that sign-off the same day, don't let it drift. **Only
+   fall back to Rica scheduling a dedicated gold-report extraction hour
+   (roadmap 1.2) if nobody has run `amplifi-onboarding` yet** ~ an empty
+   corpus teaches the team it's decorative, a filling one teaches them
+   it's load-bearing, so don't let the folder sit empty a week either
+   way.
 
 ## Rules that survive the handoff
 

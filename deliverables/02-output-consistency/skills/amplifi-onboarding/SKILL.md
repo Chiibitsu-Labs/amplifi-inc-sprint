@@ -156,9 +156,13 @@ happened:
   already installed vs. freshly installed this session, and whether each
   was verified (Step 1).
 - Which standards files are now `Status: LIVE` for the first time, which
-  were already live and left alone, and which are still `Status: FRAME`
-  because no source material was available this session ~ name what's
-  still missing and who'd need to supply it, don't leave it ambiguous.
+  were already live and left alone, which are still `Status: FRAME`
+  because no source material was available this session (name what's
+  still missing and who'd need to supply it), and which are drafted and
+  waiting on Rica's sign-off (Step 2, item 3) ~ these are a different
+  state from "no source material": the fill exists, it's just not
+  approved yet, so say that plainly and name that it's Rica's sign-off
+  blocking it, not a missing input.
 - If a client's `brand-standard.md` was filled (Step 3), name the client.
 
 Never report a file as filled if any placeholder inside it wasn't actually
