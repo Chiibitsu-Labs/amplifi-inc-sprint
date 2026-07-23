@@ -4,7 +4,7 @@ export const homeHtml = `
   <h1>The vision, coming alive.</h1>
   <p class="dek">One shared vault for the analyst workflow. A quality-check system, going live as the standard fills in. A clear signal for when to hire. This page is the live status of the build.</p>
   <div class="cover-meta">
-    <span><b>Delivered</b> week of Jul 20, 2026</span>
+    <span><b>Delivered</b> Jul 23, 2026</span>
     <span><b>Scope</b> Analyst function · Core Build</span>
     <span><b>Built by</b> Chii / Chiibitsu Labs</span>
   </div>

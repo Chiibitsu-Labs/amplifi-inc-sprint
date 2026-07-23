@@ -63,7 +63,7 @@ export const recapHtml = `
 </div>
 
 <h2>From the room</h2>
-<blockquote class="pull">We got to dish out the pain points of the workflow and actually see them — not just in our heads.
+<blockquote class="pull">We got to surface the pain points of the workflow and actually see them — not just in our heads.
   <cite>The Amplifi team, end-of-day reflections</cite>
 </blockquote>
 <blockquote class="pull">Super useful in terms of day-to-day planning.

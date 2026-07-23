@@ -3,6 +3,10 @@
 > What this client's deliverables must look and sound like. The insight and
 > QA skills read this file ~ if a rule isn't written here, the AI can't
 > apply it and a human has to catch it in revisions. Write it once instead.
+> **Version: 0.1.0.** A living document ~ `amplifi-onboarding` does the
+> first fill from this client's kickoff material, `amplifi-improve`'s
+> weekly promotion pass sharpens it after every real correction. See the
+> Changelog at the bottom.
 
 ## Voice & tone
 
@@ -30,3 +34,15 @@
 > here. This section is why the same correction never happens twice.
 
 - {YYYY-MM-DD} ~ {what got corrected, what rule we extracted}
+
+## Changelog
+
+> Version bumps separately from Revision history lessons above ~ history
+> is the STORY (why a rule exists), the changelog is the VERSION record
+> (when the file itself changed). `amplifi-onboarding` logs the first fill;
+> `amplifi-improve`'s Mode 2 bumps the version on every promoted correction
+> ~ patch (0.1.x) for a terminology/wording tweak, minor (0.x.0) for a new
+> rule added, major (x.0.0) for a full re-fill (e.g. a rebrand). Newest
+> entry at the top.
+
+- {YYYY-MM-DD} ~ v0.1.0 ~ Filled from kickoff material during onboarding.

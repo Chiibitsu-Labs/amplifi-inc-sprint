@@ -1,9 +1,12 @@
 # What Good Looks Like ~ The Amplifi Analyst Bar
 
 > **Status: FRAME ~ to be filled from Amplifi's 2–3 best past reports.**
+> **Version: 0.1.0 (unfilled)**
 > This is the encoded judgment layer: the quality bar the insight skill
 > writes to and the QA skill checks against. It must come from real winning
-> work, not theory. Owner: **Rica** (chief analyst).
+> work, not theory. A living document from here on: `amplifi-onboarding`
+> does the first fill, `amplifi-improve`'s weekly promotion pass sharpens
+> it after ~ see the Changelog at the bottom.
 
 ## How to fill this file (one hour, once)
 
@@ -56,3 +59,14 @@
 - [ ] The report references the insight-log trend where relevant
 - [ ] Nothing violates `house-voice.md` or the client's `brand-standard.md`
 - [ ] No stale data carried over from a previous period's template
+
+## Changelog
+
+> `amplifi-onboarding` logs the first fill here. After that,
+> `amplifi-improve`'s Mode 2 (weekly promotion) bumps the version and adds
+> a line every time a real correction changes this file ~ patch (0.1.x)
+> for a wording/example tweak, minor (0.x.0) for a new bar item added,
+> major (x.0.0) reserved for a full re-fill against a new gold set. Newest
+> entry at the top, same convention as `insight-log.md`.
+
+- {YYYY-MM-DD} ~ v0.1.0 ~ Filled from {N} gold reports during onboarding.

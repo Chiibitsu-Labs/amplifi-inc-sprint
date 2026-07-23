@@ -1,9 +1,12 @@
 # House Voice ~ How Amplifi Actually Writes
 
 > **Status: FRAME ~ to be filled from real Amplifi writing.**
+> **Version: 0.1.0 (unfilled)**
 > This is the anti-AI-slop layer. "AI slop," "AI tells," "insights become
 > dull" ~ all symptoms of a lens with no voice to apply. Encode the voice
-> once; every skill applies it every run. Owner: **Rica**, with the analysts.
+> once; every skill applies it every run. A living document from here on:
+> `amplifi-onboarding` does the first fill, `amplifi-improve`'s weekly
+> promotion pass sharpens it after ~ see the Changelog at the bottom.
 
 ## How to fill this file (30 minutes, once)
 
@@ -53,3 +56,14 @@
 
 - {e.g. lead with the finding, never with the methodology}
 - {e.g. one idea per paragraph; cut the second adjective}
+
+## Changelog
+
+> `amplifi-onboarding` logs the first fill here. After that,
+> `amplifi-improve`'s Mode 2 (weekly promotion) bumps the version and adds
+> a line every time a real correction changes this file ~ patch (0.1.x)
+> for a wording/example tweak, minor (0.x.0) for a new tell or rule added,
+> major (x.0.0) reserved for a full re-fill against a new gold set. Newest
+> entry at the top, same convention as `insight-log.md`.
+
+- {YYYY-MM-DD} ~ v0.1.0 ~ Filled from {N} passages during onboarding.

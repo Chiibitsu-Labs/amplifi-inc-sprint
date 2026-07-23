@@ -1,10 +1,13 @@
 # Report Template Rules ~ Structure & Branding Every Report Follows
 
 > **Status: FRAME ~ confirm against the current Canva template set.**
+> **Version: 0.1.0 (unfilled)**
 > The single description of what an Amplifi intelligence report IS ~ so the
 > insight skill produces content already shaped for the deck, and the manual
 > "transfer data to template so the deck doesn't look AI" step can shrink
-> and eventually disappear. Owner: **Rica**.
+> and eventually disappear. A living document from here on:
+> `amplifi-onboarding` does the first fill, `amplifi-improve`'s weekly
+> promotion pass sharpens it after ~ see the Changelog at the bottom.
 
 ## How to fill this file (30 minutes, once)
 
@@ -150,3 +153,14 @@ chart image or a typed-over number. So:
 
 - Working format: markdown from the skill → Canva for client-facing polish.
 - MS Office only when the client asks (per intake ~ don't default to it).
+
+## Changelog
+
+> `amplifi-onboarding` logs the first fill here. After that,
+> `amplifi-improve`'s Mode 2 (weekly promotion) bumps the version and adds
+> a line every time a real correction changes this file ~ patch (0.1.x)
+> for a value tweak (a color, a font), minor (0.x.0) for a structural rule
+> added, major (x.0.0) reserved for a full re-fill against a new Canva
+> template. Newest entry at the top, same convention as `insight-log.md`.
+
+- {YYYY-MM-DD} ~ v0.1.0 ~ Filled from the current Canva template + brand kit during onboarding.
