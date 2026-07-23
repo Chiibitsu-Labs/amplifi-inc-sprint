@@ -18,6 +18,22 @@ export const d2Html = `
 <p>Generic AI output reads generic because nothing told it not to. Direction is the real variable: give an AI less input, less instruction, and it fills the gap with a guess. Give it real, explicit direction, and it has something to actually work from.</p>
 <p>Treating AI as a reason to think less is exactly how slop happens — and how the thinking skill itself atrophies. This deliverable is built on the opposite bet: using AI is a reason to be <em>more</em> intentional, not less. Encode the standard explicitly, and "good" stops being a guess for the AI, or for whoever's checking its work.</p>
 
+<h2>Same AI. Different input.</h2>
+<div class="flow">
+  <div class="flow-node is-bad"><span class="label">A thin ask</span><p>"Write the insights section for this client."</p></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-node is-bad"><span class="label">The AI guesses</span><p>No standard, no brief, no voice — it fills every gap with the generic average.</p></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-node is-bad"><span class="label">Slop</span><p>Reads like anyone's report. A human rewrites it anyway.</p></div>
+</div>
+<div class="flow">
+  <div class="flow-node is-good"><span class="label">The same ask + your standard</span><p>The skill reads your knowledge base first — the brief, the voice, what good looks like.</p></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-node is-good"><span class="label">The AI works from your bar</span><p>Nothing left to guess — it writes against what your best work already proved.</p></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-node is-good"><span class="label">On-brand, checked twice</span><p>Sounds like Amplifi. The human reviews instead of rewriting.</p></div>
+</div>
+
 <h2>Built just-in-time, not as homework</h2>
 <p>No one sits down to write four documentation files before they're allowed to start. Every analyst runs one onboarding pass on Claude — it installs the three skills below, and pulls their own function's gold-standard files straight from their own real, already-shipped work. The standard writes itself as a byproduct of work that already proved it, not a project someone has to schedule.</p>
 <div class="table-wrap">

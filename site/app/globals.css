@@ -639,7 +639,117 @@ td.num{font-variant-numeric:tabular-nums;}
   font-size:1.02rem;
 }
 .wall-card.is-repeat{background:var(--paper-raised); border-style:dashed;}
+.wall-card .fix{
+  display:block;
+  margin-top:.4rem;
+  font-family:'Public Sans';
+  font-size:.74rem;
+  line-height:1.35;
+  color:var(--ink-soft);
+}
 @media (max-width:640px){ .wall-grid{grid-template-columns:repeat(2, 1fr);} }
+
+/* phase bar (roadmap at-a-glance) */
+.phasebar{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:.6rem;
+  margin:1.6rem 0 2.2rem;
+}
+.phase-seg{
+  background:var(--paper-raised);
+  border:1px solid var(--line);
+  border-top:3px solid var(--line-strong);
+  border-radius:5px;
+  padding:.9rem 1rem 1rem;
+}
+.phase-seg.is-now{
+  border-top-color:var(--signal);
+  background:var(--signal-tint);
+}
+.phase-seg .pn{
+  display:block;
+  font-family:'Public Sans';
+  font-weight:700;
+  font-size:.64rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--signal-strong);
+  margin-bottom:.3rem;
+}
+.phase-seg .pt{
+  display:block;
+  font-family:'Playfair Display';
+  font-weight:700;
+  font-size:1.02rem;
+  line-height:1.25;
+}
+.phase-seg .pd{
+  display:block;
+  margin-top:.35rem;
+  font-family:'Public Sans';
+  font-size:.74rem;
+  color:var(--ink-soft);
+}
+@media (max-width:640px){ .phasebar{grid-template-columns:1fr;} }
+
+/* good/bad variants for flow diagrams */
+.flow-node.is-bad{border-color:var(--flag); background:var(--flag-tint);}
+.flow-node.is-bad .label{color:var(--flag);}
+.flow-node.is-good{border-color:var(--line-strong); background:var(--signal-tint);}
+
+/* dashboard-style KPI tiles (instrument) */
+.tile-row{
+  display:grid;
+  grid-template-columns:repeat(5, 1fr);
+  gap:.6rem;
+  margin:1.6rem 0 .8rem;
+}
+.tile{
+  background:var(--paper-raised);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:.85rem .9rem;
+}
+.tile .tl{
+  font-family:'Public Sans';
+  font-weight:700;
+  font-size:.62rem;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+  color:var(--ink-faint);
+  display:block;
+  margin-bottom:.35rem;
+}
+.tile .tv{
+  font-family:'Playfair Display';
+  font-weight:700;
+  font-size:1.35rem;
+  line-height:1;
+  display:block;
+  font-variant-numeric:tabular-nums;
+}
+.tile .ts{
+  font-family:'Public Sans';
+  font-size:.7rem;
+  color:var(--ink-soft);
+  display:block;
+  margin-top:.35rem;
+}
+.tile .feed{
+  display:inline-block;
+  margin-top:.45rem;
+  font-family:'Public Sans';
+  font-weight:600;
+  font-size:.6rem;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  padding:.12rem .45rem;
+  border-radius:99px;
+  background:var(--signal-tint);
+  color:var(--signal-strong);
+}
+@media (max-width:760px){ .tile-row{grid-template-columns:repeat(2, 1fr);} }
 
 /* ============ Phase bar (roadmap overview) ============ */
 .phasebar{

@@ -52,6 +52,23 @@ export const homeHtml = `
   </div>
 </div>
 
+<h2>Your workflow, and where it gets lighter</h2>
+<p>The twelve steps your team mapped on the wall, Jul 8 — with what the system changes at each one. Not a generic pipeline: this is your cycle, in your words.</p>
+<div class="wall-grid">
+  <div class="wall-card"><span class="n">01</span><span class="step">Brief</span><span class="fix">Repeat questions get answered once, in the client FAQ</span></div>
+  <div class="wall-card"><span class="n">02</span><span class="step">Baseline</span><span class="fix">Pulled from the knowledge base, not re-inferred</span></div>
+  <div class="wall-card"><span class="n">03</span><span class="step">Internal Alignment</span><span class="fix">Everyone reads the same written standard</span></div>
+  <div class="wall-card"><span class="n">04</span><span class="step">Present</span><span class="fix">On-brand by default, not by heroics</span></div>
+  <div class="wall-card"><span class="n">05</span><span class="step">Revisions</span><span class="fix">Issues caught before the client sees them</span></div>
+  <div class="wall-card"><span class="n">06</span><span class="step">Implement</span><span class="fix">Supplier pains named — parked as a process track</span></div>
+  <div class="wall-card"><span class="n">07</span><span class="step">Monthly Analysis</span><span class="fix">Drafted against your standard, not a blank prompt</span></div>
+  <div class="wall-card"><span class="n">08</span><span class="step">Insights</span><span class="fix">Compound as a client's data accumulates</span></div>
+  <div class="wall-card"><span class="n">09</span><span class="step">Report</span><span class="fix">Checked twice before it ships</span></div>
+  <div class="wall-card"><span class="n">10</span><span class="step">Internal Alignment</span><span class="fix">Faster — the standard does the aligning</span></div>
+  <div class="wall-card"><span class="n">11</span><span class="step">Client Presentation</span><span class="fix">Final deck cleared by the ship gate</span></div>
+  <div class="wall-card is-repeat"><span class="n">12</span><span class="step">Repeat</span><span class="fix">Every cycle teaches the knowledge base something</span></div>
+</div>
+
 <h2>The five deliverables</h2>
 <p>Each is a working page, with a PDF to share.</p>
 

@@ -48,6 +48,7 @@ export const d4Html = `
 <tr><td>Turn on the two AI quality checks as a standing step in the report flow — one on the draft, one on the finished report, before it ever reaches the client</td><td class="owner">Rica, with Chii</td></tr>
 <tr><td>Walk the when-to-hire signal by hand for the first time, together — Michele sets the first-pass "when does this feel like too much" lines</td><td class="owner">Michele + Chii</td></tr>
 <tr><td>Add the report-level feed to the capacity checker, so Michele sees cycle time, on-time rate, and revision rounds in the same place as daily load</td><td class="owner">Chii</td></tr>
+<tr><td>Once the capacity checker is working as intended, move it onto Amplifi's own accounts and domain — with a step-by-step migration guide. It was always yours to keep</td><td class="owner">Chii + your IT</td></tr>
 <tr><td>Take the team's single biggest recurring time-sink (likely the data-pulling queue) and automate it</td><td class="owner">Chii + Michele pick it</td></tr>
 <tr><td>90-day review — sit down against the original five goals and see what's true</td><td class="owner">Michele + Chii</td></tr>
 </tbody>
