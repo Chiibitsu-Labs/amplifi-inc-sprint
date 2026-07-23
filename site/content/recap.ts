@@ -83,8 +83,8 @@ export const recapHtml = `
   <figure><img src="/Rica-Janelle.jpg" alt="Rica and Janelle with their finished LEGO builds" loading="lazy" /><figcaption>Rica &amp; Janelle</figcaption></figure>
   <figure><img src="/Aubrey-Sen.jpg" alt="Aubrey and Sen with their matching buddy-builds" loading="lazy" /><figcaption>Aubrey &amp; Sen — twin builds from words alone</figcaption></figure>
   <figure><img src="/Affinity-Mapping.jpg" alt="Silent sticky-note mapping on the wall" loading="lazy" /><figcaption>Silent mapping — the pain points go up on the wall</figcaption></figure>
-  <figure class="is-wide"><img src="/Analyst-Workflow.jpg" alt="The twelve workflow steps on pink sticky notes" loading="lazy" /><figcaption>The 12 steps, in your own words — now the map on the <a href="/deliverable/3">architecture page</a></figcaption></figure>
-  <figure class="is-wide"><img src="/Post-Sprint-Group-Pic.jpg" alt="The team together at the end of the sprint day" loading="lazy" /><figcaption>End of the day</figcaption></figure>
+  <figure class="is-wide is-portrait"><img src="/Analyst-Workflow.jpg" alt="The twelve workflow steps on pink sticky notes" loading="lazy" /><figcaption>The 12 steps, in your own words — now the map on the <a href="/deliverable/3">architecture page</a></figcaption></figure>
+  <figure class="is-wide is-portrait"><img src="/Post-Sprint-Group-Pic.jpg" alt="The team together at the end of the sprint day" loading="lazy" /><figcaption>End of the day</figcaption></figure>
 </div>
 <p style="font-size:.82rem; color:var(--ink-faint);"><a href="https://drive.google.com/drive/folders/1Pe0-TelvQLJDgneThQAL1RrUF_Nr85Ha?usp=drive_link" target="_blank" rel="noopener">Full album →</a> · <a href="https://drive.google.com/drive/folders/11McOFr7WbnbiJfI4-aWvfFQ5uA5ycS4n?usp=drive_link" target="_blank" rel="noopener">Raw photos →</a></p>
 

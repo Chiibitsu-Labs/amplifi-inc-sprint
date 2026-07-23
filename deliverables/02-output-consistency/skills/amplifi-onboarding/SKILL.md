@@ -34,7 +34,13 @@ find them.**
   (alongside `amplifi-onboarding` itself), per `DRIVE-HANDOFF.md` step 6b.
   Installing insights/QA locally under tier (b) creates a second, unused
   copy that the tier-(b) redeployment instructions never update ~ it goes
-  stale silently and risks getting invoked by mistake later.
+  stale silently and risks getting invoked by mistake later. **Not
+  installing them locally doesn't mean skipping them, though:** confirm
+  `amplifi-insights` and `amplifi-qa` are actually uploaded and current in
+  Claude Enterprise (step 4) before calling this step done under tier (b)
+  ~ otherwise this pass can complete and report "verified" while the
+  analyst has no drafting or QA skill available anywhere, local or
+  Enterprise.
 
 Check whether whichever skills the active tier calls for are already
 present in this client's own skills location (for Claude Code:
@@ -51,10 +57,15 @@ source risks installing a stale or partial skill, or leaving the next
 analyst with no canonical copy of `amplifi-onboarding` to install from at
 all. Don't improvise a copy from anywhere else.
 
-Verify each install the same way `DRIVE-HANDOFF.md` step 4/6a already do:
-fresh session, confirm the skill actually runs and reads the corpus back.
-Don't report "installed" for a file that's present but hasn't actually
-been exercised once.
+Verify each LOCAL install the same way `DRIVE-HANDOFF.md` step 4/6a
+already do: fresh session, confirm the skill actually runs and reads the
+corpus back. Don't report "installed" for a file that's present but
+hasn't actually been exercised once. **Under tier (b), this alone isn't
+the whole check** ~ also confirm `amplifi-insights` and `amplifi-qa` are
+present and current in Claude Enterprise (they were never local installs
+to verify this way in the first place); if either is missing there, this
+step isn't done, regardless of how the local `amplifi-improve` and
+`amplifi-onboarding` copies check out.
 
 ## Step 2 ~ Bootstrap the shared standards (once per Amplifi-wide file)
 
@@ -102,12 +113,6 @@ changelog line):
    promotion to these same three files. Send her the draft and wait for
    her sign-off before item 5 below flips `Status: LIVE` ~ don't let a
    first analyst who isn't Rica set the Amplifi-wide bar unreviewed.
-   **Before ending the session either way, write a dated "Drafted,
-   pending Rica's approval" line into the file's Changelog section** ~
-   Status stays `FRAME` (it isn't live yet), but this line is what makes
-   the pending state durable and resumable across sessions instead of
-   something only this conversation remembers; it's what the check above
-   looks for on a later run.
 4. **Actually replace every `{...}` placeholder in the file** ~ not just
    the instruction blockquote. `amplifi-insights`' Step 0 corpus-readiness
    check runs an independent brace-scan on top of the Status marker
@@ -121,10 +126,20 @@ changelog line):
    report and exempts them from its own brace-scan for the same reason.
    Leave those three exactly as written; only replace the fill-once
    placeholders around them.
-5. **Delete the instruction blockquote AND flip `Status: FRAME` to
-   `Status: LIVE`** ~ both, per the file's own rule; either alone doesn't
-   clear the corpus-readiness check. Only do this once Rica has signed off
-   (item 3 above) when she wasn't the one onboarding.
+5. **Now, with item 4's placeholder replacement actually done, check
+   whether Rica has signed off (item 3).** If she has (or she was the one
+   onboarding): delete the instruction blockquote AND flip `Status: FRAME`
+   to `Status: LIVE` ~ both, per the file's own rule; either alone doesn't
+   clear the corpus-readiness check. **If she hasn't yet:** write a dated
+   "Drafted, pending Rica's approval" line into the file's Changelog
+   section now ~ only now, after item 4 has confirmed every fill-once
+   placeholder is actually gone, never before it. Writing this marker
+   before item 4 completes is what makes the pending state falsely look
+   finished to a later session that trusts the marker and skips straight
+   to approval without re-checking placeholders. Status stays `FRAME`;
+   the marker is what makes the pending state durable and resumable
+   across sessions instead of something only this conversation
+   remembers ~ it's what Step 2's check above looks for on a later run.
 6. **Set the Changelog.** Change the header's `Version: 0.1.0 (unfilled)`
    to `Version: 0.1.0`, and replace the seed changelog line's `{YYYY-MM-DD}`
    with today's actual date and `{N}` with the real count of sources used.

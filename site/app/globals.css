@@ -723,7 +723,8 @@ td.num{font-variant-numeric:tabular-nums;}
   display:block;
 }
 .photo-grid figure.is-wide{grid-column:1 / -1;}
-.photo-grid figure.is-wide img{aspect-ratio:21 / 9;}
+.photo-grid figure.is-wide img{aspect-ratio:16 / 9;}
+.photo-grid figure.is-wide.is-portrait img{aspect-ratio:3 / 4;}
 .photo-grid figcaption{
   font-family:'Public Sans';
   font-size:.74rem;
