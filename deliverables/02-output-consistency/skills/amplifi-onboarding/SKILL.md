@@ -21,13 +21,28 @@ don't assume the invoking client's working directory already is it.
 
 ## Step 1 ~ Install the toolchain
 
-Check whether `amplifi-insights`, `amplifi-qa`, and `amplifi-improve` are
-already present in this client's own skills location (for Claude Code:
-`.claude/skills/{name}/SKILL.md`, project- or user-level; see
-`DRIVE-HANDOFF.md` step 6 for which tier applies). For each one missing,
-copy it in from `amplifi-knowledge/skills/{name}/SKILL.md` (Amplifi's own
-owned copy, per `DRIVE-HANDOFF.md` step 5 ~ never from Chii's reference
-repo, which can drift from what Amplifi actually has live).
+**Check which deployment tier applies first (`DRIVE-HANDOFF.md` step 6)
+~ this determines which skills belong in THIS client, not just where to
+find them.**
+
+- **Tier (a), one client:** install all three ~ `amplifi-insights`,
+  `amplifi-qa`, AND `amplifi-improve` ~ into this same client alongside
+  `amplifi-onboarding` itself, per `DRIVE-HANDOFF.md` step 6a.
+- **Tier (b), fallback:** insights and QA drafting stays in Claude
+  Enterprise on purpose ~ do NOT install `amplifi-insights` or
+  `amplifi-qa` into this client. Only `amplifi-improve` belongs here
+  (alongside `amplifi-onboarding` itself), per `DRIVE-HANDOFF.md` step 6b.
+  Installing insights/QA locally under tier (b) creates a second, unused
+  copy that the tier-(b) redeployment instructions never update ~ it goes
+  stale silently and risks getting invoked by mistake later.
+
+Check whether whichever skills the active tier calls for are already
+present in this client's own skills location (for Claude Code:
+`.claude/skills/{name}/SKILL.md`, project- or user-level). For each one
+missing, copy it in from `amplifi-knowledge/skills/{name}/SKILL.md`
+(Amplifi's own owned copy, per `DRIVE-HANDOFF.md` step 5 ~ never from
+Chii's reference repo, which can drift from what Amplifi actually has
+live).
 
 If `amplifi-knowledge/skills/` itself doesn't have all three yet, this
 machine can't be the first install ~ stop and flag it: the Drive handoff's
@@ -136,8 +151,9 @@ alone.
 End with a plain summary, not a claim of "done" that outruns what actually
 happened:
 
-- Which of the three skills were already installed vs. freshly installed
-  this session, and whether each was verified (Step 1).
+- Which tier applied, which of the skills that tier calls for were
+  already installed vs. freshly installed this session, and whether each
+  was verified (Step 1).
 - Which standards files are now `Status: LIVE` for the first time, which
   were already live and left alone, and which are still `Status: FRAME`
   because no source material was available this session ~ name what's
