@@ -15,7 +15,7 @@ export const d2Html = `
 </div>
 
 <h2>The root cause</h2>
-<p>Generic AI output reads generic because nothing told it not to. That's not a smarter-model problem — it's a direction problem. Give an AI less input, less instruction, and it fills the gap with a guess; give it real, explicit direction, and it has something to actually work from.</p>
+<p>Generic AI output reads generic because nothing told it not to. Direction is the real variable: give an AI less input, less instruction, and it fills the gap with a guess. Give it real, explicit direction, and it has something to actually work from.</p>
 <p>Treating AI as a reason to think less is exactly how slop happens — and how the thinking skill itself atrophies. This deliverable is built on the opposite bet: using AI is a reason to be <em>more</em> intentional, not less. Encode the standard explicitly, and "good" stops being a guess for the AI, or for whoever's checking its work.</p>
 
 <h2>Built just-in-time, not as homework</h2>
@@ -37,24 +37,31 @@ export const d2Html = `
 <div class="flow">
   <div class="flow-node"><span class="label">Draft</span><p><code>amplifi-insights</code> skill writes against the encoded standard — not a blank prompt.</p></div>
   <div class="flow-arrow">→</div>
-  <div class="flow-node"><span class="label">QA · pass 1</span><p><code>amplifi-qa</code> checks the full markdown draft before it goes anywhere near Canva.</p></div>
+  <div class="flow-node"><span class="label">QA · pass 1</span><p><code>amplifi-qa</code> checks the full markdown draft before it's assembled into the final report.</p></div>
   <div class="flow-arrow">→</div>
-  <div class="flow-node"><span class="label">QA · pass 2</span><p>The same gate, re-run against the visually rendered Canva export. <strong>This is the only pass that actually clears a report to ship</strong> — layout drift, stale charts, and wrong logos all happen after pass 1 already ran.</p></div>
+  <div class="flow-node"><span class="label">QA · pass 2</span><p>The same gate, re-run against the finished, visually rendered report. <strong>This is the only pass that actually clears a report to ship</strong> — layout drift, stale charts, and wrong logos all happen after pass 1 already ran.</p></div>
   <div class="flow-arrow">→</div>
   <div class="flow-node"><span class="label">Capture</span><p><code>amplifi-improve</code> closes the loop — what this session taught goes back into the standard.</p></div>
 </div>
 
 <h2>Why two QA passes, not one</h2>
-<p>A markdown draft can pass every check and still ship with a stale chart or an off-brand layout once it's actually assembled in Canva — because that assembly step happens <em>after</em> the first check runs. The second pass, against the rendered deck, is the one checkpoint that's allowed to actually clear a report for the client. Anything it flags gets a human clear-or-rerun decision, every time.</p>
+<p>A markdown draft can pass every check and still ship with a stale chart or an off-brand layout once it's actually assembled into the final deck — because that assembly step happens <em>after</em> the first check runs. The second pass, against the rendered report, is the one checkpoint that's allowed to actually clear a report for the client. Anything it flags gets a human clear-or-rerun decision, every time.</p>
 
 <h2>Argue with the draft before shipping it</h2>
-<p>One more habit, taught during the sprint: before a report ships, ask what the worst version of this would look like, or have a second pass actively try to find what's wrong — not just confirm it looks fine. A same-angle re-check tends to agree with itself; a pass built to disagree catches what the first one won't.</p>
+<p>One more habit, taught during the sprint: before a report ships, ask what the worst version of this would look like, or have a second pass actively try to find what's wrong — not just confirm it looks fine. A same-angle re-check tends to agree with itself; a pass built to disagree catches what the first one won't. A genuinely different model makes that disagreement more likely than asking the same one to double-check itself — ChatGPT auditing a draft written in Claude, for instance, since that's the tool most people already have open.</p>
 
 <h2>The loop-closer</h2>
 <p><code>amplifi-improve</code> is what keeps this from calcifying. It's the same skill that runs Deliverable 1's capture loop — every session's real lessons get written down, and the good ones get promoted into these standards files, so the definition of "good" keeps sharpening instead of going stale the day it was written.</p>
 
 <h2>Status</h2>
-<p>All four skills are built and ready — that's done on our side: <code>amplifi-insights</code> drafts, <code>amplifi-qa</code> checks (twice), <code>amplifi-improve</code> captures, and <code>amplifi-onboarding</code> ties them together — one pass that installs the other three and bootstraps each function's gold-standard files automatically, live, from real work. Nobody's homework. That install is the top of Phase 1 on the <a href="/deliverable/4">roadmap</a>. From there, consistency depends on your team actually running it — the tool's built, the ball's in play.</p>
+<p>All four skills are built and ready — that's done on our side.</p>
+<ul>
+  <li><code>amplifi-insights</code> drafts</li>
+  <li><code>amplifi-qa</code> checks, twice</li>
+  <li><code>amplifi-improve</code> captures</li>
+  <li><code>amplifi-onboarding</code> installs the other three and fills the standards live, from real work — nobody's homework</li>
+</ul>
+<p>That install is the top of Phase 1 on the <a href="/deliverable/4">roadmap</a>. From there, it's on your team to actually use it day to day — that's the only part left.</p>
 
 <hr class="hr" />
 <p class="brand-close">Chiibitsu Labs — more human, by design.</p>
