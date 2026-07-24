@@ -86,10 +86,14 @@ grows under their roof. Chii's repo remains the reference/spec copy.
 5. **Keep an owned copy ~ and know that editing it isn't enough on its
    own.** Copy each skill into its OWN subfolder in Drive ~
    `amplifi-knowledge/skills/amplifi-insights/SKILL.md`,
-   `.../amplifi-qa/SKILL.md`, `.../amplifi-improve/SKILL.md`. All three
-   source files are literally named `SKILL.md`; dumping them into one flat
-   folder means the second and third uploads silently overwrite the first.
-   This is Amplifi's own canonical record ~ without it, the operating
+   `.../amplifi-qa/SKILL.md`, `.../amplifi-improve/SKILL.md`, AND
+   `.../amplifi-onboarding/SKILL.md`. All four source files are literally
+   named `SKILL.md`; dumping them into one flat folder means each later
+   upload silently overwrites the one before it. This is Amplifi's own
+   canonical record for all four ~ `amplifi-onboarding` is the one every
+   new analyst is pointed at first, so it needs to live here as much as
+   the other three, not just get named in the summary table above. Without
+   this, the operating
    instructions for "how the analyst function uses AI" live only in
    Chii's reference repo and inside a vendor product; if Claude access
    changes or the lens swaps, Amplifi would be reconstructing its own
@@ -103,22 +107,26 @@ grows under their roof. Chii's repo remains the reference/spec copy.
    active, so check that first, don't assume the same split always
    applies:
    - **Running tier (a), one client (the deployment to aim for):** all
-     three skills ~ `amplifi-insights`, `amplifi-qa`, AND `amplifi-improve`
-     ~ live ONLY in the write-capable client's local skills location
-     (step 6a). Re-copy whichever skill changed there and re-verify (fresh
-     session, confirm the new behavior). Re-uploading to Claude Enterprise
-     does nothing here if Enterprise isn't the session actually doing the
-     work ~ that copy, if one still exists from an earlier setup, is
-     already dead weight.
+     four skills ~ `amplifi-insights`, `amplifi-qa`, `amplifi-improve`, AND
+     `amplifi-onboarding` ~ live ONLY in the write-capable client's local
+     skills location (step 6a). Re-copy whichever skill changed there and
+     re-verify (fresh session, confirm the new behavior). Re-uploading to
+     Claude Enterprise does nothing here if Enterprise isn't the session
+     actually doing the work ~ that copy, if one still exists from an
+     earlier setup, is already dead weight.
    - **Running tier (b), the fallback:** `amplifi-insights` / `amplifi-qa`
      live in Claude Enterprise ~ re-upload there (step 4), re-verify
-     (fresh session, confirm the new behavior). `amplifi-improve` lives
-     separately, in the write-capable client's local skills location
-     (step 6b) ~ re-copy it there too, independently. It's installed in
-     two places for two different reasons (drafting/QA access vs. write
-     access) and both copies go stale independently; updating only the
-     Enterprise copy leaves the write-capable session ~ the one that
-     actually runs captures ~ on the old behavior.
+     (fresh session, confirm the new behavior). `amplifi-improve` AND
+     `amplifi-onboarding` live separately, in the write-capable client's
+     local skills location (step 6b) ~ re-copy them there too,
+     independently. `amplifi-onboarding` needs the same write access
+     `amplifi-improve` does (it's the one that flips the standards files
+     to `Status: LIVE`), so it belongs on the write-capable side of this
+     split, not in Enterprise. Skills are installed in two places for two
+     different reasons (drafting/QA access vs. write access) and every
+     copy goes stale independently; updating only the Enterprise copy
+     leaves the write-capable session ~ the one that actually runs
+     captures and onboarding ~ on the old behavior.
    Don't tell anyone an update is live until every installed copy FOR THE
    TIER ACTUALLY IN USE is confirmed, not just the first one you
    remembered.
@@ -182,9 +190,13 @@ grows under their roof. Chii's repo remains the reference/spec copy.
    everyone but the one person who did the setup). Track completion
    per analyst, same discipline `ROADMAP.md`'s other team-wide rollout
    tasks already use ~ this step isn't "done" until EVERY analyst who
-   drafts/QAs/captures has confirmed all three skills actually run on
-   THEIR own client, not when the corpus connection and one verification
-   session both check out for the first person who tried it.
+   drafts/QAs/captures has confirmed all FOUR skills (the three plus
+   `amplifi-onboarding` itself) actually run on THEIR own client, not
+   when the corpus connection and one verification session both check
+   out for the first person who tried it, and not when someone's
+   installed the three by hand without ever running `amplifi-onboarding`
+   ~ that manual path skips the standards bootstrap this whole tier is
+   supposed to guarantee.
 
    **(b) Fallback ~ only if the team keeps drafting in Claude Enterprise.**
    If insights/QA work stays in Claude Enterprise (paid seat, org
@@ -193,15 +205,21 @@ grows under their roof. Chii's repo remains the reference/spec copy.
    recap forward, typed once, right after finishing in Enterprise ~ 2-3
    sentences on what got corrected and what was learned, not a full
    transcript paste. `amplifi-improve` captures FROM that recap in this
-   mode, not from a session it never saw. Install `amplifi-improve` in
-   the write-capable client's own skills location (for Claude Code: the
-   project's `.claude/skills/amplifi-improve/SKILL.md`, or
-   `~/.claude/skills/amplifi-improve/SKILL.md` for a user-level install)
-   ~ uploading it to Claude Enterprise in step 4 does NOT make it
-   available there, that upload only registers the skill where it can't
-   write. Verify by running it once end-to-end with a real recap and
+   mode, not from a session it never saw. Install BOTH `amplifi-improve`
+   AND `amplifi-onboarding` in the write-capable client's own skills
+   location (for Claude Code: the project's
+   `.claude/skills/amplifi-improve/SKILL.md` and
+   `.claude/skills/amplifi-onboarding/SKILL.md`, or the `~/.claude/skills/`
+   equivalents for a user-level install) ~ uploading either to Claude
+   Enterprise in step 4 does NOT make it available there, that upload only
+   registers the skill where it can't write, and `amplifi-onboarding`
+   needs write access for the exact same reason `amplifi-improve` does
+   (it's the one flipping the standards files to `Status: LIVE`). Verify
+   `amplifi-improve` by running it once end-to-end with a real recap and
    confirming a real, meaningful file lands in `learnings/` ~ not just
-   that a file appears, that it reflects something that actually happened.
+   that a file appears, that it reflects something that actually
+   happened. Verify `amplifi-onboarding` the same way step 6a does: fresh
+   session, confirm it actually runs and reads the corpus back.
 
    Until either tier is fully set up, the skill outputs the learning
    file's content and asks the analyst to save it by hand ~ workable, but
@@ -209,10 +227,23 @@ grows under their roof. Chii's repo remains the reference/spec copy.
 7. **Copy the deliverable docs** into a Drive `deliverables/` folder for
    circulation. Canva/Slides visual of the architecture map: optional
    polish, the markdown is canonical.
-8. **First write, same day:** Rica schedules the gold-report extraction
-   hour (roadmap 1.2). An empty corpus teaches the team it's decorative ~
-   a filling one teaches them it's load-bearing. Don't let the folder sit
-   empty a week.
+8. **First write, same day:** the first analyst to run `amplifi-onboarding`
+   (step 6a/6b) does this fill live, as part of that pass ~ not a
+   separately-scheduled hour. If that analyst isn't Rica, the draft sits
+   at `Status: FRAME` until she signs off (`amplifi-onboarding`'s own
+   rule); chase that sign-off the same day, don't let it drift. **Fall
+   back to Rica scheduling a dedicated gold-report extraction hour
+   (roadmap 1.2) whenever the standards still haven't reached
+   `Status: LIVE`** ~ that covers both nobody having run
+   `amplifi-onboarding` yet, and someone having run it with no source
+   material to draw from (`amplifi-onboarding` Step 5's "no source
+   material" category) with no later onboarding pass having picked it
+   back up since. Onboarding merely having been invoked once isn't the
+   same as the fill having happened ~ don't let one dry run permanently
+   suppress this fallback while the file sits at `Status: FRAME`
+   indefinitely. An empty corpus teaches the team it's decorative, a
+   filling one teaches them it's load-bearing, so don't let the folder
+   sit empty a week either way.
 
 ## Rules that survive the handoff
 

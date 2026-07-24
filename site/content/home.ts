@@ -90,4 +90,8 @@ export const homeHtml = `
 <div class="callout"><b>Out of Core Build scope:</b> supplier pains, a Canva replacement, new platforms, the git migration. The <a href="/deliverable/4">roadmap</a> says when to revisit each.</div>
 
 <p class="lede" style="margin-top:2.2rem;">For the day this came out of, see the <a href="/recap">sprint recap</a>.</p>
+
+<hr class="hr" />
+<p class="brand-close">Chiibitsu Labs — more human, by design.</p>
+<p class="attribution">Prepared by <a href="https://linkedin.com/in/angelinev" target="_blank" rel="noopener">Angeline &ldquo;Chii&rdquo; Viray</a> · labs@chiibitsu.com · Viber/WhatsApp +63 924 113 1973 · @chiibitsulabs</p>
 `;

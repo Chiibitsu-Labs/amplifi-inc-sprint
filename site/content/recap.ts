@@ -58,6 +58,7 @@ export const recapHtml = `
 <div class="grid grid-2">
   <a class="deliv-card" href="/deliverable/1"><span class="idx">01</span><div><h3>A shared knowledge base</h3><p>One home your whole team reads from, so quality isn't tribal.</p></div></a>
   <a class="deliv-card" href="/deliverable/2"><span class="idx">02</span><div><h3>On-brand reports, from your own work</h3><p>Each person produced one live, in their own role, the same day.</p></div></a>
+  <a class="deliv-card" href="/deliverable/3"><span class="idx">03</span><div><h3>A map of your own workflow</h3><p>The 12 steps you put on the wall, with the pain points marked.</p></div></a>
   <a class="deliv-card" href="/deliverable/4"><span class="idx">04</span><div><h3>A roadmap with owners and dates</h3><p>What happens next, sequenced, with a name on every task.</p></div></a>
   <a class="deliv-card" href="/deliverable/5"><span class="idx">05</span><div><h3>Michele's capacity checker</h3><p>Built live, in use for daily planning ever since.</p></div></a>
 </div>
@@ -77,17 +78,18 @@ export const recapHtml = `
 <h2>Photos</h2>
 <p class="lede">The room, the wall, the buddy-builds, the team at work.</p>
 <div class="photo-grid">
-  <figure class="is-wide"><img src="/Lego.jpg" alt="The whole team around the table, mid buddy-build, LEGO everywhere" /><figcaption>The buddy-build — briefing a partner in words only, the same skill as briefing an AI</figcaption></figure>
-  <figure><img src="/Dale-Mitch.jpg" alt="Dale and Michele with their finished LEGO builds" /><figcaption>Dale &amp; Michele — builds compared</figcaption></figure>
-  <figure><img src="/Rica-Janelle.jpg" alt="Rica and Janelle with their finished LEGO builds" /><figcaption>Rica &amp; Janelle</figcaption></figure>
-  <figure><img src="/Aubrey-Sen.jpg" alt="Aubrey and Sen with their matching buddy-builds" /><figcaption>Aubrey &amp; Sen — twin builds from words alone</figcaption></figure>
-  <figure><img src="/Affinity-Mapping.jpg" alt="Silent sticky-note mapping on the wall" /><figcaption>Silent mapping — the pain points go up on the wall</figcaption></figure>
-  <figure class="is-wide"><img src="/Analyst-Workflow.jpg" alt="The twelve workflow steps on pink sticky notes" /><figcaption>The 12 steps, in your own words — now the map on the <a href="/deliverable/3">architecture page</a></figcaption></figure>
-  <figure class="is-wide"><img src="/Post-Sprint-Group-Pic.jpg" alt="The team together at the end of the sprint day" /><figcaption>End of the day</figcaption></figure>
+  <figure class="is-wide"><img src="/Lego.jpg" alt="The whole team around the table, mid buddy-build, LEGO everywhere" loading="lazy" /><figcaption>The buddy-build — briefing a partner in words only, the same skill as briefing an AI</figcaption></figure>
+  <figure class="is-portrait"><img src="/Dale-Mitch.jpg" alt="Dale and Michele with their finished LEGO builds" loading="lazy" /><figcaption>Dale &amp; Michele — builds compared</figcaption></figure>
+  <figure class="is-portrait"><img src="/Rica-Janelle.jpg" alt="Rica and Janelle with their finished LEGO builds" loading="lazy" /><figcaption>Rica &amp; Janelle</figcaption></figure>
+  <figure class="is-portrait"><img src="/Aubrey-Sen.jpg" alt="Aubrey and Sen with their matching buddy-builds" loading="lazy" /><figcaption>Aubrey &amp; Sen — twin builds from words alone</figcaption></figure>
+  <figure><img src="/Affinity-Mapping.jpg" alt="Silent sticky-note mapping on the wall" loading="lazy" /><figcaption>Silent mapping — the pain points go up on the wall</figcaption></figure>
+  <figure class="is-wide is-portrait"><img src="/Analyst-Workflow.jpg" alt="The twelve workflow steps on pink sticky notes" loading="lazy" /><figcaption>The 12 steps, in your own words — now the map on the <a href="/deliverable/3">architecture page</a></figcaption></figure>
+  <figure class="is-wide is-portrait"><img src="/Post-Sprint-Group-Pic.jpg" alt="The team together at the end of the sprint day" loading="lazy" /><figcaption>End of the day</figcaption></figure>
 </div>
 <p style="font-size:.82rem; color:var(--ink-faint);"><a href="https://drive.google.com/drive/folders/1Pe0-TelvQLJDgneThQAL1RrUF_Nr85Ha?usp=drive_link" target="_blank" rel="noopener">Full album →</a> · <a href="https://drive.google.com/drive/folders/11McOFr7WbnbiJfI4-aWvfFQ5uA5ycS4n?usp=drive_link" target="_blank" rel="noopener">Raw photos →</a></p>
 
 <hr class="hr" />
 <p class="brand-close">Chiibitsu Labs — more human, by design.</p>
+<p class="attribution">Prepared by <a href="https://linkedin.com/in/angelinev" target="_blank" rel="noopener">Angeline &ldquo;Chii&rdquo; Viray</a> · labs@chiibitsu.com · Viber/WhatsApp +63 924 113 1973 · @chiibitsulabs</p>
 
 `;

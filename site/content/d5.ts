@@ -104,5 +104,6 @@ export const d5Html = `
 
 <hr class="hr" />
 <p class="brand-close">Chiibitsu Labs — more human, by design.</p>
+<p class="attribution">Prepared by <a href="https://linkedin.com/in/angelinev" target="_blank" rel="noopener">Angeline &ldquo;Chii&rdquo; Viray</a> · labs@chiibitsu.com · Viber/WhatsApp +63 924 113 1973 · @chiibitsulabs</p>
 
 `;
