@@ -58,6 +58,15 @@ instead of a live preview link in the PR.)
 - `public/logos/` — Chiibitsu Labs and Amplifi marks (already background-removed)
 - `public/fonts/` — self-hosted Source Serif, Public Sans, IBM Plex Mono, Playfair Display
 
+## Regenerating the PDFs
+
+The five files in `public/pdfs/` are exported from the live `/deliverable/[id]` pages
+via Playwright + headless Chromium (`page.pdf()`), not authored separately. See
+[`PDF-DESIGN-STANDARD.md`](./PDF-DESIGN-STANDARD.md) before touching that pipeline —
+Chromium's print engine has a few undocumented quirks (header/footer background,
+margin insets, table pagination) that will reintroduce white gaps or a blank trailing
+page if you don't work around them the way that doc describes.
+
 ## A note on the password gate
 
 The password check and session cookie are server-side (`middleware.ts` +
