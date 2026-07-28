@@ -51,42 +51,62 @@ live). **But survey what's already there before copying anything in ~ the
 install is only unconditional for a skill with nothing of its own already
 in place.**
 
-**Before installing anything, list EVERY skill already in this client's
-skills location and read each one's `description` ~ not just the four
-names this skill installs.** Several analysts built their own personal
-capture/learning skill during the in-person sprint and have been using it
-since, and **most of them did not name it `amplifi-improve`** ~ it might
-be `improve`, `capture`, `learnings`, `eod`, their own initials, anything.
-Matching on filename alone will miss it entirely and then install
-`amplifi-improve` *alongside* it, leaving that person with two skills
-doing the same job, writing to different places, and no idea which one to
-run. **Match on what a skill DOES (its description and its actual
-instructions), not on what it's called.** If you find one that overlaps
-any of the four ~ same job, different name ~ treat it exactly like a
-same-name match below, and say plainly which existing skill you think it
-overlaps and why before touching anything. If you're unsure whether it
-overlaps, ask; don't assume it doesn't.
+**Before installing anything, inventory BOTH skill scopes ~ project-level
+(`.claude/skills/`) AND user-level (`~/.claude/skills/`) ~ and read every
+skill's `description`, not just the four names this skill installs.**
+Checking only the scope you're about to install into is how a duplicate
+gets created anyway: an analyst's personal skill sitting at user level is
+invisible to a project-level survey, so the canonical copy lands beside it
+and both stay live. Survey both, always, whichever scope you end up
+installing into.
+
+Several analysts built their own personal capture/learning skill during
+the in-person sprint and have been using it since, and **most of them did
+not name it `amplifi-improve`** ~ it might be `improve`, `capture`,
+`learnings`, `eod`, their own initials, anything. Matching on filename
+alone misses it entirely. **Match on what a skill DOES (its description
+and its actual instructions), not on what it's called.** Say plainly which
+canonical skill you think an overlap corresponds to, and why, before
+touching anything. If you're unsure whether it overlaps, ask; don't assume
+it doesn't.
+
+**Then split what you found by whether the active tier installs that skill
+locally at all:**
+
+- **Overlaps a skill THIS TIER installs locally** (tier (a): all four;
+  tier (b): `amplifi-improve` and `amplifi-onboarding` only) ~ run the
+  merge/replace/keep flow below.
+- **Overlaps `amplifi-insights` or `amplifi-qa` under tier (b)** ~ do NOT
+  run that flow, and do NOT install the canonical copy locally. Tier (b)
+  keeps those two in Claude Enterprise precisely because a local copy is
+  never covered by the redeployment plan and goes stale silently. Merging
+  a personal helper with the shared copy here would manufacture exactly
+  that stale local artifact out of something that was previously just
+  someone's own tool. Instead: leave it alone, tell them plainly that it
+  sits outside the update plan and won't receive shared improvements, and
+  ask whether they want to keep it as a personal helper or retire it.
+  Either answer is fine; record which in Step 5.
 
 **A skill that's already present is NOT automatically the same skill ~
 never overwrite one without asking.** A local file existing tells you
-nothing about whose version it is. For every skill already present
-locally (same name, or a differently-named overlap found above), compare
-it against `amplifi-knowledge/skills/{name}/SKILL.md` and act on what you
-find:
+nothing about whose version it is. For every in-tier match (same name, or
+a differently-named overlap), compare it against
+`amplifi-knowledge/skills/{name}/SKILL.md` and act on what you find:
 
 - **Byte-identical to the Drive copy:** nothing to do, leave it, move on.
 - **Different in any way:** STOP and show the person what differs in
   plain terms (what their copy does that the shared one doesn't, and
   vice versa), then ask which they want:
-  1. **Merge** (default recommendation) ~ keep everything their version
-     does that the shared one doesn't, and add the shared version's rules
-     on top. This is the right answer almost always: their additions are
-     real working knowledge earned over weeks of use, and the shared copy
-     carries conventions the rest of the corpus depends on (where files
-     land, how they're named and tagged, what the other skills expect to
-     read back).
+  1. **Merge** (default recommendation) ~ their additions are real working
+     knowledge earned over weeks of use, and the shared copy carries
+     conventions the rest of the corpus depends on. See the merge
+     procedure below ~ it is not a paste-both-together operation.
   2. **Replace** with the shared copy ~ only if they say their version
-     was a throwaway experiment.
+     was a throwaway experiment. **If theirs was differently named,
+     deleting that folder is part of replacing it**, not an afterthought:
+     install the canonical copy under its canonical name AND remove the
+     old alias, or you've recreated the two-overlapping-skills state this
+     whole check exists to prevent.
   3. **Keep theirs** untouched ~ fine, but tell them plainly which shared
      conventions they'll be missing, and don't report the skill as
      installed-and-current if it can't do what the rest of the corpus
@@ -98,22 +118,77 @@ find:
   teaches the team that the system takes work away rather than compounds
   it.
 
-  **On a merge, ask which name the result should live under, and end up
-  with exactly ONE skill doing that job**, not the merged one plus their
-  original sitting beside it. Keeping their name is completely fine (it's
-  what their muscle memory reaches for); if they keep a name other than
-  the canonical one, note that in the Step 5 report-back so nobody later
-  reads a missing `amplifi-improve` folder as "never installed." What's
-  not fine is leaving two overlapping skills installed ~ that's the
-  same confusion this whole check exists to prevent.
+### The merge procedure (rule by rule, not file plus file)
+
+Concatenating both versions produces one skill holding two contradictory
+sets of instructions ~ a capture step that's been told to write to their
+personal path AND to the corpus path will do one, the other, or both
+unpredictably. That's worse than either version alone. So:
+
+1. **Additive-only differences** (their version does something extra the
+   shared one is silent about) ~ keep, no decision needed.
+2. **Direct conflicts** (both specify a destination, a filename pattern, a
+   tag vocabulary, an ordering ~ and they differ) ~ surface each one
+   explicitly, name both behaviors, and get a decision on which wins.
+   **Default to the shared convention for anything another skill reads
+   back** (where files land, how they're named and tagged, section
+   structure) ~ those aren't stylistic preferences, they're the contract
+   the rest of the corpus depends on. Default to theirs for anything
+   purely about how they personally work.
+3. **Write the decision down in the merged file** so the next person to
+   open it can see a rule was chosen, not accidentally inherited.
+4. The merged result must contain **exactly one instruction per decision
+   point** ~ if you can't tell which of two rules would fire, the merge
+   isn't done.
+
+**Naming the merged result:** ask which name it should live under, and end
+with exactly ONE skill doing that job ~ not the merged one plus their
+original beside it. Keeping their own name is fine for
+`amplifi-insights`, `amplifi-qa`, and `amplifi-improve` (it's what their
+muscle memory reaches for); note the non-canonical name in Step 5 so a
+later rollout check doesn't read the missing canonical folder as "never
+installed."
+
+**`amplifi-onboarding` is the one exception ~ it must keep its canonical
+name.** `DRIVE-HANDOFF.md`, `ROADMAP.md`, and the analyst-facing start
+instructions all tell people to run `amplifi-onboarding` by that exact
+name in a fresh session. A report-back line saying "it's called something
+else on this machine" doesn't make that documented entry point work
+later ~ the next analyst, or this one months from now, follows the
+written instruction and finds nothing. If someone's personal skill
+overlaps this one and they want their name kept, keep it as an alias
+alongside, but the canonical `amplifi-onboarding` entry point stays
+installed and working.
+
+### Sending an improvement back to the shared copy
 
 **If a merge surfaces something genuinely good in their personal version
 ~ a rule, a habit, a check the shared copy lacks ~ that belongs back in
-the shared copy, not just in their local one.** Say so, and offer to
-capture it with `amplifi-improve` (or write it up for the next promotion
-pass) so the rest of the team gets it too. One person's private
-improvement staying private is the same tribal-knowledge problem the
-whole knowledge base is here to end.
+the shared copy, not just in their local one.** `amplifi-improve` cannot
+route this on its own: its promotion mode files `STANDARD` items into the
+standards files and `PROCESS` items into `learnings/patterns.md`, and
+neither destination is a `SKILL.md`. Pointing someone at it for a skill
+change quietly drops the improvement. Do this instead:
+
+1. **Edit `amplifi-knowledge/skills/{name}/SKILL.md` in Drive directly** ~
+   that copy is the source of truth (`DRIVE-HANDOFF.md` step 5), and a
+   skill change is one of the few edits that lands there rather than in
+   `standards/` or `learnings/`.
+2. **Add a dated line to that skill's own notes** saying what changed,
+   whose practice it came from, and why ~ same discipline every other
+   corpus file's changelog uses.
+3. **Flag it in the Step 5 report-back as a Drive-side change requiring
+   redeployment**, and follow `DRIVE-HANDOFF.md` step 5's redeploy rule ~
+   every already-installed copy is now behind, including ones set up
+   earlier in this same rollout.
+
+**Timing matters here: do the Drive edit AFTER this analyst's install is
+finished and verified, not in the middle of a multi-machine pass.**
+Changing the canonical copy mid-pass silently invalidates every install
+completed earlier in that same pass. If you're onboarding several people
+in one sitting, collect improvements as you go and apply them to Drive in
+one batch at the end, then redeploy ~ rather than moving the target
+under your own feet.
 
 If `amplifi-knowledge/skills/` itself doesn't have all four skills yet
 (the three above AND `amplifi-onboarding` itself) ~ stop and flag it: the

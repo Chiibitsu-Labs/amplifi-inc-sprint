@@ -137,7 +137,13 @@ grows under their roof. Chii's repo remains the reference/spec copy.
    diff first, and where the local copy differs, show the person what
    changed and let them choose merge (default), replace, or keep ~ then
    feed anything good from their version back into the Drive copy so the
-   rest of the team gets it.
+   rest of the team gets it. **Batch those Drive-side writes to the END
+   of the redeployment pass, never mid-pass** ~ editing the canonical
+   copy while a multi-machine redeploy is still running silently makes
+   every machine already completed in that same pass stale against this
+   step's own rule, and you'd have to start the pass over to honor it.
+   Collect the improvements as you go, apply them to Drive once the pass
+   is done, then run a fresh redeploy cycle for the new version.
 6. **Give the improve skill an actual write path ~ and don't let the fix
    for "can't write" accidentally create "can't see what happened."**
    Read access (step 4) is not enough for `amplifi-improve`: the
