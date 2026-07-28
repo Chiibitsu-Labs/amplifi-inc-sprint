@@ -97,4 +97,37 @@ a glance instead of assuming an edit here went live everywhere.
 
 ---
 
+## Declined shared-skill proposals
+
+**When someone's personal copy does something the shared one doesn't and
+they say NO to pushing it back to everyone, the no gets written here.**
+`amplifi-onboarding`'s "Sending an improvement back to the shared copy"
+step asks that as its own question, separately from merging their local
+install ~ and a no there has to survive the session that heard it.
+
+Without this table it doesn't. A Claude session can't read another
+session's conversation, so a refusal recorded only in a report-back is
+gone the moment that session ends, and the next operator onboarding the
+next person finds the same difference and asks again. Being asked
+repeatedly to hand your own work to the whole team, by something that
+can't remember you already said no, is its own kind of pressure.
+
+**Check this table before proposing a promotion, not just after.** A
+matching row means the answer is already no; don't re-ask unless the
+person who declined raises it themselves.
+
+| Date | Skill | What was proposed | Whose copy | Who declined | Note |
+|---|---|---|---|---|---|
+| {YYYY-MM-DD} | {canonical skill name} | {the change, one line} | {analyst, and the name their copy is installed under} | {who said no} | {reason if they gave one ~ optional, and never inferred} |
+
+**A reason is optional and never invented.** Nobody owes an explanation
+for keeping their own work local. Leave the cell empty rather than
+guessing at a motive that then reads as fact to everyone after.
+
+**A no isn't permanent, it's just not yours to reverse.** If the same
+person later decides they do want it shared, add the Changelog row for
+the change and note the date here so the history stays readable.
+
+---
+
 *Chiibitsu Labs ~ more human, by design.*

@@ -1149,7 +1149,15 @@ td.num{font-variant-numeric:tabular-nums;}
 .ob-need li{margin-bottom:6px; padding-left:3px;}
 .ob-need li:last-child{margin-bottom:0;}
 .ob-need li::marker{color:var(--ob-accent);}
+/* The global thead rule uses --ink-faint (3.40:1 on cream at .66rem). Page
+   tokens are set on .ob and don't reach a rule that names the token directly,
+   so this table needs its own header colour. */
+.ob thead th{color:var(--ob-faint);}
 
+/* list-style:none strips list semantics in some Safari/VoiceOver builds, and
+   the ::before counters below restore only the visible numbers — so the JSX
+   carries role="list" to keep this announced as the ordered prerequisite
+   sequence it is. Don't remove one without the other. */
 .ob-steps{counter-reset:ob; list-style:none; margin:0; padding:0;
   display:flex; flex-direction:column; gap:20px;}
 .ob-steps li{display:flex; gap:15px; align-items:flex-start;}

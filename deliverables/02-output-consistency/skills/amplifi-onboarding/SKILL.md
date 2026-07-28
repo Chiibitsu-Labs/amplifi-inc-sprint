@@ -254,10 +254,21 @@ change quietly drops the improvement. Do this instead:
    different blast radii, and the second one edits the source of truth
    every other analyst installs from and invalidates every install already
    completed. Name what would change, in what file, and who it affects,
-   then ask. **A no here is final for this run**: leave the shared copy
-   alone, keep the improvement in their local install, and note it in the
-   Step 5 report-back as declined so nobody quietly retries it later. Only
-   on an explicit yes do items 1&ndash;3 below happen.
+   then ask. Before you ask, **read the `Declined shared-skill proposals`
+   table in `amplifi-knowledge/skills/README.md`** ~ a matching row means
+   this was already refused and you don't re-ask.
+
+   **A no is final for this run**: leave the shared copy alone, keep the
+   improvement in their local install, and **write a row into that same
+   table** ~ date, skill, what was proposed, whose copy, who declined.
+   The Step 5 report-back is not a record; it lives only in this
+   conversation, and the next session onboarding the next person cannot
+   read it. Without the durable row, the same difference gets found again
+   and the same person gets asked again by something that can't remember
+   they already said no. Mention it in the report-back as well, but the
+   table is the part that has to happen.
+
+   Only on an explicit yes do items 1&ndash;3 below happen.
 
 1. **Edit `amplifi-knowledge/skills/{name}/SKILL.md` in Drive directly** ~
    that copy is the source of truth (`DRIVE-HANDOFF.md` step 5), and a

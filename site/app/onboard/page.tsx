@@ -51,9 +51,12 @@ export default function OnboardPage() {
         <div className="ob-live">
           <span className="ob-dot" />
           <p>
-            <b>Your knowledge base is already live in the shared Drive</b> — the
-            standards, the client folders, the assistants. Nothing to create,
-            nothing to upload. You&rsquo;re just connecting to it.{" "}
+            <b>The knowledge base is already in the shared Drive</b> — the
+            structure, the client folders, the assistants. Nothing for you to
+            create or upload; you&rsquo;re connecting to something that exists.
+            The one part still to be written is the quality standards, and
+            that&rsquo;s what the first person through fills in — from real
+            Amplifi work, with the setup asking the questions.{" "}
             <a href={DRIVE_URL} target="_blank" rel="noopener noreferrer">
               Open the folder &rarr;
             </a>
@@ -125,7 +128,11 @@ export default function OnboardPage() {
 
         <section className="ob-sec">
           <h2 className="ob-h2">If you&rsquo;ve never opened it this way before</h2>
-          <ol className="ob-steps">
+          {/* role="list" is load-bearing, not redundant: .ob-steps sets
+              list-style:none, which drops list semantics in some
+              Safari/VoiceOver builds and would leave these three
+              prerequisites announced as unrelated blocks of text. */}
+          <ol className="ob-steps" role="list">
             <li>
               <span>
                 <b>Google Drive for desktop</b>
