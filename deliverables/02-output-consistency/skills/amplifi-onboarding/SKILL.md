@@ -76,16 +76,31 @@ locally at all:**
 - **Overlaps a skill THIS TIER installs locally** (tier (a): all four;
   tier (b): `amplifi-improve` and `amplifi-onboarding` only) ~ run the
   merge/replace/keep flow below.
-- **Overlaps `amplifi-insights` or `amplifi-qa` under tier (b)** ~ do NOT
-  run that flow, and do NOT install the canonical copy locally. Tier (b)
-  keeps those two in Claude Enterprise precisely because a local copy is
-  never covered by the redeployment plan and goes stale silently. Merging
-  a personal helper with the shared copy here would manufacture exactly
-  that stale local artifact out of something that was previously just
-  someone's own tool. Instead: leave it alone, tell them plainly that it
-  sits outside the update plan and won't receive shared improvements, and
-  ask whether they want to keep it as a personal helper or retire it.
-  Either answer is fine; record which in Step 5.
+- **A LOCAL overlap with `amplifi-insights` or `amplifi-qa` under tier
+  (b)** ~ do NOT run that flow, and do NOT install the canonical copy
+  locally. Tier (b) keeps those two in Claude Enterprise precisely
+  because a local copy is never covered by the redeployment plan and goes
+  stale silently. Merging a personal helper with the shared copy here
+  would manufacture exactly that stale local artifact out of something
+  that was previously just someone's own tool. Instead: leave it alone,
+  tell them plainly that it sits outside the update plan and won't
+  receive shared improvements, and ask whether they want to keep it as a
+  personal helper or retire it. Either answer is fine; record which in
+  Step 5.
+
+  **This exception is about LOCAL copies only ~ it does not apply to the
+  Enterprise copies themselves.** Under tier (b), `amplifi-insights` and
+  `amplifi-qa` are live in Claude Enterprise, and someone may well have
+  personalized one there. When updating those (`DRIVE-HANDOFF.md`
+  step 5's tier-(b) redeploy), run the SAME compare-and-ask flow as
+  below ~ diff the Enterprise copy against the Drive copy, show what
+  differs, and offer merge / replace / keep. The reasoning that makes
+  the local exception right (that copy is unused and unmaintained)
+  inverts completely here: the Enterprise copy IS the live one doing
+  real drafting and QA every day, so a blind overwrite there costs more
+  than anywhere else, and leaving it stale means the whole tier's
+  drafting runs on old rules. Neither "skip it" nor "overwrite it" is
+  acceptable ~ ask.
 
 **A skill that's already present is NOT automatically the same skill ~
 never overwrite one without asking.** A local file existing tells you
@@ -115,10 +130,33 @@ a differently-named overlap), compare it against
      install the canonical copy under its canonical name AND remove the
      old alias, or you've recreated the two-overlapping-skills state this
      whole check exists to prevent.
+
+     **Before deleting anything, list the WHOLE folder ~ a skill is not
+     always one file.** Their folder may hold scripts, reference
+     documents, templates, example outputs, or assets that the
+     `SKILL.md` comparison above never looked at and the plain-language
+     diff never showed them. Those extras are frequently the most
+     valuable thing in there ~ the very accumulated practice this check
+     exists to protect ~ and deleting the folder destroys them silently.
+     Name every non-`SKILL.md` file you found, ask what should happen to
+     each, and either carry it across to the canonical folder or get an
+     explicit "yes, delete that too." **Never delete a folder whose
+     contents you haven't enumerated out loud.**
   3. **Keep theirs** untouched ~ fine, but tell them plainly which shared
      conventions they'll be missing, and don't report the skill as
      installed-and-current if it can't do what the rest of the corpus
      expects of it.
+
+     **Not available when their personalized copy already occupies the
+     `amplifi-onboarding` name** (they edited a previously-installed copy
+     of it). "Keep theirs" and "the canonical entry point stays
+     installed and working" can't both be true there ~ one folder, one
+     frontmatter `name:`, and every written instruction sends people to
+     that exact name. Say so plainly and make them choose between merge
+     (keep their changes, canonical name retained ~ almost always right
+     here) or replace. Don't quietly install over their edits to resolve
+     it, and don't leave the entry point broken to honor a "keep" that
+     can't actually hold.
 
   **Never pick for them, and never silently overwrite** ~ weeks of
   someone's own accumulated practice is exactly the kind of thing this
@@ -156,6 +194,16 @@ original beside it. Keeping their own name is fine for
 muscle memory reaches for); note the non-canonical name in Step 5 so a
 later rollout check doesn't read the missing canonical folder as "never
 installed."
+
+**A skill's name lives in two places ~ change both or neither.** The
+folder name AND the `name:` field in the file's own frontmatter. A merge
+built from the canonical file and dropped into `capture/` while still
+declaring `name: amplifi-improve` is a skill that reports itself as
+something it isn't: the alias they asked for may not resolve at all, it
+collides with any real canonical install, and the row you write in the
+inventory records a name the file itself contradicts. Rename the folder
+and rewrite the frontmatter in the same breath, then confirm the file
+says what the folder says.
 
 **`amplifi-onboarding` is the one exception ~ it must keep its canonical
 name.** `DRIVE-HANDOFF.md`, `ROADMAP.md`, and the analyst-facing start
@@ -427,15 +475,21 @@ because the obvious answer is wrong for half of them:***
 
 - **A gap in a SKILL ITSELF** (this one or any of the four ~ a step that
   misfires, an instruction that's unclear, a case nobody thought of):
-  fix `amplifi-knowledge/skills/{name}/SKILL.md` in Drive directly and
-  log it in that folder's `README.md` Changelog, exactly as the
-  "Sending an improvement back to the shared copy" section above
-  describes. **Don't route this through `amplifi-improve`** ~ its
-  promotion mode files things into `standards/` or
-  `learnings/patterns.md` and has no destination for a `SKILL.md`, so a
-  skill defect captured that way gets filed as a process note and the
-  broken skill stays broken. That applies whenever the gap is found ~
-  during a merge, mid-run, or a week later.
+  it ends up in `amplifi-knowledge/skills/{name}/SKILL.md` in Drive,
+  with a row in that folder's `README.md` Changelog, per the
+  "Sending an improvement back to the shared copy" section above. Two
+  ways to get there depending on when you notice:
+  - **While this skill is running** (during a merge, mid-setup) ~ do it
+    directly, as that section describes.
+  - **Any other time** ~ found while running `amplifi-insights`,
+    `amplifi-qa`, or `amplifi-improve`, or a week after onboarding when
+    nobody's reading this file at all ~ capture it with
+    `amplifi-improve` under its **`SKILL-DEFECT`** tag. That tag exists
+    precisely for this and routes to the skill's own file rather than
+    into `patterns.md`. Tagging it `PROCESS` instead is the failure to
+    avoid: it becomes a tidy note about friction in the pattern tally
+    while the skill goes on doing the same wrong thing to the next
+    person who runs it.
 - **A gap in the WORK the skills support** (a standard that's thin, a
   client fact worth keeping, process friction that isn't about a skill's
   own instructions): `amplifi-improve`, as normal. That's what it's for.

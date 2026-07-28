@@ -44,6 +44,19 @@ catch, 2026-07-19).
    never grows past one. If rework happened or friction showed up this
    session, log it under `REWORK`/`PROCESS` even if the exact same theme
    was captured last week too ~ especially then.
+
+   **Separate friction in the WORK from a defect in a SKILL.** If what
+   went wrong was one of the skills themselves ~ `amplifi-insights`,
+   `amplifi-qa`, `amplifi-onboarding`, or this one: a step that
+   misfired, an instruction that was ambiguous, a situation it had no
+   answer for ~ that's `SKILL-DEFECT`, not `PROCESS`. The distinction is
+   about where the fix has to land: `PROCESS` items become counts in
+   `patterns.md` that feed the instrument, and a skill defect filed
+   there gets tallied as friction and then left alone, so the skill
+   keeps misfiring for everyone else. Name which skill and what it
+   actually did. Same novelty rule as `REWORK`/`PROCESS`: log it again
+   even if it was logged before ~ a defect that recurs after someone
+   thought it was fixed is worth more, not less.
 3. Write ONE file:
    `learnings/YYYY-MM-DD-HHMMSS-{analyst}-{client-or-topic}.md` (seconds,
    not just HHMM ~ two sessions for the same analyst/client inside the
@@ -134,6 +147,7 @@ catch, 2026-07-19).
 - STANDARD: {a voice/quality/format lesson → destined for standards/}
 - REWORK: {what got revised, why, which rework tag fits}
 - PROCESS: {workflow friction worth flagging to the instrument}
+- SKILL-DEFECT: {which skill, what it did wrong or unclearly → destined for that skill's own file}
 - CONTRADICTS: {corpus file + what reality said instead}
 ```
 
@@ -316,6 +330,22 @@ grouping rule below for why that corrupts cross-week recurrence).
      `brand-standard.md`, the Revision history) without also recording
      that the file's version moved, or the Changelog stops being a
      trustworthy record of when the file actually changed.
+   - `SKILL-DEFECT` → **the affected skill's own file in Drive**
+     (`amplifi-knowledge/skills/{name}/SKILL.md`), plus a row in that
+     folder's `README.md` Changelog recording what changed and leaving
+     `Redeployed` at `pending` until it actually is. **This is the one
+     promotion destination that is NOT a `standards/` or `learnings/`
+     file, and getting it wrong is silent:** a skill that misfires,
+     contradicts itself, or leaves a case unhandled is a defect in
+     executable instructions, and filing it as `PROCESS` in
+     `patterns.md` produces a tidy note about friction while the skill
+     goes on doing the same wrong thing to the next person who runs it.
+     If the fix isn't obvious, or the defect is in a skill you'd be
+     editing while running it, flag it for a human rather than guessing
+     ~ but flag it against the SKILL, not into the pattern tally.
+     Redeploying afterwards is required, not optional
+     (`DRIVE-HANDOFF.md` step 5): every installed copy is on the old
+     behavior until someone pushes the new one.
    - `CONTRADICTS` → the correction, highlighted for Rica's explicit yes/no
    - `REWORK` / `PROCESS` → append a dated pattern entry (theme, count,
      which clients) to `learnings/patterns.md` ~ the durable, append-only

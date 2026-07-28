@@ -20,21 +20,36 @@ see what happened in anyone else's session ~ without a written record
 here, the next person checking rollout progress has no way to tell a
 deliberate choice from a missed install.
 
-Add or update your own row. One row per analyst per machine.
+**One row per skill per install location** ~ not one row per person. A
+single analyst with four skills has four rows, and more if they work
+across several project folders.
 
-| Analyst | Machine / profile | Scope | Skills installed, and under what name | Verified | Date |
-|---|---|---|---|---|---|
-| {name} | {which machine, if they use more than one} | project · user | {e.g. all four canonical; or "capture" = amplifi-improve, merged} | yes/no | {YYYY-MM-DD} |
+That granularity is the point: `DRIVE-HANDOFF.md` step 5 requires
+redeploying **every** installed copy when a shared skill changes, and
+"Dale, project scope" doesn't tell the next person which project folder
+on which machine to actually open. A row nobody can act on is the same as
+no row.
 
-**Fill the name column honestly.** If someone kept their own skill under
-their own name (allowed for insights/qa/improve ~ see
-`amplifi-onboarding` Step 1), write the real name and what it maps to.
-A later rollout check reading only for canonical folder names would
-otherwise call that a missing install and try to "fix" a deliberate
-decision.
+| Analyst | Machine | Installed as | Maps to | Scope | Exact path | Verified | Date |
+|---|---|---|---|---|---|---|---|
+| {name} | {machine, if they use more than one} | {the real folder name} | {which canonical skill} | user · project | {full path, e.g. `~/.claude/skills/capture/` or `~/work/amplifi/.claude/skills/capture/`} | yes/no | {YYYY-MM-DD} |
+
+**`Installed as` and `Maps to` differ only when someone kept their own
+name** (allowed for insights/qa/improve ~ see `amplifi-onboarding`
+Step 1). When they match, write the canonical name in both.
+
+**Fill it honestly.** A later rollout check reading only for canonical
+folder names would otherwise call a deliberately-kept personal copy a
+missing install, and try to "fix" a decision someone made on purpose.
 
 `amplifi-onboarding` itself always keeps its canonical name ~ the written
 instructions everyone follows name it directly.
+
+**Keep this current when installs change, not just when they're first
+created.** A redeploy that renames a merged skill, removes an alias, or
+moves a copy between scopes makes the old row wrong, and a wrong row is
+worse than a missing one ~ it sends the next person to a path that isn't
+there while the real copy goes un-redeployed.
 
 ---
 

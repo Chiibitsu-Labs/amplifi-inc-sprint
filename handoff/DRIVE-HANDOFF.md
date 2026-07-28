@@ -137,7 +137,14 @@ grows under their roof. Chii's repo remains the reference/spec copy.
    diff first, and where the local copy differs, show the person what
    changed and let them choose merge (default), replace, or keep ~ then
    feed anything good from their version back into the Drive copy so the
-   rest of the team gets it. **Batch those Drive-side writes to the END
+   rest of the team gets it. **Whichever they choose, update that
+   skill's row in `amplifi-knowledge/skills/README.md` before moving
+   on** ~ a merge can rename the skill, a replace can remove an alias,
+   and either can consolidate two scopes into one, so the row that was
+   accurate this morning now points at a path that no longer exists.
+   Only `amplifi-onboarding`'s Step 5 writes those rows at install time;
+   nothing else does it for you here, and a stale row sends the next
+   redeploy to the wrong place while the real copy quietly stays behind. **Batch those Drive-side writes to the END
    of the redeployment pass, never mid-pass** ~ editing the canonical
    copy while a multi-machine redeploy is still running silently makes
    every machine already completed in that same pass stale against this
