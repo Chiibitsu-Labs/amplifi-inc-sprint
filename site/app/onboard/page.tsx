@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CopyButton } from "./copy-button";
+import { StartLine } from "./copy-button";
 
 const START_LINE =
   "Look in this folder for skills/amplifi-onboarding/SKILL.md, then run it start to finish. My name is ___.";
@@ -56,8 +56,7 @@ export default function OnboardPage() {
           <h2 className="ob-h2">The one line that starts it</h2>
           <div className="ob-launch">
             <div className="ob-cap">Copy this, then paste it into Claude</div>
-            <div className="ob-cmd">{START_LINE}</div>
-            <CopyButton text={START_LINE} />
+            <StartLine text={START_LINE} />
             <p className="ob-after">
               Put your own name where the blank is. &ldquo;This folder&rdquo;
               means the shared knowledge base folder you opened Claude in — step
@@ -68,23 +67,48 @@ export default function OnboardPage() {
 
           <div className="ob-first">
             <p>
-              <b>Going first? Set aside about 90 minutes, not 30.</b> Whoever
-              runs this before anyone else also builds the team&rsquo;s quality
-              standard from scratch, with the setup asking the questions —
-              roughly an hour on what makes a good report, another half hour on
-              the template and brand rules. Everyone after you inherits that and
-              is done in 20&ndash;30.
+              <b>Going first? Set aside about two and a half hours, not 30
+              minutes.</b> Whoever runs this before anyone else also writes the
+              team&rsquo;s three shared standards from scratch, with the setup
+              asking the questions: about an hour on what makes a report good,
+              half an hour on how Amplifi actually writes, half an hour on the
+              template and brand rules, plus the 20&ndash;30 minutes everyone
+              spends. Everyone after you inherits all of it and is done in
+              20&ndash;30.
             </p>
             <p>
-              <b>Have these open before you start:</b> two or three of your best
-              recent reports, and the current Canva template plus brand kit.
-              They&rsquo;re deliberately different sources and it&rsquo;ll ask
-              for both.
+              <b>Have these four things open before you start.</b> They&rsquo;re
+              deliberately different sources, and it asks for each one
+              separately:
+            </p>
+            <ul className="ob-need">
+              <li>
+                Two or three of the reports the team is proudest of — the ones
+                a client praised or renewed on.
+              </li>
+              <li>
+                Three or four passages that sound unmistakably like Amplifi — a
+                report section, a strong client email, deck copy.
+              </li>
+              <li>
+                Two or three AI drafts the team threw out for sounding like a
+                machine. These matter as much as the good ones; they&rsquo;re
+                how it learns what to never write.
+              </li>
+              <li>
+                The current Canva report template and the brand kit.
+              </li>
+            </ul>
+            <p>
+              You can stop after any one of the three and come back — it picks
+              up where you left off. But the team stays partly blocked until
+              all three are done, so finishing in one sitting is the kinder
+              option.
             </p>
             <p className="ob-faint">
               Not sure whether you&rsquo;re first? It checks and tells you
-              before that part begins — if the standards are already filled in,
-              it skips straight past them.
+              before that part begins — anything already filled in, it skips
+              straight past.
             </p>
           </div>
         </section>
@@ -144,9 +168,9 @@ export default function OnboardPage() {
             <div className="ob-card">
               <h3>Learns the standard</h3>
               <p>
-                Asks for two or three of your best reports and writes down what
-                makes them good: voice, structure, what a real recommendation
-                looks like.
+                Reads real Amplifi work — winning reports, writing that sounds
+                like you, drafts you rejected, the template — and writes down
+                what separates them.
               </p>
             </div>
             <div className="ob-card">

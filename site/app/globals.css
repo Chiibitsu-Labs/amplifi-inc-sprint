@@ -1022,7 +1022,20 @@ td.num{font-variant-numeric:tabular-nums;}
 }
 
 /* ============ /onboard — public, standalone (no rail, no gate) ============ */
-.ob{min-height:100vh; background:var(--paper);}
+/* Every small/de-emphasised style on this page is instructional text people
+   have to read and act on, not chrome. Two site-wide tokens don't clear
+   4.5:1 at these sizes on cream: --signal is 4.26:1 and --ink-faint 3.40:1.
+   Page-local aliases fix both without disturbing the rest of the site, and
+   keep the hierarchy (accent still reads as accent, faint still reads as
+   quieter than body). Dark needs its own faint value too: --ink-faint clears
+   the floor against --paper but only reaches 4.37:1 against --paper-raised,
+   which is the ground under the caption and the keyboard hint. */
+.ob{min-height:100vh; background:var(--paper); --ob-accent:var(--signal-strong); --ob-faint:#6F6249;}
+@media (prefers-color-scheme: dark){
+  .ob{--ob-accent:var(--signal); --ob-faint:#948AA8;}
+}
+:root[data-theme="dark"] .ob{--ob-accent:var(--signal); --ob-faint:#948AA8;}
+:root[data-theme="light"] .ob{--ob-accent:var(--signal-strong); --ob-faint:#6F6249;}
 .ob-band{
   background:var(--rail-bg); color:var(--rail-ink);
   padding:14px 24px; display:flex; justify-content:space-between;
@@ -1038,7 +1051,7 @@ td.num{font-variant-numeric:tabular-nums;}
 .ob-eyebrow{
   font-family:'Public Sans'; font-weight:600; font-size:11px;
   letter-spacing:.16em; text-transform:uppercase;
-  color:var(--signal); margin-bottom:16px;
+  color:var(--ob-accent); margin-bottom:16px;
 }
 .ob-h1{
   font-family:'Playfair Display',Georgia,serif; font-weight:500;
@@ -1047,11 +1060,11 @@ td.num{font-variant-numeric:tabular-nums;}
 }
 .ob-h1 em{font-style:italic; color:var(--signal);}
 .ob-dek{font-size:1.09rem; color:var(--ink-soft); margin:0 0 12px; max-width:54ch;}
-.ob-stamp{font-size:.82rem; color:var(--ink-faint); margin-bottom:36px;}
+.ob-stamp{font-size:.82rem; color:var(--ob-faint); margin-bottom:36px;}
 
 .ob-h2{
   font-family:'Public Sans'; font-weight:600; font-size:11px;
-  letter-spacing:.16em; text-transform:uppercase; color:var(--signal);
+  letter-spacing:.16em; text-transform:uppercase; color:var(--ob-accent);
   padding-bottom:9px; border-bottom:1px solid var(--line); margin:0 0 20px;
 }
 .ob-sec{margin-bottom:46px;}
@@ -1076,14 +1089,20 @@ td.num{font-variant-numeric:tabular-nums;}
 .ob-cap{
   font-family:'Public Sans'; font-weight:600; font-size:11px;
   letter-spacing:.14em; text-transform:uppercase;
-  color:var(--ink-faint); margin-bottom:12px;
+  color:var(--ob-faint); margin-bottom:12px;
 }
 .ob-cmd{
   font-family:'IBM Plex Mono',ui-monospace,monospace;
   font-size:.85rem; line-height:1.65; color:var(--ink);
   background:var(--signal-tint); border-radius:5px;
   padding:15px 17px; margin-bottom:16px; word-break:break-word;
+  cursor:text;
 }
+/* Focusable on purpose (tabIndex in StartLine): when both clipboard paths
+   fail the button tells the reader to copy this by hand, which a keyboard-only
+   user can only do if it's reachable by Tab. */
+.ob-cmd:focus-visible{outline:2px solid var(--ob-accent); outline-offset:3px;}
+.ob-cmd-hint{font-size:.78rem; color:var(--ob-faint); margin:10px 0 0; max-width:none;}
 .ob-copy{
   font-family:'Public Sans'; font-size:.97rem; font-weight:600;
   background:var(--signal); color:var(--paper-raised);
@@ -1106,6 +1125,16 @@ td.num{font-variant-numeric:tabular-nums;}
 .ob-first p{margin:0 0 9px; font-size:.9rem; color:var(--ink-soft);}
 .ob-first p:last-child{margin-bottom:0;}
 .ob-first b{color:var(--ink); font-weight:600;}
+/* No flex here: flex items don't generate ::marker, so the bullets vanish
+   and the list reads as four unlabelled paragraphs. Spacing via margin. */
+/* list-style set explicitly — Tailwind's preflight strips it from every ul. */
+.ob-need{
+  margin:0 0 11px; padding-left:19px; font-size:.9rem;
+  color:var(--ink-soft); list-style:disc outside;
+}
+.ob-need li{margin-bottom:6px; padding-left:3px;}
+.ob-need li:last-child{margin-bottom:0;}
+.ob-need li::marker{color:var(--ob-accent);}
 
 .ob-steps{counter-reset:ob; list-style:none; margin:0; padding:0;
   display:flex; flex-direction:column; gap:20px;}
@@ -1117,9 +1146,13 @@ td.num{font-variant-numeric:tabular-nums;}
   font-family:'Public Sans'; font-size:.8rem; font-weight:600;
   display:flex; align-items:center; justify-content:center; margin-top:1px;
 }
-.ob-steps b{font-weight:600; display:block; margin-bottom:2px; color:var(--ink);}
+/* Direct child only — the step's title. A descendant selector here also
+   catches inline <b> inside the step body and turns it into a block, which
+   strands the punctuation that follows it on the next line. */
+.ob-steps li > span > b{font-weight:600; display:block; margin-bottom:2px; color:var(--ink);}
+.ob-steps p b{font-weight:600; color:var(--ink);}
 .ob-steps p{margin:0; font-size:.92rem; color:var(--ink-soft);}
-.ob-faint{color:var(--ink-faint);}
+.ob-faint{color:var(--ob-faint);}
 
 .ob-cards{display:grid; grid-template-columns:repeat(2,1fr); gap:14px;}
 .ob-card{
