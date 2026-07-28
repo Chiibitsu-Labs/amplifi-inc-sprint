@@ -11,6 +11,13 @@ export const metadata: Metadata = {
   title: "Amplifi Brain — Onboard",
   description:
     "Ten minutes, once, on your own machine. Connect to the Amplifi knowledge base and set up your assistants.",
+  // Public to anyone with the link, but never in search results. This page is
+  // outside the password gate on purpose (friction here means nobody
+  // onboards), which also means it's the one route a crawler could reach —
+  // and it carries Amplifi's Drive link and internal process. Vercel adds a
+  // noindex header on preview deployments but NOT on the production domain,
+  // so without this the live page would be indexable.
+  robots: { index: false, follow: false, nocache: true },
 };
 
 export default function OnboardPage() {
