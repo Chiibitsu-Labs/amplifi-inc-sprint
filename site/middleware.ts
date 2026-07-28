@@ -9,7 +9,16 @@ export const config = {
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  if (pathname === "/access" || pathname === "/api/access") {
+  // Public routes — no gate. /onboard is distributed to the whole Amplifi
+  // analyst team to set themselves up; a password wall on it is friction on
+  // the one page where friction actually costs us (nobody onboards). It
+  // contains no client data — the Drive link inside is permission-controlled
+  // by Google, so access to the corpus is enforced there, not here.
+  if (
+    pathname === "/access" ||
+    pathname === "/api/access" ||
+    pathname === "/onboard"
+  ) {
     return NextResponse.next();
   }
 
