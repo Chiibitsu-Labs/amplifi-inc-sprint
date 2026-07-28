@@ -248,6 +248,17 @@ standards files and `PROCESS` items into `learnings/patterns.md`, and
 neither destination is a `SKILL.md`. Pointing someone at it for a skill
 change quietly drops the improvement. Do this instead:
 
+0. **Ask first, as a separate question, and get an explicit yes.** Saying
+   yes to merging their personal skill into their own install is NOT
+   consent to change the team's copy ~ those are different decisions with
+   different blast radii, and the second one edits the source of truth
+   every other analyst installs from and invalidates every install already
+   completed. Name what would change, in what file, and who it affects,
+   then ask. **A no here is final for this run**: leave the shared copy
+   alone, keep the improvement in their local install, and note it in the
+   Step 5 report-back as declined so nobody quietly retries it later. Only
+   on an explicit yes do items 1&ndash;3 below happen.
+
 1. **Edit `amplifi-knowledge/skills/{name}/SKILL.md` in Drive directly** ~
    that copy is the source of truth (`DRIVE-HANDOFF.md` step 5), and a
    skill change is one of the few edits that lands there rather than in

@@ -8,6 +8,7 @@ const MANUAL = "Couldn't copy — the line above is selected, press Ctrl+C (⌘C
 
 export function StartLine({ text }: { text: string }) {
   const [label, setLabel] = useState(IDLE);
+  const [status, setStatus] = useState("");
   const btnRef = useRef<HTMLButtonElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
 
@@ -30,13 +31,26 @@ export function StartLine({ text }: { text: string }) {
     if (next !== MANUAL) setTimeout(() => setLabel(IDLE), 2600);
   };
 
+  const succeed = () => {
+    flash(DONE);
+    setStatus("Copied. Paste it into Claude.");
+  };
+
   // Both clipboard paths failed. Hand the reader something they can act on
   // rather than a dead end: select the line for them and move focus onto it,
   // so the very next keystroke copies.
+  //
+  // The button's own label can't carry this news to a screen reader — focus
+  // leaves the button in the same tick the label changes, so it's never
+  // announced. The live region below is what actually speaks, and it has to
+  // be written AFTER the focus move or the announcement is cut off by it.
   const manual = () => {
     flash(MANUAL);
     lineRef.current?.focus();
     selectLine();
+    setStatus(
+      "Couldn't copy automatically. The start line is now selected — press Control C, or Command C on a Mac, to copy it.",
+    );
   };
 
   // Legacy path for browsers/contexts without the async clipboard API. The
@@ -61,7 +75,7 @@ export function StartLine({ text }: { text: string }) {
       ta.remove();
     }
     if (copied) {
-      flash(DONE);
+      succeed();
       btnRef.current?.focus();
     } else {
       manual();
@@ -69,8 +83,9 @@ export function StartLine({ text }: { text: string }) {
   };
 
   const onClick = () => {
+    setStatus("");
     if (navigator.clipboard?.writeText) {
-      navigator.clipboard.writeText(text).then(() => flash(DONE), fallback);
+      navigator.clipboard.writeText(text).then(succeed, fallback);
     } else {
       fallback();
     }
@@ -98,6 +113,12 @@ export function StartLine({ text }: { text: string }) {
       <p className="ob-cmd-hint">
         Prefer the keyboard? Tab to the line above — it selects itself — then
         Ctrl+C (⌘C on a Mac).
+      </p>
+      {/* assertive, not polite: on the failure path the reader has just been
+          moved to the line and needs to know why before they do anything else.
+          Visually hidden — sighted readers already have the button label. */}
+      <p role="status" aria-live="assertive" className="ob-sr">
+        {status}
       </p>
     </>
   );

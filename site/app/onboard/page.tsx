@@ -28,7 +28,10 @@ export default function OnboardPage() {
         <span className="ob-conf">Onboard</span>
       </div>
 
-      <div className="ob-wrap">
+      {/* <main> rather than a div: this route bypasses the gated shell that
+          normally supplies the landmark, so without it a screen-reader user
+          navigating by landmarks has no way to skip the masthead. */}
+      <main className="ob-wrap">
         <div className="ob-eyebrow">Amplifi Brain</div>
         <h1 className="ob-h1">
           Half an hour, and your AI knows how Amplifi{" "}
@@ -112,8 +115,10 @@ export default function OnboardPage() {
             </p>
             <p className="ob-faint">
               Not sure whether you&rsquo;re first? It checks and tells you
-              before that part begins — anything already filled in, it skips
-              straight past.
+              before that part begins. Anything already written, it doesn&rsquo;t
+              redo — it shows you what&rsquo;s there and asks whether your work
+              says anything it got wrong or missed. Usually a couple of minutes,
+              and &ldquo;no, that&rsquo;s right&rdquo; is a complete answer.
             </p>
           </div>
         </section>
@@ -291,7 +296,7 @@ export default function OnboardPage() {
           </span>
           <span className="ob-tag">more human, by design</span>
         </footer>
-      </div>
+      </main>
     </div>
   );
 }
