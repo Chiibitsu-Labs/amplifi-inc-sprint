@@ -1102,7 +1102,10 @@ td.num{font-variant-numeric:tabular-nums;}
    fail the button tells the reader to copy this by hand, which a keyboard-only
    user can only do if it's reachable by Tab. */
 .ob-cmd:focus-visible{outline:2px solid var(--ob-accent); outline-offset:3px;}
-.ob-cmd-hint{font-size:.78rem; color:var(--ob-faint); margin:10px 0 0; max-width:none;}
+.ob-cmd-hint{font-size:.78rem; color:var(--ob-faint); margin:10px 0 0;}
+/* Beats `.ob .ob-wrap p`'s 62ch measure — that's for reading paragraphs, and
+   it breaks this one-line hint across two lines inside a much wider box. */
+.ob .ob-wrap p.ob-cmd-hint{max-width:none;}
 .ob-copy{
   font-family:'Public Sans'; font-size:.97rem; font-weight:600;
   background:var(--signal); color:var(--paper-raised);
