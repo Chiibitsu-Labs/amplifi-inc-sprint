@@ -1060,6 +1060,10 @@ td.num{font-variant-numeric:tabular-nums;}
 }
 .ob-h1 em{font-style:italic; color:var(--signal);}
 .ob-dek{font-size:1.09rem; color:var(--ink-soft); margin:0 0 12px; max-width:54ch;}
+/* The headline's "half an hour" is true for five of six readers. The sixth
+   needs to learn that here, next to the claim — not in a callout below the
+   fold, and not after they've already blocked out the wrong amount of time. */
+.ob-dek-note{display:block; margin-top:9px; font-size:.92rem; color:var(--ob-faint);}
 .ob-stamp{font-size:.82rem; color:var(--ob-faint); margin-bottom:36px;}
 
 .ob-h2{

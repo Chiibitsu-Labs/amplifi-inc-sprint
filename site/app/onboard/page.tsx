@@ -10,7 +10,7 @@ const DRIVE_URL =
 export const metadata: Metadata = {
   title: "Amplifi Brain — Onboard",
   description:
-    "About half an hour, once, on your own machine. Connect to the Amplifi knowledge base and set up your assistants.",
+    "About half an hour, once, on your own machine — nearer two and a half for whoever goes first. Connect to the Amplifi knowledge base and set up your assistants.",
   // Public to anyone with the link, but never in search results. This page is
   // outside the password gate on purpose (friction here means nobody
   // onboards), which also means it's the one route a crawler could reach —
@@ -36,7 +36,12 @@ export default function OnboardPage() {
         </h1>
         <p className="ob-dek">
           Once, on your own machine, whenever suits you. No meeting, no waiting
-          on anyone else.
+          on anyone else.{" "}
+          <span className="ob-dek-note">
+            One exception: whoever runs it first builds the team&rsquo;s shared
+            standards on the way through, and should budget about two and a
+            half hours. More on that below.
+          </span>
         </p>
         <div className="ob-stamp">For the Amplifi analyst team &middot; July 2026</div>
 
