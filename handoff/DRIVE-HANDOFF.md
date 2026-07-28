@@ -144,7 +144,19 @@ grows under their roof. Chii's repo remains the reference/spec copy.
    accurate this morning now points at a path that no longer exists.
    Only `amplifi-onboarding`'s Step 5 writes those rows at install time;
    nothing else does it for you here, and a stale row sends the next
-   redeploy to the wrong place while the real copy quietly stays behind. **Batch those Drive-side writes to the END
+   redeploy to the wrong place while the real copy quietly stays behind.
+
+   **And when the sweep is finished ~ every install for the tier in use
+   confirmed on the new version ~ go back and flip that skill's
+   Changelog row in `amplifi-knowledge/skills/README.md` from `pending`
+   to `yes`, with the date.** Both `amplifi-onboarding` and
+   `amplifi-improve` open those rows at `pending` when they change a
+   skill in Drive, and nothing else closes them. Left alone, every
+   successfully-completed redeploy still reads as outstanding forever,
+   which makes the one column meant to answer "is this actually live
+   everywhere?" useless the moment you'd want to trust it. If the sweep
+   was partial, say so in the row rather than flipping it ~ name which
+   installs are still behind. **Batch those Drive-side writes to the END
    of the redeployment pass, never mid-pass** ~ editing the canonical
    copy while a multi-machine redeploy is still running silently makes
    every machine already completed in that same pass stale against this

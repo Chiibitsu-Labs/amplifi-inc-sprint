@@ -106,17 +106,39 @@ locally at all:**
 never overwrite one without asking.** A local file existing tells you
 nothing about whose version it is. For every in-tier match (same name, or
 a differently-named overlap), compare it against
-`amplifi-knowledge/skills/{name}/SKILL.md` and act on what you find:
+`amplifi-knowledge/skills/{name}/SKILL.md` and act on what you find.
+
+> **Rule that governs every branch below, without exception: never delete
+> a skill folder whose full contents you haven't enumerated out loud
+> first.** A skill is not always one file. Folders routinely hold
+> scripts, reference documents, templates, example outputs, and assets ~
+> and those extras are frequently the most valuable thing in there, the
+> accumulated practice this whole check exists to protect. **Matching
+> `SKILL.md` files tell you nothing about the rest of the folder**, so
+> "the instructions are identical" is never sufficient grounds to remove
+> a directory. Before any deletion, in any branch: list every file in
+> both folders, name anything that exists in the one you're about to
+> remove, and either carry it across or get an explicit "yes, delete
+> that too." If you can't enumerate it, don't delete it.
+
+Then, by what you found:
 
 - **Byte-identical to the Drive copy, in one scope only:** nothing to do,
   leave it, move on.
 - **Byte-identical, but present in BOTH scopes:** identical today doesn't
   mean identical after the next update ~ a redeploy that touches one scope
   leaves the other silently stale, and which one actually fires depends on
-  resolution order nobody is tracking. Pick one scope to keep (user-level
-  if this person works across several project folders; project-level if
-  this corpus is the only place they use it), delete the other, and say
-  which you kept.
+  resolution order nobody is tracking. So consolidate to one:
+  1. **Enumerate both folders first** (the rule above applies here as much
+     as anywhere ~ two identical `SKILL.md` files say nothing about what
+     else is sitting beside them, and one scope may hold scripts or
+     references the other doesn't).
+  2. Pick the scope to keep ~ user-level if this person works across
+     several project folders, project-level if this corpus is the only
+     place they use it.
+  3. **Carry across anything unique** from the folder you're dropping,
+     or get an explicit yes to lose it.
+  4. Delete the other, and say which you kept.
 - **Different in any way:** STOP and show the person what differs in
   plain terms (what their copy does that the shared one doesn't, and
   vice versa), then ask which they want:

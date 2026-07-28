@@ -30,13 +30,35 @@ redeploying **every** installed copy when a shared skill changes, and
 on which machine to actually open. A row nobody can act on is the same as
 no row.
 
-| Analyst | Machine | Installed as | Maps to | Scope | Exact path | Verified | Date |
+| Analyst | Machine | Installed as | Maps to | Scope | Where exactly | Verified | Date |
 |---|---|---|---|---|---|---|---|
-| {name} | {machine, if they use more than one} | {the real folder name} | {which canonical skill} | user · project | {full path, e.g. `~/.claude/skills/capture/` or `~/work/amplifi/.claude/skills/capture/`} | yes/no | {YYYY-MM-DD} |
+| {name} | {always fill this} | {the real folder name} | {which canonical skill} | user · project · enterprise | {see below} | yes/no | {YYYY-MM-DD} |
 
 **`Installed as` and `Maps to` differ only when someone kept their own
 name** (allowed for insights/qa/improve ~ see `amplifi-onboarding`
 Step 1). When they match, write the canonical name in both.
+
+**`Machine` is never optional, even for someone who only uses one.**
+Paths like `~/.claude/skills/capture/` are meaningless without knowing
+whose machine `~` refers to, and "only one machine" stops being true
+the moment someone gets a new laptop or hands work over. A row without
+a machine can't be acted on by anyone but its author, which defeats
+the point of writing it down.
+
+**`Where exactly` depends on the scope:**
+- **user** ~ the full path, e.g. `~/.claude/skills/capture/`
+- **project** ~ the full path INCLUDING which project folder, e.g.
+  `~/work/amplifi-reports/.claude/skills/capture/`. One analyst can have
+  several project folders on one machine; "project" alone doesn't say
+  which.
+- **enterprise** ~ the Claude Enterprise workspace it's uploaded to, not
+  a filesystem path (there isn't one). **Under the fallback tier,
+  `amplifi-insights` and `amplifi-qa` live here rather than on anyone's
+  machine** ~ and they're live installs doing real drafting and QA
+  daily, so they belong in this table exactly like local ones. Leaving
+  them out means a redeploy sweep that reads only this file skips the
+  two skills the whole tier depends on. Put the analyst's name (or
+  "team-wide" if it's a shared workspace upload) in `Machine`.
 
 **Fill it honestly.** A later rollout check reading only for canonical
 folder names would otherwise call a deliberately-kept personal copy a

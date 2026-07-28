@@ -53,10 +53,15 @@ catch, 2026-07-19).
    about where the fix has to land: `PROCESS` items become counts in
    `patterns.md` that feed the instrument, and a skill defect filed
    there gets tallied as friction and then left alone, so the skill
-   keeps misfiring for everyone else. Name which skill and what it
-   actually did. Same novelty rule as `REWORK`/`PROCESS`: log it again
-   even if it was logged before ~ a defect that recurs after someone
-   thought it was fixed is worth more, not less.
+   keeps misfiring for everyone else. **Name the CANONICAL skill, not
+   your local alias for it** ~ if your capture skill is installed as
+   `capture`, write `amplifi-improve` (add your own name in brackets if
+   it helps: `amplifi-improve [installed here as "capture"]`). Drive
+   only holds the four canonical folders, so an alias-only capture sends
+   the promotion pass looking for a folder that isn't there. Same
+   novelty rule as `REWORK`/`PROCESS`: log it again even if it was
+   logged before ~ a defect that recurs after someone thought it was
+   fixed is worth more, not less.
 3. Write ONE file:
    `learnings/YYYY-MM-DD-HHMMSS-{analyst}-{client-or-topic}.md` (seconds,
    not just HHMM ~ two sessions for the same analyst/client inside the
@@ -331,9 +336,21 @@ grouping rule below for why that corrupts cross-week recurrence).
      that the file's version moved, or the Changelog stops being a
      trustworthy record of when the file actually changed.
    - `SKILL-DEFECT` → **the affected skill's own file in Drive**
-     (`amplifi-knowledge/skills/{name}/SKILL.md`), plus a row in that
-     folder's `README.md` Changelog recording what changed and leaving
-     `Redeployed` at `pending` until it actually is. **This is the one
+     (`amplifi-knowledge/skills/{canonical-name}/SKILL.md`), plus a row
+     in **`amplifi-knowledge/skills/README.md`** ~ the shared file that
+     sits alongside all four skill folders, NOT a per-skill
+     `{name}/README.md` (no such file exists; each skill folder holds
+     only its `SKILL.md`). Record what changed and leave `Redeployed` at
+     `pending` until it actually is.
+
+     **Resolve the name before writing anything.** The capture may well
+     say `capture` or whatever that analyst calls their copy, but Drive
+     only ever holds the four canonical folders ~ writing to
+     `skills/capture/SKILL.md` either fails or creates a stray folder
+     nothing reads. Look the alias up in that same `README.md`'s
+     "Who has what installed" table (`Installed as` → `Maps to`) and
+     write to the canonical folder. If the alias isn't in the table,
+     stop and ask rather than guessing which skill was meant. **This is the one
      promotion destination that is NOT a `standards/` or `learnings/`
      file, and getting it wrong is silent:** a skill that misfires,
      contradicts itself, or leaves a case unhandled is a defect in
