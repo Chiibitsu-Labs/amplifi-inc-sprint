@@ -42,13 +42,78 @@ find them.**
   analyst has no drafting or QA skill available anywhere, local or
   Enterprise.
 
-Check whether whichever skills the active tier calls for are already
-present in this client's own skills location (for Claude Code:
-`.claude/skills/{name}/SKILL.md`, project- or user-level). For each one
-missing, copy it in from `amplifi-knowledge/skills/{name}/SKILL.md`
+The skills the active tier calls for get installed into this client's own
+skills location (for Claude Code: `.claude/skills/{name}/SKILL.md`,
+project- or user-level), copied from `amplifi-knowledge/skills/{name}/SKILL.md`
 (Amplifi's own owned copy, per `DRIVE-HANDOFF.md` step 5 ~ never from
 Chii's reference repo, which can drift from what Amplifi actually has
-live).
+live). **But survey what's already there before copying anything in ~ the
+install is only unconditional for a skill with nothing of its own already
+in place.**
+
+**Before installing anything, list EVERY skill already in this client's
+skills location and read each one's `description` ~ not just the four
+names this skill installs.** Several analysts built their own personal
+capture/learning skill during the in-person sprint and have been using it
+since, and **most of them did not name it `amplifi-improve`** ~ it might
+be `improve`, `capture`, `learnings`, `eod`, their own initials, anything.
+Matching on filename alone will miss it entirely and then install
+`amplifi-improve` *alongside* it, leaving that person with two skills
+doing the same job, writing to different places, and no idea which one to
+run. **Match on what a skill DOES (its description and its actual
+instructions), not on what it's called.** If you find one that overlaps
+any of the four ~ same job, different name ~ treat it exactly like a
+same-name match below, and say plainly which existing skill you think it
+overlaps and why before touching anything. If you're unsure whether it
+overlaps, ask; don't assume it doesn't.
+
+**A skill that's already present is NOT automatically the same skill ~
+never overwrite one without asking.** A local file existing tells you
+nothing about whose version it is. For every skill already present
+locally (same name, or a differently-named overlap found above), compare
+it against `amplifi-knowledge/skills/{name}/SKILL.md` and act on what you
+find:
+
+- **Byte-identical to the Drive copy:** nothing to do, leave it, move on.
+- **Different in any way:** STOP and show the person what differs in
+  plain terms (what their copy does that the shared one doesn't, and
+  vice versa), then ask which they want:
+  1. **Merge** (default recommendation) ~ keep everything their version
+     does that the shared one doesn't, and add the shared version's rules
+     on top. This is the right answer almost always: their additions are
+     real working knowledge earned over weeks of use, and the shared copy
+     carries conventions the rest of the corpus depends on (where files
+     land, how they're named and tagged, what the other skills expect to
+     read back).
+  2. **Replace** with the shared copy ~ only if they say their version
+     was a throwaway experiment.
+  3. **Keep theirs** untouched ~ fine, but tell them plainly which shared
+     conventions they'll be missing, and don't report the skill as
+     installed-and-current if it can't do what the rest of the corpus
+     expects of it.
+
+  **Never pick for them, and never silently overwrite** ~ weeks of
+  someone's own accumulated practice is exactly the kind of thing this
+  corpus exists to preserve, and blowing it away during a setup pass
+  teaches the team that the system takes work away rather than compounds
+  it.
+
+  **On a merge, ask which name the result should live under, and end up
+  with exactly ONE skill doing that job**, not the merged one plus their
+  original sitting beside it. Keeping their name is completely fine (it's
+  what their muscle memory reaches for); if they keep a name other than
+  the canonical one, note that in the Step 5 report-back so nobody later
+  reads a missing `amplifi-improve` folder as "never installed." What's
+  not fine is leaving two overlapping skills installed ~ that's the
+  same confusion this whole check exists to prevent.
+
+**If a merge surfaces something genuinely good in their personal version
+~ a rule, a habit, a check the shared copy lacks ~ that belongs back in
+the shared copy, not just in their local one.** Say so, and offer to
+capture it with `amplifi-improve` (or write it up for the next promotion
+pass) so the rest of the team gets it too. One person's private
+improvement staying private is the same tribal-knowledge problem the
+whole knowledge base is here to end.
 
 If `amplifi-knowledge/skills/` itself doesn't have all four skills yet
 (the three above AND `amplifi-onboarding` itself) ~ stop and flag it: the
@@ -230,7 +295,12 @@ happened:
 
 - Which tier applied, which of the skills that tier calls for were
   already installed vs. freshly installed this session, and whether each
-  was verified (Step 1).
+  was verified (Step 1). **Name any skill that was merged with, kept
+  instead of, or lives under a different name than the canonical one
+  (Step 1), and say which name it's actually installed under** ~ a later
+  session or a rollout check that just looks for the four canonical
+  folder names would otherwise read a deliberately-kept personal copy as
+  a missing install and try to "fix" it.
 - Which standards files are now `Status: LIVE` for the first time, which
   were already live and left alone, which are still `Status: FRAME`
   because no source material was available this session (name what's

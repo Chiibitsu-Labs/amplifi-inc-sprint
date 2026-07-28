@@ -129,7 +129,15 @@ grows under their roof. Chii's repo remains the reference/spec copy.
      captures and onboarding ~ on the old behavior.
    Don't tell anyone an update is live until every installed copy FOR THE
    TIER ACTUALLY IN USE is confirmed, not just the first one you
-   remembered.
+   remembered. **And "re-copy" never means "overwrite blind"** ~ several
+   analysts have their own personalized version of a skill (notably
+   `amplifi-improve`, built during the in-person sprint and used since),
+   so a redeploy that clobbers a local file destroys weeks of their real
+   working practice. Apply `amplifi-onboarding` Step 1's rule here too:
+   diff first, and where the local copy differs, show the person what
+   changed and let them choose merge (default), replace, or keep ~ then
+   feed anything good from their version back into the Drive copy so the
+   rest of the team gets it.
 6. **Give the improve skill an actual write path ~ and don't let the fix
    for "can't write" accidentally create "can't see what happened."**
    Read access (step 4) is not enough for `amplifi-improve`: the
