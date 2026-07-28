@@ -5,12 +5,12 @@ const START_LINE =
   "Look in this folder for skills/amplifi-onboarding/SKILL.md, then run it start to finish. My name is ___.";
 
 const DRIVE_URL =
-  "https://drive.google.com/drive/u/3/folders/0AN2kR-z80lGjUk9PVA";
+  "https://drive.google.com/drive/folders/0AN2kR-z80lGjUk9PVA";
 
 export const metadata: Metadata = {
   title: "Amplifi Brain — Onboard",
   description:
-    "Ten minutes, once, on your own machine. Connect to the Amplifi knowledge base and set up your assistants.",
+    "About half an hour, once, on your own machine. Connect to the Amplifi knowledge base and set up your assistants.",
   // Public to anyone with the link, but never in search results. This page is
   // outside the password gate on purpose (friction here means nobody
   // onboards), which also means it's the one route a crawler could reach —
@@ -31,12 +31,12 @@ export default function OnboardPage() {
       <div className="ob-wrap">
         <div className="ob-eyebrow">Amplifi Brain</div>
         <h1 className="ob-h1">
-          Ten minutes, and your AI knows how Amplifi{" "}
+          Half an hour, and your AI knows how Amplifi{" "}
           <em>actually works</em>.
         </h1>
         <p className="ob-dek">
-          Do this once, on your own machine, whenever suits you. No meeting, no
-          waiting on anyone else.
+          Once, on your own machine, whenever suits you. No meeting, no waiting
+          on anyone else.
         </p>
         <div className="ob-stamp">For the Amplifi analyst team &middot; July 2026</div>
 
@@ -62,8 +62,8 @@ export default function OnboardPage() {
               Put your own name where the blank is. &ldquo;This folder&rdquo;
               means the shared knowledge base folder you opened Claude in — step
               3 below. Everything after that is guided, and you answer in plain
-              English. Expect 20&ndash;30 minutes the first time, then never
-              again.
+              English. The run itself takes 20&ndash;30 minutes; add a few more
+              if you still need the two things below. Once, then never again.
             </p>
           </div>
         </section>
@@ -86,11 +86,14 @@ export default function OnboardPage() {
             </li>
             <li>
               <span>
-                <b>Claude, with access to that folder</b>
+                <b>Claude Code — not Claude in the browser</b>
                 <p>
-                  It needs to be able to open the folder and save back into it.
-                  That saving is what lets the system remember what it learns
-                  from you.
+                  It has to both read that folder and <i>save back into it</i>,
+                  and that write is what lets the system remember what it learns
+                  from you. <b>Claude Enterprise with the Google Drive connector
+                  can only read</b>, so the setup gets partway and then fails
+                  the first time it tries to write. You need the version with
+                  real access to files on your machine.
                 </p>
               </span>
             </li>
@@ -126,10 +129,12 @@ export default function OnboardPage() {
               </p>
             </div>
             <div className="ob-card">
-              <h3>Routes for approval</h3>
+              <h3>Flags what needs Rica</h3>
               <p>
-                What it drafts about team-wide standards goes to Rica to
-                confirm. Handled in the background — nothing for you to chase.
+                If you&rsquo;re not Rica, what it drafts about team-wide
+                standards stays a proposal until she approves it. It&rsquo;ll
+                tell you at the end — <b>send it to her the same day</b>, or
+                the team stays blocked on it.
               </p>
             </div>
             <div className="ob-card">
