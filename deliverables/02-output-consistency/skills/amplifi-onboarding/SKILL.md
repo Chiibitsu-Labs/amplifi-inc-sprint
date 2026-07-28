@@ -93,7 +93,15 @@ nothing about whose version it is. For every in-tier match (same name, or
 a differently-named overlap), compare it against
 `amplifi-knowledge/skills/{name}/SKILL.md` and act on what you find:
 
-- **Byte-identical to the Drive copy:** nothing to do, leave it, move on.
+- **Byte-identical to the Drive copy, in one scope only:** nothing to do,
+  leave it, move on.
+- **Byte-identical, but present in BOTH scopes:** identical today doesn't
+  mean identical after the next update ~ a redeploy that touches one scope
+  leaves the other silently stale, and which one actually fires depends on
+  resolution order nobody is tracking. Pick one scope to keep (user-level
+  if this person works across several project folders; project-level if
+  this corpus is the only place they use it), delete the other, and say
+  which you kept.
 - **Different in any way:** STOP and show the person what differs in
   plain terms (what their copy does that the shared one doesn't, and
   vice versa), then ask which they want:
@@ -174,11 +182,16 @@ change quietly drops the improvement. Do this instead:
    that copy is the source of truth (`DRIVE-HANDOFF.md` step 5), and a
    skill change is one of the few edits that lands there rather than in
    `standards/` or `learnings/`.
-2. **Add a dated line to that skill's own notes** saying what changed,
-   whose practice it came from, and why ~ same discipline every other
-   corpus file's changelog uses.
+2. **Add a row to the Changelog table in
+   `amplifi-knowledge/skills/README.md`** ~ date, which skill, what
+   changed, whose practice it came from, and whether it's been redeployed
+   yet. That table is the defined home for this; don't invent a notes
+   section inside the `SKILL.md` itself (those files are executable
+   instructions, and provenance buried in them is neither findable nor
+   auditable).
 3. **Flag it in the Step 5 report-back as a Drive-side change requiring
-   redeployment**, and follow `DRIVE-HANDOFF.md` step 5's redeploy rule ~
+   redeployment**, leave that row's `Redeployed` cell at `pending` until
+   it actually is, and follow `DRIVE-HANDOFF.md` step 5's redeploy rule ~
    every already-installed copy is now behind, including ones set up
    earlier in this same rollout.
 
@@ -376,6 +389,16 @@ happened:
   session or a rollout check that just looks for the four canonical
   folder names would otherwise read a deliberately-kept personal copy as
   a missing install and try to "fix" it.
+
+  **Then write that same information into the "Who has what installed"
+  table in `amplifi-knowledge/skills/README.md` before ending the
+  session ~ saying it here is not enough.** This summary lives only in
+  this conversation, and a fresh session (this analyst's next one, or
+  whoever checks rollout progress later) has no access to it at all. The
+  Drive table is the only durable record: analyst, machine, which scope
+  the skills went into, the real installed names, and whether each was
+  verified. An unwritten row is indistinguishable from an install that
+  never happened.
 - Which standards files are now `Status: LIVE` for the first time, which
   were already live and left alone, which are still `Status: FRAME`
   because no source material was available this session (name what's
@@ -395,10 +418,30 @@ those three against it when deciding whether to report it as filled.
 
 ---
 
-*This skill is new (built {2026-07-23}) and hasn't been through the same
-adversarial hardening pass the other three skills have. Treat it as a
-solid working v1 ~ if a real onboarding run surfaces a gap, capture it with
-`amplifi-improve` like any other process friction, same as this corpus
-learns anything else.*
+*This skill is new (built {2026-07-23}) and has had less real-world use
+than the other three. Treat it as a solid working v1 ~ real onboarding
+runs will surface gaps.*
+
+***Where a gap goes depends on what kind of gap it is, and this matters
+because the obvious answer is wrong for half of them:***
+
+- **A gap in a SKILL ITSELF** (this one or any of the four ~ a step that
+  misfires, an instruction that's unclear, a case nobody thought of):
+  fix `amplifi-knowledge/skills/{name}/SKILL.md` in Drive directly and
+  log it in that folder's `README.md` Changelog, exactly as the
+  "Sending an improvement back to the shared copy" section above
+  describes. **Don't route this through `amplifi-improve`** ~ its
+  promotion mode files things into `standards/` or
+  `learnings/patterns.md` and has no destination for a `SKILL.md`, so a
+  skill defect captured that way gets filed as a process note and the
+  broken skill stays broken. That applies whenever the gap is found ~
+  during a merge, mid-run, or a week later.
+- **A gap in the WORK the skills support** (a standard that's thin, a
+  client fact worth keeping, process friction that isn't about a skill's
+  own instructions): `amplifi-improve`, as normal. That's what it's for.
+
+*Either way, don't sit on it ~ the difference between a system that
+compounds and one that decays is whether the fix gets written down
+somewhere the next person actually reads.*
 
 *Chiibitsu Labs ~ more human, by design.*
