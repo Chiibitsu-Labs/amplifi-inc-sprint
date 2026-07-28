@@ -62,8 +62,29 @@ export default function OnboardPage() {
               Put your own name where the blank is. &ldquo;This folder&rdquo;
               means the shared knowledge base folder you opened Claude in — step
               3 below. Everything after that is guided, and you answer in plain
-              English. The run itself takes 20&ndash;30 minutes; add a few more
-              if you still need the two things below. Once, then never again.
+              English. Once, then never again.
+            </p>
+          </div>
+
+          <div className="ob-first">
+            <p>
+              <b>Going first? Set aside about 90 minutes, not 30.</b> Whoever
+              runs this before anyone else also builds the team&rsquo;s quality
+              standard from scratch, with the setup asking the questions —
+              roughly an hour on what makes a good report, another half hour on
+              the template and brand rules. Everyone after you inherits that and
+              is done in 20&ndash;30.
+            </p>
+            <p>
+              <b>Have these open before you start:</b> two or three of your best
+              recent reports, and the current Canva template plus brand kit.
+              They&rsquo;re deliberately different sources and it&rsquo;ll ask
+              for both.
+            </p>
+            <p className="ob-faint">
+              Not sure whether you&rsquo;re first? It checks and tells you
+              before that part begins — if the standards are already filled in,
+              it skips straight past them.
             </p>
           </div>
         </section>

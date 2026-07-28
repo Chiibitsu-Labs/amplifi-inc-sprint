@@ -1092,8 +1092,20 @@ td.num{font-variant-numeric:tabular-nums;}
 }
 .ob-copy:hover{background:var(--signal-strong);}
 .ob-copy:focus-visible{outline:2px solid var(--ink); outline-offset:2px;}
-.ob-copy.is-done{background:var(--ok,#3D6B4A);}
+/* Both values fixed on purpose — the success state has to stay legible in
+   either theme, and --paper-raised flips to a dark plum in dark mode, which
+   would leave dark-on-dark text exactly when the reader needs to know the
+   line is safe to paste. */
+.ob-copy.is-done{background:#2F5D3F; color:#FFFDF6;}
 .ob-after{font-size:.86rem; color:var(--ink-soft); margin:14px 0 0;}
+
+.ob-first{
+  margin-top:14px; border:1px solid var(--line-strong); border-left:3px solid var(--signal);
+  border-radius:6px; padding:16px 18px; background:var(--paper-raised);
+}
+.ob-first p{margin:0 0 9px; font-size:.9rem; color:var(--ink-soft);}
+.ob-first p:last-child{margin-bottom:0;}
+.ob-first b{color:var(--ink); font-weight:600;}
 
 .ob-steps{counter-reset:ob; list-style:none; margin:0; padding:0;
   display:flex; flex-direction:column; gap:20px;}
