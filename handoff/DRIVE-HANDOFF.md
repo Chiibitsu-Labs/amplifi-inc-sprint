@@ -129,7 +129,40 @@ grows under their roof. Chii's repo remains the reference/spec copy.
      captures and onboarding ~ on the old behavior.
    Don't tell anyone an update is live until every installed copy FOR THE
    TIER ACTUALLY IN USE is confirmed, not just the first one you
-   remembered.
+   remembered. **And "re-copy" never means "overwrite blind"** ~ several
+   analysts have their own personalized version of a skill (notably
+   `amplifi-improve`, built during the in-person sprint and used since),
+   so a redeploy that clobbers a local file destroys weeks of their real
+   working practice. Apply `amplifi-onboarding` Step 1's rule here too:
+   diff first, and where the local copy differs, show the person what
+   changed and let them choose merge (default), replace, or keep ~ then
+   feed anything good from their version back into the Drive copy so the
+   rest of the team gets it. **Whichever they choose, update that
+   skill's row in `amplifi-knowledge/skills/README.md` before moving
+   on** ~ a merge can rename the skill, a replace can remove an alias,
+   and either can consolidate two scopes into one, so the row that was
+   accurate this morning now points at a path that no longer exists.
+   Only `amplifi-onboarding`'s Step 5 writes those rows at install time;
+   nothing else does it for you here, and a stale row sends the next
+   redeploy to the wrong place while the real copy quietly stays behind.
+
+   **And when the sweep is finished ~ every install for the tier in use
+   confirmed on the new version ~ go back and flip that skill's
+   Changelog row in `amplifi-knowledge/skills/README.md` from `pending`
+   to `yes`, with the date.** Both `amplifi-onboarding` and
+   `amplifi-improve` open those rows at `pending` when they change a
+   skill in Drive, and nothing else closes them. Left alone, every
+   successfully-completed redeploy still reads as outstanding forever,
+   which makes the one column meant to answer "is this actually live
+   everywhere?" useless the moment you'd want to trust it. If the sweep
+   was partial, say so in the row rather than flipping it ~ name which
+   installs are still behind. **Batch those Drive-side writes to the END
+   of the redeployment pass, never mid-pass** ~ editing the canonical
+   copy while a multi-machine redeploy is still running silently makes
+   every machine already completed in that same pass stale against this
+   step's own rule, and you'd have to start the pass over to honor it.
+   Collect the improvements as you go, apply them to Drive once the pass
+   is done, then run a fresh redeploy cycle for the new version.
 6. **Give the improve skill an actual write path ~ and don't let the fix
    for "can't write" accidentally create "can't see what happened."**
    Read access (step 4) is not enough for `amplifi-improve`: the
