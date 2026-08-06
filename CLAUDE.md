@@ -94,6 +94,14 @@ adoption; retroactive specs welcome but not required for already-shipped work).
 
 <!-- The living section. Date entries; newest first. -->
 
+- 2026-08-06 — `npm run lint` (`next lint`) has no ESLint config in this repo yet, so it
+  opens an interactive "How would you like to configure ESLint?" prompt instead of running —
+  it'll hang/block in a non-interactive session. Someone needs to run it once locally, answer
+  the prompt (Next.js's own "Strict" preset is the reasonable default), and commit the
+  resulting config before `npm run lint` is usable non-interactively. `next lint` itself is
+  also deprecated as of this Next.js version; the eventual fix is probably migrating to a
+  plain `eslint` CLI setup (`next-lint-to-eslint-cli` codemod) rather than configuring the
+  deprecated wrapper.
 - 2026-08-05 — This file, `product/`, and `canon/` didn't exist before today; the site
   (tasks completed through PR #9/#12) shipped without going through SPEC→PLAN→BUILD→
   VERIFY→AUDIT→SHIP. Not retrofitting specs for already-shipped work; starting clean from

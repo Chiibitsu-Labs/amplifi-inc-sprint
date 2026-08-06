@@ -19,11 +19,13 @@ own `canon/decisions.md` instead.
 > client deliverable PDFs, which were relying on Vercel Authentication as their *only*
 > protection and were briefly left fully public by this change.
 >
-> **Fix status: pending, not yet landed.** PR #11 removes `pdfs` from the matcher's exclusion
-> list — as of this correction it's open, reviewed clean, not yet merged. Until #11 merges
-> and deploys, the exposure described above is still live; don't read "fixed in PR #11" as
-> "fixed." `logos`/`fonts`/`_next/*` stay excluded on purpose — genuinely public static
-> assets (favicon, self-hosted fonts, framework chunks) that don't need gating.
+> **Fix status: landed (2026-08-06), deployment unverified.** PR #11 removed `pdfs` from the
+> matcher's exclusion list and merged into `main` (commit `e31682b`), which auto-deploys to
+> production on Vercel. The source-level fix is in; nobody in this session has independently
+> confirmed the live site actually redirects an anonymous `/pdfs/*` request post-deploy — this
+> sandbox's network policy blocks outbound requests to this project's hosts (see
+> `canon/lessons.md`). `logos`/`fonts`/`_next/*` stay excluded on purpose — genuinely public
+> static assets (favicon, self-hosted fonts, framework chunks) that don't need gating.
 >
 > Revisit only if a route besides `/access`, `/api/access`, `/onboard` ever needs to be
 > public — Vercel Authentication would need to come back scoped, not this same
