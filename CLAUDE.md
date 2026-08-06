@@ -30,7 +30,7 @@ adoption; retroactive specs welcome but not required for already-shipped work).
   - Install: `npm install` · Dev: `npm run dev` · Build (also typechecks): `npm run build`
   - Lint: `npm run lint` — **not wired into CI or the build**; `next.config.mjs` sets
     `eslint: { ignoreDuringBuilds: true }`. Run it by hand until that's fixed (see gotchas).
-  - Test: **no test suite exists yet.** Non-negotiable #2 below is aspirational until one
+  - Test: **no test suite exists yet.** Non-negotiable #3 below is aspirational until one
     does — flagged, not silently assumed.
 - Deploy: Vercel, merge to main auto-deploys production; every branch gets a preview.
   `amplifi-capchecker` (sibling repo, same org) proxies `/onboard` onto
