@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ACCESS_PASSWORD, SESSION_COOKIE, SESSION_MAX_AGE_SECONDS } from "@/lib/config";
+import { getAccessPassword, SESSION_COOKIE, SESSION_MAX_AGE_SECONDS } from "@/lib/config";
 import { createSessionToken } from "@/lib/session";
 import { supabaseServer } from "@/lib/supabase";
 
@@ -23,9 +23,14 @@ export async function POST(req: NextRequest) {
   if (!EMAIL_RE.test(email)) {
     return NextResponse.json({ ok: false, error: "Enter a valid email." }, { status: 400 });
   }
-  if (password !== ACCESS_PASSWORD) {
+  if (password !== getAccessPassword()) {
     return NextResponse.json({ ok: false, error: "Incorrect password." }, { status: 401 });
   }
+
+  // Created before the Supabase insert below so a missing SESSION_SECRET fails the
+  // request here — not after a visitor row has already been logged for an access that
+  // was never actually granted a session (each retry would otherwise log a duplicate).
+  const token = await createSessionToken();
 
   const supabase = supabaseServer();
   const { error } = await supabase.from("amplifi_sprint_access").insert({
@@ -40,7 +45,6 @@ export async function POST(req: NextRequest) {
     console.error("amplifi_sprint_access insert failed:", error.message);
   }
 
-  const token = await createSessionToken();
   const res = NextResponse.json({ ok: true });
   res.cookies.set(SESSION_COOKIE, token, {
     httpOnly: true,

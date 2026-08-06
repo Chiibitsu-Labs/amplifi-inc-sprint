@@ -12,19 +12,23 @@ npm install
 npm run dev
 ```
 
-Visit `http://localhost:3000` — you'll land on `/access` first. The default password is
-`MoreHuman-ByDesign-2026` (see **Configuration** below to change it).
+Visit `http://localhost:3000` — you'll land on `/access` first. Set `ACCESS_PASSWORD` and
+`SESSION_SECRET` in a `.env.local` first (see **Configuration** below) — without them the
+app still builds and loads, but submitting the access form fails.
 
 ## Configuration
 
-Everything in `lib/config.ts` has a working default, so the site runs out of the box.
-Override any of these as Vercel project Environment Variables before sharing the real
-link:
+`SUPABASE_URL` and `SUPABASE_ANON_KEY` have safe non-secret defaults baked into
+`lib/config.ts`. `ACCESS_PASSWORD` and `SESSION_SECRET` do not — a request to `/api/access`
+throws if either is unset, on purpose: this is a public repo, so a hardcoded fallback
+password or signing secret would be readable by anyone who opens the source. Set both as
+Vercel project Environment Variables before sharing the real link — required, not optional,
+in every environment including Preview:
 
 | Variable | Default | What it's for |
 |---|---|---|
-| `ACCESS_PASSWORD` | `MoreHuman-ByDesign-2026` | The password on `/access`. Change this before wide distribution. |
-| `SESSION_SECRET` | a fixed placeholder string | Signs the access-gate session cookie. Set a real random value in production. |
+| `ACCESS_PASSWORD` | none — required | The password on `/access`. |
+| `SESSION_SECRET` | none — required | Signs the access-gate session cookie. Use a long random value (e.g. `openssl rand -hex 32`). |
 | `SUPABASE_URL` | the Chiibitsu Labs shared Supabase project | Where visitor name/email get logged. |
 | `SUPABASE_ANON_KEY` | that project's anon/publishable key | Safe to expose — the `amplifi_sprint_access` table's RLS policy only allows inserts, never reads. |
 
@@ -38,7 +42,8 @@ This repo is ready for Vercel's standard **Import Git Repository** flow:
 1. In the Vercel dashboard, New Project → Import `chiibitsu-labs/amplifi-inc-sprint`.
 2. Set **Root Directory** to `site`.
 3. Framework preset: Next.js (auto-detected).
-4. Optionally set the env vars above; the app works without them.
+4. Set `ACCESS_PASSWORD` and `SESSION_SECRET` from the table above — required, the access
+   form fails without them. `SUPABASE_URL`/`SUPABASE_ANON_KEY` are optional overrides.
 5. Deploy. Every future PR against this repo gets its own preview URL automatically —
    the "instant rollback" / preview-deploy behavior vibeOS's bindings doc calls for.
 
