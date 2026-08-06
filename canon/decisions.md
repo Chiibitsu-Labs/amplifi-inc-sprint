@@ -108,6 +108,22 @@ own `canon/decisions.md` instead.
 > INSERT) is a live policy change against a production table serving a currently-shared
 > link, not something to make unilaterally inside a docs-adoption PR. Flagging as a known
 > gap; Chii's call on priority.
+>
+> **Partially resolved (2026-08-06, Chii: "ok").** `site/lib/supabase.ts`'s `supabaseServer()`
+> now prefers `SUPABASE_SERVICE_ROLE_KEY` (bypasses RLS entirely) over the anon key when it's
+> set, and falls back to the anon key when it isn't — so this shipped with no behavior change
+> and no deploy-breaking risk (unlike `ACCESS_PASSWORD`/`SESSION_SECRET` below, this env var
+> is *not yet set anywhere*, so making it required immediately would have taken production
+> down the moment this merged). **Still open:** the anon INSERT grant/policy on
+> `amplifi_sprint_access` has *not* been revoked — until it is, the spoofing gap described
+> above is still live even after this lands. Two steps left, both needing Chii:
+> 1. Grab the `service_role` secret key from the Supabase dashboard (Project Settings → API)
+>    and set `SUPABASE_SERVICE_ROLE_KEY` in the `amplifi-inc-sprint` Vercel project — see
+>    `site/README.md`'s Configuration table.
+> 2. Once confirmed live, revoke `anon`'s INSERT: `drop policy "anon can log access" on
+>    public.amplifi_sprint_access; revoke insert on public.amplifi_sprint_access from anon;`
+>    — a follow-up migration, applied only after step 1 is confirmed so the write path
+>    doesn't go dark in between.
 
 > **2026-08-06 — Flag the hard-coded `ACCESS_PASSWORD`/`SESSION_SECRET` defaults as an open
 > gap, not a fix.** `site/lib/config.ts` falls back to a real password and session-signing
@@ -132,3 +148,13 @@ own `canon/decisions.md` instead.
 > time (inside the `/api/access` handler and `createSessionToken()`), not at module import,
 > since an eager check broke `next build`'s static page-data collection and would have broken
 > every PR's automatic preview deploy. `site/README.md` no longer calls these two optional.
+
+> **2026-08-06 — Add the retroactive migration file for `amplifi_sprint_access` (Chii:
+> "whatever you reco").** CLAUDE.md non-negotiable #5 flagged this as owed since the table
+> was provisioned directly via the Supabase MCP tool rather than a committed migration.
+> Added `site/supabase/migrations/20260720054855_create_amplifi_sprint_access.sql`, using the
+> exact DDL already recorded above and dated to match the existing Supabase-side
+> `schema_migrations` entry from when it was actually provisioned (`list_migrations` confirms
+> version `20260720054855`, name `create_amplifi_sprint_access`) — a record of what already
+> ran, not a new change. Safe to add without Chii's live-state confirmation, unlike the
+> credential fixes above: it doesn't touch the live database, only the repo's own history.
