@@ -29,6 +29,22 @@ const nextConfig = {
       },
     ];
   },
+  async headers() {
+    return [
+      {
+        // Root-relative url()s inside a stylesheet resolve against the
+        // stylesheet's own origin, not the document's -- so once assetPrefix
+        // makes /onboard's CSS load from this origin even when the page is
+        // proxied through capchecker, its @font-face url('/fonts/...')
+        // requests also go directly to this origin, cross-origin from the
+        // capchecker document. Browsers fetch cross-origin fonts in CORS
+        // mode, so without this header they fail closed -- silently, no
+        // error beyond a CORS rejection in the Network tab (Codex review, PR #9).
+        source: "/fonts/:path*",
+        headers: [{ key: "Access-Control-Allow-Origin", value: "*" }],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
