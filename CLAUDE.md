@@ -36,29 +36,40 @@ adoption; retroactive specs welcome but not required for already-shipped work).
   `amplifi-capchecker` (sibling repo, same org) proxies `/onboard` onto
   `amplifi.chiibitsu.com` — see that repo's `next.config.mjs` and PR #12.
 
-## Non-negotiables (vibeOS docs/02 + 04)
+## Non-negotiables (vibeOS docs/02 + 04, plus the Chiibitsu Labs PR review gate below)
 
 1. Work on a branch; never commit to main directly.
-2. Every feature ships with tests covering its acceptance criteria; keep the suite green.
+2. **Every PR gets an independent AI review before merge — always** (Chiibitsu Labs company
+   rule, not vibeOS-generic: the vault's `AGENTS.md` "Code & pull requests" section, mirrored
+   here so a session doesn't need vault access to know it). Whoever implemented requests the
+   *other* agent: Claude-implemented → comment `@codex review` on the PR; Codex-implemented →
+   request a Claude Code review. Never merge unreviewed.
+   - Open the PR as **draft**, request review, address findings, request review again —
+     repeat until clean. A review with findings resets the loop.
+   - **First clean pass:** mark ready for review (un-draft) and request one more independent
+     review.
+   - **Second clean pass, with no comment from Chii in between:** the agent may merge on its
+     own. Any comment from Chii pauses auto-merge — she decides from there.
+3. Every feature ships with tests covering its acceptance criteria; keep the suite green.
    **Currently unenforceable — no test runner is configured.** First real feature branch
    after this file lands should also set one up (Playwright is pre-installed in this
    environment; likely the path of least resistance).
-3. No secrets in code, chat, or logs — env vars only.
-4. Database changes only via migrations (with rollback), never ad-hoc SQL against prod.
+4. No secrets in code, chat, or logs — env vars only.
+5. Database changes only via migrations (with rollback), never ad-hoc SQL against prod.
    **Current gap:** the access-log Supabase table (see `canon/decisions.md`) was provisioned
    directly via the Supabase MCP tool, not a committed migration file. Retroactive migration
    owed.
-5. Tier 3 triggers (auth, payments, personal data, migrations, uploads, external writes):
+6. Tier 3 triggers (auth, payments, personal data, migrations, uploads, external writes):
    prepare an audit pack before requesting ship (vibeOS `templates/audit-pack.md`), and once
    findings and resolutions are filled in, commit the completed pack to
    `product/audits/<change-name>.md` before merge — not just the PR thread (doc 04).
-6. Explain choices in product terms. Ask Chii product questions, not code questions.
-7. End of session: commit and push this repo's changes, then write a HANDOFF note — state,
+7. Explain choices in product terms. Ask Chii product questions, not code questions.
+8. End of session: commit and push this repo's changes, then write a HANDOFF note — state,
    next step, open questions, in the sub-line format vibeOS's `ops/tasks.md` defines —
    directly into the vibeOS repo's `ops/tasks.md` and commit+push that too (two repos, two
    commits — doc 07's layout). Mirror the note in the PR description for convenience, but
    the `ops/tasks.md` commit is the record.
-8. This repo runs on the vibeOS protocol (Chiibitsu Labs). It isn't a vibeOS fork being
+9. This repo runs on the vibeOS protocol (Chiibitsu Labs). It isn't a vibeOS fork being
    distributed, so no NOTICE.md/attribution footer applies here — that requirement is for
    derived products, not internal client-engagement repos.
 

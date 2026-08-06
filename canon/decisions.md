@@ -23,3 +23,12 @@ own `canon/decisions.md` instead.
 > process) — not to `deliverables/`, which is Amplifi's own operating system and a sprint
 > deliverable in its own right, governed by its own internal rules. Not retrofitting specs
 > or audit packs for already-shipped work; starting the loop from here forward.
+
+> **2026-08-05 — Encode the Chiibitsu Labs PR review gate in this repo's `CLAUDE.md`, not
+> just the vault.** The vault's `AGENTS.md` already states this rule ("Code & pull requests")
+> company-wide: every PR gets an independent AI review (`@codex review` when Claude
+> implements) before merge, re-requested after every fix round, requiring two consecutive
+> clean passes with no Chii comment in between before an agent may self-merge. It wasn't yet
+> mirrored into any product repo's own standing orders, so a session without vault access
+> (or one that didn't think to check it) could merge unreviewed. Mirrored into non-negotiable
+> #2 rather than only trusting future sessions to go find it.
