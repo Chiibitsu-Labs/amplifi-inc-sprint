@@ -12,19 +12,22 @@ npm install
 npm run dev
 ```
 
-Visit `http://localhost:3000` — you'll land on `/access` first. The default password is
-`MoreHuman-ByDesign-2026` (see **Configuration** below to change it).
+Visit `http://localhost:3000` — you'll land on `/access` first. Set `ACCESS_PASSWORD` and
+`SESSION_SECRET` in a `.env.local` first (see **Configuration** below) — the app throws at
+startup without them.
 
 ## Configuration
 
-Everything in `lib/config.ts` has a working default, so the site runs out of the box.
-Override any of these as Vercel project Environment Variables before sharing the real
-link:
+`ACCESS_PASSWORD` and `SUPABASE_URL`) have safe non-secret defaults baked into
+`lib/config.ts`. `ACCESS_PASSWORD` and `SESSION_SECRET` do not — the app throws at startup
+if either is unset, on purpose: this is a public repo, so a hardcoded fallback password or
+signing secret would be readable by anyone who opens the source. Set both as Vercel project
+Environment Variables before sharing the real link:
 
 | Variable | Default | What it's for |
 |---|---|---|
-| `ACCESS_PASSWORD` | `MoreHuman-ByDesign-2026` | The password on `/access`. Change this before wide distribution. |
-| `SESSION_SECRET` | a fixed placeholder string | Signs the access-gate session cookie. Set a real random value in production. |
+| `ACCESS_PASSWORD` | none — required | The password on `/access`. |
+| `SESSION_SECRET` | none — required | Signs the access-gate session cookie. Use a long random value (e.g. `openssl rand -hex 32`). |
 | `SUPABASE_URL` | the Chiibitsu Labs shared Supabase project | Where visitor name/email get logged. |
 | `SUPABASE_ANON_KEY` | that project's anon/publishable key | Safe to expose — the `amplifi_sprint_access` table's RLS policy only allows inserts, never reads. |
 
