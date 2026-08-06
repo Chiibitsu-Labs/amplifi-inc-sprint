@@ -60,15 +60,11 @@ adoption; retroactive specs welcome but not required for already-shipped work).
    lands should add a real test runner as its own step, Playwright a reasonable default
    choice, not an assumed shortcut.)
 4. No secrets in code, chat, or logs — env vars only.
-   **Current gap, and a live one:** `site/lib/config.ts` hard-codes a real password
-   (`ACCESS_PASSWORD`) and session-signing secret (`SESSION_SECRET`) as fallback defaults,
-   committed in this **public** repo — readable by anyone who opens the source, whether or
-   not the real deployment has overridden them with its own env vars. `site/README.md`
-   currently calls setting those variables optional ("the app works without them"). Not
-   fixed here: forcing the app to require real values would break the live deployment if it
-   turns out to still be running on these defaults, and this session couldn't confirm the
-   actual Vercel env var state (no tool exposes it). See `canon/decisions.md` — this needs
-   Chii's call, not a silent code change.
+   **Fixed (PR #12, 2026-08-06):** `site/lib/config.ts` used to hard-code a real password and
+   session-signing secret as fallback defaults, committed in this **public** repo. Chii
+   confirmed both were already set in the live Vercel deployment, so `ACCESS_PASSWORD` and
+   `SESSION_SECRET` now throw at request time if unset instead of silently defaulting — see
+   `canon/decisions.md`.
 5. Database changes only via migrations (with rollback), never ad-hoc SQL against prod.
    **Current gap:** the access-log Supabase table (see `canon/decisions.md`) was provisioned
    directly via the Supabase MCP tool, not a committed migration file. Retroactive migration

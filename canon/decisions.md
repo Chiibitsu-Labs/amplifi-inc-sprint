@@ -123,3 +123,10 @@ own `canon/decisions.md` instead.
 > Raised directly to Chii (PR #10 conversation, 2026-08-06) rather than assumed either way.
 > Once confirmed: if real values are already set in Vercel, the code fix is safe to make
 > immediately; if not, set them there first, *then* make the code fix.
+>
+> **Resolved (2026-08-06, PR #12).** Chii confirmed both `ACCESS_PASSWORD` and
+> `SESSION_SECRET` are set in Vercel. `getAccessPassword()`/`getSessionSecret()` in
+> `site/lib/config.ts` now throw if either env var is missing — checked lazily at request
+> time (inside the `/api/access` handler and `createSessionToken()`), not at module import,
+> since an eager check broke `next build`'s static page-data collection and would have broken
+> every PR's automatic preview deploy. `site/README.md` no longer calls these two optional.
