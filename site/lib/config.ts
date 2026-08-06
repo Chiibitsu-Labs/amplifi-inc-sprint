@@ -1,13 +1,28 @@
-// Non-secret defaults so the site works out of the box on a fresh deploy.
-// Override any of these in the Vercel project's Environment Variables before
-// sharing the real link — see site/README.md.
+// SUPABASE_URL/SUPABASE_ANON_KEY below have safe non-secret defaults (see comment there).
+// ACCESS_PASSWORD/SESSION_SECRET do not — they must be set as Vercel project Environment
+// Variables before the real link is shared. See site/README.md.
 
-export const ACCESS_PASSWORD = process.env.ACCESS_PASSWORD || "MoreHuman-ByDesign-2026";
+function requireEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(
+      `${name} is not set. Set it in the Vercel project's Environment Variables — see site/README.md.`
+    );
+  }
+  return value;
+}
 
-// Used to sign the access-gate session cookie. Safe to leave as-is for a low-stakes
-// internal gate; set SESSION_SECRET in Vercel for a project-specific value.
-export const SESSION_SECRET =
-  process.env.SESSION_SECRET || "amplifi-sprint-2026-chiibitsu-labs-default-session-secret";
+// Functions, not constants: evaluated lazily per-request rather than at module import,
+// so a missing env var fails an actual /access request, not `next build` itself — Next
+// statically imports route modules while collecting page data, before any request runs.
+export function getAccessPassword(): string {
+  return requireEnv("ACCESS_PASSWORD");
+}
+
+// Used to sign the access-gate session cookie.
+export function getSessionSecret(): string {
+  return requireEnv("SESSION_SECRET");
+}
 
 // Supabase anon/publishable key — designed to be public; access is enforced by the
 // insert-only RLS policy on amplifi_sprint_access, not by keeping this value secret.

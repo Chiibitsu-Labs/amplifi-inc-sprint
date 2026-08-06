@@ -1,9 +1,9 @@
-import { SESSION_SECRET } from "./config";
+import { getSessionSecret } from "./config";
 
 async function hmac(payload: string): Promise<string> {
   const key = await crypto.subtle.importKey(
     "raw",
-    new TextEncoder().encode(SESSION_SECRET),
+    new TextEncoder().encode(getSessionSecret()),
     { name: "HMAC", hash: "SHA-256" },
     false,
     ["sign"]
