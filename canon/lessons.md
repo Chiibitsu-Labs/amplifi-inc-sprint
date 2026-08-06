@@ -25,3 +25,11 @@ only put something here if it's specific to `amplifi-inc-sprint`.
   session-level policy denial (see `/root/.ccr/README.md`), reported via
   `$HTTPS_PROXY/__agentproxy/status`. Don't read a blocked verification fetch as evidence
   about the target's own access controls without checking which layer actually blocked it.
+
+- **2026-08-06 — Internal task-tracker IDs are not GitHub PR numbers, even when both are
+  small integers that look plausible in prose.** Wrote "PR #245's build" in a `canon/decisions.md`
+  entry, citing what was actually this session's own task-list item number (a different,
+  ambient numbering system) as if it were a real PR reference. Codex caught it with a
+  repo-wide search that found no such PR — the actual commit was `819bb5e` / PR #2. Before
+  citing any `#N` as a PR or issue number, confirm it resolves in *this* repo's forge, not
+  just that a number was floating around the same context.

@@ -49,8 +49,10 @@ own `canon/decisions.md` instead.
 > **2026-08-06 — Record what `amplifi_sprint_access` actually is, since nothing else does.**
 > The table (see `site/lib/supabase.ts`, written from `site/app/api/access/route.ts`) is a
 > write-only access log for the password/name/email gate. Provisioned directly via the
-> Supabase MCP tool (PR #245's build), not a committed migration — CLAUDE.md non-negotiable
-> #5 flags that gap as still owed. Exact deployed DDL, pulled live from the
+> Supabase MCP tool (commit `819bb5e`, PR #2 — "#245" in an earlier draft of this entry was
+> an internal task-tracker ID that isn't a GitHub PR number in this repo; see
+> `canon/lessons.md`), not a committed migration — CLAUDE.md non-negotiable #5 flags that gap
+> as still owed. Exact deployed DDL, pulled live from the
 > `chiibitsu-labs` Supabase project (`wguhmblrcfcvbheusizt`) rather than reconstructed from
 > code, so the retroactive migration has something to be written *from* (Codex review on PR
 > #10 twice over — first the missing pointer, then that a prose column list isn't reproducible
@@ -74,8 +76,19 @@ own `canon/decisions.md` instead.
 >   for insert
 >   to anon
 >   with check (true);
+>
+> -- Explicit, even though this project's anon/authenticated/service_role roles already
+> -- carry it via Supabase's default schema-wide grant (`GRANT ALL ON ALL TABLES IN SCHEMA
+> -- public TO anon, authenticated, service_role`, applied automatically, not a per-table
+> -- grant we set ourselves). RLS restricts *rows*; it never substitutes for the base table
+> -- privilege a role needs before RLS is even evaluated. Recreating just the table + policy
+> -- above in an environment without that schema-wide default (any non-Supabase-provisioned
+> -- Postgres) would let anon attempt inserts that fail at the privilege check, and
+> -- site/app/api/access/route.ts swallows that failure while still admitting the visitor —
+> -- so the log would go silently empty with no user-visible symptom (Codex review, PR #10).
+> grant insert on public.amplifi_sprint_access to anon;
 > ```
 >
-> No SELECT/UPDATE/DELETE policy exists for any role — this is the *only* policy on the
+> No SELECT/UPDATE/DELETE policy exists for any role — this is the *only* RLS policy on the
 > table, which is what makes the anon key safe to embed server-side (`site/lib/supabase.ts`'s
 > comment already claimed this; now it's verified against the live policy, not assumed).
