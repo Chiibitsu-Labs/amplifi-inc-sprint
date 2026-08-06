@@ -13,16 +13,17 @@ npm run dev
 ```
 
 Visit `http://localhost:3000` — you'll land on `/access` first. Set `ACCESS_PASSWORD` and
-`SESSION_SECRET` in a `.env.local` first (see **Configuration** below) — the app throws at
-startup without them.
+`SESSION_SECRET` in a `.env.local` first (see **Configuration** below) — without them the
+app still builds and loads, but submitting the access form fails.
 
 ## Configuration
 
-`ACCESS_PASSWORD` and `SUPABASE_URL`) have safe non-secret defaults baked into
-`lib/config.ts`. `ACCESS_PASSWORD` and `SESSION_SECRET` do not — the app throws at startup
-if either is unset, on purpose: this is a public repo, so a hardcoded fallback password or
-signing secret would be readable by anyone who opens the source. Set both as Vercel project
-Environment Variables before sharing the real link:
+`SUPABASE_URL` and `SUPABASE_ANON_KEY` have safe non-secret defaults baked into
+`lib/config.ts`. `ACCESS_PASSWORD` and `SESSION_SECRET` do not — a request to `/api/access`
+throws if either is unset, on purpose: this is a public repo, so a hardcoded fallback
+password or signing secret would be readable by anyone who opens the source. Set both as
+Vercel project Environment Variables before sharing the real link — required, not optional,
+in every environment including Preview:
 
 | Variable | Default | What it's for |
 |---|---|---|
@@ -41,7 +42,8 @@ This repo is ready for Vercel's standard **Import Git Repository** flow:
 1. In the Vercel dashboard, New Project → Import `chiibitsu-labs/amplifi-inc-sprint`.
 2. Set **Root Directory** to `site`.
 3. Framework preset: Next.js (auto-detected).
-4. Optionally set the env vars above; the app works without them.
+4. Set `ACCESS_PASSWORD` and `SESSION_SECRET` from the table above — required, the access
+   form fails without them. `SUPABASE_URL`/`SUPABASE_ANON_KEY` are optional overrides.
 5. Deploy. Every future PR against this repo gets its own preview URL automatically —
    the "instant rollback" / preview-deploy behavior vibeOS's bindings doc calls for.
 

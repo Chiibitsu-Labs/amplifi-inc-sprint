@@ -27,6 +27,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "Incorrect password." }, { status: 401 });
   }
 
+  // Created before the Supabase insert below so a missing SESSION_SECRET fails the
+  // request here — not after a visitor row has already been logged for an access that
+  // was never actually granted a session (each retry would otherwise log a duplicate).
+  const token = await createSessionToken();
+
   const supabase = supabaseServer();
   const { error } = await supabase.from("amplifi_sprint_access").insert({
     name,
@@ -40,7 +45,6 @@ export async function POST(req: NextRequest) {
     console.error("amplifi_sprint_access insert failed:", error.message);
   }
 
-  const token = await createSessionToken();
   const res = NextResponse.json({ ok: true });
   res.cookies.set(SESSION_COOKIE, token, {
     httpOnly: true,
