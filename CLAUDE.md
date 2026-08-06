@@ -69,9 +69,9 @@ adoption; retroactive specs welcome but not required for already-shipped work).
    **Retroactive migration added (2026-08-06):** the access-log table was originally
    provisioned directly via the Supabase MCP tool, not a committed migration file — now
    backfilled as `site/supabase/migrations/20260720054855_create_amplifi_sprint_access.sql`,
-   dated to match the existing Supabase-side migration record. No rollback script exists for
-   it (dropping the visitor log isn't a realistic rollback anyone would run); write one if a
-   real forward migration on this table ever needs a paired rollback.
+   dated to match the existing Supabase-side migration record, with its rollback procedure
+   documented as a commented block in the same file (the Supabase CLI has no native
+   down-migration mechanism).
 6. Tier 3 triggers (auth, payments, personal data, migrations, uploads, external writes):
    prepare an audit pack before requesting ship (vibeOS `templates/audit-pack.md`), and once
    findings and resolutions are filled in, commit the completed pack to

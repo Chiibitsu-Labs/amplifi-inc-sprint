@@ -31,7 +31,7 @@ in every environment including Preview:
 | `SESSION_SECRET` | none — required | Signs the access-gate session cookie. Use a long random value (e.g. `openssl rand -hex 32`). |
 | `SUPABASE_URL` | the Chiibitsu Labs shared Supabase project | Where visitor name/email get logged. |
 | `SUPABASE_ANON_KEY` | that project's anon/publishable key | Safe to expose, but on its own lets anyone holding it insert fabricated rows into the visitor log directly through Supabase — see `SUPABASE_SERVICE_ROLE_KEY`. |
-| `SUPABASE_SERVICE_ROLE_KEY` | none — optional, recommended | Supabase Project Settings → API → `service_role` secret. When set, the visitor-log write uses it instead of the anon key, closing the anon-spoofing gap above. **Never expose this to the client** — it bypasses RLS entirely; it's only ever read server-side (`app/api/access/route.ts`). |
+| `SUPABASE_SERVICE_ROLE_KEY` | none — optional, recommended | Supabase Project Settings → API → `service_role` secret. When set, the visitor-log write uses it instead of the anon key — **preparatory only**: the anon key can still insert fabricated rows directly through Supabase's API until its `INSERT` grant/policy is separately revoked (see `canon/decisions.md`). **Never expose this to the client** — it bypasses RLS entirely; it's only ever read server-side (`app/api/access/route.ts`). |
 
 Visitor log: query `amplifi_sprint_access` (name, email, user_agent, created_at) in the
 `chiibitsu-labs` Supabase project — that's "who's viewed it."

@@ -35,3 +35,13 @@ create policy "anon can log access"
 -- failure while still admitting the visitor — so the log would go silently empty with no
 -- user-visible symptom.
 grant insert on public.amplifi_sprint_access to anon;
+
+-- ROLLBACK (CLAUDE.md non-negotiable #5 requires one; the Supabase CLI has no native
+-- down-migration mechanism, so this is the reviewed procedure to run by hand if this table
+-- is ever reverted). Irreversibly deletes any logged visitor rows — confirm that's actually
+-- intended before running.
+--
+-- revoke insert on public.amplifi_sprint_access from anon;
+-- drop policy if exists "anon can log access" on public.amplifi_sprint_access;
+-- alter table public.amplifi_sprint_access disable row level security;
+-- drop table public.amplifi_sprint_access;
