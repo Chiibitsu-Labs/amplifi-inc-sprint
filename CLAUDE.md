@@ -51,10 +51,24 @@ adoption; retroactive specs welcome but not required for already-shipped work).
    - **Second clean pass, with no comment from Chii in between:** the agent may merge on its
      own. Any comment from Chii pauses auto-merge — she decides from there.
 3. Every feature ships with tests covering its acceptance criteria; keep the suite green.
-   **Currently unenforceable — no test runner is configured.** First real feature branch
-   after this file lands should also set one up (Playwright is pre-installed in this
-   environment; likely the path of least resistance).
+   **Currently unenforceable — no test runner is configured.** `package.json` has no test
+   script, no Playwright dependency, no config, no test files — nothing is actually set up
+   yet, in this repo or in a fresh checkout of it. ("Pre-installed in this environment" in an
+   earlier draft of this line meant *this build session's own cloud sandbox* having
+   Playwright's browser binary cached — a fact about one session, not a fact about this repo
+   — and shouldn't have been phrased as if it were. First real feature branch after this file
+   lands should add a real test runner as its own step, Playwright a reasonable default
+   choice, not an assumed shortcut.)
 4. No secrets in code, chat, or logs — env vars only.
+   **Current gap, and a live one:** `site/lib/config.ts` hard-codes a real password
+   (`ACCESS_PASSWORD`) and session-signing secret (`SESSION_SECRET`) as fallback defaults,
+   committed in this **public** repo — readable by anyone who opens the source, whether or
+   not the real deployment has overridden them with its own env vars. `site/README.md`
+   currently calls setting those variables optional ("the app works without them"). Not
+   fixed here: forcing the app to require real values would break the live deployment if it
+   turns out to still be running on these defaults, and this session couldn't confirm the
+   actual Vercel env var state (no tool exposes it). See `canon/decisions.md` — this needs
+   Chii's call, not a silent code change.
 5. Database changes only via migrations (with rollback), never ad-hoc SQL against prod.
    **Current gap:** the access-log Supabase table (see `canon/decisions.md`) was provisioned
    directly via the Supabase MCP tool, not a committed migration file. Retroactive migration

@@ -89,6 +89,20 @@ own `canon/decisions.md` instead.
 > grant insert on public.amplifi_sprint_access to anon;
 > ```
 >
-> No SELECT/UPDATE/DELETE policy exists for any role — this is the *only* RLS policy on the
-> table, which is what makes the anon key safe to embed server-side (`site/lib/supabase.ts`'s
-> comment already claimed this; now it's verified against the live policy, not assumed).
+> No SELECT/UPDATE/DELETE policy exists for any role — verified against the live policy, not
+> assumed, correcting `site/lib/supabase.ts`'s comment which already claimed it.
+>
+> **Correction (2026-08-06, Codex review on PR #10):** the line above originally went on to
+> call this "what makes the anon key safe to embed server-side" — too strong. INSERT-only
+> plus no read policy means a leaked or independently-obtained anon key can't be used to
+> *read* who visited. It does nothing to stop *spoofing*: the anon/publishable key is
+> designed to be obtainable (Supabase's own model, not a leak), and `with check (true)`
+> means anyone holding it can insert fabricated rows — fake names/emails, or floods of
+> rows — directly against Supabase's REST API, bypassing `site/app/api/access/route.ts`'s
+> password check entirely. That doesn't threaten the app's actual access control (the
+> password/session gate is unrelated to this table), but it does mean the log's contents
+> can't be trusted as "who actually viewed the site" without independent corroboration.
+> **Not fixed here** — the real fix (write via a server-only credential, revoke the anon
+> INSERT) is a live policy change against a production table serving a currently-shared
+> link, not something to make unilaterally inside a docs-adoption PR. Flagging as a known
+> gap; Chii's call on priority.
