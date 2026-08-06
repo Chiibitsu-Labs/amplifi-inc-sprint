@@ -3,7 +3,11 @@ import { SESSION_COOKIE } from "./lib/config";
 import { verifySessionToken } from "./lib/session";
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|logos|fonts|pdfs).*)"],
+  // pdfs is deliberately NOT excluded here: site/public/pdfs/ holds the five
+  // real client deliverables, linked as "Download PDF" from each gated page
+  // (site/content/d1.ts..d5.ts) -- they need the same session gate as the
+  // pages that link them, not the same public-static treatment as fonts/logos.
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|logos|fonts).*)"],
 };
 
 export async function middleware(req: NextRequest) {
