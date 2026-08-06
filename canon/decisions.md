@@ -106,3 +106,20 @@ own `canon/decisions.md` instead.
 > INSERT) is a live policy change against a production table serving a currently-shared
 > link, not something to make unilaterally inside a docs-adoption PR. Flagging as a known
 > gap; Chii's call on priority.
+
+> **2026-08-06 — Flag the hard-coded `ACCESS_PASSWORD`/`SESSION_SECRET` defaults as an open
+> gap, not a fix.** `site/lib/config.ts` falls back to a real password and session-signing
+> secret when the corresponding env vars aren't set, and both fall back values are committed
+> in this **public** repo's source — readable by anyone, regardless of whether the live
+> Vercel deployment has its own values configured. `site/README.md` currently describes
+> setting those env vars as optional ("the app works without them"), which is the opposite of
+> what CLAUDE.md non-negotiable #4 (no secrets in code) requires.
+>
+> **Not fixed here, and deliberately not guessed at.** The correct code fix — throw at
+> startup if `ACCESS_PASSWORD`/`SESSION_SECRET` aren't set, rather than silently defaulting —
+> is a straightforward change, but making it without knowing whether the live deployment
+> already has its own values set risks taking the production site down outright. This
+> session has no tool that exposes the actual Vercel project's env var state to check first.
+> Raised directly to Chii (PR #10 conversation, 2026-08-06) rather than assumed either way.
+> Once confirmed: if real values are already set in Vercel, the code fix is safe to make
+> immediately; if not, set them there first, *then* make the code fix.
