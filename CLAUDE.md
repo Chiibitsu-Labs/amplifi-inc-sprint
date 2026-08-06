@@ -66,9 +66,12 @@ adoption; retroactive specs welcome but not required for already-shipped work).
    `SESSION_SECRET` now throw at request time if unset instead of silently defaulting — see
    `canon/decisions.md`.
 5. Database changes only via migrations (with rollback), never ad-hoc SQL against prod.
-   **Current gap:** the access-log Supabase table (see `canon/decisions.md`) was provisioned
-   directly via the Supabase MCP tool, not a committed migration file. Retroactive migration
-   owed.
+   **Retroactive migration added (2026-08-06):** the access-log table was originally
+   provisioned directly via the Supabase MCP tool, not a committed migration file — now
+   backfilled as `site/supabase/migrations/20260720054855_create_amplifi_sprint_access.sql`,
+   dated to match the existing Supabase-side migration record, with its rollback procedure
+   documented as a commented block in the same file (the Supabase CLI has no native
+   down-migration mechanism).
 6. Tier 3 triggers (auth, payments, personal data, migrations, uploads, external writes):
    prepare an audit pack before requesting ship (vibeOS `templates/audit-pack.md`), and once
    findings and resolutions are filled in, commit the completed pack to

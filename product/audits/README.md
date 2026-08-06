@@ -5,8 +5,8 @@ Completed Tier 3 cross-model audit packs (vibeOS `docs/04-audit-protocol.md`,
 migrations, uploads, or external writes in this repo. One file per change:
 `<change-name>.md`, committed before merge — the PR thread isn't the record.
 
-Empty as of 2026-08-05 — no Tier 3 change has gone through the full audit-pack process yet.
-The access-log gate (`site/middleware.ts`, `site/app/access/`) and the Supabase-backed
-session/access logging (`site/app/api/access/route.ts`, which performs the actual
-`amplifi_sprint_access` write — see `canon/decisions.md`) predate this file and should get a
-retroactive pack the next time any of the three is touched.
+First pack: `supabase-migration-and-service-role.md` (2026-08-06, PR #13) — the retroactive
+migration and service-role write path for `amplifi_sprint_access`. The access-log gate
+(`site/middleware.ts`, `site/app/access/`) and the actual password-check logic in
+`site/app/api/access/route.ts` still haven't individually gone through this process — get a
+retroactive pack the next time any of those three is touched.
